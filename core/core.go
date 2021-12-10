@@ -3,83 +3,124 @@ package core
 import (
 	"errors"
 	"fmt"
-	"os"
+	"io"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/speedata/boxesandglue/backend/bag"
+	"github.com/speedata/boxesandglue/backend/lang"
+	"github.com/speedata/boxesandglue/backend/node"
 	"github.com/speedata/boxesandglue/document"
 	"github.com/speedata/goxml"
 	"github.com/speedata/goxpath/xpath"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 )
 
 var (
-	logger            *zap.SugaredLogger
 	errAttribNotFound = errors.New("Attribute not found")
 	attributeValueRE  *regexp.Regexp
-	doc               *document.Document
+	oneCM             = bag.MustSp("1cm")
+	// Version is a semantic version
+	Version string
 )
 
 func init() {
 	attributeValueRE = regexp.MustCompile(`\{(.*?)\}`)
 }
 
-func newZapLogger() *zap.SugaredLogger {
-	logger, _ := zap.Config{
-		Level:       zap.NewAtomicLevelAt(zapcore.DebugLevel),
-		Encoding:    "console",
-		OutputPaths: []string{"stdout"},
-		EncoderConfig: zapcore.EncoderConfig{
-			EncodeLevel: zapcore.LowercaseColorLevelEncoder,
-			LevelKey:    "level",
-			MessageKey:  "message",
-		},
-	}.Build()
-	return logger.Sugar()
+type xtsDocument struct {
+	cfg               *XTSCofig
+	doc               *document.Document
+	data              *xpath.Parser
+	defaultLanguage   *lang.Lang
+	pages             []*page
+	fontsources       map[string]*document.FontSource
+	fontsizes         map[string][2]bag.ScaledPoint
+	defaultGridWidth  bag.ScaledPoint
+	defaultGridHeight bag.ScaledPoint
+	defaultGridGapX   bag.ScaledPoint
+	defaultGridGapY   bag.ScaledPoint
+	defaultGridNx     int
+	defaultGridNy     int
+	defaultPageWidth  bag.ScaledPoint
+	defaultPageHeight bag.ScaledPoint
+	pagetypes         []*pagetype
+	currentPage       *page
+	currentGrid       *grid
+	tracing           VTrace
 }
 
-// Dothings is the entry point
-func Dothings() error {
+func newXTSDocument() *xtsDocument {
+	return &xtsDocument{
+		defaultGridWidth:  oneCM,
+		defaultGridHeight: oneCM,
+		defaultGridGapX:   0,
+		defaultGridGapY:   0,
+		defaultPageWidth:  bag.MustSp("210mm"),
+		defaultPageHeight: bag.MustSp("297mm"),
+	}
+}
+
+func (xd *xtsDocument) setupPage() {
+	if xd.currentPage != nil {
+		return
+	}
+	p, err := newPage(xd)
+	if err != nil {
+		bag.Logger.Error(err)
+	}
+	bag.Logger.Infof("Create page %s", p.pagetype.name)
+	xd.pages = append(xd.pages, p)
+	xd.currentPage = p
+}
+
+// XTSCofig is the configuration file for PDF generation.
+type XTSCofig struct {
+	Layoutfile  io.ReadCloser
+	Datafile    io.ReadCloser
+	Outfile     io.WriteCloser
+	OutFilename string
+	FindFile    func(string) (string, error)
+}
+
+// RunXTS is the entry point
+func RunXTS(cfg *XTSCofig) error {
 	starttime := time.Now()
-	logger = newZapLogger()
-	bag.Logger = logger
+	var err error
+	var layoutxml *goxml.XMLDocument
+	bag.Logger.Infof("XTS start version %s", Version)
+	d := newXTSDocument()
+	d.cfg = cfg
 
-	logger.Info("XTS start")
-	layoutReader, err := os.Open("layout.xml")
-	if err != nil {
+	if layoutxml, err = goxml.Parse(cfg.Layoutfile); err != nil {
 		return err
 	}
-	layoutxml, err := goxml.Parse(layoutReader)
-	if err != nil {
-		return err
-	}
-	layoutReader.Close()
+	cfg.Layoutfile.Close()
 
-	dataReader, err := os.Open("data.xml")
-	if err != nil {
+	if d.data, err = xpath.NewParser(cfg.Datafile); err != nil {
 		return err
 	}
-	data, err := xpath.NewParser(dataReader)
-	if err != nil {
-		return err
-	}
-	dataReader.Close()
+	cfg.Datafile.Close()
 
-	w, err := os.Create("out.pdf")
-	if err != nil {
+	d.doc = document.NewDocument(cfg.Outfile)
+	d.doc.Filename = cfg.OutFilename
+	d.registerCallbacks()
+
+	var defaultPagetype *pagetype
+	if defaultPagetype, err = d.newPagetype("default page", "true()"); err != nil {
 		return err
 	}
-	doc = document.NewDocument(w)
-	doc.Filename = "out.pdf"
+	defaultPagetype.marginLeft = oneCM
+	defaultPagetype.marginRight = oneCM
+	defaultPagetype.marginTop = oneCM
+	defaultPagetype.marginBottom = oneCM
 
 	layoutRoot, err := layoutxml.Root()
 	if err != nil {
 		return err
 	}
 
-	dataNameSeq, err := data.Evaluate("local-name(/*)")
+	dataNameSeq, err := d.data.Evaluate("local-name(/*)")
 	if err != nil {
 		return err
 	}
@@ -87,65 +128,91 @@ func Dothings() error {
 		return fmt.Errorf("Could not find the root name for the data xml")
 	}
 	rootname := dataNameSeq[0].(string)
-	_, err = dispatch(layoutRoot, data)
+	_, err = dispatch(d, layoutRoot, d.data)
 	if err != nil {
 		return err
 	}
-	logger.Info("Start processing data")
-	data.Ctx.Root()
+	bag.Logger.Info("Start processing data")
+	d.data.Ctx.Root()
 	var startDispatcher *goxml.Element
 	var ok bool
 	if startDispatcher, ok = dataDispatcher[rootname][""]; !ok {
-		logger.Errorf("Cannot find <Record> for root element %s", rootname)
+		bag.Logger.Errorf("Cannot find <Record> for root element %s", rootname)
 		return fmt.Errorf("Cannot find <Record> for root element %s", rootname)
 	}
-
-	dispatch(startDispatcher, data)
-	doc.CurrentPage.Shipout()
-	doc.Finish()
-	w.Close()
-	logger.Infof("Finished in %s", time.Now().Sub(starttime))
+	d.defaultLanguage, err = d.doc.LoadPatternFile("hyphenationpatterns/hyph-en-us.pat.txt")
+	d.defaultLanguage.Name = "en-US"
+	if err != nil {
+		return err
+	}
+	d.doc.SetDefaultLanguage(d.defaultLanguage)
+	_, err = dispatch(d, startDispatcher, d.data)
+	if err != nil {
+		return err
+	}
+	d.doc.CurrentPage.Shipout()
+	d.doc.Finish()
+	cfg.Outfile.Close()
+	bag.Logger.Infof("Finished in %s", time.Now().Sub(starttime))
 	return nil
 }
 
-func findAttribute(name string, element *goxml.Element, mustexist bool, allowXPath bool, dflt string, xp *xpath.Parser) (string, error) {
-	var value string
-	var found bool
-	for _, attrib := range element.Attributes() {
-		if attrib.Name == name {
-			found = true
-			value = attrib.Value
-			break
+func (xd *xtsDocument) registerCallbacks() {
+	preShipout := func(pg *document.Page) {
+		xtspage := pg.Userdata["xtspage"].(*page)
+
+		if xd.IsTrace(VTraceGrid) {
+			vlist := node.NewVList()
+			rule := node.NewRule()
+			x := xtspage.marginLeft
+			y := xtspage.marginBottom
+			wd := xtspage.pageWidth - xtspage.marginLeft - xtspage.marginRight
+			ht := xtspage.pageHeight - xtspage.marginTop - xtspage.marginBottom
+			var pdfinstructions []string
+			// page
+			pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s %s %s %s re S", x, y, wd, ht))
+			gridHeight := xtspage.pageHeight - xtspage.marginTop
+			gridWidth := xtspage.pageWidth - xtspage.marginRight
+			pdfinstructions = append(pdfinstructions, "0.4 w")
+
+			gridX := x + xtspage.pagegrid.gridWidth
+			// vertical grid rules
+			for i := 1; gridX < gridWidth; i++ {
+				if i%5 == 0 {
+					pdfinstructions = append(pdfinstructions, "0.5 G")
+				} else {
+					pdfinstructions = append(pdfinstructions, "0.9 G")
+				}
+				pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s %s m %s %s l S", gridX, y, gridX, gridHeight))
+				gridX += xd.currentGrid.gridGapX
+				if xd.currentGrid.gridGapX > 0 && gridX < gridWidth {
+					pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s %s m %s %s l S", gridX, y, gridX, gridHeight))
+				}
+				gridX += xd.currentGrid.gridWidth
+			}
+
+			// horizontal grid rules from top to bottom
+			gridY := xtspage.pageHeight - xtspage.pagegrid.gridHeight - xtspage.marginTop
+			for i := 1; gridY > y; i++ {
+				if i%5 == 0 {
+					pdfinstructions = append(pdfinstructions, "0.5 G")
+				} else {
+					pdfinstructions = append(pdfinstructions, "0.9 G")
+				}
+				pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s %s m %s %s l S", x, gridY, gridWidth, gridY))
+				gridY -= xd.currentGrid.gridGapY
+				if xd.currentGrid.gridGapY > 0 && gridY > y {
+					pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s %s m %s %s l S", x, gridY, gridWidth, gridY))
+				}
+				gridY -= xd.currentGrid.gridHeight
+			}
+
+			rule.Pre = strings.Join(pdfinstructions, " ")
+
+			vlist.List = node.Hpack(rule)
+			pg.OutputAt(0, 0, vlist)
 		}
 	}
-	if !found {
-		if mustexist {
-			logger.Errorf("Layout line %d: attribute %s on element %s not found", element.Line, name, element.Name)
-			return "", fmt.Errorf("line %d: attribute %s on element %s not found", element.Line, name, element.Name)
-		}
-		value = dflt
-	}
 
-	value = attributeValueRE.ReplaceAllStringFunc(value, func(a string) string {
-		// strip curly braces
-		seq, err := xp.Evaluate(a[1 : len(a)-1])
-		if err != nil {
-			logger.Errorf("Layout line %d: %s", element.Line, err)
-			return ""
-		}
-		return seq.Stringvalue()
-	})
-	return value, nil
-}
-
-func getAttributeString(name string, element *goxml.Element, mustexist bool, allowXPath bool, dflt string, xp *xpath.Parser) (string, error) {
-	return findAttribute(name, element, mustexist, allowXPath, dflt, xp)
-}
-
-func getAttributeSize(name string, element *goxml.Element, mustexist bool, allowXPath bool, dflt string, xp *xpath.Parser) (bag.ScaledPoint, error) {
-	val, err := findAttribute(name, element, mustexist, allowXPath, dflt, xp)
-	if err != nil {
-		return 0, err
-	}
-	return bag.Sp(val)
+	xd.doc.RegisterCallback(document.CallbackPreShipout, preShipout)
 }

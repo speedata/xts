@@ -1,0 +1,1310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<commands xmlns="urn:speedata.de:2011/publisher/documentation"
+  xmlns:de="urn:speedata.de:2021/xts/en"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+  >
+  <define name="Toplevel">
+    <optional><cmd name="DefineFontfamily"/></optional>
+    <optional><cmd name="DefineFontsize"/></optional>
+    <optional><cmd name="LoadFontfile"/></optional>
+    <optional><cmd name="Record"/></optional>
+    <optional><cmd name="SetGrid"/></optional>
+    <optional><cmd name="Trace"/></optional>
+  </define>
+
+  <define name="Commands">
+    <optional><cmd name="PlaceObject"/></optional>
+  </define>
+
+  <define name="Textvalues">
+    <zeroOrMore>
+      <choice>
+        <cmd name="B"/>
+        <cmd name="Color"/>
+        <cmd name="Value"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <defineattribute name="languages">
+    <choice en="Ancient Greek">
+      <description xml:lang="en">
+        <para>Ancient Greek</para>
+      </description>
+      <description xml:lang="de">
+        <para>Altgriechisch</para>
+      </description>
+    </choice>
+    <choice en="Armenian">
+      <description xml:lang="en">
+        <para>Armenian</para>
+      </description>
+      <description xml:lang="de">
+        <para>Armenisch</para>
+      </description>
+    </choice>
+    <choice en="Bahasa Indonesia">
+      <description xml:lang="en">
+        <para>Bahasa Indonesia</para>
+      </description>
+      <description xml:lang="de">
+        <para>Indonesisch</para>
+      </description>
+    </choice>
+    <choice en="Basque">
+      <description xml:lang="en">
+        <para>Basque</para>
+      </description>
+      <description xml:lang="de">
+        <para>Baskisch</para>
+      </description>
+    </choice>
+    <choice en="Bulgarian">
+      <description xml:lang="en">
+        <para>Bulgarian (latin alphabet)</para>
+      </description>
+      <description xml:lang="de">
+        <para>Bulgarisch (lateinisches Alphabet)</para>
+      </description>
+    </choice>
+    <choice en="Catalan">
+      <description xml:lang="en">
+        <para>Catalan</para>
+      </description>
+      <description xml:lang="de">
+        <para>Katalanisch</para>
+      </description>
+    </choice>
+    <choice en="Chinese">
+      <description xml:lang="en">
+        <para>Chinese language setting.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Auf chinsische Sprache umschalten.</para>
+      </description>
+    </choice>
+    <choice en="Croatian">
+      <description xml:lang="en">
+        <para>Croatian</para>
+      </description>
+      <description xml:lang="de">
+        <para>Kroatisch</para>
+      </description>
+    </choice>
+    <choice en="Czech">
+      <description xml:lang="en">
+        <para>Czech</para>
+      </description>
+      <description xml:lang="de">
+        <para>Tschechisch</para>
+      </description>
+    </choice>
+    <choice en="Danish">
+      <description xml:lang="en">
+        <para>Danish</para>
+      </description>
+      <description xml:lang="de">
+        <para>Dänisch</para>
+      </description>
+    </choice>
+    <choice en="Dutch">
+      <description xml:lang="en">
+        <para>Dutch</para>
+      </description>
+      <description xml:lang="de">
+        <para>Niederländisch</para>
+      </description>
+    </choice>
+    <choice en="English (Great Britain)">
+      <description xml:lang="en">
+        <para>British</para>
+      </description>
+      <description xml:lang="de">
+        <para>GB-Englisch</para>
+      </description>
+    </choice>
+    <choice en="English (USA)">
+      <description xml:lang="en">
+        <para>American English</para>
+      </description>
+      <description xml:lang="de">
+        <para>US-Englisch</para>
+      </description>
+    </choice>
+    <choice en="Esperanto">
+      <description xml:lang="en">
+        <para>Esperanto</para>
+      </description>
+      <description xml:lang="de">
+        <para>Esperanto</para>
+      </description>
+    </choice>
+    <choice en="Estonian">
+      <description xml:lang="en">
+        <para>Estonian</para>
+      </description>
+      <description xml:lang="de">
+        <para>Estnisch</para>
+      </description>
+    </choice>
+    <choice en="Finnish">
+      <description xml:lang="en">
+        <para>Finnish</para>
+      </description>
+      <description xml:lang="de">
+        <para>Finnisch</para>
+      </description>
+    </choice>
+    <choice en="French">
+      <description xml:lang="en">
+        <para>French</para>
+      </description>
+      <description xml:lang="de">
+        <para>Französisch</para>
+      </description>
+    </choice>
+    <choice en="Galician">
+      <description xml:lang="en">
+        <para>Galician</para>
+      </description>
+      <description xml:lang="de">
+        <para>Galicisch</para>
+      </description>
+    </choice>
+    <choice en="German">
+      <description xml:lang="en">
+        <para>German</para>
+      </description>
+      <description xml:lang="de">
+        <para>Deutsch</para>
+      </description>
+    </choice>
+    <choice en="Greek">
+      <description xml:lang="en">
+        <para>Monotonic Greek</para>
+      </description>
+      <description xml:lang="de">
+        <para>Neugriechisch</para>
+      </description>
+    </choice>
+    <choice en="Gujarati">
+      <description xml:lang="en">
+        <para>Gujarati</para>
+      </description>
+      <description xml:lang="de">
+        <para>Gujarati</para>
+      </description>
+    </choice>
+    <choice en="Hungarian">
+      <description xml:lang="en">
+        <para>Hungarian</para>
+      </description>
+      <description xml:lang="de">
+        <para>Ungarisch</para>
+      </description>
+    </choice>
+    <choice en="Hindi">
+      <description xml:lang="en">
+        <para>Hindi</para>
+      </description>
+      <description xml:lang="de">
+        <para>Hindi</para>
+      </description>
+    </choice>
+    <choice en="Icelandic">
+      <description xml:lang="en">
+        <para>Icelandic</para>
+      </description>
+      <description xml:lang="de">
+        <para>Isländisch</para>
+      </description>
+    </choice>
+    <choice en="Irish">
+      <description xml:lang="en">
+        <para>Irish</para>
+      </description>
+      <description xml:lang="de">
+        <para>Irisch</para>
+      </description>
+    </choice>
+    <choice en="Italian">
+      <description xml:lang="en">
+        <para>Italian</para>
+      </description>
+      <description xml:lang="de">
+        <para>Italienisch</para>
+      </description>
+    </choice>
+    <choice en="Kannada">
+      <description xml:lang="en">
+        <para>Kannada</para>
+      </description>
+      <description xml:lang="de">
+        <para>Kanaresisch</para>
+      </description>
+    </choice>
+    <choice en="Kurmanji">
+      <description xml:lang="en">
+        <para>Kurmanji</para>
+      </description>
+      <description xml:lang="de">
+        <para>Kurmandschi</para>
+      </description>
+    </choice>
+    <choice en="Latvian">
+      <description xml:lang="en">
+        <para>Latvian</para>
+      </description>
+      <description xml:lang="de">
+        <para>Lettisch</para>
+      </description>
+    </choice>
+    <choice en="Lithuanian">
+      <description xml:lang="en">
+        <para>Lithuanian</para>
+      </description>
+      <description xml:lang="de">
+        <para>Litauisch</para>
+      </description>
+    </choice>
+    <choice en="Malayalam">
+      <description xml:lang="en">
+        <para>Malayalam</para>
+      </description>
+      <description xml:lang="de">
+        <para>Malayalam</para>
+      </description>
+    </choice>
+    <choice en="Norwegian Bokmål">
+      <description xml:lang="en">
+        <para>Norwegian Bokmål</para>
+      </description>
+      <description xml:lang="de">
+        <para>Norwegisch (Bokmål).</para>
+      </description>
+    </choice>
+    <choice en="Norwegian Nynorsk">
+      <description xml:lang="en">
+        <para>Norwegian Nynorsk</para>
+      </description>
+      <description xml:lang="de">
+        <para>Norwegisch (Nynorsk).</para>
+      </description>
+    </choice>
+    <choice en="Other">
+      <description xml:lang="en">
+        <para>Don't any of these languages. Useful if a text does not render correctly.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Auf keine der anderen Sprachen umschalten. Hilfreich bei Darstellungsproblemen.</para>
+      </description>
+    </choice>
+    <choice en="Polish">
+      <description xml:lang="en">
+        <para>Polish</para>
+      </description>
+      <description xml:lang="de">
+        <para>Polnisch</para>
+      </description>
+    </choice>
+    <choice en="Portuguese">
+      <description xml:lang="en">
+        <para>Portuguese</para>
+      </description>
+      <description xml:lang="de">
+        <para>Portugiesisch</para>
+      </description>
+    </choice>
+    <choice en="Romanian">
+      <description xml:lang="en">
+        <para>Romanian</para>
+      </description>
+      <description xml:lang="de">
+        <para>Rumänisch</para>
+      </description>
+    </choice>
+    <choice en="Russian">
+      <description xml:lang="en">
+        <para>Russian</para>
+      </description>
+      <description xml:lang="de">
+        <para>Russisch</para>
+      </description>
+    </choice>
+    <choice en="Serbian">
+      <description xml:lang="en">
+        <para>Serbian</para>
+      </description>
+      <description xml:lang="de">
+        <para>Serbisch</para>
+      </description>
+    </choice>
+    <choice en="Serbian (cyrillic)">
+      <description xml:lang="en">
+        <para>Serbian (cyrillic script).</para>
+      </description>
+      <description xml:lang="de">
+        <para>Serbisch (kyrillische Buchstaben).</para>
+      </description>
+    </choice>
+    <choice en="Slovak">
+      <description xml:lang="en">
+        <para>Slovak</para>
+      </description>
+      <description xml:lang="de">
+        <para>Slowakisch</para>
+      </description>
+    </choice>
+    <choice en="Slovenian">
+      <description xml:lang="en">
+        <para>Slovenian</para>
+      </description>
+      <description xml:lang="de">
+        <para>Slowenisch</para>
+      </description>
+    </choice>
+    <choice en="Spanish">
+      <description xml:lang="en">
+        <para>Spanish</para>
+      </description>
+      <description xml:lang="de">
+        <para>Spanisch</para>
+      </description>
+    </choice>
+    <choice en="Swedish">
+      <description xml:lang="en">
+        <para>Swedish</para>
+      </description>
+      <description xml:lang="de">
+        <para>Schwedisch</para>
+      </description>
+    </choice>
+    <choice en="Turkish">
+      <description xml:lang="en">
+        <para>Turkish</para>
+      </description>
+      <description xml:lang="de">
+        <para>Türkisch</para>
+      </description>
+    </choice>
+    <choice en="Ukrainian">
+      <description xml:lang="en">
+        <para>Ukrainian</para>
+      </description>
+      <description xml:lang="de">
+        <para>Ukrainisch</para>
+      </description>
+    </choice>
+    <choice en="Welsh">
+      <description xml:lang="en">
+        <para>Welsh</para>
+      </description>
+      <description xml:lang="de">
+        <para>Walisisch</para>
+      </description>
+    </choice>
+  </defineattribute>
+
+  <definelist name="languagesshortcodes">--|bg|ca|cs|cy|da|de|el|en|en_GB|en_US|eo|es|et|eu|fi|fr|ga|gl|grc|gu|hi|hr|hu|hy|id|is|it|kn|ku|lt|lv|ml|nb|nl|nn|pl|pt|ro|ru|sc|sk|sl|sr|sv|tr|uk|zh</definelist>
+  <command en="B">
+    <description xml:lang="en">
+      <para>Switch to font weight »bold«</para>
+    </description>
+    <description xml:lang="de">
+      <para>Schaltet auf »Fett« um.</para>
+    </description>
+    <childelements>
+      <reference name="Textvalues"/>
+    </childelements>
+    <example xml:lang="en">
+      <listing><![CDATA[<Textblock>
+  <Paragraph>
+    <B><Value>Bold text</Value></B>
+  </Paragraph>
+</Textblock>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Textblock>
+  <Paragraph>
+    <B><Value>Text in Fett</Value></B>
+  </Paragraph>
+</Textblock>
+]]></listing>
+    </example>
+    <seealso><cmd name="I"/>, <ref name="fonts"/></seealso>
+  </command>
+  <command en="Bold">
+    <description xml:lang="en">
+      <para>Name of the font face that should be used when switching to »bold«.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Name der Schriftart, die für den Schnitt Fett benutzt werden soll.</para>
+    </description>
+    <childelements/>
+    <attribute en="fontface" type="text" optional="no">
+      <description xml:lang="en">
+        <para>Name of the font for bold.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name der Schriftart, die für eine fette Schrift benutzt werden soll.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<LoadFontfile name="Times" filename="timesregular.otf"/>
+<LoadFontfile name="Times bold" filename="timesbold.otf"/>
+<LoadFontfile name="Times italic" filename="timesitalic.otf"/>
+<LoadFontfile name="Times bold italic" filename="timesbolditalic.otf"/>
+
+<DefineFontfamily name="text">
+  <Regular fontface="Times"/>
+  <Bold    fontface="Times bold"/>
+  <Italic  fontface="Times italic"/>
+  <BoldItalic fontface="Times bold italic" />
+</DefineFontfamily>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<LoadFontfile name="Times" filename="timesregular.otf" />
+<LoadFontfile name="Times Fett" filename="timesbold.otf" />
+<LoadFontfile name="Times Kursiv" filename="timesitalic.otf" />
+<LoadFontfile name="Times Fett Kursiv" filename="timesbolditalic.otf" />
+...
+
+<DefineFontfamily name="text">
+  <Regular    fontface="Times"/>
+  <Bold       fontface="Times Fett"/>
+  <Italic     fontface="Times Kursiv"/>
+  <BoldItalic fontface="Times Fett Kursiv"/>
+</DefineFontfamily>]]></listing>
+    </example>
+    <seealso>
+      <cmd name="B"/>, <cmd name="BoldItalic"/>, <cmd name="Regular"/>, <cmd name="Italic"/>
+    </seealso>
+  </command>
+  <command en="BoldItalic">
+    <description xml:lang="en">
+      <para>Name of the font face that should be used when switching to »bold italic«. </para>
+    </description>
+    <description xml:lang="de">
+      <para>Name der Schriftart, die für den Schnitt Fett-Kursiv benutzt werden soll.</para>
+    </description>
+    <childelements/>
+    <attribute en="fontface" type="text" optional="no">
+      <description xml:lang="en">
+        <para>Name of the font for bold italic.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name der Schriftart, die für eine Fett/Kursive Schrift benutzt werden soll.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<LoadFontfile name="Times" filename="timesregular.otf"/>
+<LoadFontfile name="Times bold" filename="timesbold.otf"/>
+<LoadFontfile name="Times italic" filename="timesitalic.otf"/>
+<LoadFontfile name="Times bold italic" filename="timesbolditalic.otf"/>
+
+<DefineFontfamily name="text">
+  <Regular fontface="Times"/>
+  <Bold fontface="Times bold"/>
+  <Italic fontface="Times italic"/>
+  <BoldItalic fontface="Times bold italic" />
+</DefineFontfamily>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<LoadFontfile name="Times" filename="timesregular.otf" />
+<LoadFontfile name="Times Fett" filename="timesbold.otf" />
+<LoadFontfile name="Times Fett" filename="timesbold.otf" />
+<LoadFontfile name="Times Kursiv" filename="timesitalic.otf" />
+<LoadFontfile name="Times Fett Kursiv" filename="timesbolditalic.otf" />
+...
+
+<DefineFontfamily name="text">
+  <Regular     fontface="Times"/>
+  <Bold       fontface="Times Fett"/>
+  <Italic     fontface="Times Kursiv"/>
+  <BoldItalic fontface="Times Fett Kursiv"/>
+</DefineFontfamily>]]></listing>
+    </example>
+    <seealso>
+      <cmd name="B"/>,
+      <cmd name="BoldItalic"/>,
+      <cmd name="Regular"/>,
+      <cmd name="Bold"/>
+    </seealso>
+  </command>
+  <command en="Color">
+    <description xml:lang="en">
+      <para>Switch to another text color</para>
+    </description>
+    <description xml:lang="de">
+      <para>Auf eine andere Textfarbe wechseln</para>
+    </description>
+    <childelements>
+      <reference name="Textvalues"/>
+    </childelements>
+    <attribute en="name" type="text" optional="no">
+      <description xml:lang="en">
+        <para>The name of the color. Must be pre-defined with <cmd name="DefineColor"/>.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Der Name der Farbe. Muss mit <cmd name="DefineColor"/> vorher definiert werden.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<Layout
+  xmlns="urn:speedata.de:2009/publisher/en">
+
+  <DefineColor name="red" value="#f00"/>
+  <Record element="data">
+    <PlaceObject>
+      <Textblock>
+        <Paragraph>
+          <Value>Hello </Value><Color name="red"><Value>bar</Value></Color>
+        </Paragraph>
+      </Textblock>
+    </PlaceObject>
+  </Record>
+</Layout>]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Layout xmlns:sd="urn:speedata:2009/publisher/functions/en" xmlns="urn:speedata.de:2009/publisher/en">
+
+  <DefineColor name="rot" wert="#f00"/>
+
+  <Record element="data">
+    <PlaceObject>
+      <Textblock>
+        <Paragraph>
+          <Value>Hallo </Value><Color name="rot"><Value>Welt</Value></Color>
+        </Paragraph>
+      </Textblock>
+    </PlaceObject>
+  </Record>
+
+</Layout>
+]]></listing>
+    </example>
+    <seealso></seealso>
+  </command>
+  <command en="DefineFontfamily">
+    <description xml:lang="en">
+      <para>Defines a font family consisting of the shapes “regular”, “bold”, “bold italic” and “italic”. To be used in <cmd name="Paragraph"/> and <cmd name="Textblock"/> with the attribute <tt>fontfamily</tt>.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Das Element <cmd name="DefineFontfamily"/> definiert eine Schriftfamilie, auf in den Elementen <cmd name="Paragraph"/> und <cmd name="Textblock"/> mit dem Attribut <tt>fontfamily</tt> zugegriffen werden kann.</para>
+    </description>
+    <childelements>
+      <interleave>
+        <optional><cmd name="Regular"/></optional>
+        <optional><cmd name="Italic"/></optional>
+        <optional><cmd name="Bold"/></optional>
+        <optional><cmd name="BoldItalic"/></optional>
+      </interleave>
+    </childelements>
+    <attribute en="name" type="text" optional="no">
+      <description xml:lang="en">
+        <para>The symbolic name that is used as a reference to access this font family.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Interner Name, unter dem die Schriftfamilie später angesprochen wird.</para>
+      </description>
+    </attribute>
+    <remark xml:lang="en">
+      <para>The default fontface is named »text« and it can be redefined by defining a new font family called »text«.</para>
+      <para>The variants bold, italic and bold italic are optional. </para>
+    </remark>
+    <remark xml:lang="de">
+      <para>Wird keine Schriftart angegeben, dann wird auf die Schriftfamilie text (kleines ‘t’) zurückgegriffen.</para>
+      <para>Die Schnitte Fett, Kursiv und FettKursiv müssen nur dann angegeben werden, wenn sie auch benutzt werden. Es wird aber empfohlen, diese anzugeben, damit nicht unbemerkt auf die Standardschriftart umgeschaltet wird.</para>
+    </remark>
+    <example xml:lang="en">
+      <listing><![CDATA[<DefineFontfamily name="Title">
+  <Regular fontface="Helvetica Regular"/>
+  <Bold fontface="Helvetica Bold"/>
+  <Italic fontface="Helvetica Italic"/>
+  <BoldItalic fontface="Helvetica Bold Italic"/>
+</DefineFontfamily>
+]]></listing>
+      <para>This font family can now be accessed like this:</para>
+      <listing><![CDATA[<Textblock fontfamily="Title">
+  <Paragraph>
+    <Value>...<Value>
+  </Paragraph>
+</Textblock>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<DefineFontfamily name="Helvetica">
+  <Regular fontface="Helvetica Normal"/>
+  <Bold fontface="Helvetica Fett"/>
+  <Italic fontface="Helvetica Kursiv"/>
+  <BoldItalic fontface="Helvetica Fett Kursiv"/>
+</DefineFontfamily>]]></listing>
+      <para>Anschließend kann im Text auf diese Schriftfamilie zugegriffen werden:</para>
+      <listing><![CDATA[<Textblock fontfamily="Helvetica">
+  <Paragraph>
+   ...]]></listing>
+    </example>
+    <seealso>
+      <cmd name="LoadFontfile"/>
+    </seealso>
+  </command>
+  <command en="DefineFontsize">
+    <description xml:lang="en">
+      <para>Set the font size and the leading</para>
+    </description>
+    <description xml:lang="de">
+      <para></para>
+    </description>
+    <childelements></childelements>
+    <attribute en="fontsize" optional="no" allowxpath="yes" type="length">
+      <description xml:lang="en">
+        <para></para>
+      </description>
+      <description xml:lang="de">
+        <para></para>
+      </description>
+    </attribute>
+    <attribute en="leading" optional="no" allowxpath="yes" type="length">
+      <description xml:lang="en">
+        <para></para>
+      </description>
+      <description xml:lang="de">
+        <para></para>
+      </description>
+    </attribute>
+    <attribute en="name" optional="no" allowxpath="yes" type="text">
+      <description xml:lang="en">
+        <para>Set the symbolic name of the size.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Setze den symbolischen Namen der Größe.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en"></example>
+    <example xml:lang="de"></example>
+    <seealso></seealso>
+  </command>
+  <command en="Italic">
+    <description xml:lang="en">
+      <para>The font face to be used when the user switches to italic.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Dient als Festlegung des Schriftschnittes, wenn Formatierung I (Kursiv) angegeben ist.</para>
+    </description>
+    <childelements/>
+    <attribute en="fontface" type="text" optional="no">
+      <description xml:lang="en">
+        <para>The name of the fontface.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name der Schriftart, die für eine kursive Schrift benutzt werden soll.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<LoadFontfile name="Helvetica" filename="helvetica-regular.otf"/>
+<LoadFontfile name="Helvetica Bold" filename="helvetica-bold.otf"/>
+<LoadFontfile name="Helvetica Italic" filename="helvetica-italic.otf"/>
+<LoadFontfile name="Helvetica Bold Italic" filename="helvetica-bolditalic.otf"/>
+
+<DefineFontfamily name="text" >
+  <Regular fontface="Helvetica"/>
+  <Bold fontface="Helvetica Bold"/>
+  <Italic fontface="Helvetica Italic"/>
+  <BoldItalic fontface="Helvetica Bold Italic"/>
+</DefineFontfamily>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<LoadFontfile name="Helvetica" filename="helvetica-regular.otf" />
+...
+
+<DefineFontfamily name="text">
+  <Regular    fontface="Helvetica"/>
+  <Bold       fontface="Helvetica Fett"/>
+  <Italic     fontface="Helvetica Kursiv"/>
+  <BoldItalic fontface="Helvetica Fett Kursiv"/>
+</DefineFontfamily>]]></listing>
+    </example>
+    <seealso>
+      <cmd name="Bold"/>
+      <cmd name="Regular"/>
+      <cmd name="I"/>
+      <cmd name="BoldItalic"/>
+    </seealso>
+  </command>
+  <command en="LoadFontfile">
+    <description xml:lang="en">
+      <para>Load a font file (.otf, .ttf, .pfb) and associate it with an internal name. If a glyph is not found in the font file, an error will be raised (this can be configured via the Options command). You can specify fallbacks as a child element of Loadfontfile.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Der Befehl LoadFontfile weist einer physikalischen Schriftdatei einen internen Namen zu. Wird ein Zeichen in der Schriftart nicht gefunden, erzeugt das Programm eine Fehlermeldung, die mit  ausgeschaltet werden kann. Alternativ dazu können auch Ersatzschriftarten angegeben werden, die nach den fehlenden Zeichen abgesucht werden. </para>
+    </description>
+    <childelements>
+    </childelements>
+    <attribute en="name" type="text" optional="no">
+      <description xml:lang="en">
+        <para>The internal name of the font file. To be used within <cmd name="DefineFontfamily"/>.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Der interne Name, unter dem die Schriftart im Element <cmd name="DefineFontfamily"/> angesprochen wird.</para>
+      </description>
+    </attribute>
+
+    <attribute en="filename" type="text" optional="no">
+      <description xml:lang="en">
+        <para>The name (with extension) of the font file.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Der Dateiname mit Endung, ohne Pfad.</para>
+      </description>
+    </attribute>
+    <attribute en="marginprotrusion" type="zerotohundred" optional="yes">
+      <description xml:lang="en">
+        <para>The amount of protrusion glyphs like -, . and - stick into the right margin. Highly font dependent. Defaults to 0.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Angabe in Prozent, um wie viel die Zeichen -, . und , über den Rand herausragen. Stark abhängig von der benutzten Schriftart.</para>
+      </description>
+    </attribute>
+
+
+
+    <example xml:lang="de">
+      <listing><![CDATA[<LoadFontfile name="Helvetica" filename="texgyreheros-regular.otf" />
+<LoadFontfile name="Helvetica Fett" filename="texgyreheros-bold.otf" />
+<LoadFontfile name="Helvetica Kursiv" filename="texgyreheros-italic.otf" />
+<LoadFontfile name="Helvetica Fett Kursiv" filename="texgyreheros-bolditalic.otf" />]]></listing>
+    </example>
+    <info xml:lang="en">
+      <para>The fonts are optionally taken from the local search path. On Windows the path <tt>%WINDIR%\Fonts</tt> (usually <tt>C:\Windows\Fonts</tt>) and on Mac OS X the paths <tt>/Library/Fonts</tt> and <tt>/System/Library/Fonts</tt> can be used as fallbacks for fonts. This can be configured with the setting <tt>fontpath</tt>.</para>
+    </info>
+    <info xml:lang="de">
+      <para>Die Schriftdateien werden aus dem lokalen Suchpfad geladen. Unter Windows wird der Pfad <tt>%WINDIR%\Fonts</tt> (normalerweise <tt>C:\Windows\Fonts</tt>) und auf Mac OS X die Pfade <tt>/Library/Fonts</tt> und <tt>/System/Library/Fonts</tt> können als Ergänzung des lokalen Suchpfads dienen. Das kann mit der Option <tt>fontpath</tt> in der Konfigurationsdatei gesetzt werden.</para>
+    </info>
+    <seealso>
+      <cmd name="DefineFontfamily"/></seealso>
+  </command>
+  <command en="Layout">
+    <description xml:lang="en">
+      <para>This command is the root element in the Layout instructions.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Das <cmd name="Layout"/>-Element ist das Wurzelelement im Layoutregelwerk.</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <reference name="Toplevel"/>
+        <optional><cmd name="Layout"/></optional>
+      </oneOrMore>
+    </childelements>
+    <attribute en="version" type="number" optional="yes">
+      <description xml:lang="en">
+        <para>Minimum publisher version required. If major or minor version differ, give a warning. Format: 1.6.12 (revision number can be left out).</para>
+      </description>
+      <description xml:lang="de">
+        <para>Gibt die minimale Version des Publishers an. Format: 1.6.13. Die letzten Ziffern können weggelassen werden. Falls die erste oder die zweite Ziffer der Versionsangabe unterschiedlich ist, wird eine Warnung ausgegeben.</para>
+      </description>
+    </attribute>
+    <attribute en="name" type="text" optional="yes">
+      <description xml:lang="en">
+        <para>A name for the layout. Optional, without any influence on the layout itself.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name des Layouts. Hat keinen Einfluss auf das Layout.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <para>This is a complete example for a layout rule set. The first part is the data file (save as <tt>data.xml</tt>) and the second the layout instructions (<tt>layout.xml</tt>).</para>
+      <listing><![CDATA[<root>
+  <elt greeting="Hello world!" />
+</root>]]></listing>
+      <listing><![CDATA[<Layout xmlns="urn:speedata.de:2021/xts/en"
+  xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+
+  <Options mainlanguage="English (USA)"/>
+
+  <Record element="root">
+    <ProcessNode select="elt"/>
+  </Record>
+
+  <Record element="elt">
+    <PlaceObject>
+      <Textblock>
+        <Paragraph>
+          <Value select="@greeting"></Value>
+        </Paragraph>
+      </Textblock>
+    </PlaceObject>
+  </Record>
+</Layout>]]></listing>
+    </example>
+    <example xml:lang="de">
+      <para>Nachfolgend ein vollständiges Beispiel für ein Layoutregelwerk. Die erste Datei ist eine Datendatei und wird unter dem Namen <tt>data.xml</tt> gespeichert. Das zweite ist die eigentliche Layoutdatei (<tt>layout.xml</tt>).</para>
+      <listing><![CDATA[<root>
+  <elt gruß="Hallo Welt!" />
+</root>]]></listing>
+      <listing><![CDATA[<Layout xmlns="urn:speedata.de:2021/xts/en"
+  xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+
+  <Options mainlanguage="German"/>
+
+  <Record element="root">
+    <ProcessNode select="elt"/>
+  </Record>
+
+  <Record element="elt">
+    <PlaceObject>
+      <Textblock>
+        <Paragraph>
+          <Value select="@gruß"></Value>
+        </Paragraph>
+      </Textblock>
+    </PlaceObject>
+  </Record>
+</Layout>]]></listing>
+    </example>
+    <seealso/>
+  </command>
+  <command en="Paragraph">
+    <description xml:lang="en">
+      <para>Insert a paragraph of text. The width of the paragraph is inherited from the surrounding element.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Erzeugt einen Absatz innerhalb eines Textblocks.</para>
+    </description>
+    <childelements>
+      <reference name="Textvalues"/>
+    </childelements>
+    <attribute en="color" type="text" optional="yes">
+      <description xml:lang="en">
+        <para>Color of the paragraph.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Farbe des Absatzes.</para>
+      </description>
+    </attribute>
+    <attribute en="fontfamily" css="font-family" type="text" optional="yes">
+      <description xml:lang="en">
+        <para>The name of the font family for the paragraph. The default is »text« (lowercase t).</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name der Schriftfamilie. Voreinstellung ist »text« (mit kleinem t).</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<Textblock>
+  <Paragraph fontfamily="Title">
+    <Value>Hello World</Value>
+  </Paragraph>
+</Textblock>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Textblock>
+  <Paragraph fontfamily="Überschrift">
+    <Value>Hallo Welt</Value>
+  </Paragraph>
+</Textblock>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Textblock >
+  <Paragraph fontfamily="Überschrift" language="German">
+    <Value select="node()"/>
+  </Paragraph>
+  </Textblock>]]></listing>
+      <para>wobei in den Daten ein Text steht, beispielsweise falls der aktuelle Knoten das Element <cmd name="Record"/> ist:</para>
+      <listing><![CDATA[<Record>Produktbeschreibung: die Artikelnummer <i>1234</i> setzt sich aus ... </Record>]]></listing>
+    </example>
+    <seealso><cmd name="Textblock"/></seealso>
+  </command>
+  <command en="PlaceObject">
+    <description xml:lang="en">
+      <para>Outputs a rectangular object (image, table, box, barcode or textblock).</para>
+    </description>
+    <description xml:lang="de">
+      <para>Gibt ein rechteckiges Objekt (Bild, Tabelle, Box, Barcode oder Textblock) aus.</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <interleave>
+          <optional><cmd name="Textblock"/></optional>
+        </interleave>
+      </oneOrMore>
+    </childelements>
+    <attribute en="column" type="numberorlength" optional="yes">
+      <description xml:lang="en">
+        <para>If contents is a number: the grid cell from the left margin of the area. If it is a length: the absolute position from the left paper margin. If this attribute is omitted, the system tries to place the object by itself.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Zahl: Die Spalte im Raster, in der das Objekt ausgegeben wird. Wird die Spalte nicht angegeben, so sucht sich das System selbständig eine passende freie Zeile für das Objekt. Maßangabe: die Position von der linken Blattkante.</para>
+      </description>
+    </attribute>
+    <attribute en="row" type="numberorlength" optional="yes">
+      <description xml:lang="en">
+        <para>The row where the object is placed. If none given, the publisher tries to find a row by itself. You can give a number (in grid cells) or an absolute value (from top left).</para>
+      </description>
+      <description xml:lang="de">
+        <para>Zahl: Die Zeile im Raster, in der das Objekt ausgegeben wird. Wird die Zeile nicht angegeben, so sucht sich das System selbständig eine passende freie Zeile für das Objekt. Maßangabe: die Position von der oberen Blattkante.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <para>Positioning inside the grid:</para>
+      <listing><![CDATA[<Record element="image">
+  <PlaceObject column="12" frame="solid" framecolor="red">
+    <Image width="10" file="_samplea.pdf"/>
+  </PlaceObject>
+</Record>]]></listing>
+      <para>Absolute positioning (from top left edge):</para>
+      <listing><![CDATA[<Record element="image">
+  <PlaceObject column="1cm" row="4cm" frame="solid" framecolor="red">
+    <Image width="10" file="_samplea.pdf"/>
+  </PlaceObject>
+</Record>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Record element="bild">
+  <PlaceObject column="12" frame="solid" framecolor="red">
+    <Image width="10" file="_samplea.pdf" />
+  </PlaceObject>
+</Record>]]></listing>
+      <para>Absolute Platzierung:</para>
+      <listing><![CDATA[<Record element="bild">
+  <PlaceObject column="1cm" row="4cm" frame="solid" framecolor="red">
+    <Image width="10" file="_samplea.pdf" />
+  </PlaceObject>
+</Record>]]></listing>
+    </example>
+    <info xml:lang="en">
+      <para>The objects can be placed in a grid (when the value in the attributes row and column are numbers) or they can be placed with absolute positions where the origin is at the top and left border of the page.</para>
+    </info>
+    <info xml:lang="de">
+      <para>Die Ausgabe kann entweder im Raster erfolgen (Angabe bei <tt>row</tt> und <tt>column</tt> ist eine Zahl) oder als absolute Positionierung (die Angaben bei <tt>row</tt> und <tt>column</tt> müssen beide vorhanden sein und
+        eine Maßgangabe sein).</para>
+    </info>
+    <seealso>
+      <cmd name="Textblock"/>,
+    </seealso>
+  </command>
+  <command en="Record">
+    <description xml:lang="en">
+      <para>Contains the instructions when the publisher processes the element in the data file with the given name. The record matching the root element will be called by the software automatically, all further data handling must be done by the user.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Enthält die Anweisungen, die bei dem angegebenen Datensatz ausgeführt werden sollen. Der oberste Datensatz (d.h. direkt unterhalb des Wurzelelements) wird vom Publisher aufgerufen, alle nachfolgenden Datensätze müssen über das Element BearbeiteKnoten aufgerufen werden.</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <reference name="Commands"/>
+      </oneOrMore>
+    </childelements>
+    <attribute en="element" type="text" optional="no">
+      <description xml:lang="en">
+        <para>The name of the element the record matches.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Der Name des Elements der auf den Datensatz passt.</para>
+      </description>
+    </attribute>
+    <attribute en="mode" type="text" optional="yes">
+      <description xml:lang="en">
+        <para>Name of the mode that matches the mode in .</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name des Modus der mit dem in  übereinstimmt.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<Record element="url" mode="output">
+  <PlaceObject>
+    <Textblock>
+      <Paragraph>
+        <A href="https://www.speedata.de"><Value>website of speedata</Value></A>
+      </Paragraph>
+    </Textblock>
+  </PlaceObject>
+</Record>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Record element="url" mode="ausgabe">
+  <PlaceObject>
+    <Textblock>
+      <Paragraph>
+        <A href="https://www.speedata.de"><Value>Webseite von speedata</Value></A>
+      </Paragraph>
+    </Textblock>
+  </PlaceObject>
+</Record>
+]]></listing>
+    </example>
+    <seealso>
+    </seealso>
+  </command>
+  <command en="Regular">
+    <description xml:lang="en">
+      <para>The (symbolic) name of the fontface for regular text, i.e. without bold or italic.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Dient als Festlegung des Schriftschnittes, wenn keine Formatierung angegeben ist.</para>
+    </description>
+    <childelements/>
+    <attribute en="fontface" type="text" optional="no">
+      <description xml:lang="en">
+        <para>The symbolic name of the font file.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name der Schriftdatei, die geladen werden soll.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<DefineFontfamily name="Title">
+  <Regular fontface="Helvetica Regular"/>
+  <Bold fontface="Helvetica Bold"/>
+  <Italic fontface="Helvetica Italic"/>
+  <BoldItalic fontface="Helvetica Bold Italic"/>
+</DefineFontfamily>
+]]></listing>
+      <para>This font family can now be accessed like this:</para>
+      <listing><![CDATA[<Textblock fontfamily="Title">
+  <Paragraph>
+    <Value>...<Value>
+  </Paragraph>
+</Textblock>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<LoadFontfile name="Helvetica" filename="helvetica-regular.otf" />
+...
+
+<DefineFontfamily name="text">
+  <Regular    fontface="Helvetica"/>
+  <Bold       fontface="Helvetica Fett"/>
+  <Italic     fontface="Helvetica Kursiv"/>
+  <BoldItalic fontface="Helvetica Fett Kursiv"/>
+</DefineFontfamily>]]></listing>
+    </example>
+    <seealso>
+      <cmd name="Bold"/>
+      <cmd name="Italic"/>
+      <cmd name="BoldItalic"/>
+    </seealso>
+  </command>
+  <command en="SetGrid">
+    <description xml:lang="en">
+      <para>Set size of the grid cells. All objects are placed in the grid.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Setzt die Größe und Höhe eines Rasterkästchens. In dem Seitenraster können Elemente platziert werden.</para>
+    </description>
+    <childelements/>
+    <attribute en="width" type="length" optional="yes">
+      <description xml:lang="en">
+        <para>The width of a grid cell. Use either width or nx, not both.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Breite einer Rasterzelle. Entweder width oder nx benutzen, nicht beide.</para>
+      </description>
+    </attribute>
+    <attribute en="height" type="length" optional="yes">
+      <description xml:lang="en">
+        <para>The height of a grid cell. Use either height or ny, but not both.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Höhe einer Rasterzelle. Entweder höhe oder ny angeben, nicht beide.</para>
+      </description>
+    </attribute>
+    <attribute en="nx" type="number" optional="yes">
+      <description xml:lang="en">
+        <para>Specify the number of grid cells in horizontal direction. Use either nx or width, not both.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Anzahl der Rasterzellen in horizontaler Richtung. Entweder nx oder width angeben.</para>
+      </description>
+    </attribute>
+    <attribute en="ny" type="number" optional="yes">
+      <description xml:lang="en">
+        <para>Set the number of grid cells in vertical direction. Give ny or height, but not both.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Gibt die Anzahl der Rasterzellen in vertikaler Richtung an. Entweder ny oder höhe angeben.</para>
+      </description>
+    </attribute>
+    <attribute en="dx" optional="yes">
+      <description xml:lang="en">
+        <para>Gap between two grid cells (horizontal)</para>
+      </description>
+      <description xml:lang="de">
+        <para>Abstand zwischen zwei Rasterzellen (horizontal)</para>
+      </description>
+    </attribute>
+    <attribute en="dy" optional="yes">
+      <description xml:lang="en">
+        <para>Gap between two grid cells (horizontal)</para>
+      </description>
+      <description xml:lang="de">
+        <para>Abstand zwischen zwei Rasterzellen (horizontal)</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<SetGrid width="4mm" height="14pt"/>]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<SetGrid width="4mm" height="14pt" />]]></listing>
+    </example>
+    <seealso><cmd name="Grid"/></seealso>
+  </command>
+  <command en="Textblock">
+    <description xml:lang="en">
+      <para>Create a rectangular piece of text.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Erzeugt einen rechteckigen Bereich mit Text.</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <choice>
+          <cmd name="Paragraph"/>
+        </choice>
+      </oneOrMore>
+    </childelements>
+    <attribute en="fontfamily" type="text" optional="yes">
+      <description xml:lang="en">
+        <para>The name of the font family. Defaults to <tt>text</tt>.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name der Schriftfamilie, die benutzt werden soll.</para>
+      </description>
+    </attribute>
+    <attribute en="fontsize" optional="yes" allowxpath="yes" type="text">
+      <description xml:lang="en">
+        <para>Set the font size. You can use a name predefined with <cmd name="DefineFontsize"/> or a string such as "10pt/12pt" to set the font size and the leading.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Setze die Schriftgröße und den Zeilenabstand. Es kann eine mit <cmd name="DefineFontsize"/> vordefinierte Größe verwendet werden oder eine Zeichenkette wie "10pt/12pt", die die Schriftgröße und den Zeilenabstand bestimmt.</para>
+      </description>
+    </attribute>
+    <attribute en="width" type="number" optional="yes">
+      <description xml:lang="en">
+        <para>Number of columns for the text. If not given, the surrounding element determines the width of the element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Anzahl der Spalten, die der Text einnehmen soll. Wenn das Attribut nicht angegeben wird, so bestimmt das umliegende Element die Breite.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<Record element="data">
+  <PlaceObject>
+    <Textblock width="10" angle="-20">
+      <Paragraph>
+        <B><Value>Bold slanted text</Value></B>
+      </Paragraph>
+    </Textblock>
+  </PlaceObject>
+</Record>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<PlaceObject>
+  <Textblock width="10" angle="-20">
+    <Paragraph>
+      <B><Value>Text in Fett</Value></B>
+    </Paragraph>
+  </Textblock>
+</PlaceObject>]]></listing>
+    </example>
+    <seealso>
+      <cmd name="Paragraph"/>, <cmd name="PlaceObject"/>
+    </seealso>
+  </command>
+  <command en="Trace">
+    <description xml:lang="en">
+      <para>Set debugging switches</para>
+    </description>
+    <description xml:lang="de">
+      <para>Setze Debugging-Schalter</para>
+    </description>
+    <childelements/>
+    <attribute en="grid" optional="yes">
+      <description xml:lang="en">
+        <para>Draw the grid on the page.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Wenn 'yes', dann zeichnet der Publisher das zugrunde liegende Raster auf die Seiten.</para>
+      </description>
+      <choice en="yes">
+        <description xml:lang="en">
+          <para>Show the grid.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Zeige das Raster.</para>
+        </description>
+      </choice>
+      <choice en="no">
+        <description xml:lang="en">
+          <para>Don't show the grid (default).</para>
+        </description>
+        <description xml:lang="de">
+          <para>Das Raster wird nicht angezeigt (Voreinstellung).</para>
+        </description>
+      </choice>
+    </attribute>
+  </command>
+  <command en="Value">
+    <description xml:lang="en">
+      <para>Contains a text value that is passed to the surrounding element.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Beinhaltet einen Textinhalt, der an das umgebende Element übergeben wird.</para>
+    </description>
+    <childelements>
+      <interleave>
+        <zeroOrMore>
+          <text/>
+        </zeroOrMore>
+      </interleave>
+    </childelements>
+    <attribute en="select" type="xpath" optional="yes">
+      <description xml:lang="en">
+        <para>Value to be passed to the outer element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Wert, der zum umgebenden Element übergeben wird.</para>
+      </description>
+    </attribute>
+    <remark xml:lang="en">
+      <para>The value can be passed to the outer element either as an XPath expression or as the contents of this element.</para>
+      <para>Containing Br-tags will be interpreted as newlines.</para>
+    </remark>
+    <remark xml:lang="de">
+      <para>Der Inhalt kann entweder als XPath-Ausdruck im Attribut select oder als Elementinhalt angegeben werden.</para>
+      <para>Innenliegende Br-Tags werden als Zeilenumbruch interpretiert.</para>
+    </remark>
+    <example xml:lang="en">
+      <listing><![CDATA[<Record element="data">
+  <PlaceObject>
+   <Textblock>
+     <Paragraph>
+       <Value select="@name"/><Value>, symbol=</Value><Value select="@symbol"/>
+     </Paragraph>
+   </Textblock>
+  </PlaceObject>
+</Record>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Textblock>
+  <Paragraph>
+    <Value select="@name"/><Value>, Symbol=</Value><Value select="@symbol" />
+  </Paragraph>
+</Textblock>]]></listing>
+    </example>
+    <seealso>
+    </seealso>
+  </command>
+</commands>

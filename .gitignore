@@ -2,4 +2,10 @@
 layout.xml
 data.xml
 bin/
-out.pdf
+publisher.pdf
+xts.xpr
+img/
+.goreleaser.yml
+dist/
+config.hcl
+

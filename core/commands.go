@@ -2,150 +2,207 @@ package core
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/boxesandglue/backend/node"
+	"github.com/speedata/boxesandglue/document"
+	"github.com/speedata/boxesandglue/pdfbackend/pdf"
 	"github.com/speedata/goxml"
 	"github.com/speedata/goxpath/xpath"
 )
 
-type commandFunc func(*goxml.Element, *xpath.Parser) (xpath.Sequence, error)
+type commandFunc func(*xtsDocument, *goxml.Element, *xpath.Parser) (xpath.Sequence, error)
 
 var (
-	dataDispatcher map[string]map[string]*goxml.Element
+	dataDispatcher = make(map[string]map[string]*goxml.Element)
 	dispatchTable  map[string]commandFunc
 )
 
 func init() {
 	dispatchTable = map[string]commandFunc{
 		"B":                cmdB,
+		"Color":            cmdColor,
 		"DefineFontfamily": cmdDefineFontfamily,
+		"DefineFontsize":   cmdDefineFontsize,
+		"Image":            cmdImage,
 		"LoadFontfile":     cmdLoadFontfile,
 		"Paragraph":        cmdParagraph,
 		"PlaceObject":      cmdPlaceObject,
 		"Record":           cmdRecord,
+		"SetGrid":          cmdSetGrid,
 		"Textblock":        cmdTextblock,
+		"Trace":            cmdTrace,
 		"Value":            cmdValue,
 	}
 }
 
-func dispatch(layoutelement *goxml.Element, data *xpath.Parser) (xpath.Sequence, error) {
+func dispatch(xd *xtsDocument, layoutelement *goxml.Element, data *xpath.Parser) (xpath.Sequence, error) {
 	var retSequence xpath.Sequence
 	for _, cld := range layoutelement.Children() {
 		if elt, ok := cld.(*goxml.Element); ok {
 			if f, ok := dispatchTable[elt.Name]; ok {
-				logger.Debugf("Call %s (line %d)", elt.Name, elt.Line)
-				seq, err := f(elt, data)
+				bag.Logger.Debugf("Call %s (line %d)", elt.Name, elt.Line)
+				seq, err := f(xd, elt, data)
 				if err != nil {
 					return nil, err
 				}
 				retSequence = append(retSequence, seq...)
 			} else {
-				fmt.Printf("Element %q unknown\n", elt.Name)
+				bag.Logger.DPanicf("dispatch: element %q unknown", elt.Name)
 			}
 		}
 	}
 	return retSequence, nil
 }
 
-func init() {
-	dataDispatcher = make(map[string]map[string]*goxml.Element)
+func cmdB(xd *xtsDocument, layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
+	seq, err := dispatch(xd, layoutelt, dataelt)
+
+	te := &document.TypesettingElement{
+		Settings: document.TypesettingSettings{
+			document.SettingFontWeight: 700,
+		},
+	}
+	getTextvalues(te, seq, "cmdBold")
+
+	return xpath.Sequence{te}, err
 }
 
-func cmdB(layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
-	abc, err := dispatch(layoutelt, dataelt)
-	return abc, err
-}
-
-func cmdDefineFontfamily(layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
-	var size, leading bag.ScaledPoint
+func cmdColor(xd *xtsDocument, layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
 	var err error
-	if size, err = getAttributeSize("fontsize", layoutelt, true, true, "", dataelt); err != nil {
-		return nil, err
-	}
-	if leading, err = getAttributeSize("leading", layoutelt, true, true, "", dataelt); err != nil {
-		return nil, err
-	}
-	var name, fontface string
-	if name, err = getAttributeString("name", layoutelt, true, true, "", dataelt); err != nil {
+	var colorname string
+	if colorname, err = xd.getAttributeString("name", layoutelt, true, true, ""); err != nil {
 		return nil, err
 	}
 
-	ff := fontfamily{
-		name:    name,
-		size:    size,
-		leading: leading,
+	seq, err := dispatch(xd, layoutelt, dataelt)
+
+	te := &document.TypesettingElement{
+		Settings: document.TypesettingSettings{
+			document.SettingColor: colorname,
+		},
 	}
+	getTextvalues(te, seq, "cmdColor")
+
+	return xpath.Sequence{te}, err
+}
+
+func cmdDefineFontfamily(xd *xtsDocument, layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
+	var err error
+	var name, fontface string
+	if name, err = xd.getAttributeString("name", layoutelt, true, true, ""); err != nil {
+		return nil, err
+	}
+
+	ff := xd.doc.NewFontFamily(name)
 
 	for _, cld := range layoutelt.Children() {
 		if c, ok := cld.(*goxml.Element); ok {
-			if fontface, err = getAttributeString("fontface", c, true, true, "", dataelt); err != nil {
+			if fontface, err = xd.getAttributeString("fontface", c, true, true, ""); err != nil {
 				return nil, err
 			}
+
 			switch c.Name {
 			case "Regular":
-				if ff.weightStyleFontname == nil {
-					ff.weightStyleFontname = make(map[fontWeight]map[fontStyle]string)
-				}
-				if ff.weightStyleFontname[fontWeight400] == nil {
-					ff.weightStyleFontname[fontWeight400] = make(map[fontStyle]string)
-				}
-				ff.weightStyleFontname[fontWeight400][fontStyleNormal] = fontface
+				ff.AddMember(xd.fontsources[fontface], document.FontWeight400, document.FontStyleNormal)
 			case "Italic":
-				if ff.weightStyleFontname == nil {
-					ff.weightStyleFontname = make(map[fontWeight]map[fontStyle]string)
-				}
-				if ff.weightStyleFontname[fontWeight400] == nil {
-					ff.weightStyleFontname[fontWeight400] = make(map[fontStyle]string)
-				}
-				ff.weightStyleFontname[fontWeight400][fontStyleItalic] = fontface
+				ff.AddMember(xd.fontsources[fontface], document.FontWeight400, document.FontStyleItalic)
 			case "Bold":
-				if ff.weightStyleFontname == nil {
-					ff.weightStyleFontname = make(map[fontWeight]map[fontStyle]string)
-				}
-				if ff.weightStyleFontname[fontWeight700] == nil {
-					ff.weightStyleFontname[fontWeight700] = make(map[fontStyle]string)
-				}
-				ff.weightStyleFontname[fontWeight700][fontStyleNormal] = fontface
+				ff.AddMember(xd.fontsources[fontface], document.FontWeight700, document.FontStyleNormal)
 			case "BoldItalic":
-				if ff.weightStyleFontname == nil {
-					ff.weightStyleFontname = make(map[fontWeight]map[fontStyle]string)
-				}
-				if ff.weightStyleFontname[fontWeight700] == nil {
-					ff.weightStyleFontname[fontWeight700] = make(map[fontStyle]string)
-				}
-				ff.weightStyleFontname[fontWeight700][fontStyleItalic] = fontface
+				ff.AddMember(xd.fontsources[fontface], document.FontWeight700, document.FontStyleItalic)
 			}
 		}
 	}
-	definefontfamily(&ff)
 	return nil, nil
 }
 
-func cmdLoadFontfile(layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
+func cmdDefineFontsize(xd *xtsDocument, layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
+	var name string
+	var fontsize, leading bag.ScaledPoint
+	var err error
+	if name, err = xd.getAttributeString("name", layoutelt, true, true, ""); err != nil {
+		return nil, err
+	}
+	if fontsize, err = xd.getAttributeSize("fontsize", layoutelt, true, true, ""); err != nil {
+		return nil, err
+	}
+	if leading, err = xd.getAttributeSize("leading", layoutelt, true, true, ""); err != nil {
+		return nil, err
+	}
+
+	if xd.fontsizes == nil {
+		xd.fontsizes = make(map[string][2]bag.ScaledPoint)
+	}
+	xd.fontsizes[name] = [2]bag.ScaledPoint{fontsize, leading}
+	return nil, nil
+}
+
+func cmdImage(xd *xtsDocument, layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
+	var filename string
+	var err error
+	if filename, err = xd.getAttributeString("file", layoutelt, true, true, ""); err != nil {
+		return nil, err
+	}
+
+	filename, err = xd.cfg.FindFile(filename)
+	if err != nil {
+		return nil, err
+	}
+	var imgObj *pdf.Imagefile
+	if imgfile, ok := loadedImages[filename]; !ok {
+
+		imgObj, err = xd.doc.LoadImageFile(filename)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		imgObj = imgfile
+	}
+	hl := createImageHlist(xd, imgObj)
+	if hl.Attibutes == nil {
+		hl.Attibutes = node.H{}
+	}
+	hl.Attibutes["origin"] = "image"
+
+	return xpath.Sequence{hl}, nil
+
+}
+
+func cmdLoadFontfile(xd *xtsDocument, layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
 	var filename, name string
 	var err error
-	if filename, err = getAttributeString("filename", layoutelt, true, true, "", dataelt); err != nil {
+	if filename, err = xd.getAttributeString("filename", layoutelt, true, true, ""); err != nil {
 		return nil, err
 	}
-	if name, err = getAttributeString("name", layoutelt, true, true, "", dataelt); err != nil {
+	if name, err = xd.getAttributeString("name", layoutelt, true, true, ""); err != nil {
 		return nil, err
 	}
-
-	fontNameFontFile[name] = &fontfile{
-		filename: filename,
+	fn, err := xd.cfg.FindFile(filename)
+	if err != nil {
+		return nil, err
 	}
+	fs := document.FontSource{
+		Name:   name,
+		Source: fn,
+	}
+	// Not necessary when default fonts are initialized
+	if xd.fontsources == nil {
+		xd.fontsources = make(map[string]*document.FontSource)
+	}
+	xd.fontsources[name] = &fs
 	return nil, nil
 }
 
-func cmdRecord(layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
+func cmdRecord(xd *xtsDocument, layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
 	var elt, mode string
 	var err error
-	if elt, err = getAttributeString("element", layoutelt, true, false, "", dataelt); err != nil {
+	if elt, err = xd.getAttributeString("element", layoutelt, true, false, ""); err != nil {
 		return nil, err
 	}
-	if mode, err = getAttributeString("mode", layoutelt, false, false, "", dataelt); err != nil {
+	if mode, err = xd.getAttributeString("mode", layoutelt, false, false, ""); err != nil {
 		return nil, err
 	}
 	dp := dataDispatcher[elt]
@@ -156,61 +213,224 @@ func cmdRecord(layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence,
 	return nil, nil
 }
 
-func cmdParagraph(layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
-	abc, err := dispatch(layoutelt, dataelt)
-	logger.Debug("paragraph after dispatch")
+func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
+	colorString, err := xd.getAttributeString("color", layoutelt, false, true, "")
 	if err != nil {
 		return nil, err
 	}
-	var txt []string
-	for _, itm := range abc {
-		switch t := itm.(type) {
-		case *goxml.Element:
-			txt = append(txt, t.Stringvalue())
-		}
+
+	seq, err := dispatch(xd, layoutelt, dataelt)
+	if err != nil {
+		return nil, err
 	}
-	return xpath.Sequence{paragraph{strings.Join(txt, "")}}, nil
+
+	te := &document.TypesettingElement{
+		Settings: make(document.TypesettingSettings),
+	}
+	if colorString != "" {
+		te.Settings[document.SettingColor] = colorString
+	}
+	getTextvalues(te, seq, "cmdParagraph")
+	return xpath.Sequence{te}, nil
 }
 
-func cmdPlaceObject(layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
-	seq, err := dispatch(layoutelt, dataelt)
+func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
+	xd.setupPage()
+	columnString, err := xd.getAttributeString("column", layoutelt, false, true, "")
 	if err != nil {
 		return nil, err
 	}
-	vl := seq[0].(*node.VList)
-	doc.OutputAt(bag.MustSp("2cm"), bag.MustSp("20cm"), vl)
+	rowString, err := xd.getAttributeString("row", layoutelt, false, true, "")
+	if err != nil {
+		return nil, err
+	}
+
+	pos := positioningUnknown
+
+	var columnGrid, rowGrid int
+	var columnLength, rowLength bag.ScaledPoint
+	if columnGrid, err = strconv.Atoi(columnString); err == nil {
+		pos = positioningGrid
+	}
+	if rowGrid, err = strconv.Atoi(rowString); err == nil {
+		if pos != positioningGrid {
+			return nil, fmt.Errorf("both column and row must be integers with grid positioning")
+		}
+	}
+
+	if pos == positioningUnknown {
+		if columnLength, err = bag.Sp(columnString); err == nil {
+			pos = positioningAbsolute
+		}
+		if rowLength, err = bag.Sp(rowString); err == nil {
+			pos = positioningAbsolute
+		}
+	}
+
+	seq, err := dispatch(xd, layoutelt, dataelt)
+	if err != nil {
+		return nil, err
+	}
+	var origin string
+	var vl *node.VList
+	switch t := seq[0].(type) {
+	case *node.VList:
+		vl = t
+		if vl.Attibutes != nil {
+			origin = vl.Attibutes["origin"].(string)
+		}
+	case *node.HList:
+		vl = node.NewVList()
+		vl.List = t
+		if t.Attibutes != nil {
+			origin = t.Attibutes["origin"].(string)
+		}
+	default:
+		bag.Logger.DPanicf("PlaceObject: unknown node %v", t)
+	}
+
+	switch pos {
+	case positioningAbsolute:
+		xd.currentPage.outputAbsolute(columnLength, rowLength, vl)
+	case positioningGrid:
+		bag.Logger.Infof("PlaceObject: output %s at (%d,%d)", origin, rowGrid, columnGrid)
+		columnLength = xd.currentGrid.posX(columnGrid)
+		rowLength = xd.currentGrid.posY(rowGrid)
+		xd.currentPage.outputAbsolute(columnLength, rowLength, vl)
+	}
+
 	return seq, nil
 }
 
-func cmdTextblock(layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
-	seq, err := dispatch(layoutelt, dataelt)
+func cmdSetGrid(xd *xtsDocument, layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
+	var err error
+	var height, width, dx, dy bag.ScaledPoint
+	var nx, ny int
+	if height, err = xd.getAttributeSize("height", layoutelt, false, true, ""); err != nil {
+		return nil, err
+	}
+	if width, err = xd.getAttributeSize("width", layoutelt, false, true, ""); err != nil {
+		return nil, err
+	}
+	if dx, err = xd.getAttributeSize("dx", layoutelt, false, true, ""); err != nil {
+		return nil, err
+	}
+	if dy, err = xd.getAttributeSize("dy", layoutelt, false, true, ""); err != nil {
+		return nil, err
+	}
+	if nx, err = xd.getAttributeInt("nx", layoutelt, false, true, ""); err != nil {
+		return nil, err
+	}
+	if ny, err = xd.getAttributeInt("ny", layoutelt, false, true, ""); err != nil {
+		return nil, err
+	}
+
+	if height > 0 {
+		xd.defaultGridHeight = height
+	}
+	if width > 0 {
+		xd.defaultGridWidth = width
+	}
+	if dx > 0 {
+		xd.defaultGridGapX = dx
+	}
+	if dy > 0 {
+		xd.defaultGridGapY = dy
+	}
+	if nx > 0 {
+		xd.defaultGridNx = nx
+	}
+	if ny > 0 {
+		xd.defaultGridNy = ny
+	}
+	return nil, nil
+}
+
+func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
+	attrFontsize, err := xd.getAttributeString("fontsize", layoutelt, false, true, "")
 	if err != nil {
 		return nil, err
 	}
 
-	opts := formatOptions{
-		width: bag.MustSp("160pt"),
-		ff:    fontfamilies["text"],
+	attrWidth, err := xd.getAttributeWidth("width", layoutelt, false, true, "")
+	if err != nil {
+		return nil, err
 	}
-	var vlist *node.VList
+
+	leading := 12 * bag.Factor
+	fontsize := 10 * bag.Factor
+
+	if sp := strings.Split(attrFontsize, "/"); len(sp) == 2 {
+		if fontsize, err = bag.Sp(sp[0]); err != nil {
+			return nil, err
+		}
+		if leading, err = bag.Sp(sp[1]); err != nil {
+			return nil, err
+		}
+	} else if fs, ok := xd.fontsizes[attrFontsize]; ok {
+		fontsize = fs[0]
+		leading = fs[1]
+	} else if attrFontsize == "" {
+		// ok, ignore
+		bag.Logger.Debug("use default font size text")
+	} else {
+		return nil, fmt.Errorf("unknown font size %s", attrFontsize)
+	}
+
+	seq, err := dispatch(xd, layoutelt, dataelt)
+	if err != nil {
+		return nil, err
+	}
+
+	te := &document.TypesettingElement{
+		Settings: document.TypesettingSettings{
+			document.SettingFontFamily: xd.doc.GetFontFamily(0),
+			document.SettingSize:       fontsize,
+		},
+	}
+
 	for _, itm := range seq {
 		switch t := itm.(type) {
-		case paragraph:
-			vlist, err = t.format(opts)
-			if err != nil {
-				return nil, err
-			}
+		case *document.TypesettingElement:
+			te.Items = append(te.Items, t)
+		default:
+			bag.Logger.DPanicf("cmdTextblock: unknown type %T", t)
 
 		}
 	}
+	hlist, tail, err := xd.doc.Mknodes(te)
+	if err != nil {
+		return nil, err
+	}
+
+	node.AppendLineEndAfter(tail)
+
+	ls := node.NewLinebreakSettings()
+	ls.HSize = attrWidth
+	ls.LineHeight = leading
+	vlist, _ := node.Linebreak(hlist, ls)
+
+	if vlist.Attibutes == nil {
+		vlist.Attibutes = node.H{}
+	}
+	vlist.Attibutes["origin"] = "textblock"
+
 	return xpath.Sequence{vlist}, nil
 }
 
-func cmdValue(layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
+func cmdTrace(xd *xtsDocument, layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
+	if traceGrid, err := xd.getAttributeBool("grid", layoutelt, false, false, ""); err == nil && traceGrid {
+		xd.SetVTrace(VTraceGrid)
+	}
+
+	return nil, nil
+}
+
+func cmdValue(xd *xtsDocument, layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
 	var selection string
 	var err error
 
-	if selection, err = getAttributeString("select", layoutelt, false, false, "", dataelt); err != nil {
+	if selection, err = xd.getAttributeString("select", layoutelt, false, false, ""); err != nil {
 		return nil, err
 	}
 	if selection != "" {
@@ -220,7 +440,10 @@ func cmdValue(layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, 
 		}
 		return eval, nil
 	}
+	seq := xpath.Sequence{}
+	for _, cld := range layoutelt.Children() {
+		seq = append(seq, cld)
+	}
 
-	fmt.Println(layoutelt.Children())
-	return nil, nil
+	return seq, nil
 }
