@@ -25,7 +25,7 @@ func initDirs() error {
 		return err
 	}
 
-	for _, dir := range []string{"fonts", "hyphenationpatterns", "img"} {
+	for _, dir := range []string{"fonts", "img"} {
 		dir = filepath.Join(root, dir)
 		bag.Logger.Debugf("Add directory %q to recursive file list", dir)
 		filepath.WalkDir(dir, dirWalker)

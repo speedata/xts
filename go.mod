@@ -3,7 +3,7 @@ module github.com/speedata/xts
 go 1.17
 
 require (
-	github.com/speedata/boxesandglue v0.0.0-20211210131222-4caeb0a48247
+	github.com/speedata/boxesandglue v0.0.0-20211217132108-e725d2b9439e
 	github.com/speedata/goxml v0.0.0-20211105205206-a002c1d0a2e8
 	github.com/speedata/goxpath v0.0.0-20211105205115-42093fc3765d
 	github.com/speedata/optionparser v1.0.1

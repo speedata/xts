@@ -6,6 +6,8 @@ type VTrace int
 const (
 	// VTraceGrid shows the page grid
 	VTraceGrid VTrace = iota
+	// VTraceHyphenation shows hyphenation points
+	VTraceHyphenation
 )
 
 // SetVTrace sets the visual tracing

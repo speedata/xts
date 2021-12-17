@@ -28,6 +28,7 @@ func init() {
 		"DefineFontsize":   cmdDefineFontsize,
 		"Image":            cmdImage,
 		"LoadFontfile":     cmdLoadFontfile,
+		"Options":          cmdOptions,
 		"Paragraph":        cmdParagraph,
 		"PlaceObject":      cmdPlaceObject,
 		"Record":           cmdRecord,
@@ -211,6 +212,21 @@ func cmdRecord(xd *xtsDocument, layoutelt *goxml.Element, dataelt *xpath.Parser)
 	}
 	dataDispatcher[elt][mode] = layoutelt
 	return nil, nil
+}
+
+func cmdOptions(xd *xtsDocument, layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
+	mainlanguageString, err := xd.getAttributeString("mainlanguage", layoutelt, false, true, "")
+	if err != nil {
+		return nil, err
+	}
+	l, err := xd.getLanguage(mainlanguageString)
+	if err != nil {
+		return nil, err
+	}
+	bag.Logger.Infof("Setting default language to %q", l.Name)
+	xd.doc.DefaultLanguage = l
+
+	return xpath.Sequence{}, nil
 }
 
 func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
@@ -402,7 +418,7 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element, dataelt *xpath.Pars
 	if err != nil {
 		return nil, err
 	}
-
+	xd.doc.Hyphenate(hlist)
 	node.AppendLineEndAfter(tail)
 
 	ls := node.NewLinebreakSettings()
@@ -421,6 +437,9 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element, dataelt *xpath.Pars
 func cmdTrace(xd *xtsDocument, layoutelt *goxml.Element, dataelt *xpath.Parser) (xpath.Sequence, error) {
 	if traceGrid, err := xd.getAttributeBool("grid", layoutelt, false, false, ""); err == nil && traceGrid {
 		xd.SetVTrace(VTraceGrid)
+	}
+	if traceHyphenation, err := xd.getAttributeBool("hyphenation", layoutelt, false, false, ""); err == nil && traceHyphenation {
+		xd.SetVTrace(VTraceHyphenation)
 	}
 
 	return nil, nil

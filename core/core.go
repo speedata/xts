@@ -140,8 +140,7 @@ func RunXTS(cfg *XTSCofig) error {
 		bag.Logger.Errorf("Cannot find <Record> for root element %s", rootname)
 		return fmt.Errorf("Cannot find <Record> for root element %s", rootname)
 	}
-	d.defaultLanguage, err = d.doc.LoadPatternFile("hyphenationpatterns/hyph-en-us.pat.txt")
-	d.defaultLanguage.Name = "en-US"
+	d.defaultLanguage, err = d.doc.GetLanguage("en")
 	if err != nil {
 		return err
 	}
@@ -160,7 +159,7 @@ func RunXTS(cfg *XTSCofig) error {
 func (xd *xtsDocument) registerCallbacks() {
 	preShipout := func(pg *document.Page) {
 		xtspage := pg.Userdata["xtspage"].(*page)
-
+		// Draw grid when requested
 		if xd.IsTrace(VTraceGrid) {
 			vlist := node.NewVList()
 			rule := node.NewRule()
@@ -212,7 +211,27 @@ func (xd *xtsDocument) registerCallbacks() {
 			vlist.List = node.Hpack(rule)
 			pg.OutputAt(0, 0, vlist)
 		}
+		if xd.IsTrace(VTraceHyphenation) {
+			for _, v := range pg.Objects {
+				showDiscNodes(v.Vlist.List)
+			}
+		}
 	}
 
 	xd.doc.RegisterCallback(document.CallbackPreShipout, preShipout)
+}
+
+func showDiscNodes(n node.Node) {
+	for e := n; e != nil; e = e.Next() {
+		switch t := e.(type) {
+		case *node.HList:
+			showDiscNodes(t.List)
+		case *node.Disc:
+			r := node.NewRule()
+			r.Pre = "q 0.3 w 0 2 m 0 7 l S Q"
+			node.InsertAfter(n, e, r)
+		default:
+			// ignore
+		}
+	}
 }
