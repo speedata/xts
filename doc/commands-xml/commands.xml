@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <commands xmlns="urn:speedata.de:2011/publisher/documentation"
-  xmlns:de="urn:speedata.de:2021/xts/en"
+  xmlns:de="urn:speedata.de/2021/xts/en"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
   >
   <define name="Toplevel">
     <optional><cmd name="DefineFontfamily"/></optional>
     <optional><cmd name="DefineFontsize"/></optional>
+    <optional><cmd name="DefinePagetype"/></optional>
     <optional><cmd name="LoadFontfile"/></optional>
     <optional><cmd name="Options"/></optional>
+    <optional><cmd name="Pageformat"/></optional>
     <optional><cmd name="Record"/></optional>
     <optional><cmd name="SetGrid"/></optional>
+    <optional><cmd name="Stylesheet"/></optional>
     <optional><cmd name="Trace"/></optional>
   </define>
 
@@ -535,6 +538,75 @@
       <cmd name="Bold"/>
     </seealso>
   </command>
+  <command en="Box" css="box">
+    <description xml:lang="en">
+      <para>Create a rectangular colored area. The area must fit the grid cells.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Erzeugt einen rechteckigen gefärbten Bereich. Die Fläche muss mit den Rasterzellen übereinstimmen.</para>
+    </description>
+    <childelements/>
+    <attribute en="class" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS class for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS Klasse für dieses Element.</para>
+      </description>
+    </attribute>
+    <attribute en="id" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS id for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS id für dieses Element.</para>
+      </description>
+    </attribute>
+    <attribute en="backgroundcolor" type="text" optional="yes" css="background-color">
+      <description xml:lang="en">
+        <para>Color of the box. If the color name is a dash (<tt>-</tt>), a transparent background is used.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Farbe der Box. Wird für die Farbe ein Strich angegeben (<tt>-</tt>), ist der Hintergrund transparent.</para>
+      </description>
+    </attribute>
+    <attribute en="height" type="numberorlength" optional="no">
+      <description xml:lang="en">
+        <para>Height of the box in grid cells.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Höhe der Box in Rasterzellen.</para>
+      </description>
+    </attribute>
+    <attribute en="width" type="numberorlength" optional="no">
+      <description xml:lang="en">
+        <para>Width of the box in grid cells or in absolute values.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Breite der Box in Rasterzellen.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<DefineColor name="mygreen" model="cmyk" c="22" m="0" y="55" k="0"/>
+<PlaceObject>
+  <Box width="10" height="5" backgroundcolor="mygreen"/>
+</PlaceObject>
+]]></listing>
+      <para>looks like</para>
+      <image file="ref-greenbox.png"/>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<DefineColor name="meingrün" model="cmyk" c="22" m="0" y="55" k="0"/>
+<PlaceObject>
+  <Box width="10" height="5" backgroundcolor="meingrün" />
+</PlaceObject>
+]]></listing>
+      <para>erzeugt ein farbiges Rechteck</para>
+      <image file="ref-greenbox.png"/>
+    </example>
+    <seealso><cmd name="DefineColor"/>, <cmd name="PlaceObject"/></seealso>
+  </command>
+
   <command en="Color">
     <description xml:lang="en">
       <para>Switch to another text color</para>
@@ -685,9 +757,111 @@
         <para>Setze den symbolischen Namen der Größe.</para>
       </description>
     </attribute>
-    <example xml:lang="en"></example>
-    <example xml:lang="de"></example>
+    <example xml:lang="en">
+      <listing><![CDATA[<DefineFontsize name="title" fontsize="10pt" leading="12pt" />]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<DefineFontsize name="title" fontsize="10pt" leading="12pt" />]]></listing>
+    </example>
     <seealso></seealso>
+  </command>
+  <command en="DefinePagetype">
+    <description xml:lang="en">
+      <para>Define a master page. A master page is chosen depending on the criterion given with the attribute »test«.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Definiert eine Seitenvorlage. Anhand der Kriterien, die im Attribut test angegeben werden, wählt das System eine Seitenvorlage aus.</para>
+    </description>
+    <childelements>
+      <!-- <optional><cmd name="Margin"/></optional>
+      <interleave>
+        <optional><oneOrMore><cmd name="PositioningArea"/></oneOrMore></optional>
+        <optional><cmd name="AtPageCreation"/></optional>
+        <optional><cmd name="AtPageShipout"/></optional>
+        <optional><cmd name="ForAll"/></optional>
+        <optional><cmd name="Grid"/></optional>
+      </interleave> -->
+    </childelements>
+    <attribute en="margin" type="text" optional="yes" allowxpath="yes">
+      <description xml:lang="en">
+        <para>Set the margin of the page (defaults to 1cm for each margin). One to four values can be provided, similar to CSS.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Setzt den Rand der Seite (Voreinstellung 1cm). Ein bis vier Werte können übergeben werden, wie bei CSS.</para>
+      </description>
+    </attribute>
+    <attribute en="name" type="text" optional="no">
+      <description xml:lang="en">
+        <para>Name of the master page. It is for informational purpose and as a selection for <cmd name="ClearPage"/>.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name der Seitenvorlage. Der Name ist zu Informationszwecken und zur Auswahl bei <cmd name="ClearPage"/>.</para>
+      </description>
+    </attribute>
+    <attribute en="test" type="xpath" optional="no">
+      <description xml:lang="en">
+        <para>If this xpath expression evaluates to true, this page is taken as a master page.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Wenn der XPath-Ausdruck »wahr« ergibt, dann wird diese Seite als Vorlage genommen.</para>
+      </description>
+    </attribute>
+    <remark xml:lang="en">
+      <para>The contents of the element at <cmd name="AtPageCreation"/> is executed, as soon as something will be placed on the page. The commands inside <cmd name="AtPageShipout"/> are executed when switching to a new page.</para>
+      <para>When creating a new page, all page types are tried in reversed order. That means that the later defined master pages have a higher priority. This is important if more than one test in a pagetype definition evaluates to true.</para>
+    </remark>
+    <remark xml:lang="de">
+      <para>Die Inhalte des Elements <cmd name="AtPageCreation"/> werden ausgeführt, sobald das erste Mal auf die Seite zugegriffen wird, bei <cmd name="AtPageShipout"/> werden die Inhalte ausgeführt, sobald
+        beispielsweise <cmd name="ClearPage"/> aufgerufen wird.</para>
+      <para>Wenn eine neue Seite erzeugt wird, werden die Seitentypen in umgekehrter Reihenfolge geprüft. Das bedeutet, dass die allgemeineren Seitentypen zuerst definiert werden müssen, später die
+        speziellen. Das ist nur dann wichtig, wenn mehrere Bedingungen »wahr« ergeben würden. </para>
+    </remark>
+    <example xml:lang="en">
+      <listing><![CDATA[<Pagetype name="right page" test=" sd:odd( sd:current-page() ) "/>]]></listing>
+      <listing><![CDATA[<Pagetype name="left page" test=" sd:even( sd:current-page() ) "/>]]></listing>
+      <listing><![CDATA[<Pagetype name="main part right" test=" sd:odd( sd:current-page() ) and $chapter='main' "/>]]></listing>
+      <listing><![CDATA[<Pagetype name="right page" test="sd:odd( sd:current-page() )">
+  <Margin left="1cm" right="1cm" top="1cm" bottom="1cm"/>
+  <PositioningArea name="frame1">
+    <PositioningFrame width="12" height="30" column="2" row="2"/>
+    <PositioningFrame width="12" height="30" column="16" row="2"/>
+  </PositioningArea>
+  <AtPageCreation>
+    <PlaceObject column="1">
+      <!-- header -->
+    </PlaceObject>
+  </AtPageCreation>
+  <AtPageShipout>
+    <PlaceObject column="1">
+      <!-- footer -->
+    </PlaceObject>
+  </AtPageShipout>
+</Pagetype>]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Pagetype name="rechte Seite" test=" sd:odd( sd:current-page() ) ">]]></listing>
+      <listing><![CDATA[<Pagetype name="linke Seite" test=" sd:even( sd:current-page() ) ">]]></listing>
+      <listing><![CDATA[<Pagetype name="Hauptteil rechte Seite" test=" sd:odd( sd:current-page() )  and $kapitel='hauptteil' ">]]></listing>
+      <listing><![CDATA[<Pagetype name="rechte Seite" test="sd:odd( sd:current-page() )">
+  <Margin left="1cm" right="1cm" top="1cm" bottom="1cm"/>
+  <AtPageCreation>
+    <PlaceObject>
+      ...
+    </PlaceObject>
+  </AtPageCreation>
+  <AtPageShipout>
+    <PlaceObject>
+      ....
+    </PlaceObject>
+  </AtPageShipout>
+  <PositioningArea name="rahmen1">
+    <PositioningFrame width="12" height="30" column="2" row="2"/>
+    <PositioningFrame width="12" height="30" column="16" row="2"/>
+  </PositioningArea>
+</Pagetype>]]></listing>
+    </example>
+    <seealso><ref name="xpath"/>, <cmd name="AtPageCreation"/>,  <cmd name="AtPageShipout"/>,   <cmd name="PositioningArea"/>,  <cmd name="ClearPage"/>, <cmd name="DefineMatter"/>
+    </seealso>
   </command>
   <command en="Italic">
     <description xml:lang="en">
@@ -771,9 +945,6 @@
         <para>Angabe in Prozent, um wie viel die Zeichen -, . und , über den Rand herausragen. Stark abhängig von der benutzten Schriftart.</para>
       </description>
     </attribute>
-
-
-
     <example xml:lang="de">
       <listing><![CDATA[<LoadFontfile name="Helvetica" filename="texgyreheros-regular.otf" />
 <LoadFontfile name="Helvetica Fett" filename="texgyreheros-bold.otf" />
@@ -823,7 +994,7 @@
       <listing><![CDATA[<root>
   <elt greeting="Hello world!" />
 </root>]]></listing>
-      <listing><![CDATA[<Layout xmlns="urn:speedata.de:2021/xts/en"
+      <listing><![CDATA[<Layout xmlns="urn:speedata.de/2021/xts/en"
   xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
 
   <Options mainlanguage="English (USA)"/>
@@ -848,7 +1019,7 @@
       <listing><![CDATA[<root>
   <elt gruß="Hallo Welt!" />
 </root>]]></listing>
-      <listing><![CDATA[<Layout xmlns="urn:speedata.de:2021/xts/en"
+      <listing><![CDATA[<Layout xmlns="urn:speedata.de/2021/xts/en"
   xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
 
   <Options mainlanguage="German"/>
@@ -909,7 +1080,38 @@
     </info>
     <seealso><ref name="cutmarks"/></seealso>
   </command>
-
+  <command en="Pageformat">
+    <description xml:lang="en">
+      <para>The size of the PDF pages. Defaults to 210mm width and 297mm height (A4).</para>
+    </description>
+    <description xml:lang="de">
+      <para>Legt die Größe des Ausgabemediums (z.B. DIN A4) fest. Voreinstellung ist eine Breite von 210mm und eine Höhe von 297mm.</para>
+    </description>
+    <childelements/>
+    <attribute en="height" type="length" optional="no">
+      <description xml:lang="en">
+        <para>The height of the PDF pages.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Höhe des Ausgabemediums.</para>
+      </description>
+    </attribute>
+    <attribute en="width" type="length" optional="no">
+      <description xml:lang="en">
+        <para>Width of the PDF pages.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Breite des Ausgabemediums.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<Pageformat width="150mm" height="150mm"/>]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Pageformat width="150mm" height="150mm" />]]></listing>
+    </example>
+    <seealso/>
+  </command>
   <command en="Paragraph">
     <description xml:lang="en">
       <para>Insert a paragraph of text. The width of the paragraph is inherited from the surrounding element.</para>
@@ -973,6 +1175,7 @@
     <childelements>
       <oneOrMore>
         <interleave>
+          <optional><cmd name="Box"/></optional>
           <optional><cmd name="Textblock"/></optional>
         </interleave>
       </oneOrMore>
@@ -1200,6 +1403,84 @@
     </example>
     <seealso><cmd name="Grid"/></seealso>
   </command>
+  <command en="Stylesheet">
+    <description xml:lang="en">
+      <para>Load a CSS file or define CSS rules</para>
+    </description>
+    <description xml:lang="de">
+      <para>Lädt eine CSS-Datei oder definiert CSS-Eigenschaften</para>
+    </description>
+    <childelements>
+      <text/>
+    </childelements>
+    <attribute en="href" type="text" optional="yes">
+      <description xml:lang="en">
+        <para>The filename of the CSS stylesheet including the file extension.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Der Dateiname der CSS Datei (inklusive Dateiendung).</para>
+      </description>
+    </attribute>
+    <attribute en="scope" optional="no">
+      <description xml:lang="en">
+        <para>Set the scope of the css rules. Can be <tt>layout</tt> or <tt>data</tt>.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Setze den Anwendungsbereich der CSS-Regeln. Kann <tt>layout</tt> oder <tt>data</tt> sein.</para>
+      </description>
+      <choice en="layout">
+        <description xml:lang="en">
+          <para>The CSS rules apply to the commands in the layout XML file.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Die CSS-Regeln werden auf das Layoutregelwerk angewendet.</para>
+        </description>
+      </choice>
+      <choice en="data">
+        <description xml:lang="en">
+          <para>The CSS rules apply to the elements in the data file.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Die CSS-Regeln werden auf die Elemente in der Datendatei angewendet.</para>
+        </description>
+      </choice>
+    </attribute>
+    <remark xml:lang="en">
+      <para>If no filename is given, the speedata Publisher expects the CSS rules as the contents of this element.</para>
+    </remark>
+    <remark xml:lang="de">
+      <para>Wird kein Dateiname angegeben, so erwartet der speedata Publisher CSS-Eigenschaften als Inhalt des Elements.</para>
+    </remark>
+    <example xml:lang="en">
+      <listing><![CDATA[<Stylesheet href="style.css" />]]></listing>
+      <listing><![CDATA[<Stylesheet>
+  frame {
+    border-bottom-right-radius: 1cm;
+    border-bottom-left-radius: 1cm;
+    border-top-right-radius: 1cm;
+    border-top-left-radius: 1cm;
+  }
+  box {
+    background-color: red;
+  }
+</Stylesheet>]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Stylesheet filename="style.css" />]]></listing>
+      <listing><![CDATA[<Stylesheet>
+  frame {
+    border-bottom-right-radius: 1cm;
+    border-bottom-left-radius: 1cm;
+    border-top-right-radius: 1cm;
+    border-top-left-radius: 1cm;
+  }
+  box {
+    background-color: red;
+  }
+</Stylesheet>]]></listing>
+    </example>
+    <seealso><ref name="css"/></seealso>
+  </command>
   <command en="Textblock">
     <description xml:lang="en">
       <para>Create a rectangular piece of text.</para>
@@ -1292,6 +1573,30 @@
         </description>
         <description xml:lang="de">
           <para>Das Raster wird nicht angezeigt (Voreinstellung).</para>
+        </description>
+      </choice>
+    </attribute>
+    <attribute en="gridallocation" optional="yes">
+      <description xml:lang="en">
+        <para>Draw allocated cells with yellow and conflicts with red markers.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Wenn 'yes', dann markiert der Publisher die belegten Rasterzellen mit einer Hintergrundfarbe.</para>
+      </description>
+      <choice en="yes">
+        <description xml:lang="en">
+          <para>Show grid allocation.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Zeige Rasterbelegung.</para>
+        </description>
+      </choice>
+      <choice en="no">
+        <description xml:lang="en">
+          <para>Don't show the grid allocation (default).</para>
+        </description>
+        <description xml:lang="de">
+          <para>Rasterbelegung nicht zeigen (Voreinstellung).</para>
         </description>
       </choice>
     </attribute>

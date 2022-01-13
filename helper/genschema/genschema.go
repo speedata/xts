@@ -12,7 +12,7 @@ import (
 
 const (
 	// SDNAMESPACE is the speedata XTS layout rules namespace
-	SDNAMESPACE string = "urn:speedata.de:2021/xts/en"
+	SDNAMESPACE string = "urn:speedata.de/2021/xts/en"
 	// FNNAMESPACE is the speedata XTS function namespace
 	FNNAMESPACE string = "urn:speedata.de/2021/xtsfunctions/en"
 )

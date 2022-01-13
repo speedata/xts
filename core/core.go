@@ -11,6 +11,7 @@ import (
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/boxesandglue/backend/lang"
 	"github.com/speedata/boxesandglue/backend/node"
+	"github.com/speedata/boxesandglue/csshtml"
 	"github.com/speedata/boxesandglue/document"
 	"github.com/speedata/goxml"
 	"github.com/speedata/goxpath/xpath"
@@ -31,6 +32,7 @@ func init() {
 type xtsDocument struct {
 	cfg               *XTSCofig
 	doc               *document.Document
+	layoutcss         *csshtml.CSS
 	data              *xpath.Parser
 	defaultLanguage   *lang.Lang
 	pages             []*page
@@ -42,8 +44,6 @@ type xtsDocument struct {
 	defaultGridGapY   bag.ScaledPoint
 	defaultGridNx     int
 	defaultGridNy     int
-	defaultPageWidth  bag.ScaledPoint
-	defaultPageHeight bag.ScaledPoint
 	pagetypes         []*pagetype
 	currentPage       *page
 	currentGrid       *grid
@@ -56,8 +56,7 @@ func newXTSDocument() *xtsDocument {
 		defaultGridHeight: oneCM,
 		defaultGridGapX:   0,
 		defaultGridGapY:   0,
-		defaultPageWidth:  bag.MustSp("210mm"),
-		defaultPageHeight: bag.MustSp("297mm"),
+		layoutcss:         csshtml.NewCssParser(),
 	}
 }
 
@@ -160,6 +159,27 @@ func (xd *xtsDocument) registerCallbacks() {
 	preShipout := func(pg *document.Page) {
 		xtspage := pg.Userdata["xtspage"].(*page)
 		// Draw grid when requested
+		if xd.IsTrace(VTraceAllocation) {
+			vlist := node.NewVList()
+			rule := node.NewRule()
+
+			pdfinstructions := make([]string, 0, len(xd.currentGrid.allocatedBlocks))
+			pdfinstructions = append(pdfinstructions, "q")
+			curGrid := xtspage.pagegrid
+
+			for k, v := range curGrid.allocatedBlocks {
+				if v > 0 {
+					x, y := k.XY()
+					pdfinstructions = append(pdfinstructions, fmt.Sprintf(" 1 1 0 rg %s %s %s %s re f", curGrid.posX(x), xtspage.pageHeight-curGrid.posY(y), curGrid.gridWidth, -curGrid.gridHeight))
+				}
+			}
+			pdfinstructions = append(pdfinstructions, " Q")
+			rule.Pre = strings.Join(pdfinstructions, " ")
+
+			vlist.List = node.Hpack(rule)
+			pg.Background = append(pg.Background, document.Object{Vlist: vlist, X: 0, Y: 0})
+
+		}
 		if xd.IsTrace(VTraceGrid) {
 			vlist := node.NewVList()
 			rule := node.NewRule()
@@ -209,7 +229,7 @@ func (xd *xtsDocument) registerCallbacks() {
 			rule.Pre = strings.Join(pdfinstructions, " ")
 
 			vlist.List = node.Hpack(rule)
-			pg.OutputAt(0, 0, vlist)
+			pg.Background = append(pg.Background, document.Object{Vlist: vlist, X: 0, Y: 0})
 		}
 		if xd.IsTrace(VTraceHyphenation) {
 			for _, v := range pg.Objects {

@@ -7,11 +7,12 @@ import (
 	"os"
 	"path/filepath"
 
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/optionparser"
 	"github.com/speedata/xts/core"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 )
 
 var (
