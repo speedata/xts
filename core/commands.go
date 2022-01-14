@@ -23,6 +23,7 @@ var (
 
 func init() {
 	dispatchTable = map[string]commandFunc{
+		"A":                cmdA,
 		"B":                cmdB,
 		"Box":              cmdBox,
 		"Color":            cmdColor,
@@ -56,11 +57,37 @@ func dispatch(xd *xtsDocument, layoutelement *goxml.Element, data *xpath.Parser)
 				}
 				retSequence = append(retSequence, seq...)
 			} else {
-				bag.Logger.Errorf("dispatch: element %q unknown", elt.Name)
+				bag.Logger.Errorf("layout: element %q unknown", elt.Name)
+				return nil, fmt.Errorf("layout: element %q unknown", elt.Name)
 			}
 		}
 	}
 	return retSequence, nil
+}
+
+func cmdA(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Href string
+	}{}
+	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+
+	seq, err := dispatch(xd, layoutelt, xd.data)
+	if err != nil {
+		return nil, err
+	}
+	hl := document.Hyperlink{URI: attValues.Href}
+
+	te := &document.TypesettingElement{
+		Settings: document.TypesettingSettings{
+			document.SettingHyperlink: hl,
+		},
+	}
+	getTextvalues(te, seq, "cmdA")
+
+	return xpath.Sequence{te}, err
 }
 
 func cmdB(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {

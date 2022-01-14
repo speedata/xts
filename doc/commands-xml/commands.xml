@@ -23,6 +23,7 @@
   <define name="Textvalues">
     <zeroOrMore>
       <choice>
+        <cmd name="A"/>
         <cmd name="B"/>
         <cmd name="Color"/>
         <cmd name="Value"/>
@@ -410,6 +411,57 @@
   </defineattribute>
 
   <definelist name="languagesshortcodes">--|bg|ca|cs|cy|da|de|el|en|en_GB|en_US|eo|es|et|eu|fi|fr|ga|gl|grc|gu|hi|hr|hu|hy|id|is|it|kn|ku|lt|lv|ml|nb|nl|nn|pl|pt|ro|ru|sc|sk|sl|sr|sv|tr|uk|zh</definelist>
+  <command en="A">
+    <description xml:lang="en">
+      <para>Insert hyperlink to a URL.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Hyperlink auf eine URL einfügen.</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <interleave>
+          <reference name="Textvalues"/>
+          <optional>
+            <cmd name="Box"/>
+          </optional>
+        </interleave>
+      </oneOrMore>
+    </childelements>
+    <attribute en="href" type="text" optional="yes">
+      <description xml:lang="en">
+        <para>The target of the hyperlink (URI). Example: <tt>https://www.speedata.de</tt></para>
+      </description>
+      <description xml:lang="de">
+        <para>Das Ziel des Hyperlinks. Beispiel: <tt>https://www.speedata.de</tt></para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<PlaceObject>
+  <Textblock>
+    <Paragraph><Value>See the </Value>
+      <A href="https://www.speedata.de">
+        <Value>homepage</Value>
+      </A>
+      <Value> for more information.</Value>
+    </Paragraph>
+  </Textblock>
+</PlaceObject>]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<PlaceObject>
+  <Textblock>
+    <Paragraph>
+      <Value>Siehe die </Value>
+      <A href="https://www.speedata.de"><Value>Homepage</Value></A>
+      <Value> für weitere Information.</Value>
+    </Paragraph>
+  </Textblock>
+</PlaceObject>
+]]></listing>
+    </example>
+    <seealso/>
+  </command>
   <command en="B">
     <description xml:lang="en">
       <para>Switch to font weight »bold«</para>
