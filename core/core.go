@@ -190,22 +190,22 @@ func (xd *xtsDocument) registerCallbacks() {
 			var pdfinstructions []string
 			// page
 			pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s %s %s %s re S", x, y, wd, ht))
-			gridHeight := xtspage.pageHeight - xtspage.marginTop
-			gridWidth := xtspage.pageWidth - xtspage.marginRight
+			gridMaxX := xtspage.pageWidth - xtspage.marginRight
+			gridMaxY := xtspage.pageHeight - xtspage.marginTop
 			pdfinstructions = append(pdfinstructions, "0.4 w")
 
 			gridX := x + xtspage.pagegrid.gridWidth
 			// vertical grid rules
-			for i := 1; gridX < gridWidth; i++ {
+			for i := 1; gridX < gridMaxX; i++ {
 				if i%5 == 0 {
 					pdfinstructions = append(pdfinstructions, "0.5 G")
 				} else {
 					pdfinstructions = append(pdfinstructions, "0.9 G")
 				}
-				pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s %s m %s %s l S", gridX, y, gridX, gridHeight))
+				pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s %s m %s %s l S", gridX, y, gridX, gridMaxY))
 				gridX += xd.currentGrid.gridGapX
-				if xd.currentGrid.gridGapX > 0 && gridX < gridWidth {
-					pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s %s m %s %s l S", gridX, y, gridX, gridHeight))
+				if xd.currentGrid.gridGapX > 0 && gridX < gridMaxX {
+					pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s %s m %s %s l S", gridX, y, gridX, gridMaxY))
 				}
 				gridX += xd.currentGrid.gridWidth
 			}
@@ -218,14 +218,15 @@ func (xd *xtsDocument) registerCallbacks() {
 				} else {
 					pdfinstructions = append(pdfinstructions, "0.9 G")
 				}
-				pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s %s m %s %s l S", x, gridY, gridWidth, gridY))
+				pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s %s m %s %s l S", x, gridY, gridMaxX, gridY))
 				gridY -= xd.currentGrid.gridGapY
 				if xd.currentGrid.gridGapY > 0 && gridY > y {
-					pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s %s m %s %s l S", x, gridY, gridWidth, gridY))
+					pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s %s m %s %s l S", x, gridY, gridMaxX, gridY))
 				}
 				gridY -= xd.currentGrid.gridHeight
 			}
-
+			pageframe := fmt.Sprintf("0 0 %s %s re S", xtspage.pageWidth, xtspage.pageHeight)
+			pdfinstructions = append(pdfinstructions, pageframe)
 			rule.Pre = strings.Join(pdfinstructions, " ")
 
 			vlist.List = node.Hpack(rule)

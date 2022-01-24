@@ -247,13 +247,13 @@ func cmdDefinePagetype(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequenc
 func cmdImage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
-		File string
+		Href string
 	}{}
 	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 
-	filename, err := xd.cfg.FindFile(attValues.File)
+	filename, err := xd.cfg.FindFile(attValues.Href)
 	if err != nil {
 		return nil, err
 	}
@@ -325,6 +325,7 @@ func cmdOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	var err error
 	attValues := &struct {
 		Mainlanguage *string
+		Bleed        *bag.ScaledPoint
 	}{}
 	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -336,6 +337,10 @@ func cmdOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 		}
 		bag.Logger.Infof("Setting default language to %q", l.Name)
 		xd.doc.DefaultLanguage = l
+	}
+
+	if attValues.Bleed != nil {
+		xd.doc.Bleed = *attValues.Bleed
 	}
 
 	return xpath.Sequence{}, nil

@@ -915,6 +915,55 @@
     <seealso><ref name="xpath"/>, <cmd name="AtPageCreation"/>,  <cmd name="AtPageShipout"/>,   <cmd name="PositioningArea"/>,  <cmd name="ClearPage"/>, <cmd name="DefineMatter"/>
     </seealso>
   </command>
+  <command en="Image">
+    <description xml:lang="en">
+      <para>Includes an external Graphic. Allowed graphic formats are PDF (.pdf), PNG (.png) and JPEG (.jpg). See below for a limitation on the number of included PDF files.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Bindet eine externe Grafik ein. Erlaubte Grafikformate sind PDF (.pdf), PNG (.png) und JPEG (.jpg). Siehe unten für die Einschränkung eingebundener PDF-Dateien.</para>
+    </description>
+    <attribute en="href" type="text" optional="yes">
+      <description xml:lang="en">
+        <para>Filename of the image. Can be a file in the search path, an absolute file name, a file-URI for absolute paths (e.g. <tt>file:///path/to/image.pdf</tt>) or a location on the web (http, https).</para>
+      </description>
+      <description xml:lang="de">
+        <para>Dateiname des Bildes. Kann entweder eine Datei im Suchpfad sein, ein absoluter Dateiname, ein file-URI-Schema (z.B. <tt>file:///pfad/zum/bild.pdf</tt>) oder eine Quelle im Web (http/https).</para>
+      </description>
+    </attribute>
+    <attribute en="height" type="numberorlength" optional="yes">
+      <description xml:lang="en">
+        <para>Image height. One of 'auto' (default, take image width), length (such as '3cm') or number (in grid cells).</para>
+      </description>
+      <description xml:lang="de">
+        <para>Bildhöhe. Angabe in der Form 'auto' (Voreinstellung, natürliche Bildbreite), Längenangabe wie '4cm' oder Zahl (Anzahl von Rasterspalten)</para>
+      </description>
+    </attribute>
+    <attribute en="width" type="numberorlength" optional="yes">
+      <description xml:lang="en">
+        <para>Image width. One of 'auto' (default, take image width), '100%' (whole area width), length (such as '3cm') or number (in grid cells).</para>
+      </description>
+      <description xml:lang="de">
+        <para>Bildbreite. Angabe in der Form 'auto' (Voreinstellung, natürliche Bildbreite), '100%' (Breite des aktuellen Platzierungsbereichs), Längenangabe wie '4cm' oder Zahl (Anzahl von Rasterspalten)</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<Record element="productdata">
+  <PlaceObject column="{ $column }">
+    <Image width="10" file="{ string(.) }"/>
+  </PlaceObject>
+</Record>
+]]></listing>
+      <para>Takes the file name of the image from the contents of the current element in the data file (here: productdata). Sample data XML:</para>
+      <listing><![CDATA[<productdata>image.pdf</productdata>]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Record element="produktbild">
+  <PlaceObject column="{ $spalte }">
+    <Image width="10" file="{string(.)}" />
+  </PlaceObject>
+</Record>]]></listing>
+</example>
+</command>
   <command en="Italic">
     <description xml:lang="en">
       <para>The font face to be used when the user switches to italic.</para>
@@ -1101,6 +1150,14 @@
       <para>Setzt Publisher-spezifische Optionen.</para>
     </description>
     <childelements/>
+    <attribute en="bleed" type="length" optional="yes">
+      <description xml:lang="en">
+        <para>The amount of bleed. Defaults to 0mm.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Die Größe des Anschnitts (bleed). Voreinstellung ist 0mm.</para>
+      </description>
+    </attribute>
     <attribute en="mainlanguage" optional="yes" allowxpath="yes">
       <description xml:lang="en">
         <para>The default language for text (hyphenation and rendering). You can also set the default language on the command line and locally set it at <cmd name="Paragraph"/> and <cmd name="Textblock" />.</para>
@@ -1228,6 +1285,7 @@
       <oneOrMore>
         <interleave>
           <optional><cmd name="Box"/></optional>
+          <optional><cmd name="Image"/></optional>
           <optional><cmd name="Textblock"/></optional>
         </interleave>
       </oneOrMore>

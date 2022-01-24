@@ -38,14 +38,16 @@ func getStructTag(f reflect.StructField, tagName string) string {
 }
 
 var (
-	dummyBool        bool
-	dummyStr         string
-	boolType         = reflect.TypeOf(true)
-	boolPtrType      = reflect.TypeOf(&dummyBool)
-	stringType       = reflect.TypeOf("")
-	stringPtrType    = reflect.TypeOf(&dummyStr)
-	intType          = reflect.TypeOf(0)
-	scaledPointsType = reflect.TypeOf(bag.ScaledPoint(0))
+	dummyBool           bool
+	dummyStr            string
+	dummySP             bag.ScaledPoint
+	boolType            = reflect.TypeOf(true)
+	boolPtrType         = reflect.TypeOf(&dummyBool)
+	stringType          = reflect.TypeOf("")
+	stringPtrType       = reflect.TypeOf(&dummyStr)
+	intType             = reflect.TypeOf(0)
+	scaledPointsType    = reflect.TypeOf(dummySP)
+	scaledPointsPtrType = reflect.TypeOf(&dummySP)
 )
 
 // getXMLAtttributes fills the struct at v with the attribute values of the current element.
@@ -123,7 +125,8 @@ func getXMLAtttributes(xd *xtsDocument, layoutelt *goxml.Element, v interface{})
 			case stringType:
 				field.SetString(attValue)
 			case stringPtrType:
-				field.Set(reflect.ValueOf(&attValue))
+				a := attValue
+				field.Set(reflect.ValueOf(&a))
 			case boolPtrType:
 				b := attValue == "yes"
 				field.Set(reflect.ValueOf(&b))
@@ -145,6 +148,22 @@ func getXMLAtttributes(xd *xtsDocument, layoutelt *goxml.Element, v interface{})
 					}
 				}
 				field.Set(reflect.ValueOf(wd).Convert(scaledPointsType))
+			case scaledPointsPtrType:
+				var wd bag.ScaledPoint
+				if cols, err := strconv.Atoi(attValue); err == nil {
+					switch fieldName {
+					case "width":
+						wd = xd.currentGrid.width(coord(cols))
+					case "height":
+						wd = xd.currentGrid.height(coord(cols))
+					}
+				} else {
+					wd, err = bag.Sp(attValue)
+					if err != nil {
+						return err
+					}
+				}
+				field.Set(reflect.ValueOf(&wd).Convert(scaledPointsPtrType))
 			}
 
 		}
