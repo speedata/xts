@@ -7,14 +7,14 @@ import (
 	"strings"
 
 	"github.com/speedata/boxesandglue/backend/bag"
-	"github.com/speedata/boxesandglue/document"
+	"github.com/speedata/boxesandglue/frontend"
 	"github.com/speedata/goxml"
 	"github.com/speedata/goxpath/xpath"
 )
 
 // Get the values from the child elements of B, Paragraph and its ilk and fill
 // the provided typesetting element to get a recursive data structure.
-func getTextvalues(te *document.TypesettingElement, seq xpath.Sequence, cmdname string) {
+func getTextvalues(te *frontend.TypesettingElement, seq xpath.Sequence, cmdname string) {
 	for _, itm := range seq {
 		switch t := itm.(type) {
 		case *goxml.Element:
@@ -25,7 +25,7 @@ func getTextvalues(te *document.TypesettingElement, seq xpath.Sequence, cmdname 
 			te.Items = append(te.Items, string(t))
 		case string:
 			te.Items = append(te.Items, t)
-		case *document.TypesettingElement:
+		case *frontend.TypesettingElement:
 			te.Items = append(te.Items, t)
 		default:
 			bag.Logger.DPanicf("%s: unknown type %T", cmdname, t)
@@ -135,10 +135,9 @@ func getXMLAtttributes(xd *xtsDocument, layoutelt *goxml.Element, v interface{})
 			case scaledPointsType:
 				var wd bag.ScaledPoint
 				if cols, err := strconv.Atoi(attValue); err == nil {
-					switch fieldName {
-					case "width":
+					if strings.Contains(fieldName, "width") {
 						wd = xd.currentGrid.width(coord(cols))
-					case "height":
+					} else if strings.Contains(fieldName, "height") {
 						wd = xd.currentGrid.height(coord(cols))
 					}
 				} else {
@@ -151,10 +150,9 @@ func getXMLAtttributes(xd *xtsDocument, layoutelt *goxml.Element, v interface{})
 			case scaledPointsPtrType:
 				var wd bag.ScaledPoint
 				if cols, err := strconv.Atoi(attValue); err == nil {
-					switch fieldName {
-					case "width":
+					if strings.Contains(fieldName, "width") {
 						wd = xd.currentGrid.width(coord(cols))
-					case "height":
+					} else if strings.Contains(fieldName, "height") {
 						wd = xd.currentGrid.height(coord(cols))
 					}
 				} else {

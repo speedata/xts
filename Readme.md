@@ -8,7 +8,7 @@ This is all experimental and not safe to use.
 
 # License
 
-AGPL v3 - see license.txt
+AGPL v3 - see License.md
 
 # Contact
 

@@ -6,9 +6,10 @@ import (
 	"strings"
 
 	"github.com/speedata/boxesandglue/backend/bag"
+	"github.com/speedata/boxesandglue/backend/document"
 	"github.com/speedata/boxesandglue/backend/node"
 	"github.com/speedata/boxesandglue/csshtml"
-	"github.com/speedata/boxesandglue/document"
+	"github.com/speedata/boxesandglue/frontend"
 	"github.com/speedata/boxesandglue/pdfbackend/pdf"
 	"github.com/speedata/goxml"
 	"github.com/speedata/goxpath/xpath"
@@ -80,9 +81,9 @@ func cmdA(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	}
 	hl := document.Hyperlink{URI: attValues.Href}
 
-	te := &document.TypesettingElement{
-		Settings: document.TypesettingSettings{
-			document.SettingHyperlink: hl,
+	te := &frontend.TypesettingElement{
+		Settings: frontend.TypesettingSettings{
+			frontend.SettingHyperlink: hl,
 		},
 	}
 	getTextvalues(te, seq, "cmdA")
@@ -93,9 +94,9 @@ func cmdA(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 func cmdB(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	seq, err := dispatch(xd, layoutelt, xd.data)
 
-	te := &document.TypesettingElement{
-		Settings: document.TypesettingSettings{
-			document.SettingFontWeight: 700,
+	te := &frontend.TypesettingElement{
+		Settings: frontend.TypesettingSettings{
+			frontend.SettingFontWeight: 700,
 		},
 	}
 	getTextvalues(te, seq, "cmdBold")
@@ -131,15 +132,15 @@ func cmdBox(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	}
 
 	attrs, _ := csshtml.ResolveAttributes(a.Find("box").First().Nodes[0].Attr)
-	var bgcolor *document.Color
+	var bgcolor *frontend.Color
 	if bgc, ok := attrs["background-color"]; ok {
-		bgcolor = xd.doc.GetColor(bgc)
+		bgcolor = xd.frontend.GetColor(bgc)
 	} else {
-		bgcolor = xd.doc.GetColor(attValues.Backgroundcolor)
+		bgcolor = xd.frontend.GetColor(attValues.Backgroundcolor)
 	}
 
 	r := node.NewRule()
-	if bgcolor.Space != document.ColorNone {
+	if bgcolor.Space != frontend.ColorNone {
 		r.Pre = fmt.Sprintf(" %s 0 0 %s %s re f ", bgcolor.PDFStringFG(), attValues.Width, -attValues.Height)
 	}
 
@@ -160,9 +161,9 @@ func cmdColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 
 	seq, err := dispatch(xd, layoutelt, xd.data)
 
-	te := &document.TypesettingElement{
-		Settings: document.TypesettingSettings{
-			document.SettingColor: attValues.Name,
+	te := &frontend.TypesettingElement{
+		Settings: frontend.TypesettingSettings{
+			frontend.SettingColor: attValues.Name,
 		},
 	}
 	getTextvalues(te, seq, "cmdColor")
@@ -179,7 +180,7 @@ func cmdDefineFontfamily(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Seque
 		return nil, err
 	}
 
-	ff := xd.doc.NewFontFamily(attValues.Name)
+	ff := xd.frontend.NewFontFamily(attValues.Name)
 	var fontface string
 	for _, cld := range layoutelt.Children() {
 		if c, ok := cld.(*goxml.Element); ok {
@@ -189,13 +190,13 @@ func cmdDefineFontfamily(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Seque
 
 			switch c.Name {
 			case "Regular":
-				ff.AddMember(xd.fontsources[fontface], document.FontWeight400, document.FontStyleNormal)
+				ff.AddMember(xd.fontsources[fontface], frontend.FontWeight400, frontend.FontStyleNormal)
 			case "Italic":
-				ff.AddMember(xd.fontsources[fontface], document.FontWeight400, document.FontStyleItalic)
+				ff.AddMember(xd.fontsources[fontface], frontend.FontWeight400, frontend.FontStyleItalic)
 			case "Bold":
-				ff.AddMember(xd.fontsources[fontface], document.FontWeight700, document.FontStyleNormal)
+				ff.AddMember(xd.fontsources[fontface], frontend.FontWeight700, frontend.FontStyleNormal)
 			case "BoldItalic":
-				ff.AddMember(xd.fontsources[fontface], document.FontWeight700, document.FontStyleItalic)
+				ff.AddMember(xd.fontsources[fontface], frontend.FontWeight700, frontend.FontStyleItalic)
 			}
 		}
 	}
@@ -247,7 +248,15 @@ func cmdDefinePagetype(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequenc
 func cmdImage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
-		Href string
+		Href      string `sdxml:"mustexist"`
+		Height    *bag.ScaledPoint
+		Width     *bag.ScaledPoint
+		MinHeight *bag.ScaledPoint
+		MinWidth  *bag.ScaledPoint
+		MaxHeight *bag.ScaledPoint
+		MaxWidth  *bag.ScaledPoint
+		Stretch   bool
+		Page      int
 	}{}
 	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -258,16 +267,22 @@ func cmdImage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		return nil, err
 	}
 	var imgObj *pdf.Imagefile
-	if imgfile, ok := loadedImages[filename]; !ok {
-
-		imgObj, err = xd.doc.LoadImageFile(filename)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		imgObj = imgfile
+	imgObj, err = xd.frontend.Doc.LoadImageFile(filename)
+	if err != nil {
+		return nil, err
 	}
-	hl := createImageHlist(xd, imgObj)
+
+	hl := createImageHlist(
+		xd,
+		attValues.Width,
+		attValues.Height,
+		attValues.MinWidth,
+		attValues.MaxWidth,
+		attValues.MinHeight,
+		attValues.MaxHeight,
+		attValues.Stretch,
+		imgObj,
+		attValues.Page)
 	if hl.Attibutes == nil {
 		hl.Attibutes = node.H{}
 	}
@@ -291,13 +306,13 @@ func cmdLoadFontfile(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence,
 	if err != nil {
 		return nil, err
 	}
-	fs := document.FontSource{
+	fs := frontend.FontSource{
 		Name:   attValues.Name,
 		Source: fn,
 	}
 	// Not necessary when default fonts are initialized
 	if xd.fontsources == nil {
-		xd.fontsources = make(map[string]*document.FontSource)
+		xd.fontsources = make(map[string]*frontend.FontSource)
 	}
 	xd.fontsources[attValues.Name] = &fs
 	return nil, nil
@@ -336,11 +351,11 @@ func cmdOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 			return nil, err
 		}
 		bag.Logger.Infof("Setting default language to %q", l.Name)
-		xd.doc.DefaultLanguage = l
+		xd.frontend.Doc.DefaultLanguage = l
 	}
 
 	if attValues.Bleed != nil {
-		xd.doc.Bleed = *attValues.Bleed
+		xd.frontend.Doc.Bleed = *attValues.Bleed
 	}
 
 	return xpath.Sequence{}, nil
@@ -356,8 +371,8 @@ func cmdPageformat(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 		return nil, err
 	}
 
-	xd.doc.DefaultPageWidth = attValues.Width
-	xd.doc.DefaultPageHeight = attValues.Height
+	xd.frontend.Doc.DefaultPageWidth = attValues.Width
+	xd.frontend.Doc.DefaultPageHeight = attValues.Height
 	return xpath.Sequence{}, nil
 }
 
@@ -375,11 +390,11 @@ func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		return nil, err
 	}
 
-	te := &document.TypesettingElement{
-		Settings: make(document.TypesettingSettings),
+	te := &frontend.TypesettingElement{
+		Settings: make(frontend.TypesettingSettings),
 	}
 	if attValues.Color != "" {
-		te.Settings[document.SettingColor] = attValues.Color
+		te.Settings[frontend.SettingColor] = attValues.Color
 	}
 	getTextvalues(te, seq, "cmdParagraph")
 	return xpath.Sequence{te}, nil
@@ -401,19 +416,28 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	var columnInt, rowInt int
 	var col, row coord
 	var columnLength, rowLength bag.ScaledPoint
+
+	var rowSet, colSet bool
 	if columnInt, err = strconv.Atoi(attValues.Column); err == nil {
+		colSet = true
 		pos = positioningGrid
 		col = coord(columnInt)
 	}
-
 	if rowInt, err = strconv.Atoi(attValues.Row); err == nil {
-		if pos != positioningGrid {
-			return nil, fmt.Errorf("both column and row must be integers with grid positioning")
-		}
+		rowSet = true
+		pos = positioningGrid
 		row = coord(rowInt)
 	}
 
-	if pos == positioningUnknown {
+	if pos == positioningGrid && colSet != rowSet {
+		bag.Logger.Errorf("line %d: both column and row must be integers with grid positioning", layoutelt.Line)
+		if !colSet {
+			col, columnInt = 1, 1
+		}
+		if !rowSet {
+			row, rowInt = 1, 1
+		}
+	} else if pos == positioningUnknown {
 		if columnLength, err = bag.Sp(attValues.Column); err == nil {
 			pos = positioningAbsolute
 		}
@@ -447,11 +471,20 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		bag.Logger.DPanicf("PlaceObject: unknown node %v", t)
 	}
 
+	if pos == positioningUnknown {
+		pos = positioningGrid
+		xy := xd.currentPage.findFreeSpaceForObject(vl)
+		bag.Logger.Debugf("looking for free space for %s", origin)
+		col, row = xy.XY()
+		columnInt = int(col)
+		rowInt = int(row)
+	}
+
 	switch pos {
 	case positioningAbsolute:
 		xd.currentPage.outputAbsolute(columnLength, rowLength, vl)
 	case positioningGrid:
-		bag.Logger.Infof("PlaceObject: output %s at (%d,%d)", origin, rowInt, columnInt)
+		bag.Logger.Infof("PlaceObject: output %s at (%d,%d)", origin, columnInt, rowInt)
 		columnLength = xd.currentGrid.posX(col)
 		rowLength = xd.currentGrid.posY(row)
 		xd.currentPage.outputAbsolute(columnLength, rowLength, vl)
@@ -565,26 +598,26 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		return nil, err
 	}
 
-	te := &document.TypesettingElement{
-		Settings: document.TypesettingSettings{
-			document.SettingFontFamily: xd.doc.GetFontFamily(0),
-			document.SettingSize:       fontsize,
+	te := &frontend.TypesettingElement{
+		Settings: frontend.TypesettingSettings{
+			frontend.SettingFontFamily: xd.frontend.GetFontFamily(0),
+			frontend.SettingSize:       fontsize,
 		},
 	}
 
 	for _, itm := range seq {
 		switch t := itm.(type) {
-		case *document.TypesettingElement:
+		case *frontend.TypesettingElement:
 			te.Items = append(te.Items, t)
 		default:
 			bag.Logger.DPanicf("cmdTextblock: unknown type %T", t)
 		}
 	}
-	hlist, tail, err := xd.doc.Mknodes(te)
+	hlist, tail, err := xd.frontend.Mknodes(te)
 	if err != nil {
 		return nil, err
 	}
-	xd.doc.Hyphenate(hlist)
+	frontend.Hyphenate(hlist, xd.defaultLanguage)
 	node.AppendLineEndAfter(tail)
 
 	ls := node.NewLinebreakSettings()

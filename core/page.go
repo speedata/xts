@@ -5,6 +5,7 @@ import (
 	"math"
 
 	"github.com/speedata/boxesandglue/backend/bag"
+	"github.com/speedata/boxesandglue/backend/document"
 	"github.com/speedata/boxesandglue/backend/node"
 )
 
@@ -56,6 +57,8 @@ type grid struct {
 	nx              int
 	ny              int
 	allocatedBlocks allocationMatrix
+	currentCol      coord
+	currentRow      coord
 }
 
 func newGrid(xd *xtsDocument) *grid {
@@ -64,6 +67,8 @@ func newGrid(xd *xtsDocument) *grid {
 		gridHeight: xd.defaultGridHeight,
 		gridGapX:   xd.defaultGridGapX,
 		gridGapY:   xd.defaultGridGapY,
+		currentRow: 1,
+		currentCol: 1,
 	}
 
 	return g
@@ -75,10 +80,13 @@ func (g *grid) setPage(p *page) {
 	pageAreaX := p.pageWidth - p.marginLeft - p.marginRight
 	pageAreaY := p.pageHeight - p.marginTop - p.marginBottom
 	// there might be more cells to the right and to the bottom, but those are
-	// omitted, because they are only visible partly.
-	g.nx = int(pageAreaX / (g.gridWidth + g.gridGapX))
-	g.ny = int(pageAreaY / (g.gridHeight + g.gridGapY))
-
+	// omitted, because they are only partly visible.
+	if g.nx == 0 {
+		g.nx = int(pageAreaX / (g.gridWidth + g.gridGapX))
+	}
+	if g.ny == 0 {
+		g.ny = int(pageAreaY / (g.gridHeight + g.gridGapY))
+	}
 	g.allocatedBlocks = make(allocationMatrix)
 }
 
@@ -88,11 +96,17 @@ func (g *grid) String() string {
 
 // posX returns the horizontal offset relative to the left page border. Column 1 returns the margin left.
 func (g *grid) posX(column coord) bag.ScaledPoint {
+	if column == 0 {
+		return bag.ScaledPoint(0)
+	}
 	return bag.ScaledPoint(column-1)*g.gridWidth + bag.ScaledPoint(column-1)*g.gridGapX + g.page.marginLeft
 }
 
 // posY returns the vertical offset relative to the top page border. Row 1 returns the top margin.
 func (g *grid) posY(row coord) bag.ScaledPoint {
+	if row == 0 {
+		return bag.ScaledPoint(0)
+	}
 	return bag.ScaledPoint(row-1)*g.gridHeight + bag.ScaledPoint(row-1)*g.gridGapY + g.page.marginTop
 }
 
@@ -117,11 +131,52 @@ func (g *grid) heightToRows(height bag.ScaledPoint) coord {
 }
 
 func (g *grid) allocate(x, y coord, wd, ht bag.ScaledPoint) {
-	for col := coord(0); col < g.widthToColumns(wd); col++ {
-		for row := coord(0); row < g.heightToRows(ht); row++ {
-			g.allocatedBlocks.allocate(col+x, row+y)
+	var warningTopRaised, warningLeftRaised, warningRightRaised, warningBottomRaised bool
+	for col := coord(1); col <= g.widthToColumns(wd); col++ {
+		for row := coord(1); row <= g.heightToRows(ht); row++ {
+			if posX, posY := col+x-1, row+y-1; posX >= 1 && posY >= 1 && posX <= coord(g.nx) && posY <= coord(g.ny) {
+				g.allocatedBlocks.allocate(posX, posY)
+			} else {
+				if posX < 1 && !warningLeftRaised {
+					bag.Logger.Warn("object protrudes into the left margin")
+					warningLeftRaised = true
+				}
+				if posY < 1 && !warningTopRaised {
+					bag.Logger.Warn("object protrudes into the top margin")
+					warningTopRaised = true
+				}
+				if posX > coord(g.nx) && !warningRightRaised {
+					bag.Logger.Warn("object protrudes into the right margin")
+					warningRightRaised = true
+				}
+				if posY > coord(g.ny) && !warningBottomRaised {
+					bag.Logger.Warn("object protrudes into the bottom margin")
+					warningBottomRaised = true
+				}
+			}
 		}
 	}
+	g.currentCol = g.widthToColumns(wd) + x
+	g.currentRow = y
+}
+
+func (g *grid) fitsInRow(y coord, wdCols coord) coord {
+	col := g.currentCol
+	row := y
+	for {
+		if g.allocatedBlocks.allocValue(col, row) > 0 || int(col) > g.nx {
+			col++
+		} else {
+			break
+		}
+	}
+	nowhere := newGridCoord(0, 0)
+	for i := col; i < col+wdCols; i++ {
+		if g.allocatedBlocks.allocValue(i, row) > 0 {
+			return coord(nowhere)
+		}
+	}
+	return col
 }
 
 type pagetype struct {
@@ -168,6 +223,7 @@ func (xd *xtsDocument) detectPagetype(name string) (*pagetype, error) {
 
 type page struct {
 	pagenumber   int
+	bagPage      *document.Page
 	xd           *xtsDocument
 	pagetype     *pagetype
 	pageWidth    bag.ScaledPoint
@@ -186,21 +242,26 @@ func newPage(xd *xtsDocument) (*page, error) {
 	if err != nil {
 		return nil, err
 	}
+	d := xd.frontend.Doc
+
 	if xd.defaultGridNx > 0 {
-		gridAreaWidth := xd.doc.DefaultPageWidth - pt.marginLeft - pt.marginRight - bag.ScaledPoint(xd.defaultGridNx-1)*g.gridGapX
+		gridAreaWidth := d.DefaultPageWidth - pt.marginLeft - pt.marginRight - bag.ScaledPoint(xd.defaultGridNx-1)*g.gridGapX
 		g.gridWidth = gridAreaWidth / bag.ScaledPoint(xd.defaultGridNx)
+		g.nx = xd.defaultGridNx
 	}
 	if xd.defaultGridNy > 0 {
-		gridAreaHeight := xd.doc.DefaultPageHeight - pt.marginTop - pt.marginBottom - bag.ScaledPoint(xd.defaultGridNy-1)*g.gridGapY
+		gridAreaHeight := d.DefaultPageHeight - pt.marginTop - pt.marginBottom - bag.ScaledPoint(xd.defaultGridNy-1)*g.gridGapY
 		g.gridHeight = gridAreaHeight / bag.ScaledPoint(xd.defaultGridNy)
+		g.ny = xd.defaultGridNy
 	}
 
 	pg := &page{
 		xd:           xd,
+		bagPage:      d.NewPage(),
 		pagetype:     pt,
 		pagegrid:     g,
-		pageWidth:    xd.doc.DefaultPageWidth,
-		pageHeight:   xd.doc.DefaultPageHeight,
+		pageWidth:    d.DefaultPageWidth,
+		pageHeight:   d.DefaultPageHeight,
 		marginLeft:   pt.marginLeft,
 		marginRight:  pt.marginRight,
 		marginTop:    pt.marginTop,
@@ -208,14 +269,24 @@ func newPage(xd *xtsDocument) (*page, error) {
 	}
 	g.setPage(pg)
 	xd.currentGrid = pg.pagegrid
-	docPage := xd.doc.NewPage()
+	// CHECK
+	docPage := pg.bagPage
 	docPage.Userdata = make(map[interface{}]interface{})
 	docPage.Userdata["xtspage"] = pg
 	return pg, nil
 }
 
 func (p *page) outputAbsolute(x, y bag.ScaledPoint, vl *node.VList) {
-	p.xd.doc.OutputAt(x, p.pageHeight-y, vl)
+	p.bagPage.OutputAt(x, p.pageHeight-y, vl)
+}
+
+func (p *page) findFreeSpaceForObject(vl *node.VList) gridCoord {
+	currentGrid := p.pagegrid
+	// htRows := currentGrid.heightToRows(vl.Height + vl.Depth)
+	wdCols := currentGrid.widthToColumns(vl.Width)
+	col := currentGrid.fitsInRow(currentGrid.currentRow, wdCols)
+	xy := newGridCoord(col, 1)
+	return xy
 }
 
 func (p *page) String() string {

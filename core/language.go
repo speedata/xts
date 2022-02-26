@@ -1,6 +1,9 @@
 package core
 
-import "github.com/speedata/boxesandglue/backend/lang"
+import (
+	"github.com/speedata/boxesandglue/backend/lang"
+	"github.com/speedata/boxesandglue/frontend"
+)
 
 var languageMapping = map[string]string{
 	"Ancient Greek":           "grc",
@@ -58,5 +61,5 @@ func (xd *xtsDocument) getLanguage(name string) (*lang.Lang, error) {
 	if ln, ok := languageMapping[name]; ok {
 		name = ln
 	}
-	return xd.doc.GetLanguage(name)
+	return frontend.GetLanguage(name)
 }

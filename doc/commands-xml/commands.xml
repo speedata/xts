@@ -938,6 +938,54 @@
         <para>Bildhöhe. Angabe in der Form 'auto' (Voreinstellung, natürliche Bildbreite), Längenangabe wie '4cm' oder Zahl (Anzahl von Rasterspalten)</para>
       </description>
     </attribute>
+    <attribute en="page" type="number" optional="yes">
+      <description xml:lang="en">
+        <para>The page number from the PDF. Default is 1 (include the first page).</para>
+      </description>
+      <description xml:lang="de">
+        <para>Die Seitenzahl aus dem PDF. Voreinstellung ist 1.</para>
+      </description>
+    </attribute>
+    <attribute en="maxwidth" type="numberorlength" optional="yes">
+      <description xml:lang="en">
+        <para>The maximum width of the image. Only used when clip="no". Value is a number (grid cells), a length or the value »100%« for full width image.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Die maximale Breite des Bilds. Nur, wenn clip="no". Angabe in absoluten Längen, Rasterzellen oder »100%« für volle Breite.</para>
+      </description>
+    </attribute>
+    <attribute en="maxheight" type="numberorlength" optional="yes">
+      <description xml:lang="en">
+        <para>The maximum height of the image. Only used when clip="no". Value is a number (grid cells) or a length.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Die maximale Breite des Bilds. Nur, wenn clip="no". Angabe in absoluten Längen oder Anzahl Rasterzellen.</para>
+      </description>
+    </attribute>
+    <attribute en="minwidth" type="numberorlength" optional="yes">
+      <description xml:lang="en">
+        <para>The minimum width of the image. Only used when clip="no". Value is a number (grid cells), a length or the value »100%« for full width image.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Die minimale Breite des Bilds. Nur, wenn clip="no". Angabe in absoluten Längen, Rasterzellen oder »100%« für volle Breite.</para>
+      </description>
+    </attribute>
+    <attribute en="minheight" type="numberorlength" optional="yes">
+      <description xml:lang="en">
+        <para>The minimum height of the image. Only used when clip="no". Value is a number (grid cells) or a length.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Die minimale Breite des Bilds. Nur, wenn clip="no". Angabe in absoluten Längen oder Anzahl Rasterzellen.</para>
+      </description>
+    </attribute>
+    <attribute en="stretch" optional="yes" type="boolean">
+      <description xml:lang="en">
+        <para>Stretch image until one of maximum width and maximum height is reached. Useful if images should be as large as possible but should not use more than the given space.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Dehnt das Bild bis eine der Angaben von maxheight und maxwidth erreich ist. Hilfreich um Bilder so groß wie möglich aber innerhalb gewisser Grenzen anzeigen zu lassen.</para>
+      </description>
+    </attribute>
     <attribute en="width" type="numberorlength" optional="yes">
       <description xml:lang="en">
         <para>Image width. One of 'auto' (default, take image width), '100%' (whole area width), length (such as '3cm') or number (in grid cells).</para>

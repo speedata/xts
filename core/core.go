@@ -9,10 +9,11 @@ import (
 	"time"
 
 	"github.com/speedata/boxesandglue/backend/bag"
+	"github.com/speedata/boxesandglue/backend/document"
 	"github.com/speedata/boxesandglue/backend/lang"
 	"github.com/speedata/boxesandglue/backend/node"
 	"github.com/speedata/boxesandglue/csshtml"
-	"github.com/speedata/boxesandglue/document"
+	"github.com/speedata/boxesandglue/frontend"
 	"github.com/speedata/goxml"
 	"github.com/speedata/goxpath/xpath"
 )
@@ -31,12 +32,12 @@ func init() {
 
 type xtsDocument struct {
 	cfg               *XTSCofig
-	doc               *document.Document
+	frontend          *frontend.Frontend
 	layoutcss         *csshtml.CSS
 	data              *xpath.Parser
 	defaultLanguage   *lang.Lang
 	pages             []*page
-	fontsources       map[string]*document.FontSource
+	fontsources       map[string]*frontend.FontSource
 	fontsizes         map[string][2]bag.ScaledPoint
 	defaultGridWidth  bag.ScaledPoint
 	defaultGridHeight bag.ScaledPoint
@@ -100,9 +101,10 @@ func RunXTS(cfg *XTSCofig) error {
 		return err
 	}
 	cfg.Datafile.Close()
+	if d.frontend, err = frontend.CreateFile(cfg.OutFilename); err != nil {
+		return err
+	}
 
-	d.doc = document.NewDocument(cfg.Outfile)
-	d.doc.Filename = cfg.OutFilename
 	d.registerCallbacks()
 
 	var defaultPagetype *pagetype
@@ -139,18 +141,18 @@ func RunXTS(cfg *XTSCofig) error {
 		bag.Logger.Errorf("Cannot find <Record> for root element %s", rootname)
 		return fmt.Errorf("Cannot find <Record> for root element %s", rootname)
 	}
-	d.defaultLanguage, err = d.doc.GetLanguage("en")
+	d.defaultLanguage, err = frontend.GetLanguage("en")
 	if err != nil {
 		return err
 	}
-	d.doc.SetDefaultLanguage(d.defaultLanguage)
+	d.frontend.Doc.DefaultLanguage = d.defaultLanguage
 	_, err = dispatch(d, startDispatcher, d.data)
 	if err != nil {
 		return err
 	}
-	d.doc.CurrentPage.Shipout()
-	d.doc.Finish()
-	cfg.Outfile.Close()
+	d.currentPage.bagPage.Shipout()
+	d.frontend.Doc.Finish()
+
 	bag.Logger.Infof("Finished in %s", time.Now().Sub(starttime))
 	return nil
 }
@@ -239,7 +241,7 @@ func (xd *xtsDocument) registerCallbacks() {
 		}
 	}
 
-	xd.doc.RegisterCallback(document.CallbackPreShipout, preShipout)
+	xd.frontend.Doc.RegisterCallback(document.CallbackPreShipout, preShipout)
 }
 
 func showDiscNodes(n node.Node) {

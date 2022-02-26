@@ -108,7 +108,7 @@ func dothings() error {
 		initDirs()
 		var layoutpath, datapath string
 		var lr, dr io.ReadCloser
-		var pw io.WriteCloser
+
 		if layoutpath, err = findFile("layout.xml"); err != nil {
 			return err
 		}
@@ -121,14 +121,10 @@ func dothings() error {
 		if dr, err = os.Open(datapath); err != nil {
 			return err
 		}
-		if pw, err = os.Create("publisher.pdf"); err != nil {
-			return err
-		}
 
 		xc := &core.XTSCofig{
 			Layoutfile:  lr,
 			Datafile:    dr,
-			Outfile:     pw,
 			OutFilename: "publisher.pdf",
 			FindFile:    findFile,
 		}
