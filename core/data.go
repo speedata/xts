@@ -14,7 +14,7 @@ import (
 
 // Get the values from the child elements of B, Paragraph and its ilk and fill
 // the provided typesetting element to get a recursive data structure.
-func getTextvalues(te *frontend.TypesettingElement, seq xpath.Sequence, cmdname string) {
+func getTextvalues(te *frontend.TypesettingElement, seq xpath.Sequence, cmdname string, line int) {
 	for _, itm := range seq {
 		switch t := itm.(type) {
 		case *goxml.Element:
@@ -27,8 +27,10 @@ func getTextvalues(te *frontend.TypesettingElement, seq xpath.Sequence, cmdname 
 			te.Items = append(te.Items, t)
 		case *frontend.TypesettingElement:
 			te.Items = append(te.Items, t)
+		case []goxml.XMLNode:
+			te.Items = append(te.Items, seq.Stringvalue())
 		default:
-			bag.Logger.DPanicf("%s: unknown type %T", cmdname, t)
+			bag.Logger.DPanicf("%s (line %d): unknown type %T", cmdname, line, t)
 		}
 	}
 }
@@ -80,16 +82,18 @@ func getXMLAtttributes(xd *xtsDocument, layoutelt *goxml.Element, v interface{})
 
 		field := val.Field(i)
 		structField := val.Type().Field(i)
+		fieldName := strings.ToLower(structField.Name)
 		for _, tag := range strings.Split(getStructTag(structField, "sdxml"), ",") {
 			if strings.HasPrefix(tag, "default:") {
 				dflt = strings.TrimPrefix(tag, "default:")
+			} else if strings.HasPrefix(tag, "attr") {
+				fieldName = strings.TrimPrefix(tag, "attr:")
 			} else if tag == "mustexist" {
 				mustexist = true
 			} else if tag == "noescape" {
 				allowXPath = false
 			}
 		}
-		fieldName := strings.ToLower(structField.Name)
 		hasAttribute := false
 		if a, ok := attributes[fieldName]; ok {
 			hasAttribute = true

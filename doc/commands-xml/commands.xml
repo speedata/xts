@@ -12,12 +12,14 @@
     <optional><cmd name="Pageformat"/></optional>
     <optional><cmd name="Record"/></optional>
     <optional><cmd name="SetGrid"/></optional>
+    <optional><cmd name="SetVariable"/></optional>
     <optional><cmd name="Stylesheet"/></optional>
     <optional><cmd name="Trace"/></optional>
   </define>
 
   <define name="Commands">
     <optional><cmd name="PlaceObject"/></optional>
+    <optional><cmd name="SetVariable"/></optional>
   </define>
 
   <define name="Textvalues">
@@ -462,6 +464,51 @@
     </example>
     <seealso/>
   </command>
+
+  <command en="Attribute">
+    <description xml:lang="en">
+      <para>Create an attribute for the <cmd name="Element"/> data structure that can be saved to the hard drive with <cmd name="SaveDataset"/>.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Erzeugt ein Attribut für die <cmd name="Element"/> Datenstruktur, die mithilfe von <cmd name="SaveDataset"/> auf Festplatte gespeichert werden kann.</para>
+    </description>
+    <childelements/>
+    <attribute en="name" type="text" optional="no">
+      <description xml:lang="en">
+        <para>Name of the attribute that is created.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name des Attributs, das erzeugt wird.</para>
+      </description>
+    </attribute>
+    <attribute en="select" type="xpath" optional="no">
+      <description xml:lang="en">
+        <para>The contents of the attribute</para>
+      </description>
+      <description xml:lang="de">
+        <para>Der Inhalt des Attributs</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<Element name="Entry">
+  <Attribute name="chapter" select="@name"/>
+  <Attribute name="page" select="sd:current-page()"/>
+</Element>
+]]></listing>
+      <para>creates the following structure:</para>
+      <listing><![CDATA[<Entry chapter="(contents of @name)" page="(the current page number)" />]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Element name="Eintrag">
+  <Attribute name="kapitelname" select="@name"/>
+  <Attribute name="seite" select="sd:current-page()"/>
+</Element>]]></listing>
+      <para>Erzeugt diese Datenstruktur:</para>
+      <listing><![CDATA[<Eintrag kapitelname=" (Inhalt von @name) " seite=" (aktuelle Seitennummer) " />]]></listing>
+    </example>
+    <seealso><cmd name="Element"/></seealso>
+  </command>
+
   <command en="B">
     <description xml:lang="en">
       <para>Switch to font weight »bold«</para>
@@ -714,6 +761,71 @@
     </example>
     <seealso></seealso>
   </command>
+
+  <command en="Copy-of">
+    <description xml:lang="en">
+      <para>Replace this element by the copy of the selection as an element structure. You can use it to construct more complex data structures.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Ersetzt dieses Element mit dem Inhalt von <tt>select</tt> als Elementstruktur. Dient zum „Zusammenbauen“ von Texten und Tabellen.</para>
+    </description>
+    <childelements/>
+    <attribute en="select" type="xpath" optional="no">
+      <description xml:lang="en">
+        <para>The selection (most likely a variable) that is to be copied.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Die Auswahl (eine Variable) die kopiert werden soll.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<SetVariable variable="myparagraph">
+  <Paragraph>
+    <Value select="@name"/><Value>, Symbol=</Value><Value select="@symbol"/>
+  </Paragraph>
+</SetVariable>
+<PlaceObject>
+  <Textblock>
+    <Copy-of select="$myparagraph"/>
+  </Textblock>
+</PlaceObject>
+]]></listing>
+      <para>is the same as</para>
+      <listing><![CDATA[<PlaceObject>
+  <Textblock>
+    <Paragraph>
+      <Value select="@name"/><Value>, Symbol=</Value><Value select="@symbol"/>
+    </Paragraph>
+  </Textblock>
+</PlaceObject>]]></listing>
+      <para>with the exception that the values of <tt>@name</tt> and <tt>@symbol</tt> can be evaluated before the text gets output.</para>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<SetVariable variable="meinabsatz">
+  <Paragraph>
+    <Value select="@name"/><Value>, Symbol=</Value><Value select="@symbol"/>
+  </Paragraph>
+</SetVariable>
+<PlaceObject>
+  <Textblock>
+    <Copy-of select="$meinabsatz"/>
+  </Textblock>
+</PlaceObject>]]></listing>
+      <para>ist dasselbe wie</para>
+      <listing><![CDATA[<PlaceObject>
+  <Textblock>
+    <Paragraph>
+      <Value select="@name"/><Value>, Symbol=</Value><Value select="@symbol"/>
+    </Paragraph>
+  </Textblock>
+</PlaceObject>
+]]></listing>
+      <para>nur mit dem Unterschied, dass der Inhalt vom Paragraph (<tt>@name</tt>, <tt>@symbol</tt>) ermittelt werden kann, bevor der Text ausgegeben wird. Die Zuweisung und die Textausgabe können in
+        verschiedenen Regeln stehen.</para>
+    </example>
+    <seealso><cmd name="Value"/>, <ref name="xpath"/>, <cmd name="SetVariable"/></seealso>
+  </command>
+
   <command en="DefineFontfamily">
     <description xml:lang="en">
       <para>Defines a font family consisting of the shapes “regular”, “bold”, “bold italic” and “italic”. To be used in <cmd name="Paragraph"/> and <cmd name="Textblock"/> with the attribute <tt>fontfamily</tt>.</para>
@@ -915,6 +1027,50 @@
     <seealso><ref name="xpath"/>, <cmd name="AtPageCreation"/>,  <cmd name="AtPageShipout"/>,   <cmd name="PositioningArea"/>,  <cmd name="ClearPage"/>, <cmd name="DefineMatter"/>
     </seealso>
   </command>
+
+  <command en="Element">
+    <description xml:lang="en">
+      <para>Create a data structure that can be used to save on the hard-drive between consecutive runs (with <cmd name="SaveDataset"/>).</para>
+    </description>
+    <description xml:lang="de">
+      <para>Erzeugt eine Datenstruktur, die mithilfe von <cmd name="SaveDataset"/> auf Festplatte gespeichert werden kann.</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <interleave>
+          <optional><cmd name="Attribute"/></optional>
+          <optional><cmd name="Element"/></optional>
+        </interleave>
+      </oneOrMore>
+    </childelements>
+    <attribute en="name" type="text" optional="no">
+      <description xml:lang="en">
+        <para>Name of the element that gets created.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name des Elements, das erzeugt wird.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<SetVariable variable="articles">
+  <Element name="articlelist">
+    <Attribute name="name" select=" @name "/>
+    <Attribute name="page" select="sd:current-page()"/>
+  </Element>
+</SetVariable>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Element name="artikelliste">
+  <Attribute name="name" select=" @name "/>
+  <Attribute name="seite" select=" sd:current-page()"/>
+</Element>]]></listing>
+    </example>
+    <seealso>
+      <cmd name="Attribute"/>,
+    </seealso>
+  </command>
+
   <command en="Image">
     <description xml:lang="en">
       <para>Includes an external Graphic. Allowed graphic formats are PDF (.pdf), PNG (.png) and JPEG (.jpg). See below for a limitation on the number of included PDF files.</para>
@@ -1561,6 +1717,180 @@
     </example>
     <seealso><cmd name="Grid"/></seealso>
   </command>
+  <command en="SetVariable">
+    <description xml:lang="en">
+      <para>Associates a value with a variable name. The value can be a simple value or a more complex one consisting of several elements.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Weist einer Variablen einen Wert zu. Der Wert kann aus mehreren Elementen bestehen (siehe zweites Beispiel).</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <interleave>
+          <optional><cmd name="Paragraph"/></optional>
+          <optional><cmd name="Element"/></optional>
+          <optional><cmd name="Value"/></optional>
+        </interleave>
+      </oneOrMore>
+    </childelements>
+    <attribute en="variable" type="text" optional="no">
+      <description xml:lang="en">
+        <para>The name of the variable that holds the contents.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name der Variablen, der etwas zugewiesen werden soll.</para>
+      </description>
+    </attribute>
+    <attribute en="select" type="xpath" optional="yes">
+      <description xml:lang="en">
+        <para>The value of the contents.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Inhalt, der der Variablen zugewiesen wird.</para>
+      </description>
+    </attribute>
+    <attribute en="type" optional="yes" since="4.3.10">
+      <description xml:lang="en">
+        <para>Set the data type of the variable. Currently only supported for MetaPost variables.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Setzt den Datentyp der Variable. Derzeit nur für MetaPost-Variablen unterstützt.</para>
+      </description>
+      <choice en="sd:any">
+        <description xml:lang="en">
+          <para>The default (any) datatype for variables in the speedata layout language.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Der voreingestellte Datentyp für die speedata Layoutsprache.</para>
+        </description>
+      </choice>
+      <choice en="mp:cmykcolor">
+        <description xml:lang="en">
+          <para>A MetaPost CMYK color.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Eine MetaPost CMYK Farbe.</para>
+        </description>
+      </choice>
+      <choice en="mp:rgbcolor">
+        <description xml:lang="en">
+          <para>A MetaPost RGB color.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Eine MetaPost RGB Farbe.</para>
+        </description>
+      </choice>
+    </attribute>
+    <attribute en="trace" optional="yes">
+      <description xml:lang="en">
+        <para>Show information about the assignment in the log file.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Zeige Informationen über die Zuweisung in der Logdatei.</para>
+      </description>
+      <choice en="yes">
+        <description xml:lang="en">
+          <para>Show information.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Zeige Informationen.</para>
+        </description>
+      </choice>
+      <choice en="no">
+        <description xml:lang="en">
+          <para>Don't show information (default).</para>
+        </description>
+        <description xml:lang="de">
+          <para>Zeige keine Informationen (Voreinstellung).</para>
+        </description>
+      </choice>
+    </attribute>
+    <remark xml:lang="en"><para>Variables have global scope.</para></remark>
+    <remark xml:lang="de"><para>Variablen haben eine globale Sichtbarkeit.</para></remark>
+    <example xml:lang="en">
+      <listing><![CDATA[<Record element="product">
+  <SetVariable variable="wd" select="5"/>
+  <PlaceObject>
+    <Textblock width="{ $wd }">
+      <Paragraph>
+        <Value select="$articlenumber"/>
+      </Paragraph>
+    </Textblock>
+  </PlaceObject>
+</Record>
+]]></listing>
+      <para>The following example shows a more complex scenario: you can collect complex elements in a variable.</para>
+      <listing><![CDATA[<Record element="products">
+  <SetVariable variable="articletext"/>
+  <ProcessNode select="article"/>
+  <PlaceObject>
+    <Textblock>
+      <Value select=" $articletext "/>
+    </Textblock>
+  </PlaceObject>
+</Record>
+
+<Record element="article">
+  <SetVariable variable="articletext">
+    <!-- the previous contents is added -->
+    <Value select="$articletext"/>
+    <Paragraph>
+      <Value select=" @description "/>
+    </Paragraph>
+  </SetVariable>
+</Record>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Record element="produkt">
+  <SetVariable variable="Textbreite" select="5"/>
+  <PlaceObject>
+    <Textblock width="{ $Textbreite }">
+      <Paragraph>
+        <Value select="$Artikelnummer"/>
+      </Paragraph>
+    </Textblock>
+  </PlaceObject>
+</Record>]]></listing>
+      <para>Folgendes Beispiel zeigt, wie mehrere Absätze in einer Variablen gespeichert werden, um sie anschließend in einem Textblock auszugeben.</para>
+      <listing><![CDATA[<Record element="produkte">
+  <SetVariable variable="Artikeltext"/>
+  <ProcessNode select="artikel"/>
+  <PlaceObject>
+    <Textblock>
+      <Value select=" $Artikeltext "/>
+    </Textblock>
+  </PlaceObject>
+</Record>
+
+<Record element="artikel">
+  <SetVariable variable="Artikeltext">
+    <!-- Der vorherige Inhalt wird hinzugefügt -->
+    <Value select="$Artikeltext"/>
+    <Paragraph>
+      <Value select=" @beschreibung " />
+    </Paragraph>
+  </SetVariable>
+</Record>]]></listing>
+    </example>
+    <seealso>
+      <cmd name="Value"/>
+    </seealso>
+    <rules xml:lang="en">
+      <sch:pattern>
+        <sch:rule context="t:SetVariable">
+          <sch:assert test="not(  not(empty(@select)) and node()  )">SetVariable: either use select Attribute _or_ child elements, but not both.</sch:assert>
+        </sch:rule>
+      </sch:pattern>
+    </rules>
+    <rules xml:lang="de">
+      <sch:pattern>
+        <sch:rule context="t:SetVariable">
+        <sch:assert test="not(  not(empty(@select)) and node()  )">SetVariable: entweder Attribut select benutzen _oder_ Kindelemente, aber nicht beides.</sch:assert>
+      </sch:rule>
+      </sch:pattern>
+    </rules>
+  </command>
   <command en="Stylesheet">
     <description xml:lang="en">
       <para>Load a CSS file or define CSS rules</para>
@@ -1649,6 +1979,7 @@
     <childelements>
       <oneOrMore>
         <choice>
+          <cmd name="Copy-of"/>
           <cmd name="Paragraph"/>
         </choice>
       </oneOrMore>

@@ -25,12 +25,15 @@ var (
 func init() {
 	dispatchTable = map[string]commandFunc{
 		"A":                cmdA,
+		"Attribute":        cmdAttribute,
 		"B":                cmdB,
 		"Box":              cmdBox,
 		"Color":            cmdColor,
+		"Copy-of":          cmdCopyof,
 		"DefineFontfamily": cmdDefineFontfamily,
 		"DefineFontsize":   cmdDefineFontsize,
 		"DefinePagetype":   cmdDefinePagetype,
+		"Element":          cmdElement,
 		"Image":            cmdImage,
 		"LoadFontfile":     cmdLoadFontfile,
 		"Options":          cmdOptions,
@@ -39,6 +42,7 @@ func init() {
 		"PlaceObject":      cmdPlaceObject,
 		"Record":           cmdRecord,
 		"SetGrid":          cmdSetGrid,
+		"SetVariable":      cmdSetVariable,
 		"Stylesheet":       cmdStylesheet,
 		"Textblock":        cmdTextblock,
 		"Trace":            cmdTrace,
@@ -86,9 +90,32 @@ func cmdA(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 			frontend.SettingHyperlink: hl,
 		},
 	}
-	getTextvalues(te, seq, "cmdA")
+	getTextvalues(te, seq, "cmdA", layoutelt.Line)
 
 	return xpath.Sequence{te}, err
+}
+
+func cmdAttribute(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	attValues := &struct {
+		Select string `sdxml:"noescape"`
+		Name   string `sdxml:"mustexist"`
+	}{}
+	if err := getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	var eval xpath.Sequence
+	var err error
+	eval, err = xd.data.Evaluate(attValues.Select)
+	if err != nil {
+		bag.Logger.Errorf("Attribute (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
+		return nil, err
+	}
+
+	attr := goxml.Attribute{
+		Name:  attValues.Name,
+		Value: eval.Stringvalue(),
+	}
+	return xpath.Sequence{attr}, nil
 }
 
 func cmdB(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -99,7 +126,7 @@ func cmdB(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 			frontend.SettingFontWeight: 700,
 		},
 	}
-	getTextvalues(te, seq, "cmdBold")
+	getTextvalues(te, seq, "cmdBold", layoutelt.Line)
 
 	return xpath.Sequence{te}, err
 }
@@ -166,9 +193,23 @@ func cmdColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 			frontend.SettingColor: attValues.Name,
 		},
 	}
-	getTextvalues(te, seq, "cmdColor")
+	getTextvalues(te, seq, "cmdColor", layoutelt.Line)
 
 	return xpath.Sequence{te}, err
+}
+
+func cmdCopyof(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Select string `sdxml:"mustexist"`
+	}{}
+	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	var eval xpath.Sequence
+	eval, err = xd.data.Evaluate(attValues.Select)
+
+	return eval, nil
 }
 
 func cmdDefineFontfamily(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -243,6 +284,34 @@ func cmdDefinePagetype(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequenc
 	pt.marginRight = fv["right"]
 	pt.marginTop = fv["top"]
 	return xpath.Sequence{}, nil
+}
+
+func cmdElement(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Name string `sdxml:"mustexist"`
+	}{}
+	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+
+	elt := goxml.Element{}
+	elt.Name = attValues.Name
+
+	seq, err := dispatch(xd, layoutelt, xd.data)
+	if err != nil {
+		return nil, err
+	}
+	for _, itm := range seq {
+		switch t := itm.(type) {
+		case goxml.XMLNode:
+			elt.Append(goxml.XMLNode(t))
+		default:
+			bag.Logger.DPanicf("Element (line %d): don't know how to append %T", layoutelt.Line, t)
+		}
+
+	}
+	return xpath.Sequence{elt}, nil
 }
 
 func cmdImage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -396,7 +465,7 @@ func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	if attValues.Color != "" {
 		te.Settings[frontend.SettingColor] = attValues.Color
 	}
-	getTextvalues(te, seq, "cmdParagraph")
+	getTextvalues(te, seq, "cmdParagraph", layoutelt.Line)
 	return xpath.Sequence{te}, nil
 }
 
@@ -528,6 +597,38 @@ func cmdSetGrid(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	return nil, nil
 }
 
+func cmdSetVariable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	attValues := &struct {
+		Select   *string `sdxml:"noescape"`
+		Variable string  `sdxml:"mustexist"`
+		Trace    bool
+	}{}
+	if err := getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+
+	var eval xpath.Sequence
+	var err error
+	if attValues.Select != nil {
+		eval, err = xd.data.Evaluate(*attValues.Select)
+		if err != nil {
+			bag.Logger.Errorf("SetVariable (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
+			return nil, err
+		}
+		xd.data.SetVariable(attValues.Variable, eval)
+	} else {
+		eval, err = dispatch(xd, layoutelt, xd.data)
+		if err != nil {
+			return nil, err
+		}
+	}
+	xd.data.SetVariable(attValues.Variable, eval)
+	if attValues.Trace {
+		bag.Logger.Infof("SetVariable (line %d): %s to %s", layoutelt.Line, attValues.Variable, eval)
+	}
+	return nil, nil
+}
+
 func cmdStylesheet(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
@@ -621,6 +722,11 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	node.AppendLineEndAfter(tail)
 
 	ls := node.NewLinebreakSettings()
+
+	if attValues.Width == 0 {
+		attValues.Width = xd.currentGrid.width(coord(xd.currentGrid.nx) - xd.currentGrid.currentCol + 1)
+	}
+
 	ls.HSize = attValues.Width
 	ls.LineHeight = leading
 	vlist, _ := node.Linebreak(hlist, ls)
@@ -684,7 +790,6 @@ func cmdValue(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		// if err != nil {
 		// 	return nil, err
 		// }
-		fmt.Println(eval)
 		return eval, nil
 	}
 	seq := xpath.Sequence{}
