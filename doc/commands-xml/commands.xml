@@ -3,6 +3,16 @@
   xmlns:de="urn:speedata.de/2021/xts/en"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
   >
+
+  <define name="Switchcontents">
+    <optional><cmd name="ClearPage"/></optional>
+    <optional><cmd name="Message"/></optional>
+    <optional><cmd name="NextFrame"/></optional>
+    <optional><cmd name="Switch"/></optional>
+    <optional><cmd name="PlaceObject"/></optional>
+  </define>
+
+
   <define name="Toplevel">
     <optional><cmd name="DefineFontfamily"/></optional>
     <optional><cmd name="DefineFontsize"/></optional>
@@ -18,8 +28,14 @@
   </define>
 
   <define name="Commands">
+    <optional><cmd name="ClearPage"/></optional>
+    <optional><cmd name="ForAll"/></optional>
+    <optional><cmd name="Message"/></optional>
+    <optional><cmd name="NextFrame"/></optional>
     <optional><cmd name="PlaceObject"/></optional>
+    <optional><cmd name="ProcessNode"/></optional>
     <optional><cmd name="SetVariable"/></optional>
+    <optional><cmd name="Switch"/></optional>
   </define>
 
   <define name="Textvalues">
@@ -32,6 +48,7 @@
       </choice>
     </zeroOrMore>
   </define>
+
 
   <defineattribute name="languages">
     <choice en="Ancient Greek">
@@ -465,6 +482,82 @@
     <seealso/>
   </command>
 
+  <command en="AtPageCreation">
+    <description xml:lang="en">
+      <para>The contents of the element <cmd name="AtPageCreation"/> is executed the first time the page is accessed. This is used in <cmd name="Pagetype"/>.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Die Inhalte des Elements <cmd name="AtPageCreation"/> werden ausgeführt, sobald das erste Mal auf die Seite zugegriffen wird. Dieser Befehl kann in einem Seitentyp (<cmd name="Pagetype"/>) benutzt werden.</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <reference name="Commands"/>
+      </oneOrMore>
+    </childelements>
+    <example xml:lang="en">
+      <listing><![CDATA[<AtPageCreation>
+  <PlaceObject column="1" row="1">
+    <Textblock>
+      <Paragraph>
+        <Value select="$pageheader"/>
+      </Paragraph>
+    </Textblock>
+  </PlaceObject>
+</AtPageCreation>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <para>Dies gibt die Seitennummer im Kopf aus:</para>
+      <listing><![CDATA[<AtPageCreation>
+  <PlaceObject row="1" column="1">
+    <Textblock>
+      <Paragraph>
+        <Value select="sd:current-page()"/>
+      </Paragraph>
+    </Textblock>
+  </PlaceObject>
+</AtPageCreation>]]></listing>
+    </example>
+    <seealso><cmd name="Pagetype"/>, <cmd name="AtPageShipout"/></seealso>
+  </command>
+  <command en="AtPageShipout">
+    <description xml:lang="en">
+      <para>The enclosed instructions will be executed when the page is placed into the PDF file. Used in <cmd name="Pagetype"/>.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Die innerhalb dieses Befehls definierten Anweisungen werden ausgeführt, sobald die Seite ins PDF ausgegeben wird. Wird in <cmd name="Pagetype"/> benutzt.</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <reference name="Commands"/>
+      </oneOrMore>
+    </childelements>
+    <example xml:lang="en">
+      <listing><![CDATA[<AtPageShipout>
+  <PlaceObject column="1" row="20">
+    <Textblock>
+      <Paragraph>
+        <Value select="sd:current-page()"/>
+      </Paragraph>
+    </Textblock>
+  </PlaceObject>
+</AtPageShipout>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<AtPageShipout>
+  <PlaceObject column="1" row="{sd:number-of-rows()}">
+    <Textblock>
+      <Paragraph>
+        <Value select="sd:current-page()"/>
+      </Paragraph>
+    </Textblock>
+  </PlaceObject>
+</AtPageShipout>]]></listing>
+    </example>
+    <seealso><cmd name="AtPageCreation"/>, <cmd name="Pagetype"/></seealso>
+  </command>
+
   <command en="Attribute">
     <description xml:lang="en">
       <para>Create an attribute for the <cmd name="Element"/> data structure that can be saved to the hard drive with <cmd name="SaveDataset"/>.</para>
@@ -537,6 +630,7 @@
     </example>
     <seealso><cmd name="I"/>, <ref name="fonts"/></seealso>
   </command>
+
   <command en="Bold">
     <description xml:lang="en">
       <para>Name of the font face that should be used when switching to »bold«.</para>
@@ -585,6 +679,7 @@
       <cmd name="B"/>, <cmd name="BoldItalic"/>, <cmd name="Regular"/>, <cmd name="Italic"/>
     </seealso>
   </command>
+
   <command en="BoldItalic">
     <description xml:lang="en">
       <para>Name of the font face that should be used when switching to »bold italic«. </para>
@@ -637,6 +732,7 @@
       <cmd name="Bold"/>
     </seealso>
   </command>
+
   <command en="Box" css="box">
     <description xml:lang="en">
       <para>Create a rectangular colored area. The area must fit the grid cells.</para>
@@ -705,6 +801,85 @@
     </example>
     <seealso><cmd name="DefineColor"/>, <cmd name="PlaceObject"/></seealso>
   </command>
+
+  <command en="Case">
+    <description xml:lang="en">
+      <para>Part of a <cmd name="Switch"/> construct. All cases up to the first case which evaluates to »true« will be executed. If no cases match and there is a <cmd name="Otherwise"/>, this will be executed instead.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Stellt einen Fall einer Fallunterscheidung (<cmd name="Switch"/>) dar. Der erste Fall, der zutrifft, wird ausgeführt. Weitere Fälle werden nicht betrachtet. Wird kein Fall erfüllt, dann wird, falls vorhanden, das Element <cmd name="Otherwise"/> ausgeführt.</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <reference name="Switchcontents"/>
+      </oneOrMore>
+    </childelements>
+    <attribute en="test" type="xpath" optional="no">
+      <description xml:lang="en">
+        <para>The test that gets evaluated.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Für jeden Fall in einer Fallunterscheidung wird überprüft, ob die Bedingung erfüllt ist und bei Übereinstimmung die Kindelemente ausgeführt.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <para>See the example at <cmd name="Switch"/>.</para>
+    </example>
+    <example xml:lang="de">
+      <para>Siehe das Beispiel bei <cmd name="Switch"/>.</para>
+    </example>
+    <seealso>
+      <cmd name="Switch"/>, <cmd name="Otherwise"/>
+    </seealso>
+  </command>
+
+  <command en="ClearPage">
+    <description xml:lang="en">
+      <para>Finishes the current page. </para>
+    </description>
+    <description xml:lang="de">
+      <para>Beendet die Ausgabe auf der aktuellen Seite.</para>
+    </description>
+    <childelements/>
+    <example xml:lang="en">
+      <listing><![CDATA[<Record element="data">
+  <PlaceObject>
+    <Textblock>
+      <Paragraph><Value>This is page 1</Value></Paragraph>
+    </Textblock>
+  </PlaceObject>
+  <ClearPage openon="right"/>
+  <PlaceObject>
+    <Textblock>
+      <Paragraph><Value>And this is page 3</Value></Paragraph>
+    </Textblock>
+  </PlaceObject>
+</Record>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Record element="data">
+  <PlaceObject>
+    <Textblock>
+      <Paragraph>
+        <Value>Das ist Seite 1</Value>
+      </Paragraph>
+    </Textblock>
+  </PlaceObject>
+  <ClearPage openon="right"/>
+  <PlaceObject>
+    <Textblock>
+      <Paragraph>
+        <Value>Das ist Seite 3</Value>
+      </Paragraph>
+    </Textblock>
+  </PlaceObject>
+</Record>
+]]></listing>
+    </example>
+    <seealso><cmd name="DefinePagetype"/></seealso>
+  </command>
+
 
   <command en="Color">
     <description xml:lang="en">
@@ -889,6 +1064,7 @@
       <cmd name="LoadFontfile"/>
     </seealso>
   </command>
+
   <command en="DefineFontsize">
     <description xml:lang="en">
       <para>Set the font size and the leading</para>
@@ -929,6 +1105,8 @@
     </example>
     <seealso></seealso>
   </command>
+
+
   <command en="DefinePagetype">
     <description xml:lang="en">
       <para>Define a master page. A master page is chosen depending on the criterion given with the attribute »test«.</para>
@@ -937,14 +1115,13 @@
       <para>Definiert eine Seitenvorlage. Anhand der Kriterien, die im Attribut test angegeben werden, wählt das System eine Seitenvorlage aus.</para>
     </description>
     <childelements>
-      <!-- <optional><cmd name="Margin"/></optional>
       <interleave>
         <optional><oneOrMore><cmd name="PositioningArea"/></oneOrMore></optional>
         <optional><cmd name="AtPageCreation"/></optional>
         <optional><cmd name="AtPageShipout"/></optional>
         <optional><cmd name="ForAll"/></optional>
-        <optional><cmd name="Grid"/></optional>
-      </interleave> -->
+        <!-- <optional><cmd name="Grid"/></optional> -->
+      </interleave>
     </childelements>
     <attribute en="margin" type="text" optional="yes" allowxpath="yes">
       <description xml:lang="en">
@@ -1071,6 +1248,80 @@
     </seealso>
   </command>
 
+  <command en="ForAll">
+    <description xml:lang="en">
+      <para>Executes the given commands for all elements in the data XML file that match the contents of the attribute <tt>select</tt>.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Ruft die Kindelemente für alle Daten-Elemente auf, die auf das Muster bei <tt>select</tt> passen.</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <interleave>
+          <reference name="Switchcontents"/>
+        </interleave>
+      </oneOrMore>
+    </childelements>
+    <attribute en="select" type="xpath" optional="no">
+      <description xml:lang="en">
+        <para>Selects the child elements from the data XML</para>
+      </description>
+      <description xml:lang="de">
+        <para>Wählt die Kindelemente aus.</para>
+      </description>
+    </attribute>
+    <attribute en="limit" type="number" optional="yes">
+      <description xml:lang="en">
+        <para>Limits the number of children to the given number.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Die Anzahl der Kinder wird durch die Zahl begrenzt.</para>
+      </description>
+    </attribute>
+    <attribute en="start" optional="yes" type="number" since="2.3.67">
+      <description xml:lang="en">
+        <para>The first entry to process. Default is 1.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Der erste Eintrag der verarbeitet werden soll. Voreinstellung ist 1.</para>
+      </description>
+    </attribute>
+    <example xml:lang="de">
+      <listing><![CDATA[<Record element="data">
+  <PlaceObject>
+    <Table>
+      <ForAll select="eintrag">
+        <Tr><Td><Paragraph><Value select="string(.)"></Value></Paragraph></Td></Tr>
+      </ForAll>
+    </Table>
+  </PlaceObject>
+</Record>]]></listing>
+      <para>Erzeugt eine Tabellenzeile für alle Elemente <tt>eintrag</tt> im Datensatz <tt>data</tt>. So müsste in etwa ein entsprechender Eintrag in den Daten aussehen:</para>
+      <listing><![CDATA[<data>
+  <eintrag>a</eintrag>
+  <eintrag>b</eintrag>
+  <eintrag>c</eintrag>
+</data>]]></listing>
+    </example>
+    <example xml:lang="en">
+      <listing><![CDATA[<Record element="data">
+  <PlaceObject>
+    <Table>
+      <ForAll select="entry">
+        <Tr><Td><Paragraph><Value select="string(.)"/></Paragraph></Td></Tr>
+      </ForAll>
+    </Table>
+  </PlaceObject>
+</Record>]]></listing>
+      <para>Creates a table row for all elements <tt>entry</tt> in the data element <tt>data</tt>. The data XML should look similar to this:</para>
+      <listing><![CDATA[<data>
+  <entry>a</entry>
+  <entry>b</entry>
+  <entry>c</entry>
+</data>]]></listing>
+    </example>
+    <seealso><cmd name="Switch"/></seealso>
+  </command>
   <command en="Image">
     <description xml:lang="en">
       <para>Includes an external Graphic. Allowed graphic formats are PDF (.pdf), PNG (.png) and JPEG (.jpg). See below for a limitation on the number of included PDF files.</para>
@@ -1265,6 +1516,94 @@
     <seealso>
       <cmd name="DefineFontfamily"/></seealso>
   </command>
+
+  <command en="Message">
+    <description xml:lang="en">
+      <para>Writes a message onto the console and to the protocol file.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Gibt eine Textmeldung auf der Konsole und in der Protokolldatei aus.</para>
+    </description>
+    <childelements>
+      <interleave>
+        <optional>
+          <oneOrMore>
+            <cmd name="Value"/>
+          </oneOrMore>
+        </optional>
+        <optional>
+          <oneOrMore>
+            <cmd name="Element"/>
+          </oneOrMore>
+        </optional>
+      </interleave>
+    </childelements>
+    <attribute en="select" type="xpath" optional="yes">
+      <description xml:lang="en">
+        <para>Contents of the message. You can alternatively specify the message by the child elements <cmd name="Value"/>.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Inhalt der Nachricht. Alternativ dazu: Kindelemente Wert innerhalb des Elements »<cmd name="Message"/>«</para>
+      </description>
+    </attribute>
+    <attribute en="error" optional="yes">
+      <description xml:lang="en">
+        <para>Generate an error besides writing the message.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Zusätzlich einen Fehler melden.</para>
+      </description>
+      <choice en="yes">
+        <description xml:lang="en">
+          <para>Report an error.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Fehler ausgeben.</para>
+        </description>
+      </choice>
+      <choice en="no">
+        <description xml:lang="en">
+          <para>Do not report an error (default).</para>
+        </description>
+        <description xml:lang="de">
+          <para>Keinen Fehler ausgeben (Voreinstellung).</para>
+        </description>
+      </choice>
+    </attribute>
+    <attribute en="errorcode" optional="yes" type="number" since="2.3.69">
+      <description xml:lang="en">
+        <para>If an error is raised, use this code on exit. Defaults to 1. Negative values are reserved for system purpose.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Wenn ein Fehler ausgegeben wird, benutze diesen Fehlercode. Voreinstellung 1. Negative Werte sind für interne Zwecke reserviert.</para>
+      </description>
+    </attribute>
+    <attribute en="exit" optional="yes" since="3.1.17">
+      <description xml:lang="en"><para>Tells the software to exit immediately.</para></description>
+      <description xml:lang="de"><para>Soll sich der Publisher beenden?</para></description>
+      <choice en="no">
+        <description xml:lang="en"><para>The speedata Publisher continues with the PDF creation.</para></description>
+        <description xml:lang="de"><para>Der speedata Publisher erzeugt weiterhin die PDF-Datei</para></description>
+      </choice>
+      <choice en="yes">
+        <description xml:lang="en"><para>The speedata Publisher exits without finishing the PDF file.</para></description>
+        <description xml:lang="de"><para>Der speedata Publisher beendet sich ohne die PDF-Datei fertig zu stellen.</para></description>
+      </choice>
+    </attribute>
+    <example xml:lang="de">
+      <listing><![CDATA[<Message select="concat('Price: ',@price)" error="no"/>]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Record element="Datensatz">
+  <Message>
+    <Value>Attribut Preis: </Value>
+    <Value select="@Preis"></Value>
+  </Nachricht>
+</Record>]]></listing>
+    </example>
+    <seealso/>
+  </command>
+
   <command en="Layout">
     <description xml:lang="en">
       <para>This command is the root element in the Layout instructions.</para>
@@ -1346,6 +1685,37 @@
     </example>
     <seealso/>
   </command>
+
+  <command en="NextFrame">
+    <description xml:lang="en">
+      <para>Switch to the next free frame of a positioning area.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Schaltet auf den nächsten freien Rahmen eines Platzierungsbereichs um.</para>
+    </description>
+    <childelements/>
+    <attribute en="area" type="text" optional="no">
+      <description xml:lang="en">
+        <para>Name of the positioning area.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name des Platzierungsbereich, in dem der nächste Rahmen gesucht werden soll.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<NextFrame area="articlearea"/>]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Record element="artikel">
+  <NextFrame area="Titel" />
+</Record>]]></listing>
+    </example>
+    <seealso>
+      <cmd name="PositioningArea"/>
+      <cmd name="PositioningFrame"/>
+    </seealso>
+  </command>
+
   <command en="Options">
     <description xml:lang="en">
       <para>Set publisher specific options.</para>
@@ -1393,6 +1763,30 @@
     </info>
     <seealso><ref name="cutmarks"/></seealso>
   </command>
+
+  <command en="Otherwise">
+    <description xml:lang="en">
+      <para>Default branch of a <cmd name="Switch"/> command.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Zweig, der bei <cmd name="Switch"/> ausgeführt wird, wenn kein <cmd name="Case"/> wahr ist.</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <reference name="Switchcontents"/>
+      </oneOrMore>
+    </childelements>
+    <example xml:lang="de">
+      <para>Siehe das Beispiel bei <cmd name="Switch"/>.</para>
+    </example>
+    <example xml:lang="en">
+      <para>See the example at <cmd name="Switch"/>.</para>
+    </example>
+    <seealso>
+      <cmd name="Switch"/>, <cmd name="Case"/>
+    </seealso>
+  </command>
+
   <command en="Pageformat">
     <description xml:lang="en">
       <para>The size of the PDF pages. Defaults to 210mm width and 297mm height (A4).</para>
@@ -1425,6 +1819,8 @@
     </example>
     <seealso/>
   </command>
+
+
   <command en="Paragraph">
     <description xml:lang="en">
       <para>Insert a paragraph of text. The width of the paragraph is inherited from the surrounding element.</para>
@@ -1478,6 +1874,8 @@
     </example>
     <seealso><cmd name="Textblock"/></seealso>
   </command>
+
+
   <command en="PlaceObject">
     <description xml:lang="en">
       <para>Outputs a rectangular object (image, table, box, barcode or textblock).</para>
@@ -1494,6 +1892,14 @@
         </interleave>
       </oneOrMore>
     </childelements>
+    <attribute en="area" type="text" optional="yes">
+      <description xml:lang="en">
+        <para>Name of the positioning area where the object should be placed.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name des Platzierungsbereich, in dem das Objekt ausgegeben werden soll.</para>
+      </description>
+    </attribute>
     <attribute en="column" type="numberorlength" optional="yes">
       <description xml:lang="en">
         <para>If contents is a number: the grid cell from the left margin of the area. If it is a length: the absolute position from the left paper margin. If this attribute is omitted, the system tries to place the object by itself.</para>
@@ -1549,6 +1955,159 @@
       <cmd name="Textblock"/>,
     </seealso>
   </command>
+
+  <command en="PositioningArea">
+    <description xml:lang="en">
+      <para>Describes an area which contains one or more frames. Elements can be placed within these frames.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Beschreibt einen Platzierungsbereich, der mehrere Platzierungsrahmen beinhalten kann. In diesen Rahmen können Elemente platziert werden</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <interleave>
+          <optional><cmd name="PositioningFrame"/></optional>
+          <optional><cmd name="Switch"/></optional>
+        </interleave>
+      </oneOrMore>
+    </childelements>
+    <attribute en="name" type="text" optional="no">
+      <description xml:lang="en">
+        <para>Name of the area.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name des Platzierungsbereichs</para>
+      </description>
+    </attribute>
+    <attribute en="framecolor" optional="yes" since="2.9.12" type="text">
+      <description xml:lang="en">
+        <para>Set the color of the frame in grid=yes mode. Defaults to 'red'</para>
+      </description>
+      <description xml:lang="de">
+        <para>Setze die Farbe im Modus wenn die Platzierungsbereiche angezeigt werden (grid=yes). Voreinstellung ist 'red'.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<Pagetype name="right page" test="sd:odd( sd:current-page() )">
+  <Margin left="1cm" right="1cm" top="1cm" bottom="1cm"/>
+  <PositioningArea name="frame1">
+    <PositioningFrame width="12" height="30" column="2" row="2"/>
+    <PositioningFrame width="12" height="30" column="16" row="2"/>
+  </PositioningArea>
+</Pagetype>]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<PositioningArea name="rahmen1">
+  <PositioningFrame width="12" height="30" column="2" row="2"/>
+  <PositioningFrame width="12" height="30" column="16" row="2"/>
+</PositioningArea>]]></listing>
+    </example>
+    <seealso>
+      <cmd name="PositioningFrame"/>
+      <cmd name="PlaceObject"/>
+    </seealso>
+  </command>
+  <command en="PositioningFrame">
+    <description xml:lang="en">
+      <para>Defines a rectangular area for objects.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Beschreibt einen rechteckigen Bereich, in dem Elemente platziert werden können. Inhalte in diesen Bereichen werden bei Platzmangel automatisch in den nächsten Rahmen desselben Bereichs platziert.</para>
+    </description>
+    <childelements/>
+    <attribute en="width" type="number" optional="no">
+      <description xml:lang="en">
+        <para>The width of the frame in grid cells.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Breite des Rahmens in Rasterkästen</para>
+      </description>
+    </attribute>
+    <attribute en="height" type="number" optional="no">
+      <description xml:lang="en">
+        <para>The height of the frame in grid cells.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Höhe des Rahmens in Rasterkästen</para>
+      </description>
+    </attribute>
+    <attribute en="row" type="number" optional="no">
+      <description xml:lang="en">
+        <para>The row number relative to the grid.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Erste Zeile des Rahmens</para>
+      </description>
+    </attribute>
+    <attribute en="column" type="number" optional="no">
+      <description xml:lang="en">
+        <para>First column of the frame, in grid cells.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Erste Spalte des Rahmens</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<Pagetype name="right page" test="sd:odd( sd:current-page() )">
+  <Margin left="1cm" right="1cm" top="1cm" bottom="1cm"/>
+  <PositioningArea name="frame1">
+    <PositioningFrame width="12" height="30" column="2" row="2"/>
+    <PositioningFrame width="12" height="30" column="16" row="2"/>
+  </PositioningArea>
+</Pagetype>]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<PositioningArea name="rahmen1">
+  <PositioningFrame width="12" height="30" column="2" row="2"/>
+  <PositioningFrame width="12" height="30" column="16" row="2"/>
+</PositioningArea>]]></listing>
+    </example>
+    <seealso>
+      <cmd name="PositioningArea"/>
+    </seealso>
+  </command>
+
+  <command en="ProcessNode">
+    <description xml:lang="en">
+      <para>Executes all given nodes. The elements, that are to be executed, are given with the attribute <tt>selection</tt>.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Bearbeitet alle angegebenen Datensätze. Die Elemente, für die die Regeln ausgeführt werden sollen, werden mit dem Attribut select angegeben.</para>
+    </description>
+    <childelements/>
+    <attribute en="limit" optional="yes" since="2.5.6" type="number">
+      <description xml:lang="en">
+        <para>Limits the number of items processed with this command</para>
+      </description>
+      <description xml:lang="de">
+        <para>Beschränkt die Anzahl der Datensätze, die mit diesem Befehl verarbeitet werden.</para>
+      </description>
+    </attribute>
+    <attribute en="select" type="xpath" optional="no">
+      <description xml:lang="en">
+        <para>Selection of child elements, that are to be processed.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Auswahl der Kindelemente, die verarbeitet werden sollen.</para>
+      </description>
+    </attribute>
+    <attribute en="mode" type="text" optional="yes">
+      <description xml:lang="en">
+        <para>Name of the mode. This must match the mode at the corresponding <cmd name="Record"/> element. With this it is possible to have different rules for the same element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name des Modus. Dieser muss bei <cmd name="Record"/> exakt übereinstimmen. Damit ist es möglich für dasselbe Element unterschiedliche Regeln aufzurufen.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<ProcessNode select="*" mode="sum" />]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<ProcessNode select="*" mode="summe" />]]></listing>
+    </example>
+    <seealso><cmd name="Record"/></seealso>
+  </command>
+
   <command en="Record">
     <description xml:lang="en">
       <para>Contains the instructions when the publisher processes the element in the data file with the given name. The record matching the root element will be called by the software automatically, all further data handling must be done by the user.</para>
@@ -1561,7 +2120,7 @@
         <reference name="Commands"/>
       </oneOrMore>
     </childelements>
-    <attribute en="element" type="text" optional="no">
+    <attribute en="match" type="xpath" optional="no">
       <description xml:lang="en">
         <para>The name of the element the record matches.</para>
       </description>
@@ -1653,6 +2212,8 @@
       <cmd name="BoldItalic"/>
     </seealso>
   </command>
+
+
   <command en="SetGrid">
     <description xml:lang="en">
       <para>Set size of the grid cells. All objects are placed in the grid.</para>
@@ -1715,8 +2276,10 @@
     <example xml:lang="de">
       <listing><![CDATA[<SetGrid width="4mm" height="14pt" />]]></listing>
     </example>
-    <seealso><cmd name="Grid"/></seealso>
+    <seealso></seealso>
   </command>
+
+
   <command en="SetVariable">
     <description xml:lang="en">
       <para>Associates a value with a variable name. The value can be a simple value or a more complex one consisting of several elements.</para>
@@ -1891,6 +2454,105 @@
       </sch:pattern>
     </rules>
   </command>
+
+  <command en="Switch">
+    <description xml:lang="en">
+      <para>Create an if-then-else construct. The test attribute of each <cmd name="Case"/> commands is evaluated until it yields true. The contents of the Case gets executed. If no test succeeds, the (optional) <cmd name="Otherwise"/> gets executed.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Erzeugt eine „Wenn-Dann-Abfrage“. Das heißt, für jedes Kindelement <cmd name="Case"/> wird überprüft, ob die Bedingung erfüllt ist. Wenn ja, dann wird der Inhalt des Kindelements <cmd name="Case"/> ausgeführt und die Verarbeitung hinter der Fallunterscheidung fortgesetzt. Wenn keine Bedingung erfüllt wurde und ein Element <cmd name="Otherwise"/> gefunden wurde, wird der         Inhalt des Elements <cmd name="Otherwise"/> ausgeführt. Durch das frühzeitige Abbrechen werden nachfolgende Fälle nicht weiter untersucht (siehe Beispiel).</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <cmd name="Case"/>
+      </oneOrMore>
+      <optional>
+        <cmd name="Otherwise"/>
+      </optional>
+    </childelements>
+    <example xml:lang="en">
+      <listing><![CDATA[<Record element="data">
+  <SetVariable variable="counter" select="3"/>
+  <Switch>
+    <Case test=" $counter &lt; 5">
+      <SetVariable variable="text" select="'Less than 5'"/>
+    </Case>
+    <Case test=" $counter &lt; 20">
+      <SetVariable variable="text" select="'Less than 20'"/>
+    </Case>
+    <Otherwise>
+      <SetVariable variable="text" select="'Larger or equal to 20'"/>
+    </Otherwise>
+  </Switch>
+  <PlaceObject>
+    <Textblock>
+      <Paragraph><Value select="$text"/></Paragraph>
+    </Textblock>
+  </PlaceObject>
+</Record>]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Record element="...">
+  <SetVariable variable="zähler" select="3"/>
+  <Switch>
+    <Case test=" $zähler &lt; 5">
+      <SetVariable variable="text" select="'Kleiner als 5'" />
+    </Case>
+    <Case test=" $zähler &lt; 20">
+      <SetVariable variable="text" select="'Kleiner als 20'" />
+    </Case>
+    <Otherwise>
+      <SetVariable variable="text" select="'Größer als oder gleich 20'" />
+    </Otherwise>
+  </Switch>
+  <PlaceObject>
+    <Textblock>
+      <Paragraph><Value select="$text" /></Paragraph>
+    </Textblock>
+  </PlaceObject>
+</Record>]]></listing>
+    </example>
+    <info xml:lang="en">
+      <para>You have to be careful to encode the test with the rules of XML: that is »less« must be written as <tt>&amp;lt;</tt>, since <tt>&lt;</tt> must not be part of text contents.</para>
+      <para>A Switch may be part of nearly all commands. It dissolves and only the contents of the Case or Otherwise gets replaced by the whole construct.</para>
+    </info>
+    <info xml:lang="de">
+      <para>»Größer« und »kleiner« Vergleiche müssen nach den Regeln von XML kodiert werden. Für »größer« kann das <tt>></tt> Zeichen oder <tt>&amp;gt;</tt> benutzt werden, »kleiner« muss zwingend als <tt>&amp;lt;</tt>
+        ausgeschrieben sein, da das Zeichen <tt>&lt;</tt> nicht in einem XML Attribut vorkommen darf.</para>
+      <para>Eine Fallunterscheidung kann in fast allen Elementen vorkommen. Das Ergebnis der Fallunterscheidung (also vom benutzten Element Case oder Otherwise) wird an das umgebende Element
+        zurückgegeben. So wird beispielsweise aus</para>
+      <listing><![CDATA[<Td>
+  <Paragraph>
+    <Switch>
+      <Case test=" $zeile > 10 ">
+       <Value>Zeile ist größer als 10</Value>
+      </Case>
+      <Otherwise>
+        <Value>Zeile ist kleiner oder gleich 10</Value>
+      </Otherwise>
+    </Switch>
+  </Paragraph>
+</Td>]]></listing>
+      <listing><![CDATA[<Td>
+  <Paragraph>
+    <Value>Zeile ist größer als 10</Value>
+  </Paragraph>
+</Td>
+]]></listing>
+      <para>oder</para>
+      <listing><![CDATA[<Td>
+  <Paragraph>
+    <Value>Zeile ist kleiner oder gleich 10</Value>
+  </Paragraph>
+</Td>]]></listing>
+      <para>je nach Inhalt der Variablen.</para>
+    </info>
+    <seealso>
+      <cmd name="Case"/>
+      <cmd name="Otherwise"/>
+    </seealso>
+  </command>
+
   <command en="Stylesheet">
     <description xml:lang="en">
       <para>Load a CSS file or define CSS rules</para>
@@ -1969,6 +2631,7 @@
     </example>
     <seealso><ref name="css"/></seealso>
   </command>
+
   <command en="Textblock">
     <description xml:lang="en">
       <para>Create a rectangular piece of text.</para>

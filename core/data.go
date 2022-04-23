@@ -9,7 +9,7 @@ import (
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/boxesandglue/frontend"
 	"github.com/speedata/goxml"
-	"github.com/speedata/goxpath/xpath"
+	xpath "github.com/speedata/goxpath"
 )
 
 // Get the values from the child elements of B, Paragraph and its ilk and fill
@@ -22,9 +22,11 @@ func getTextvalues(te *frontend.TypesettingElement, seq xpath.Sequence, cmdname 
 		case float64:
 			te.Items = append(te.Items, strconv.FormatFloat(t, 'f', -1, 64))
 		case goxml.CharData:
-			te.Items = append(te.Items, string(t))
+			te.Items = append(te.Items, string(t.Contents))
 		case string:
 			te.Items = append(te.Items, t)
+		case int:
+			te.Items = append(te.Items, fmt.Sprintf("%d", t))
 		case *frontend.TypesettingElement:
 			te.Items = append(te.Items, t)
 		case []goxml.XMLNode:
@@ -269,6 +271,12 @@ func (xd *xtsDocument) getAttributeHeight(name string, element *goxml.Element, m
 
 	}
 	return bag.Sp(val)
+}
+
+// evaluateXPath runs an XPath expression.
+func evaluateXPath(xd *xtsDocument, layoutelt *goxml.Element, xpath string) (xpath.Sequence, error) {
+	xd.data.Ctx.Namespaces = layoutelt.Namespaces
+	return xd.data.Evaluate(xpath)
 }
 
 func getFourValues(str string) map[string]string {
