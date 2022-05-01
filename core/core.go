@@ -37,6 +37,7 @@ type xtsDocument struct {
 	data              *xpath.Parser
 	defaultLanguage   *lang.Lang
 	pages             []*page
+	groups            map[string]*group
 	fontsources       map[string]*frontend.FontSource
 	fontsizes         map[string][2]bag.ScaledPoint
 	defaultGridWidth  bag.ScaledPoint
@@ -48,6 +49,7 @@ type xtsDocument struct {
 	pagetypes         []*pagetype
 	currentPage       *page
 	currentGrid       *grid
+	currentGroup      *group
 	tracing           VTrace
 }
 
@@ -58,16 +60,19 @@ func newXTSDocument() *xtsDocument {
 		defaultGridGapX:   0,
 		defaultGridGapY:   0,
 		layoutcss:         csshtml.NewCssParser(),
+		groups:            make(map[string]*group),
 	}
 }
 
 var inSetupPage bool
 
 func (xd *xtsDocument) setupPage() {
+	if xd.currentGroup != nil {
+		return
+	}
 	if xd.currentPage != nil {
 		return
 	}
-
 	if inSetupPage {
 		return
 	}
@@ -119,6 +124,9 @@ func RunXTS(cfg *XTSCofig) error {
 	if d.data, err = xpath.NewParser(cfg.Datafile); err != nil {
 		return err
 	}
+	d.data.Ctx.Store = map[interface{}]interface{}{
+		"xd": d,
+	}
 	cfg.Datafile.Close()
 
 	d.registerCallbacks()
@@ -163,6 +171,7 @@ func RunXTS(cfg *XTSCofig) error {
 	d.document.Doc.DefaultLanguage = d.defaultLanguage
 	_, err = dispatch(d, startDispatcher, d.data)
 	if err != nil {
+		bag.Logger.Error(err)
 		return err
 	}
 	if d.currentPage != nil {
@@ -179,6 +188,7 @@ func RunXTS(cfg *XTSCofig) error {
 func (xd *xtsDocument) registerCallbacks() {
 	preShipout := func(pg *document.Page) {
 		xtspage := pg.Userdata["xtspage"].(*page)
+		curGrid := xtspage.pagegrid
 		// Draw grid when requested
 		if xd.IsTrace(VTraceAllocation) {
 			vlist := node.NewVList()
@@ -186,7 +196,6 @@ func (xd *xtsDocument) registerCallbacks() {
 
 			pdfinstructions := make([]string, 0, len(xd.currentGrid.allocatedBlocks))
 			pdfinstructions = append(pdfinstructions, "q")
-			curGrid := xtspage.pagegrid
 
 			for k, v := range curGrid.allocatedBlocks {
 				if v > 0 {
@@ -204,18 +213,18 @@ func (xd *xtsDocument) registerCallbacks() {
 		if xd.IsTrace(VTraceGrid) {
 			vlist := node.NewVList()
 			rule := node.NewRule()
-			x := xtspage.pagetype.marginLeft
-			y := xtspage.pagetype.marginBottom
-			wd := xtspage.pageWidth - xtspage.pagetype.marginLeft - xtspage.pagetype.marginRight
-			ht := xtspage.pageHeight - xtspage.pagetype.marginTop - xtspage.pagetype.marginBottom
+			x := curGrid.marginLeft
+			y := curGrid.marginBottom
+			wd := xtspage.pageWidth - curGrid.marginLeft - curGrid.marginRight
+			ht := xtspage.pageHeight - curGrid.marginTop - curGrid.marginBottom
 			var pdfinstructions []string
 			// page
 			pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s %s %s %s re S", x, y, wd, ht))
-			gridMaxX := xtspage.pageWidth - xtspage.pagetype.marginRight
-			gridMaxY := xtspage.pageHeight - xtspage.pagetype.marginTop
+			gridMaxX := xtspage.pageWidth - curGrid.marginRight
+			gridMaxY := xtspage.pageHeight - curGrid.marginTop
 			pdfinstructions = append(pdfinstructions, "0.4 w")
 
-			gridX := x + xtspage.pagegrid.gridWidth
+			gridX := x + curGrid.gridWidth
 			// vertical grid rules
 			for i := 1; gridX < gridMaxX; i++ {
 				switch {
@@ -235,7 +244,7 @@ func (xd *xtsDocument) registerCallbacks() {
 			}
 
 			// horizontal grid rules from top to bottom
-			gridY := xtspage.pageHeight - xtspage.pagegrid.gridHeight - xtspage.pagetype.marginTop
+			gridY := xtspage.pageHeight - curGrid.gridHeight - curGrid.marginTop
 			for i := 1; gridY > y; i++ {
 				switch {
 				case i%10 == 0:
@@ -256,7 +265,7 @@ func (xd *xtsDocument) registerCallbacks() {
 			pdfinstructions = append(pdfinstructions, pageframe)
 
 			pdfinstructions = append(pdfinstructions, " 2 w 1 0 0 RG ")
-			for _, area := range xtspage.areas {
+			for _, area := range curGrid.areas {
 				for _, rect := range area.frame {
 					posX := xd.currentGrid.posX(rect.col, pageAreaName)
 					posY := xtspage.pageHeight - xd.currentGrid.posY(rect.row, pageAreaName)

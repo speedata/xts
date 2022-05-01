@@ -30,12 +30,14 @@ func init() {
 		"Box":              cmdBox,
 		"ClearPage":        cmdClearpage,
 		"Color":            cmdColor,
+		"Contents":         cmdContents,
 		"Copy-of":          cmdCopyof,
 		"DefineFontfamily": cmdDefineFontfamily,
 		"DefineFontsize":   cmdDefineFontsize,
 		"DefinePagetype":   cmdDefinePagetype,
 		"Element":          cmdElement,
 		"ForAll":           cmdForall,
+		"Group":            cmdGroup,
 		"Image":            cmdImage,
 		"LoadFontfile":     cmdLoadFontfile,
 		"Message":          cmdMessage,
@@ -209,6 +211,15 @@ func cmdColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	return xpath.Sequence{te}, err
 }
 
+func cmdContents(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	_, err := dispatch(xd, layoutelt, xd.data)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+}
+
 func cmdCopyof(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
@@ -355,6 +366,26 @@ func cmdForall(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 	}
 	xd.data.Ctx.SetContext(xpath.Sequence{oldContext})
 
+	return nil, nil
+}
+
+func cmdGroup(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Name string `sdxml:"mustexist"`
+	}{}
+	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	saveGrid := xd.currentGrid
+	xd.currentGroup = xd.newGroup(attValues.Name)
+	xd.currentGrid = xd.currentGroup.grid
+	_, err = dispatch(xd, layoutelt, xd.data)
+	if err != nil {
+		return nil, err
+	}
+	xd.currentGroup = nil
+	xd.currentGrid = saveGrid
 	return nil, nil
 }
 
@@ -516,7 +547,7 @@ func cmdNextFrame(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		return nil, err
 	}
 	xd.setupPage()
-	if area, ok := xd.currentPage.areas[attValues.Area]; ok {
+	if area, ok := xd.currentPage.pagegrid.areas[attValues.Area]; ok {
 		area.currentFrame++
 		if area.currentFrame == len(area.frame) {
 			area.currentFrame = 0
@@ -595,9 +626,10 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	xd.setupPage()
 	var err error
 	attValues := &struct {
-		Column string
-		Row    string
-		Area   string
+		Column    string
+		Row       string
+		Area      string
+		Groupname string
 	}{}
 	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -617,6 +649,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		pos = positioningGrid
 		col = coord(columnInt)
 	}
+
 	if rowInt, err = strconv.Atoi(attValues.Row); err == nil {
 		rowSet = true
 		pos = positioningGrid
@@ -639,10 +672,15 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 			pos = positioningAbsolute
 		}
 	}
+	var seq xpath.Sequence
+	if attValues.Groupname != "" {
+		seq = xpath.Sequence{xd.groups[attValues.Groupname].contents}
+	} else {
+		seq, err = dispatch(xd, layoutelt, xd.data)
+		if err != nil {
+			return nil, err
+		}
 
-	seq, err := dispatch(xd, layoutelt, xd.data)
-	if err != nil {
-		return nil, err
 	}
 	if len(seq) == 0 {
 		bag.Logger.Warnf("line %d: no objects in PlaceObject", layoutelt.Line)
@@ -667,7 +705,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 
 	if pos == positioningUnknown {
 		pos = positioningGrid
-		xy, err := xd.currentPage.findFreeSpaceForObject(vl, attValues.Area)
+		xy, err := xd.currentGrid.findFreeSpaceForObject(vl, attValues.Area)
 		if err != nil {
 			return nil, err
 		}

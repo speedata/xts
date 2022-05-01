@@ -3,9 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
-	"io/fs"
 	"os"
-	"path/filepath"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -16,50 +14,8 @@ import (
 )
 
 var (
-	filelist = make(map[string]string)
-	version  string
+	version string
 )
-
-func initDirs() error {
-	root, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-
-	for _, dir := range []string{"fonts", "img"} {
-		dir = filepath.Join(root, dir)
-		bag.Logger.Debugf("Add directory %q to recursive file list", dir)
-		filepath.WalkDir(dir, dirWalker)
-	}
-	return nil
-}
-
-func dirWalker(path string, d fs.DirEntry, err error) error {
-	if d.Type().IsRegular() {
-		filelist[filepath.Base(path)] = path
-	}
-	return nil
-}
-
-// findFile returns the full path to the file name.
-func findFile(filename string) (string, error) {
-	if fn, ok := filelist[filename]; ok {
-		bag.Logger.Debugf("File lookup %q -> %q", filename, fn)
-		return fn, nil
-	}
-	if _, err := os.Stat(filename); err == nil {
-		var fn string
-		fn, err = filepath.Abs(filename)
-		if err != nil {
-			return "", err
-		}
-		bag.Logger.Debugf("File lookup %q -> %q", filename, fn)
-		return fn, nil
-	}
-
-	bag.Logger.Debugf("File lookup %q not found", filename)
-	return "", fmt.Errorf("%w: %s", os.ErrNotExist, filename)
-}
 
 func newZapLogger(verbose bool) (*zap.SugaredLogger, error) {
 	cfg := zap.Config{
@@ -105,17 +61,17 @@ func dothings() error {
 
 	switch cmd {
 	case "run":
-		initDirs()
+		core.InitDirs()
 		var layoutpath, datapath string
 		var lr, dr io.ReadCloser
 
-		if layoutpath, err = findFile("layout.xml"); err != nil {
+		if layoutpath, err = core.FindFile("layout.xml"); err != nil {
 			return err
 		}
 		if lr, err = os.Open(layoutpath); err != nil {
 			return err
 		}
-		if datapath, err = findFile("data.xml"); err != nil {
+		if datapath, err = core.FindFile("data.xml"); err != nil {
 			return err
 		}
 		if dr, err = os.Open(datapath); err != nil {
@@ -126,7 +82,7 @@ func dothings() error {
 			Layoutfile:  lr,
 			Datafile:    dr,
 			OutFilename: "publisher.pdf",
-			FindFile:    findFile,
+			FindFile:    core.FindFile,
 		}
 		if err = core.RunXTS(xc); err != nil {
 			return err
@@ -140,7 +96,6 @@ func dothings() error {
 
 func main() {
 	if err := dothings(); err != nil {
-		fmt.Println(err)
 		os.Exit(1)
 	}
 }

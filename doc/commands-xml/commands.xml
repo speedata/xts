@@ -30,6 +30,7 @@
   <define name="Commands">
     <optional><cmd name="ClearPage"/></optional>
     <optional><cmd name="ForAll"/></optional>
+    <optional><cmd name="Group"/></optional>
     <optional><cmd name="Message"/></optional>
     <optional><cmd name="NextFrame"/></optional>
     <optional><cmd name="PlaceObject"/></optional>
@@ -937,6 +938,27 @@
     <seealso></seealso>
   </command>
 
+  <command en="Contents">
+    <description xml:lang="en">
+      <para>Marks the contents of a <cmd name="Group"/>, a virtual area.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Kennzeichnet den Inhalt einer <cmd name="Group"/>, einer virtuellen Fläche.</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <reference name="Commands"/>
+      </oneOrMore>
+    </childelements>
+    <example xml:lang="en">
+      <para>See the example at <cmd name="Group"/>.</para>
+    </example>
+    <example xml:lang="de">
+      <para>Siehe das Beispiel bei <cmd name="Group"/>.</para>
+    </example>
+    <seealso><cmd name="Group"/></seealso>
+  </command>
+
   <command en="Copy-of">
     <description xml:lang="en">
       <para>Replace this element by the copy of the selection as an element structure. You can use it to construct more complex data structures.</para>
@@ -1322,6 +1344,79 @@
     </example>
     <seealso><cmd name="Switch"/></seealso>
   </command>
+
+  <command en="Group">
+    <description xml:lang="en">
+      <para>Create a virtual page that behaves like a real page but is not placed into the PDF.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Erzeugt einen virtuellen Bereich, in dem Elemente platziert werden können. Ausgegeben werden die Gruppen anschließend mit <cmd name="PlaceObject"/>.</para>
+    </description>
+    <childelements>
+      <interleave>
+        <cmd name="Contents"/>
+        <!-- <optional><cmd name="Grid"/></optional> -->
+      </interleave>
+    </childelements>
+    <attribute en="name" type="text" optional="no">
+      <description xml:lang="en">
+        <para>Name of the group that is created.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Der Name der anzulegenden Gruppe.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en"><listing><![CDATA[<Record element="data">
+  <Group name="Some group">
+    <!-- Optional, taken from the current page -->
+    <Grid width="10mm" height="10mm"/>
+    <Contents>
+      <PlaceObject column="3" row="2">
+        <Textblock width="14">
+          <Paragraph>
+            <Value>Text</Value>
+          </Paragraph>
+        </Textblock>
+      </PlaceObject>
+      <PlaceObject column="2" row="4">
+        <Textblock width="14">
+          <Paragraph>
+            <Value>Next text</Value>
+          </Paragraph>
+        </Textblock>
+      </PlaceObject>
+    </Contents>
+  </Group>
+  <PlaceObject groupname="Some group" row="1" />
+</Record>
+]]></listing></example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Gruppe name="Beispielgruppe">
+  <Contents>
+    <PlaceObject column="3" row="2">
+      <Textblock width="14">
+        <Paragraph>
+          <Value>Text</Value>
+        </Paragraph>
+      </Textblock>
+    </PlaceObject>
+    <PlaceObject column="2" row="4">
+      <Textblock width="14">
+        <Paragraph>
+          <Value>Nächster Text</Value>
+        </Paragraph>
+      </Textblock>
+    </PlaceObject>
+  </Contents>
+</Gruppe>
+<PlaceObject groupname="Beispielgruppe" />]]></listing>
+    </example>
+    <seealso>
+      <cmd name="PlaceObject"/>
+      <cmd name="Contents"/>
+    </seealso>
+  </command>
+
   <command en="Image">
     <description xml:lang="en">
       <para>Includes an external Graphic. Allowed graphic formats are PDF (.pdf), PNG (.png) and JPEG (.jpg). See below for a limitation on the number of included PDF files.</para>
@@ -1906,6 +2001,14 @@
       </description>
       <description xml:lang="de">
         <para>Zahl: Die Spalte im Raster, in der das Objekt ausgegeben wird. Wird die Spalte nicht angegeben, so sucht sich das System selbständig eine passende freie Zeile für das Objekt. Maßangabe: die Position von der linken Blattkante.</para>
+      </description>
+    </attribute>
+    <attribute en="groupname" type="text" optional="yes">
+      <description xml:lang="en">
+        <para>The name of the group that gets output. When given a groupname, PlaceObject should not contain any objects.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Wenn eine Gruppe ausgegeben werden soll, muss der Name hier angegeben werden.</para>
       </description>
     </attribute>
     <attribute en="row" type="numberorlength" optional="yes">
