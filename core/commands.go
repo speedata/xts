@@ -34,7 +34,7 @@ func init() {
 		"Copy-of":          cmdCopyof,
 		"DefineFontfamily": cmdDefineFontfamily,
 		"DefineFontsize":   cmdDefineFontsize,
-		"DefinePagetype":   cmdDefinePagetype,
+		"DefineMasterpage": cmdDefineMasterpage,
 		"Element":          cmdElement,
 		"ForAll":           cmdForall,
 		"Group":            cmdGroup,
@@ -284,7 +284,7 @@ func cmdDefineFontsize(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequenc
 	return nil, nil
 }
 
-func cmdDefinePagetype(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+func cmdDefineMasterpage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
 		Margin string `sdxml:"mustexist"`
@@ -534,7 +534,7 @@ func cmdMessage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 			return nil, err
 		}
 	}
-	bag.Logger.Infof("Message (line %d): %s", layoutelt.Line, eval)
+	bag.Logger.Infof("Message (line %d): %s", layoutelt.Line, eval.Stringvalue())
 	return nil, nil
 }
 

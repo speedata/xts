@@ -16,7 +16,7 @@
   <define name="Toplevel">
     <optional><cmd name="DefineFontfamily"/></optional>
     <optional><cmd name="DefineFontsize"/></optional>
-    <optional><cmd name="DefinePagetype"/></optional>
+    <optional><cmd name="DefineMasterpage"/></optional>
     <optional><cmd name="LoadFontfile"/></optional>
     <optional><cmd name="Options"/></optional>
     <optional><cmd name="Pageformat"/></optional>
@@ -878,7 +878,7 @@
 </Record>
 ]]></listing>
     </example>
-    <seealso><cmd name="DefinePagetype"/></seealso>
+    <seealso><cmd name="DefineMasterpage"/></seealso>
   </command>
 
 
@@ -1129,7 +1129,7 @@
   </command>
 
 
-  <command en="DefinePagetype">
+  <command en="DefineMasterpage">
     <description xml:lang="en">
       <para>Define a master page. A master page is chosen depending on the criterion given with the attribute »test«.</para>
     </description>
