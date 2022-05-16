@@ -117,7 +117,6 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 	var f func()
 	xd.currentGrid = pg.pagegrid
 	if pt.layoutElt != nil {
-
 		for _, node := range pt.layoutElt.Children() {
 			switch t := node.(type) {
 			case *goxml.Element:

@@ -59,7 +59,7 @@ func newXTSDocument() *xtsDocument {
 		defaultGridHeight: oneCM,
 		defaultGridGapX:   0,
 		defaultGridGapY:   0,
-		layoutcss:         csshtml.NewCssParser(),
+		layoutcss:         csshtml.NewCSSParser(),
 		groups:            make(map[string]*group),
 	}
 }
@@ -154,6 +154,7 @@ func RunXTS(cfg *XTSCofig) error {
 	rootname := dataNameSeq[0].(string)
 	_, err = dispatch(d, layoutRoot, d.data)
 	if err != nil {
+		bag.Logger.Error(err)
 		return err
 	}
 	bag.Logger.Info("Start processing data")
@@ -177,7 +178,9 @@ func RunXTS(cfg *XTSCofig) error {
 	if d.currentPage != nil {
 		d.currentPage.bagPage.Shipout()
 	}
-	d.document.Doc.Finish()
+	if err = d.document.Finish(); err != nil {
+		return err
+	}
 
 	bag.Logger.Infof("Finished in %s", time.Now().Sub(starttime))
 	return nil

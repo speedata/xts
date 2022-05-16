@@ -7,12 +7,14 @@ import (
 
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/boxesandglue/backend/document"
+	pdfdocument "github.com/speedata/boxesandglue/backend/document"
 	"github.com/speedata/boxesandglue/backend/node"
 	"github.com/speedata/boxesandglue/csshtml"
 	"github.com/speedata/boxesandglue/frontend"
 	"github.com/speedata/boxesandglue/pdfbackend/pdf"
 	"github.com/speedata/goxml"
 	xpath "github.com/speedata/goxpath"
+	"github.com/speedata/xts/pdfdraw"
 )
 
 type commandFunc func(*xtsDocument, *goxml.Element) (xpath.Sequence, error)
@@ -28,11 +30,13 @@ func init() {
 		"Attribute":        cmdAttribute,
 		"B":                cmdB,
 		"Box":              cmdBox,
+		"Circle":           cmdCircle,
 		"ClearPage":        cmdClearpage,
 		"Color":            cmdColor,
 		"Contents":         cmdContents,
 		"Copy-of":          cmdCopyof,
 		"DefineFontfamily": cmdDefineFontfamily,
+		"DefineColor":      cmdDefineColor,
 		"DefineFontsize":   cmdDefineFontsize,
 		"DefineMasterpage": cmdDefineMasterpage,
 		"Element":          cmdElement,
@@ -167,7 +171,7 @@ func cmdBox(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	}
 
 	attrs, _ := csshtml.ResolveAttributes(a.Find("box").First().Nodes[0].Attr)
-	var bgcolor *frontend.Color
+	var bgcolor *pdfdocument.Color
 	if bgc, ok := attrs["background-color"]; ok {
 		bgcolor = xd.document.GetColor(bgc)
 	} else {
@@ -175,12 +179,63 @@ func cmdBox(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	}
 
 	r := node.NewRule()
-	if bgcolor.Space != frontend.ColorNone {
-		r.Pre = fmt.Sprintf(" %s 0 0 %s %s re f ", bgcolor.PDFStringFG(), attValues.Width, -attValues.Height)
+	if bgcolor.Space != pdfdocument.ColorNone {
+		str := pdfdraw.New().Color(*bgcolor).Rect(0, 0, attValues.Width, -attValues.Height).Fill().String()
+		r.Pre = str
 	}
 
 	r.Width = attValues.Width
 	r.Height = attValues.Height
+	vl := node.Vpack(r)
+	return xpath.Sequence{vl}, err
+}
+
+func cmdCircle(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	attValues := &struct {
+		Class           string
+		ID              string
+		Backgroundcolor string           `sdxml:"default:black"`
+		RadiusX         *bag.ScaledPoint `sdxml:"mustexist"`
+		RadiusY         *bag.ScaledPoint
+	}{}
+	if err := getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	if attValues.RadiusY == nil {
+		attValues.RadiusY = attValues.RadiusX
+	}
+
+	htmlString := `<circle `
+	if class := attValues.Class; class != "" {
+		htmlString += fmt.Sprintf("class=%q ", class)
+	}
+	if id := attValues.ID; id != "" {
+		htmlString += fmt.Sprintf("id=%q", id)
+	}
+	htmlString += ">"
+
+	a, err := xd.layoutcss.ParseHTMLFragment(htmlString, "")
+	if err != nil {
+		return nil, err
+	}
+
+	attrs, _ := csshtml.ResolveAttributes(a.Find("circle").First().Nodes[0].Attr)
+	var bgcolor *pdfdocument.Color
+	if bgc, ok := attrs["background-color"]; ok {
+		bgcolor = xd.document.GetColor(bgc)
+	} else {
+		bgcolor = xd.document.GetColor(attValues.Backgroundcolor)
+	}
+
+	r := node.NewRule()
+
+	if bgcolor.Space != pdfdocument.ColorNone {
+		str := pdfdraw.New().Color(*bgcolor).Circle(0, 0, *attValues.RadiusX, *attValues.RadiusY).Fill().String()
+		r.Pre = str
+	}
+
+	r.Width = *attValues.RadiusX * 2
+	r.Height = *attValues.RadiusY * 2
 	vl := node.Vpack(r)
 	return xpath.Sequence{vl}, err
 }
@@ -263,6 +318,86 @@ func cmdDefineFontfamily(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Seque
 			}
 		}
 	}
+	return nil, nil
+}
+
+func cmdDefineColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Name                string
+		Colorname           string
+		Model               string
+		Value               string
+		R, G, B, C, M, Y, K string
+	}{}
+	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	col := pdfdocument.Color{}
+	switch attValues.Model {
+	case "cmyk":
+		col.Space = pdfdocument.ColorCMYK
+		var c, m, y, k int
+		if c, err = strconv.Atoi(attValues.C); err != nil {
+			return nil, fmt.Errorf("DefineColor: cannot parse value for c (line %d)", layoutelt.Line)
+		}
+		if m, err = strconv.Atoi(attValues.M); err != nil {
+			return nil, fmt.Errorf("DefineColor: cannot parse value for m (line %d)", layoutelt.Line)
+		}
+		if y, err = strconv.Atoi(attValues.Y); err != nil {
+			return nil, fmt.Errorf("DefineColor: cannot parse value for y (line %d)", layoutelt.Line)
+		}
+		if k, err = strconv.Atoi(attValues.K); err != nil {
+			return nil, fmt.Errorf("DefineColor: cannot parse value for k (line %d)", layoutelt.Line)
+		}
+		col.C = float64(c) / 100.0
+		col.M = float64(m) / 100.0
+		col.Y = float64(y) / 100.0
+		col.K = float64(k) / 100.0
+	case "rgb":
+		// 0-100
+		col.Space = pdfdocument.ColorRGB
+		var r, g, b int
+		if r, err = strconv.Atoi(attValues.R); err != nil {
+			return nil, fmt.Errorf("DefineColor: cannot parse value for r (line %d)", layoutelt.Line)
+		}
+		if g, err = strconv.Atoi(attValues.G); err != nil {
+			return nil, fmt.Errorf("DefineColor: cannot parse value for g (line %d)", layoutelt.Line)
+		}
+		if b, err = strconv.Atoi(attValues.B); err != nil {
+			return nil, fmt.Errorf("DefineColor: cannot parse value for b (line %d)", layoutelt.Line)
+		}
+		col.R = float64(r) / 100.0
+		col.G = float64(g) / 100.0
+		col.B = float64(b) / 100.0
+	case "RGB":
+		// 0-255
+		col.Space = pdfdocument.ColorRGB
+		var r, g, b int
+		if r, err = strconv.Atoi(attValues.R); err != nil {
+			return nil, fmt.Errorf("DefineColor: cannot parse value for r (line %d)", layoutelt.Line)
+		}
+		if g, err = strconv.Atoi(attValues.G); err != nil {
+			return nil, fmt.Errorf("DefineColor: cannot parse value for g (line %d)", layoutelt.Line)
+		}
+		if b, err = strconv.Atoi(attValues.B); err != nil {
+			return nil, fmt.Errorf("DefineColor: cannot parse value for b (line %d)", layoutelt.Line)
+		}
+		col.R = float64(r) / 255.0
+		col.G = float64(g) / 255.0
+		col.B = float64(b) / 255.0
+	case "spotcolor":
+		col.Space = pdfdocument.ColorSpotcolor
+	case "":
+		// let's hope the user has provided a value field...
+		if attValues.Value == "" {
+			return nil, fmt.Errorf("DefineColor: empty model not recognized - you should provide a color model or a value attribute (line %d)", layoutelt.Line)
+		}
+		col = *xd.document.GetColor(attValues.Value)
+	default:
+		return nil, fmt.Errorf("DefineColor: model %q not recognized (line %d)", attValues.Model, layoutelt.Line)
+	}
+	xd.document.DefineColor(attValues.Name, &col)
 	return nil, nil
 }
 

@@ -141,9 +141,9 @@ func getXMLAtttributes(xd *xtsDocument, layoutelt *goxml.Element, v interface{})
 			case scaledPointsType:
 				var wd bag.ScaledPoint
 				if cols, err := strconv.Atoi(attValue); err == nil {
-					if strings.Contains(fieldName, "width") {
+					if strings.Contains(fieldName, "width") || strings.HasSuffix(fieldName, "x") {
 						wd = xd.currentGrid.width(coord(cols))
-					} else if strings.Contains(fieldName, "height") {
+					} else if strings.Contains(fieldName, "height") || strings.HasSuffix(fieldName, "y") {
 						wd = xd.currentGrid.height(coord(cols))
 					}
 				} else {
@@ -156,9 +156,9 @@ func getXMLAtttributes(xd *xtsDocument, layoutelt *goxml.Element, v interface{})
 			case scaledPointsPtrType:
 				var wd bag.ScaledPoint
 				if cols, err := strconv.Atoi(attValue); err == nil {
-					if strings.Contains(fieldName, "width") {
+					if strings.Contains(fieldName, "width") || strings.HasSuffix(fieldName, "x") {
 						wd = xd.currentGrid.width(coord(cols))
-					} else if strings.Contains(fieldName, "height") {
+					} else if strings.Contains(fieldName, "height") || strings.HasSuffix(fieldName, "y") {
 						wd = xd.currentGrid.height(coord(cols))
 					}
 				} else {
