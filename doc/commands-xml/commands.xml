@@ -2205,6 +2205,14 @@
         <para>Farbe des Absatzes.</para>
       </description>
     </attribute>
+    <attribute en="features" type="text" optional="yes">
+      <description xml:lang="en">
+        <para>A comma separated list of OpenType features such as +kern,-liga.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Eine kommaseparierte Liste mit OpenType Features wie +kern,-liga</para>
+      </description>
+    </attribute>
     <attribute en="fontfamily" css="font-family" type="text" optional="yes">
       <description xml:lang="en">
         <para>The name of the font family for the paragraph. The default is »text« (lowercase t).</para>

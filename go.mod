@@ -3,7 +3,7 @@ module github.com/speedata/xts
 go 1.17
 
 require (
-	github.com/speedata/boxesandglue v0.0.0-20220516093338-7797ffa76804
+	github.com/speedata/boxesandglue v0.0.0-20220524111352-0c22377bd37c
 	github.com/speedata/goxml v0.0.0-20220304094847-e25a4c712d89
 	github.com/speedata/goxpath v0.0.0-20220501190814-7db6127442ec
 	github.com/speedata/optionparser v1.0.1
@@ -19,10 +19,12 @@ require (
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/speedata/css/scanner v0.0.0-20201005071706-2ed32c3ce553 // indirect
 	github.com/speedata/gofpdi v1.0.15 // indirect
-	github.com/speedata/gootf v0.0.0-20220123191322-61352bb5ace4 // indirect
 	github.com/speedata/hyphenation v1.0.1 // indirect
+	github.com/speedata/textlayout v0.0.0-20220524080102-01873ebf5971 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
+	golang.org/x/image v0.0.0-20210504121937-7319ad40d33e // indirect
 	golang.org/x/net v0.0.0-20220513224357-95641704303c // indirect
 	golang.org/x/sys v0.0.0-20220513210249-45d2b4557a2a // indirect
+	golang.org/x/text v0.3.7 // indirect
 )

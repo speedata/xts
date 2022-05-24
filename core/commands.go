@@ -135,7 +135,7 @@ func cmdB(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 
 	te := &frontend.TypesettingElement{
 		Settings: frontend.TypesettingSettings{
-			frontend.SettingFontWeight: 700,
+			frontend.SettingFontWeight: frontend.FontWeight700,
 		},
 	}
 	getTextvalues(te, seq, "cmdBold", layoutelt.Line)
@@ -305,7 +305,6 @@ func cmdDefineFontfamily(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Seque
 			if fontface, err = xd.getAttributeString("fontface", c, true, true, ""); err != nil {
 				return nil, err
 			}
-
 			switch c.Name {
 			case "Regular":
 				ff.AddMember(xd.fontsources[fontface], frontend.FontWeight400, frontend.FontStyleNormal)
@@ -562,10 +561,10 @@ func cmdImage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		attValues.Stretch,
 		imgObj,
 		attValues.Page)
-	if hl.Attibutes == nil {
-		hl.Attibutes = node.H{}
+	if hl.Attributes == nil {
+		hl.Attributes = node.H{}
 	}
-	hl.Attibutes["origin"] = "image"
+	hl.Attributes["origin"] = "image"
 
 	return xpath.Sequence{hl}, nil
 
@@ -736,7 +735,8 @@ func cmdPageformat(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
-		Color string
+		Color    string
+		Features string
 	}{}
 	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -752,6 +752,9 @@ func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	}
 	if attValues.Color != "" {
 		te.Settings[frontend.SettingColor] = attValues.Color
+	}
+	if attValues.Features != "" {
+		te.Settings[frontend.SettingOpenTypeFeature] = attValues.Features
 	}
 	getTextvalues(te, seq, "cmdParagraph", layoutelt.Line)
 	return xpath.Sequence{te}, nil
@@ -826,13 +829,13 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	switch t := seq[0].(type) {
 	case *node.VList:
 		vl = t
-		if vl.Attibutes != nil {
-			origin = vl.Attibutes["origin"].(string)
+		if vl.Attributes != nil {
+			origin = vl.Attributes["origin"].(string)
 		}
 	case *node.HList:
 		vl = node.Vpack(t)
-		if t.Attibutes != nil {
-			origin = t.Attibutes["origin"].(string)
+		if t.Attributes != nil {
+			origin = t.Attributes["origin"].(string)
 		}
 	default:
 		bag.Logger.DPanicf("PlaceObject: unknown node %v", t)
@@ -995,8 +998,9 @@ func cmdSwitch(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
-		Fontsize string
-		Width    bag.ScaledPoint
+		Fontsize   string
+		Width      bag.ScaledPoint
+		FontFamily string
 	}{}
 	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -1005,6 +1009,13 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	leading := 12 * bag.Factor
 	fontsize := 10 * bag.Factor
 	attrFontsize := attValues.Fontsize
+
+	ff := xd.document.FindFontFamily("text")
+	if af := attValues.FontFamily; af != "" {
+		if fontfamily := xd.document.FindFontFamily(af); fontfamily != nil {
+			ff = fontfamily
+		}
+	}
 
 	if sp := strings.Split(attrFontsize, "/"); len(sp) == 2 {
 		if fontsize, err = bag.Sp(sp[0]); err != nil {
@@ -1030,7 +1041,7 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 
 	te := &frontend.TypesettingElement{
 		Settings: frontend.TypesettingSettings{
-			frontend.SettingFontFamily: xd.document.GetFontFamily(0),
+			frontend.SettingFontFamily: ff,
 			frontend.SettingSize:       fontsize,
 		},
 	}
@@ -1065,10 +1076,10 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	if vlist == nil {
 		return nil, nil
 	}
-	if vlist.Attibutes == nil {
-		vlist.Attibutes = node.H{}
+	if vlist.Attributes == nil {
+		vlist.Attributes = node.H{}
 	}
-	vlist.Attibutes["origin"] = "textblock"
+	vlist.Attributes["origin"] = "textblock"
 
 	return xpath.Sequence{vlist}, nil
 }
