@@ -10,7 +10,6 @@ import (
 
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/boxesandglue/backend/document"
-	"github.com/speedata/boxesandglue/backend/lang"
 	"github.com/speedata/boxesandglue/backend/node"
 	"github.com/speedata/boxesandglue/csshtml"
 	"github.com/speedata/boxesandglue/frontend"
@@ -35,7 +34,6 @@ type xtsDocument struct {
 	document          *frontend.Document
 	layoutcss         *csshtml.CSS
 	data              *xpath.Parser
-	defaultLanguage   *lang.Lang
 	pages             []*page
 	groups            map[string]*group
 	fontsources       map[string]*frontend.FontSource
@@ -143,6 +141,10 @@ func RunXTS(cfg *XTSCofig) error {
 	if err != nil {
 		return err
 	}
+	d.document.Doc.DefaultLanguage, err = frontend.GetLanguage("en")
+	if err != nil {
+		return err
+	}
 
 	dataNameSeq, err := d.data.Evaluate("local-name(/*)")
 	if err != nil {
@@ -157,6 +159,7 @@ func RunXTS(cfg *XTSCofig) error {
 		bag.Logger.Error(err)
 		return err
 	}
+
 	bag.Logger.Info("Start processing data")
 	d.data.Ctx.Root()
 	var startDispatcher *goxml.Element
@@ -165,11 +168,6 @@ func RunXTS(cfg *XTSCofig) error {
 		bag.Logger.Errorf("Cannot find <Record> for root element %s", rootname)
 		return fmt.Errorf("Cannot find <Record> for root element %s", rootname)
 	}
-	d.defaultLanguage, err = frontend.GetLanguage("en")
-	if err != nil {
-		return err
-	}
-	d.document.Doc.DefaultLanguage = d.defaultLanguage
 	_, err = dispatch(d, startDispatcher, d.data)
 	if err != nil {
 		bag.Logger.Error(err)

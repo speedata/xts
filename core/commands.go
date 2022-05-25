@@ -1058,7 +1058,7 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	if err != nil {
 		return nil, err
 	}
-	frontend.Hyphenate(hlist, xd.defaultLanguage)
+	frontend.Hyphenate(hlist, xd.document.Doc.DefaultLanguage)
 	node.AppendLineEndAfter(tail)
 
 	ls := node.NewLinebreakSettings()
