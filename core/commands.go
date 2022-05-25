@@ -87,7 +87,7 @@ func cmdA(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	attValues := &struct {
 		Href string
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 
@@ -112,7 +112,7 @@ func cmdAttribute(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		Select string `sdxml:"noescape"`
 		Name   string `sdxml:"mustexist"`
 	}{}
-	if err := getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 	var eval xpath.Sequence
@@ -152,7 +152,7 @@ func cmdBox(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		Height          bag.ScaledPoint `sdxml:"mustexist"`
 	}{}
 
-	if err := getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 
@@ -198,7 +198,7 @@ func cmdCircle(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 		RadiusX         *bag.ScaledPoint `sdxml:"mustexist"`
 		RadiusY         *bag.ScaledPoint
 	}{}
-	if err := getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 	if attValues.RadiusY == nil {
@@ -250,7 +250,7 @@ func cmdColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	attValues := &struct {
 		Name string
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 
@@ -280,7 +280,7 @@ func cmdCopyof(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 	attValues := &struct {
 		Select string `sdxml:"mustexist"`
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 	var eval xpath.Sequence
@@ -294,7 +294,7 @@ func cmdDefineFontfamily(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Seque
 	attValues := &struct {
 		Name string
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 
@@ -329,7 +329,7 @@ func cmdDefineColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		Value               string
 		R, G, B, C, M, Y, K string
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 	col := pdfdocument.Color{}
@@ -407,7 +407,7 @@ func cmdDefineFontsize(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequenc
 		Leading  bag.ScaledPoint
 	}{}
 
-	if err := getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 
@@ -425,7 +425,7 @@ func cmdDefineMasterpage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Seque
 		Name   string `sdxml:"mustexist"`
 		Test   string `sdxml:"mustexist"`
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 
@@ -451,7 +451,7 @@ func cmdElement(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	attValues := &struct {
 		Name string `sdxml:"mustexist"`
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 
@@ -479,7 +479,7 @@ func cmdForall(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 	attValues := &struct {
 		Select string `sdxml:"noescape"`
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 	var eval xpath.Sequence
@@ -508,7 +508,7 @@ func cmdGroup(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	attValues := &struct {
 		Name string `sdxml:"mustexist"`
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 	saveGrid := xd.currentGrid
@@ -536,7 +536,7 @@ func cmdImage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		Stretch   bool
 		Page      int
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 
@@ -576,7 +576,7 @@ func cmdLoadFontfile(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence,
 		Filename string `sdxml:"mustexist"`
 		Name     string `sdxml:"mustexist"`
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 
@@ -602,7 +602,7 @@ func cmdProcessNode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		Select string `sdxml:"mustexist"`
 		Mode   string
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 	var eval xpath.Sequence
@@ -635,7 +635,7 @@ func cmdRecord(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 		Match string `sdxml:"mustexist"`
 		Mode  string
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 
@@ -652,7 +652,7 @@ func cmdMessage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	attValues := &struct {
 		Select *string `sdxml:"noescape"`
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 	var eval xpath.Sequence
@@ -677,7 +677,7 @@ func cmdNextFrame(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	attValues := &struct {
 		Area string `sdxml:"mustexist"`
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 	xd.setupPage()
@@ -698,7 +698,7 @@ func cmdOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 		Mainlanguage *string
 		Bleed        *bag.ScaledPoint
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 	if attValues.Mainlanguage != nil {
@@ -723,7 +723,7 @@ func cmdPageformat(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 		Width  bag.ScaledPoint `sdxml:"mustexist"`
 		Height bag.ScaledPoint `sdxml:"mustexist"`
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 
@@ -738,7 +738,7 @@ func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		Color    string
 		Features string
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 
@@ -769,7 +769,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		Area      string
 		Groupname string
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 	if attValues.Area == "" {
@@ -872,7 +872,7 @@ func cmdSetGrid(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 		Width  bag.ScaledPoint
 		Height bag.ScaledPoint
 	}{}
-	if err := getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 
@@ -903,7 +903,7 @@ func cmdSetVariable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		Variable string  `sdxml:"mustexist"`
 		Trace    bool
 	}{}
-	if err := getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 
@@ -935,7 +935,7 @@ func cmdStylesheet(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 		Scope string
 		Href  string
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 
@@ -1002,7 +1002,7 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		Width      bag.ScaledPoint
 		FontFamily string
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 
@@ -1091,7 +1091,7 @@ func cmdTrace(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		Hyphenation    *bool
 		Gridallocation *bool
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 	if attValues.Grid != nil {
@@ -1126,7 +1126,7 @@ func cmdValue(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	attValues := &struct {
 		Select *string
 	}{}
-	if err = getXMLAtttributes(xd, layoutelt, attValues); err != nil {
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 

@@ -54,8 +54,8 @@ var (
 	scaledPointsPtrType = reflect.TypeOf(&dummySP)
 )
 
-// getXMLAtttributes fills the struct at v with the attribute values of the current element.
-func getXMLAtttributes(xd *xtsDocument, layoutelt *goxml.Element, v interface{}) error {
+// getXMLAttributes fills the struct at v with the attribute values of the current element.
+func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v interface{}) error {
 	attributes := make(map[string]string)
 	for _, attrib := range layoutelt.Attributes() {
 		attributes[attrib.Name] = attrib.Value

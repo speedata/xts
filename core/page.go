@@ -128,7 +128,7 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 					attValues := &struct {
 						Name string `sdxml:"mustexist"`
 					}{}
-					if err = getXMLAtttributes(xd, t, attValues); err != nil {
+					if err = getXMLAttributes(xd, t, attValues); err != nil {
 						return nil, nil, err
 					}
 					var rects []*gridRect
@@ -140,7 +140,7 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 								Column int `sdxml:"mustexist"`
 								Row    int `sdxml:"mustexist"`
 							}{}
-							if err = getXMLAtttributes(xd, c, attValues); err != nil {
+							if err = getXMLAttributes(xd, c, attValues); err != nil {
 								return nil, nil, err
 							}
 							rect := gridRect{
