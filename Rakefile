@@ -19,15 +19,21 @@ task :default do
 	puts
 end
 
-
-desc "Compile and install necessary software"
-task :build  do
-	sh "go build -ldflags \"-X github.com/speedata/xts/core.Version=#{@xts_version}\" -o bin/xts github.com/speedata/xts/xts"
-end
-
 task :xtshelper  do
 	sh "go build -ldflags \"-X main.version=#{@xts_version} -X main.basedir=#{installdir} \" -o bin/xtshelper github.com/speedata/xts/helper"
 end
+
+
+desc "Compile and install necessary software"
+task :build do
+	sh "go build -ldflags \"-X github.com/speedata/xts/core.Version=#{@xts_version}\" -o bin/xts github.com/speedata/xts/xts"
+end
+
+task "doc" => [:xtshelper] do
+	sh "#{installdir}/bin/xtshelper doc"
+	puts "done"
+end
+
 
 
 task :schema => [:xtshelper] do

@@ -10,12 +10,28 @@ import (
 const fnNS = "urn:speedata.de/2021/xtsfunctions/en"
 
 func init() {
+	goxpath.RegisterFunction(&goxpath.Function{Name: "current-row", Namespace: fnNS, F: fnCurrentRow, MinArg: 0, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "dummytext", Namespace: fnNS, F: fnDummytext, MinArg: 0, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "even", Namespace: fnNS, F: fnEven, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "group-height", Namespace: fnNS, F: fnGroupheight, MinArg: 1, MaxArg: 2})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "group-width", Namespace: fnNS, F: fnGroupwidth, MinArg: 1, MaxArg: 2})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "file-exists", Namespace: fnNS, F: fnFileExists, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "odd", Namespace: fnNS, F: fnOdd, MinArg: 1, MaxArg: 1})
+}
+
+func fnCurrentRow(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	areaname := defaultAreaName
+	if len(args) > 0 {
+		firstArg := args[0]
+		areaname = firstArg.Stringvalue()
+	}
+	var area *area
+	var ok bool
+	xd := ctx.Store["xd"].(*xtsDocument)
+	if area, ok = xd.currentGrid.areas[areaname]; !ok {
+		return nil, fmt.Errorf("area %s unknown", areaname)
+	}
+	return goxpath.Sequence{int(xd.currentGrid.CurrentRow(area, 1))}, nil
 }
 
 func fnDummytext(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {

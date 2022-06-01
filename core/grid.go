@@ -114,8 +114,6 @@ type grid struct {
 	marginTop       bag.ScaledPoint
 	marginBottom    bag.ScaledPoint
 	allocatedBlocks allocationMatrix
-	currentCol      coord
-	currentRow      coord
 	areas           map[string]*area
 	inGroup         bool
 }
@@ -126,15 +124,8 @@ func newGrid(xd *xtsDocument) *grid {
 		gridHeight: xd.defaultGridHeight,
 		gridGapX:   xd.defaultGridGapX,
 		gridGapY:   xd.defaultGridGapY,
-		currentRow: 1,
-		currentCol: 1,
 		areas:      make(map[string]*area),
 		inGroup:    true,
-	}
-
-	g.areas[pageAreaName] = &area{
-		name:  pageAreaName,
-		frame: []*gridRect{{1, 1, coord(g.nx), coord(g.ny)}},
 	}
 
 	return g
@@ -144,6 +135,10 @@ func newGrid(xd *xtsDocument) *grid {
 func (g *grid) setPage(p *page) {
 	g.page = p
 	g.allocatedBlocks = make(allocationMatrix)
+	g.areas[pageAreaName] = &area{
+		name:  pageAreaName,
+		frame: []*gridRect{{1, 1, coord(g.nx), coord(g.ny)}},
+	}
 }
 
 func (g *grid) String() string {
@@ -152,30 +147,28 @@ func (g *grid) String() string {
 
 // posX returns the horizontal offset relative to the left page border. Column 1
 // returns the margin left.
-func (g *grid) posX(column coord, areaname string) bag.ScaledPoint {
+func (g *grid) posX(column coord, area *area) bag.ScaledPoint {
 	if column == 0 {
 		return bag.ScaledPoint(0)
 	}
-	var offsetX coord
-	if area, ok := g.areas[areaname]; ok {
-		offsetX = area.frame[area.currentFrame].col
+	posx := g.marginLeft + bag.ScaledPoint(column-1)*g.gridWidth
+	if column > 1 {
+		posx += bag.ScaledPoint(column-2) * g.gridGapX
 	}
-	posX := bag.ScaledPoint(column + offsetX - 2)
-	return posX*g.gridWidth + posX*g.gridGapX + g.marginLeft
+	return posx
 }
 
 // posY returns the vertical offset relative to the top page border. Row 1
 // returns the top margin.
-func (g *grid) posY(row coord, areaname string) bag.ScaledPoint {
+func (g *grid) posY(row coord, area *area) bag.ScaledPoint {
 	if row == 0 {
 		return bag.ScaledPoint(0)
 	}
-	var offsetY coord
-	if area, ok := g.areas[areaname]; ok {
-		offsetY = area.frame[area.currentFrame].row
+	posy := g.marginTop + bag.ScaledPoint(row-1)*g.gridHeight
+	if row > 1 {
+		posy += bag.ScaledPoint(row-2) * g.gridGapY
 	}
-	posY := bag.ScaledPoint(row + offsetY - 2)
-	return posY*g.gridHeight + posY*g.gridGapY + g.marginTop
+	return posy
 }
 
 // height returns the height of the number of columns.
@@ -198,16 +191,13 @@ func (g *grid) heightToRows(height bag.ScaledPoint) coord {
 	return coord(math.Ceil(r - 0.005))
 }
 
-func (g *grid) allocate(x, y coord, areaname string, wd, ht bag.ScaledPoint) {
+func (g *grid) allocate(x, y coord, area *area, wd, ht bag.ScaledPoint) {
 	var warningTopRaised, warningLeftRaised, warningRightRaised, warningBottomRaised bool
 	var offsetX coord
 	var offsetY coord
-	if area, ok := g.areas[areaname]; ok {
-		offsetX = area.frame[area.currentFrame].col
-	}
-	if area, ok := g.areas[areaname]; ok {
-		offsetY = area.frame[area.currentFrame].row
-	}
+
+	offsetX = area.frame[area.currentFrame].col
+	offsetY = area.frame[area.currentFrame].row
 
 	for col := coord(1); col <= g.widthToColumns(wd); col++ {
 		for row := coord(1); row <= g.heightToRows(ht); row++ {
@@ -233,26 +223,27 @@ func (g *grid) allocate(x, y coord, areaname string, wd, ht bag.ScaledPoint) {
 			}
 		}
 	}
-	g.currentCol = g.widthToColumns(wd) + x
-	g.currentRow = y
-}
-func (g *grid) findFreeSpaceForObject(vl *node.VList, areaname string) (gridCoord, error) {
-	var area *area
-	var ok bool
-	if area, ok = g.areas[areaname]; !ok {
-		return 0, fmt.Errorf("area %q not found", areaname)
+	col := x + g.widthToColumns(wd)
+	if col > coord(g.nx) {
+		area.currentCol = 1
+		area.currentRow = y + g.heightToRows(ht)
 	}
+}
+func (g *grid) findFreeSpaceForObject(vl *node.VList, area *area) (gridCoord, error) {
 	if area.currentRow == 0 {
 		area.currentRow = 1
+	}
+	if area.currentCol == 0 {
+		area.currentCol = 1
 	}
 	rowOffset := area.frame[area.currentFrame].row
 
 	row := area.currentRow + rowOffset - 1
 	wdCols := g.widthToColumns(vl.Width)
 
-	if g.currentCol >= coord(g.nx) {
-		g.nextRow()
-	}
+	// if g.currentCol >= coord(g.nx) {
+	// 	g.nextRow()
+	// }
 	col := g.fitsInRow(row, wdCols, area)
 	if col > 0 {
 		col = col - area.frame[area.currentFrame].col + 1
@@ -263,12 +254,12 @@ func (g *grid) findFreeSpaceForObject(vl *node.VList, areaname string) (gridCoor
 }
 
 func (g *grid) nextRow() {
-	g.currentCol = 1
-	g.currentRow++
+	// g.currentCol = 1
+	// g.currentRow++
 }
 
 func (g *grid) fitsInRow(y coord, wdCols coord, area *area) coord {
-	col := area.currentCol + area.frame[area.currentFrame].col
+	col := area.currentCol + area.frame[area.currentFrame].col - 1
 	row := y
 	for {
 		if g.allocatedBlocks.allocValue(col, row) > 0 && int(col) <= g.nx {
@@ -285,4 +276,12 @@ func (g *grid) fitsInRow(y coord, wdCols coord, area *area) coord {
 		}
 	}
 	return col
+}
+
+func (g *grid) CurrentRow(area *area, framenumber int) int {
+	return int(area.currentRow)
+}
+
+func (g *grid) CurrentCol(area *area, framenumber int) int {
+	return int(area.currentCol)
 }

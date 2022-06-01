@@ -32,7 +32,6 @@ func init() {
 		"Box":              cmdBox,
 		"Circle":           cmdCircle,
 		"ClearPage":        cmdClearpage,
-		"Color":            cmdColor,
 		"Contents":         cmdContents,
 		"Copy-of":          cmdCopyof,
 		"DefineFontfamily": cmdDefineFontfamily,
@@ -44,6 +43,7 @@ func init() {
 		"Group":            cmdGroup,
 		"Image":            cmdImage,
 		"LoadFontfile":     cmdLoadFontfile,
+		"Loop":             cmdLoop,
 		"Message":          cmdMessage,
 		"NextFrame":        cmdNextFrame,
 		"Options":          cmdOptions,
@@ -54,6 +54,7 @@ func init() {
 		"Record":           cmdRecord,
 		"SetGrid":          cmdSetGrid,
 		"SetVariable":      cmdSetVariable,
+		"Span":             cmdSpan,
 		"Stylesheet":       cmdStylesheet,
 		"Switch":           cmdSwitch,
 		"Textblock":        cmdTextblock,
@@ -245,27 +246,6 @@ func cmdClearpage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	return nil, nil
 }
 
-func cmdColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
-	var err error
-	attValues := &struct {
-		Name string
-	}{}
-	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
-		return nil, err
-	}
-
-	seq, err := dispatch(xd, layoutelt, xd.data)
-
-	te := &frontend.TypesettingElement{
-		Settings: frontend.TypesettingSettings{
-			frontend.SettingColor: attValues.Name,
-		},
-	}
-	getTextvalues(te, seq, "cmdColor", layoutelt.Line)
-
-	return xpath.Sequence{te}, err
-}
-
 func cmdContents(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	_, err := dispatch(xd, layoutelt, xd.data)
 	if err != nil {
@@ -410,7 +390,14 @@ func cmdDefineFontsize(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequenc
 	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
-
+	if attValues.Fontsize == 0 || attValues.Leading == 0 {
+		if attValues.Fontsize == 0 {
+			bag.Logger.Warnf("DefineFontsize (line %d): fontsize is 0", layoutelt.Line)
+		}
+		if attValues.Leading == 0 {
+			bag.Logger.Warnf("DefineFontsize (line %d): leading is 0", layoutelt.Line)
+		}
+	}
 	if xd.fontsizes == nil {
 		xd.fontsizes = make(map[string][2]bag.ScaledPoint)
 	}
@@ -582,6 +569,7 @@ func cmdLoadFontfile(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence,
 
 	fn, err := xd.cfg.FindFile(attValues.Filename)
 	if err != nil {
+		bag.Logger.Errorf("error in line %d", layoutelt.Line)
 		return nil, err
 	}
 	fs := frontend.FontSource{
@@ -644,6 +632,36 @@ func cmdRecord(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 		dataDispatcher[attValues.Match] = make(map[string]*goxml.Element)
 	}
 	dataDispatcher[attValues.Match][attValues.Mode] = layoutelt
+	return nil, nil
+}
+
+func cmdLoop(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Select   string `sdxml:"noescape,mustexist"`
+		Variable string
+	}{}
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	var eval xpath.Sequence
+	eval, err = evaluateXPath(xd, layoutelt, attValues.Select)
+	if err != nil {
+		return nil, err
+	}
+	f, err := strconv.ParseFloat(eval.Stringvalue(), 64)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := 1; i < int(f)+1; i++ {
+		xd.data.SetVariable(attValues.Variable, xpath.Sequence{i})
+		eval, err = dispatch(xd, layoutelt, xd.data)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return nil, nil
 }
 
@@ -775,6 +793,12 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	if attValues.Area == "" {
 		attValues.Area = defaultAreaName
 	}
+	var area *area
+	var ok bool
+	if area, ok = xd.currentGrid.areas[attValues.Area]; !ok {
+		return nil, fmt.Errorf("area %s not found", attValues.Area)
+	}
+
 	pos := positioningUnknown
 
 	var columnInt, rowInt int
@@ -810,6 +834,8 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 			pos = positioningAbsolute
 		}
 	}
+	xd.store["maxwidth"] = xd.currentGrid.nx
+
 	var seq xpath.Sequence
 	if attValues.Groupname != "" {
 		seq = xpath.Sequence{xd.groups[attValues.Groupname].contents}
@@ -818,7 +844,6 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		if err != nil {
 			return nil, err
 		}
-
 	}
 	if len(seq) == 0 {
 		bag.Logger.Warnf("line %d: no objects in PlaceObject", layoutelt.Line)
@@ -843,7 +868,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 
 	if pos == positioningUnknown {
 		pos = positioningGrid
-		xy, err := xd.currentGrid.findFreeSpaceForObject(vl, attValues.Area)
+		xy, err := xd.currentGrid.findFreeSpaceForObject(vl, area)
 		if err != nil {
 			return nil, err
 		}
@@ -857,7 +882,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	case positioningAbsolute:
 		xd.currentPage.outputAbsolute(columnLength, rowLength, vl)
 	case positioningGrid:
-		xd.OutputAt(vl, col, row, true, attValues.Area, origin)
+		xd.OutputAt(vl, col, row, true, area, origin)
 	}
 
 	return seq, nil
@@ -927,6 +952,55 @@ func cmdSetVariable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		bag.Logger.Infof("SetVariable (line %d): %s to %s", layoutelt.Line, attValues.Variable, eval)
 	}
 	return nil, nil
+}
+
+func cmdSpan(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	attValues := &struct {
+		Class string
+		ID    string
+		Style string
+	}{}
+
+	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+
+	htmlString := `<span `
+	if class := attValues.Class; class != "" {
+		htmlString += fmt.Sprintf("class=%q ", class)
+	}
+	if id := attValues.ID; id != "" {
+		htmlString += fmt.Sprintf("id=%q", id)
+	}
+	if style := attValues.Style; style != "" {
+		htmlString += fmt.Sprintf("style=%q", style)
+	}
+	htmlString += ">"
+
+	a, err := xd.layoutcss.ParseHTMLFragment(htmlString, "")
+	if err != nil {
+		return nil, err
+	}
+	seq, err := dispatch(xd, layoutelt, xd.data)
+
+	te := &frontend.TypesettingElement{
+		Settings: frontend.TypesettingSettings{},
+	}
+
+	attrs, _ := csshtml.ResolveAttributes(a.Find("span").First().Nodes[0].Attr)
+	if val, ok := attrs["color"]; ok {
+		te.Settings[frontend.SettingColor] = xd.document.GetColor(val)
+	}
+	if val, ok := attrs["font-weight"]; ok {
+		te.Settings[frontend.SettingFontWeight] = frontend.ResolveFontWeight(val, frontend.FontWeight100)
+	}
+	if val, ok := attrs["font-style"]; ok {
+		te.Settings[frontend.SettingStyle] = frontend.ResolveFontStyle(val)
+	}
+
+	getTextvalues(te, seq, "cmdSpan", layoutelt.Line)
+
+	return xpath.Sequence{te}, err
 }
 
 func cmdStylesheet(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -1006,8 +1080,8 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		return nil, err
 	}
 
-	leading := 12 * bag.Factor
-	fontsize := 10 * bag.Factor
+	leading := xd.fontsizes["text"][1]
+	fontsize := xd.fontsizes["text"][0]
 	attrFontsize := attValues.Fontsize
 
 	ff := xd.document.FindFontFamily("text")
@@ -1062,12 +1136,8 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	node.AppendLineEndAfter(tail)
 
 	ls := node.NewLinebreakSettings()
-
 	if attValues.Width == 0 {
-		if xd.currentGrid.currentCol > coord(xd.currentGrid.nx) {
-			xd.currentGrid.nextRow()
-		}
-		attValues.Width = xd.currentGrid.width(coord(xd.currentGrid.nx) - xd.currentGrid.currentCol + 1)
+		attValues.Width = xd.currentGrid.width(coord(xd.store["maxwidth"].(int)))
 	}
 
 	ls.HSize = attValues.Width

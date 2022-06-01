@@ -6,10 +6,11 @@
 
   <define name="Switchcontents">
     <optional><cmd name="ClearPage"/></optional>
+    <optional><cmd name="Loop"/></optional>
     <optional><cmd name="Message"/></optional>
     <optional><cmd name="NextFrame"/></optional>
-    <optional><cmd name="Switch"/></optional>
     <optional><cmd name="PlaceObject"/></optional>
+    <optional><cmd name="Switch"/></optional>
   </define>
 
 
@@ -32,6 +33,7 @@
     <optional><cmd name="ClearPage"/></optional>
     <optional><cmd name="ForAll"/></optional>
     <optional><cmd name="Group"/></optional>
+    <optional><cmd name="Loop"/></optional>
     <optional><cmd name="Message"/></optional>
     <optional><cmd name="NextFrame"/></optional>
     <optional><cmd name="PlaceObject"/></optional>
@@ -45,8 +47,8 @@
       <choice>
         <cmd name="A"/>
         <cmd name="B"/>
-        <cmd name="Color"/>
         <cmd name="Value"/>
+        <cmd name="Span"/>
       </choice>
     </zeroOrMore>
   </define>
@@ -487,10 +489,10 @@
 
   <command en="AtPageCreation">
     <description xml:lang="en">
-      <para>The contents of the element <cmd name="AtPageCreation"/> is executed the first time the page is accessed. This is used in <cmd name="Pagetype"/>.</para>
+      <para>The contents of the element <cmd name="AtPageCreation"/> is executed the first time the page is accessed. This is used in <cmd name="DefineMasterpage"/>.</para>
     </description>
     <description xml:lang="de">
-      <para>Die Inhalte des Elements <cmd name="AtPageCreation"/> werden ausgeführt, sobald das erste Mal auf die Seite zugegriffen wird. Dieser Befehl kann in einem Seitentyp (<cmd name="Pagetype"/>) benutzt werden.</para>
+      <para>Die Inhalte des Elements <cmd name="AtPageCreation"/> werden ausgeführt, sobald das erste Mal auf die Seite zugegriffen wird. Dieser Befehl kann in einem Seitentyp (<cmd name="DefineMasterpage"/>) benutzt werden.</para>
     </description>
     <childelements>
       <oneOrMore>
@@ -521,14 +523,14 @@
   </PlaceObject>
 </AtPageCreation>]]></listing>
     </example>
-    <seealso><cmd name="Pagetype"/>, <cmd name="AtPageShipout"/></seealso>
+    <seealso><cmd name="DefineMasterpage"/>, <cmd name="AtPageShipout"/></seealso>
   </command>
   <command en="AtPageShipout">
     <description xml:lang="en">
-      <para>The enclosed instructions will be executed when the page is placed into the PDF file. Used in <cmd name="Pagetype"/>.</para>
+      <para>The enclosed instructions will be executed when the page is placed into the PDF file. Used in <cmd name="DefineMasterpage"/>.</para>
     </description>
     <description xml:lang="de">
-      <para>Die innerhalb dieses Befehls definierten Anweisungen werden ausgeführt, sobald die Seite ins PDF ausgegeben wird. Wird in <cmd name="Pagetype"/> benutzt.</para>
+      <para>Die innerhalb dieses Befehls definierten Anweisungen werden ausgeführt, sobald die Seite ins PDF ausgegeben wird. Wird in <cmd name="DefineMasterpage"/> benutzt.</para>
     </description>
     <childelements>
       <oneOrMore>
@@ -558,7 +560,7 @@
   </PlaceObject>
 </AtPageShipout>]]></listing>
     </example>
-    <seealso><cmd name="AtPageCreation"/>, <cmd name="Pagetype"/></seealso>
+    <seealso><cmd name="AtPageCreation"/>, <cmd name="DefineMasterpage"/></seealso>
   </command>
 
   <command en="Attribute">
@@ -836,7 +838,7 @@
     </seealso>
   </command>
 
-  <command en="Circle" css="circle" since="2.3.42">
+  <command en="Circle" css="circle">
     <description xml:lang="en">
       <para>Create a circle or ellipse.</para>
     </description>
@@ -970,62 +972,6 @@
   </command>
 
 
-  <command en="Color">
-    <description xml:lang="en">
-      <para>Switch to another text color</para>
-    </description>
-    <description xml:lang="de">
-      <para>Auf eine andere Textfarbe wechseln</para>
-    </description>
-    <childelements>
-      <reference name="Textvalues"/>
-    </childelements>
-    <attribute en="name" type="text" optional="no">
-      <description xml:lang="en">
-        <para>The name of the color. Must be pre-defined with <cmd name="DefineColor"/>.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Der Name der Farbe. Muss mit <cmd name="DefineColor"/> vorher definiert werden.</para>
-      </description>
-    </attribute>
-    <example xml:lang="en">
-      <listing><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<Layout
-  xmlns="urn:speedata.de:2009/publisher/en">
-
-  <DefineColor name="red" value="#f00"/>
-  <Record element="data">
-    <PlaceObject>
-      <Textblock>
-        <Paragraph>
-          <Value>Hello </Value><Color name="red"><Value>bar</Value></Color>
-        </Paragraph>
-      </Textblock>
-    </PlaceObject>
-  </Record>
-</Layout>]]></listing>
-    </example>
-    <example xml:lang="de">
-      <listing><![CDATA[<Layout xmlns:sd="urn:speedata:2009/publisher/functions/en" xmlns="urn:speedata.de:2009/publisher/en">
-
-  <DefineColor name="rot" wert="#f00"/>
-
-  <Record element="data">
-    <PlaceObject>
-      <Textblock>
-        <Paragraph>
-          <Value>Hallo </Value><Color name="rot"><Value>Welt</Value></Color>
-        </Paragraph>
-      </Textblock>
-    </PlaceObject>
-  </Record>
-
-</Layout>
-]]></listing>
-    </example>
-    <seealso></seealso>
-  </command>
-
   <command en="Contents">
     <description xml:lang="en">
       <para>Marks the contents of a <cmd name="Group"/>, a virtual area.</para>
@@ -1119,7 +1065,7 @@
       <para>Definiert Farben, die später im Layout benutzt werden können</para>
     </description>
     <childelements/>
-    <attribute en="alpha" type="number" optional="yes" since="4.3.15">
+    <attribute en="alpha" type="number" optional="yes">
       <description xml:lang="en">
         <para>Set the opacity of the color. (0-100/255, where 0 is invisible)</para>
       </description>
@@ -1318,7 +1264,7 @@
       </description>
     </attribute>
     <remark xml:lang="en">
-      <para>The default fontface is named »text« and it can be redefined by defining a new font family called »text«.</para>
+      <para>The default font family is named »text« and it can be redefined by defining a new font family called »text«.</para>
       <para>The variants bold, italic and bold italic are optional. </para>
     </remark>
     <remark xml:lang="de">
@@ -1363,23 +1309,23 @@
       <para>Set the font size and the leading</para>
     </description>
     <description xml:lang="de">
-      <para></para>
+      <para>Setze die Schriftgröße und den Zeilenabstand.</para>
     </description>
     <childelements></childelements>
     <attribute en="fontsize" optional="no" allowxpath="yes" type="length">
       <description xml:lang="en">
-        <para></para>
+        <para>Fontsize, for example <tt>12pt</tt>.</para>
       </description>
       <description xml:lang="de">
-        <para></para>
+        <para>Schriftgröße, beispielsweise <tt>12pt</tt>.</para>
       </description>
     </attribute>
     <attribute en="leading" optional="no" allowxpath="yes" type="length">
       <description xml:lang="en">
-        <para></para>
+        <para>Distance between two base lines, for example <tt>14pt</tt>.</para>
       </description>
       <description xml:lang="de">
-        <para></para>
+        <para>Abstand zwischen zwei Grundlinien, beispielsweise <tt>14pt</tt></para>
       </description>
     </attribute>
     <attribute en="name" optional="no" allowxpath="yes" type="text">
@@ -1442,7 +1388,7 @@
     </attribute>
     <remark xml:lang="en">
       <para>The contents of the element at <cmd name="AtPageCreation"/> is executed, as soon as something will be placed on the page. The commands inside <cmd name="AtPageShipout"/> are executed when switching to a new page.</para>
-      <para>When creating a new page, all page types are tried in reversed order. That means that the later defined master pages have a higher priority. This is important if more than one test in a pagetype definition evaluates to true.</para>
+      <para>When creating a new page, all page types are tried in reversed order. That means that the later defined master pages have a higher priority. This is important if more than one test in a Masterpage definition evaluates to true.</para>
     </remark>
     <remark xml:lang="de">
       <para>Die Inhalte des Elements <cmd name="AtPageCreation"/> werden ausgeführt, sobald das erste Mal auf die Seite zugegriffen wird, bei <cmd name="AtPageShipout"/> werden die Inhalte ausgeführt, sobald
@@ -1451,10 +1397,10 @@
         speziellen. Das ist nur dann wichtig, wenn mehrere Bedingungen »wahr« ergeben würden. </para>
     </remark>
     <example xml:lang="en">
-      <listing><![CDATA[<Pagetype name="right page" test=" sd:odd( sd:current-page() ) "/>]]></listing>
-      <listing><![CDATA[<Pagetype name="left page" test=" sd:even( sd:current-page() ) "/>]]></listing>
-      <listing><![CDATA[<Pagetype name="main part right" test=" sd:odd( sd:current-page() ) and $chapter='main' "/>]]></listing>
-      <listing><![CDATA[<Pagetype name="right page" test="sd:odd( sd:current-page() )">
+      <listing><![CDATA[<DefineMasterpage name="right page" test=" sd:odd( sd:current-page() ) "/>]]></listing>
+      <listing><![CDATA[<DefineMasterpage name="left page" test=" sd:even( sd:current-page() ) "/>]]></listing>
+      <listing><![CDATA[<DefineMasterpage name="main part right" test=" sd:odd( sd:current-page() ) and $chapter='main' "/>]]></listing>
+      <listing><![CDATA[<DefineMasterpage name="right page" test="sd:odd( sd:current-page() )">
   <Margin left="1cm" right="1cm" top="1cm" bottom="1cm"/>
   <PositioningArea name="frame1">
     <PositioningFrame width="12" height="30" column="2" row="2"/>
@@ -1470,13 +1416,13 @@
       <!-- footer -->
     </PlaceObject>
   </AtPageShipout>
-</Pagetype>]]></listing>
+</DefineMasterpage>]]></listing>
     </example>
     <example xml:lang="de">
-      <listing><![CDATA[<Pagetype name="rechte Seite" test=" sd:odd( sd:current-page() ) ">]]></listing>
-      <listing><![CDATA[<Pagetype name="linke Seite" test=" sd:even( sd:current-page() ) ">]]></listing>
-      <listing><![CDATA[<Pagetype name="Hauptteil rechte Seite" test=" sd:odd( sd:current-page() )  and $kapitel='hauptteil' ">]]></listing>
-      <listing><![CDATA[<Pagetype name="rechte Seite" test="sd:odd( sd:current-page() )">
+      <listing><![CDATA[<DefineMasterpage name="rechte Seite" test=" sd:odd( sd:current-page() ) ">]]></listing>
+      <listing><![CDATA[<DefineMasterpage name="linke Seite" test=" sd:even( sd:current-page() ) ">]]></listing>
+      <listing><![CDATA[<DefineMasterpage name="Hauptteil rechte Seite" test=" sd:odd( sd:current-page() )  and $kapitel='hauptteil' ">]]></listing>
+      <listing><![CDATA[<DefineMasterpage name="rechte Seite" test="sd:odd( sd:current-page() )">
   <Margin left="1cm" right="1cm" top="1cm" bottom="1cm"/>
   <AtPageCreation>
     <PlaceObject>
@@ -1492,7 +1438,7 @@
     <PositioningFrame width="12" height="30" column="2" row="2"/>
     <PositioningFrame width="12" height="30" column="16" row="2"/>
   </PositioningArea>
-</Pagetype>]]></listing>
+</Masterpage>]]></listing>
     </example>
     <seealso><ref name="xpath"/>, <cmd name="AtPageCreation"/>,  <cmd name="AtPageShipout"/>,   <cmd name="PositioningArea"/>,  <cmd name="ClearPage"/>, <cmd name="DefineMatter"/>
     </seealso>
@@ -1571,7 +1517,7 @@
         <para>Die Anzahl der Kinder wird durch die Zahl begrenzt.</para>
       </description>
     </attribute>
-    <attribute en="start" optional="yes" type="number" since="2.3.67">
+    <attribute en="start" optional="yes" type="number" >
       <description xml:lang="en">
         <para>The first entry to process. Default is 1.</para>
       </description>
@@ -1695,6 +1641,7 @@
     <description xml:lang="de">
       <para>Bindet eine externe Grafik ein. Erlaubte Grafikformate sind PDF (.pdf), PNG (.png) und JPEG (.jpg). Siehe unten für die Einschränkung eingebundener PDF-Dateien.</para>
     </description>
+    <childelements/>
     <attribute en="href" type="text" optional="yes">
       <description xml:lang="en">
         <para>Filename of the image. Can be a file in the search path, an absolute file name, a file-URI for absolute paths (e.g. <tt>file:///path/to/image.pdf</tt>) or a location on the web (http, https).</para>
@@ -1783,8 +1730,10 @@
     <Image width="10" file="{string(.)}" />
   </PlaceObject>
 </Record>]]></listing>
-</example>
-</command>
+    </example>
+    <seealso><cmd name="PlaceObject"/></seealso>
+  </command>
+
   <command en="Italic">
     <description xml:lang="en">
       <para>The font face to be used when the user switches to italic.</para>
@@ -1833,6 +1782,8 @@
       <cmd name="BoldItalic"/>
     </seealso>
   </command>
+
+
   <command en="LoadFontfile">
     <description xml:lang="en">
       <para>Load a font file (.otf, .ttf, .pfb) and associate it with an internal name. If a glyph is not found in the font file, an error will be raised (this can be configured via the Options command). You can specify fallbacks as a child element of Loadfontfile.</para>
@@ -1882,6 +1833,63 @@
     <seealso>
       <cmd name="DefineFontfamily"/></seealso>
   </command>
+
+
+  <command en="Loop">
+    <description xml:lang="en">
+      <para>Repeat the contents of this element several times.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Wiederhole den Inhalt dieses Elements mehrfach.</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <interleave>
+          <reference name="Switchcontents"/>
+        </interleave>
+      </oneOrMore>
+    </childelements>
+    <attribute en="select" type="xpath" optional="no">
+      <description xml:lang="en">
+        <para>The number of loops. Must be a number or castable as a number.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Die Anzahl der Schleifendurchläufe. Muss eine Zahl oder in eine Zahl konvertierbar sein.</para>
+      </description>
+    </attribute>
+    <attribute en="variable" type="text" optional="yes">
+      <description xml:lang="en">
+        <para>If given, store the current loop value in this variable. If omitted, the loop value is stored in the variable <tt>_loopcounter</tt>.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Wenn angegeben, wird die Nummer des Schleifendurchlaufs in dieser Variablen gespeichert, ansonsten in <tt>_loopcounter</tt>.</para>
+      </description>
+    </attribute>
+    <example xml:lang="de">
+      <listing><![CDATA[<PlaceObject>
+  <Table>
+    <Loop select="5" variable="i">
+      <Tr><Td><Paragraph><Value select="$i"/></Paragraph></Td></Tr>
+    </Loop>
+  </Table>
+</PlaceObject>
+]]></listing>
+    </example>
+    <example xml:lang="en">
+      <listing><![CDATA[<PlaceObject>
+  <Table>
+    <Loop select="5" variable="i">
+      <Tr>
+        <Td><Paragraph><Value select="$i"/></Paragraph></Td>
+      </Tr>
+    </Loop>
+  </Table>
+</PlaceObject>
+]]></listing>
+    </example>
+    <seealso><cmd name="ForAll"/></seealso>
+  </command>
+
 
   <command en="Message">
     <description xml:lang="en">
@@ -1936,7 +1944,7 @@
         </description>
       </choice>
     </attribute>
-    <attribute en="errorcode" optional="yes" type="number" since="2.3.69">
+    <attribute en="errorcode" optional="yes" type="number" >
       <description xml:lang="en">
         <para>If an error is raised, use this code on exit. Defaults to 1. Negative values are reserved for system purpose.</para>
       </description>
@@ -1944,7 +1952,7 @@
         <para>Wenn ein Fehler ausgegeben wird, benutze diesen Fehlercode. Voreinstellung 1. Negative Werte sind für interne Zwecke reserviert.</para>
       </description>
     </attribute>
-    <attribute en="exit" optional="yes" since="3.1.17">
+    <attribute en="exit" optional="yes">
       <description xml:lang="en"><para>Tells the software to exit immediately.</para></description>
       <description xml:lang="de"><para>Soll sich der Publisher beenden?</para></description>
       <choice en="no">
@@ -2362,7 +2370,7 @@
         <para>Name des Platzierungsbereichs</para>
       </description>
     </attribute>
-    <attribute en="framecolor" optional="yes" since="2.9.12" type="text">
+    <attribute en="framecolor" optional="yes" type="text">
       <description xml:lang="en">
         <para>Set the color of the frame in grid=yes mode. Defaults to 'red'</para>
       </description>
@@ -2371,13 +2379,13 @@
       </description>
     </attribute>
     <example xml:lang="en">
-      <listing><![CDATA[<Pagetype name="right page" test="sd:odd( sd:current-page() )">
+      <listing><![CDATA[<Masterpage name="right page" test="sd:odd( sd:current-page() )">
   <Margin left="1cm" right="1cm" top="1cm" bottom="1cm"/>
   <PositioningArea name="frame1">
     <PositioningFrame width="12" height="30" column="2" row="2"/>
     <PositioningFrame width="12" height="30" column="16" row="2"/>
   </PositioningArea>
-</Pagetype>]]></listing>
+</Masterpage>]]></listing>
     </example>
     <example xml:lang="de">
       <listing><![CDATA[<PositioningArea name="rahmen1">
@@ -2431,13 +2439,13 @@
       </description>
     </attribute>
     <example xml:lang="en">
-      <listing><![CDATA[<Pagetype name="right page" test="sd:odd( sd:current-page() )">
+      <listing><![CDATA[<Masterpage name="right page" test="sd:odd( sd:current-page() )">
   <Margin left="1cm" right="1cm" top="1cm" bottom="1cm"/>
   <PositioningArea name="frame1">
     <PositioningFrame width="12" height="30" column="2" row="2"/>
     <PositioningFrame width="12" height="30" column="16" row="2"/>
   </PositioningArea>
-</Pagetype>]]></listing>
+</Masterpage>]]></listing>
     </example>
     <example xml:lang="de">
       <listing><![CDATA[<PositioningArea name="rahmen1">
@@ -2458,7 +2466,7 @@
       <para>Bearbeitet alle angegebenen Datensätze. Die Elemente, für die die Regeln ausgeführt werden sollen, werden mit dem Attribut select angegeben.</para>
     </description>
     <childelements/>
-    <attribute en="limit" optional="yes" since="2.5.6" type="number">
+    <attribute en="limit" optional="yes" type="number">
       <description xml:lang="en">
         <para>Limits the number of items processed with this command</para>
       </description>
@@ -2596,6 +2604,93 @@
     </seealso>
   </command>
 
+  <command en="SaveDataset">
+    <description xml:lang="en">
+      <para>Saves an element/attribute structure to be used in the next publisher run. The contents must have a tree structure.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Speichert eine XML-Datei auf Festplatte. Diese Datei muss als Kindelement hierarchische Struktur, zum Beispiel aus den Befehlen Element und Attribut enthalten, wahlweise zusammengesetzt durch Variablen. Eine ausführlichere Erläuterung findet sich im Abschnitt über automatisch generierte Verzeichnisse.</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <optional><cmd name="Loop"/></optional>
+        <optional><cmd name="Element"/></optional>
+        <optional><cmd name="Copy-of"/></optional>
+        <optional><cmd name="ForAll"/></optional>
+      </oneOrMore>
+    </childelements>
+    <attribute en="name" type="text" optional="no">
+      <description xml:lang="en">
+        <para>Name of the file. Example: toc</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name der Dateisatzdatei. Beispiel: toc</para>
+      </description>
+    </attribute>
+    <attribute en="elementname" type="text" optional="no">
+      <description xml:lang="en">
+        <para>Name of the root element that surrounds the elements given by the child elements.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name des Wurzelelements, das erzeugt wird.</para>
+      </description>
+    </attribute>
+    <attribute en="select" type="xpath" optional="yes">
+      <description xml:lang="en">
+        <para>Alternative to giving the data structure in the child elements.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Alternativ zur Angabe des Datensatzes im Kindelement.</para>
+      </description>
+    </attribute>
+    <attribute en="attributes" type="xpath" optional="yes">
+      <description xml:lang="en">
+        <para>The variable (as an XPath expression, e.g. <tt>$foo</tt>) which contains <cmd name="Attribute"/> Elements. These attributes are added to the root element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Der Variablenname (als XPath-Ausdruck, also <tt>$foo</tt>), der <cmd name="Attribute"/>-Elemente beinhaltet. Diese Attribute werden zum Wurzelelement hinzugefügt.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[  <Record element="data">
+    <SetVariable variable="attributesvar">
+      <Attribute name="att1" select="'Hello'" />
+      <Attribute name="att2" select="123" />
+    </SetVariable>
+
+    <SaveDataset name="toc" elementname="root" attributes="$attributesvar">
+      <Element name="child">
+        <Attribute name="attchild" select="999"/>
+      </Element>
+    </SaveDataset>
+  </Record>
+]]></listing>
+      <para>This code saves an XML file to the disc which has this structure:</para>
+      <listing><![CDATA[<root att1="Hello" att2="123">
+ <child attchild="999"/>
+</root>
+]]></listing>
+    </example>
+    <example xml:lang="en">
+      <listing><![CDATA[<SaveDataset name="toc" elementname="Contents">
+  <Copy-of select="$contents"/>
+</SaveDataset>
+]]></listing>
+      <para>is equivalent to</para>
+      <listing><![CDATA[<SaveDataset name="toc" elementname="Contents" select="$contents"/>]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<SaveDataset name="toc" elementname="Inhalt">
+   <Copy-of select="$Inhalt"/>
+</SaveDataset>]]></listing>
+      <para>Äquivalent dazu ist:</para>
+      <listing><![CDATA[<SaveDataset name="toc" elementname="Inhalt" select="$Inhalt" />]]></listing>
+    </example>
+    <seealso>
+      <cmd name="Element"/>, <cmd name="Attribute"/>, <cmd name="LoadDataset"/>, <ref name="directories"/>
+    </seealso>
+  </command>
+
 
   <command en="SetGrid">
     <description xml:lang="en">
@@ -2694,38 +2789,6 @@
       <description xml:lang="de">
         <para>Inhalt, der der Variablen zugewiesen wird.</para>
       </description>
-    </attribute>
-    <attribute en="type" optional="yes" since="4.3.10">
-      <description xml:lang="en">
-        <para>Set the data type of the variable. Currently only supported for MetaPost variables.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Setzt den Datentyp der Variable. Derzeit nur für MetaPost-Variablen unterstützt.</para>
-      </description>
-      <choice en="sd:any">
-        <description xml:lang="en">
-          <para>The default (any) datatype for variables in the speedata layout language.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Der voreingestellte Datentyp für die speedata Layoutsprache.</para>
-        </description>
-      </choice>
-      <choice en="mp:cmykcolor">
-        <description xml:lang="en">
-          <para>A MetaPost CMYK color.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Eine MetaPost CMYK Farbe.</para>
-        </description>
-      </choice>
-      <choice en="mp:rgbcolor">
-        <description xml:lang="en">
-          <para>A MetaPost RGB color.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Eine MetaPost RGB Farbe.</para>
-        </description>
-      </choice>
     </attribute>
     <attribute en="trace" optional="yes">
       <description xml:lang="en">
@@ -2836,6 +2899,76 @@
       </sch:rule>
       </sch:pattern>
     </rules>
+  </command>
+
+
+  <command en="Span" css="span">
+    <description xml:lang="en">
+      <para>Surround text by styling options.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Text mit Style-Optionen umgeben.</para>
+    </description>
+    <childelements>
+      <reference name="Textvalues"/>
+    </childelements>
+    <attribute en="class" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS class for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS Klasse für dieses Element.</para>
+      </description>
+    </attribute>
+    <attribute en="id" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS id for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS id für dieses Element.</para>
+      </description>
+    </attribute>
+    <attribute en="style" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>Set the CSS style.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Setze den CSS-Stil.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<Stylesheet>
+  .green { background-color: lightgreen; }
+</Stylesheet>
+
+<Record element="data">
+  <PlaceObject>
+    <Textblock>
+      <Paragraph>
+        <Span class="green"><Value>green</Value></Span>
+      </Paragraph>
+    </Textblock>
+  </PlaceObject>
+</Record>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Stylesheet>
+  .green { background-color: lightgreen; }
+</Stylesheet>
+
+<Record element="data">
+  <PlaceObject>
+    <Textblock>
+      <Paragraph>
+        <Span class="green"><Value>green</Value></Span>
+      </Paragraph>
+    </Textblock>
+  </PlaceObject>
+</Record>
+]]></listing>
+    </example>
+    <seealso></seealso>
   </command>
 
   <command en="Switch">
@@ -3079,6 +3212,8 @@
       <cmd name="Paragraph"/>, <cmd name="PlaceObject"/>
     </seealso>
   </command>
+
+
   <command en="Trace">
     <description xml:lang="en">
       <para>Set debugging switches</para>
@@ -3159,7 +3294,13 @@
         </description>
       </choice>
     </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<Trace grid="yes" />]]></listing>
+    </example>
+    <seealso></seealso>
   </command>
+
+
   <command en="Value">
     <description xml:lang="en">
       <para>Contains a text value that is passed to the surrounding element.</para>

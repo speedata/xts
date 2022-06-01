@@ -5,29 +5,34 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/speedata/boxesandglue/backend/bag"
 )
 
 var filelist = make(map[string]string)
 
-// InitDirs starts indexing the files.
-func InitDirs() error {
-	root, err := os.Getwd()
-	if err != nil {
-		return err
-	}
+// AddDir recursively adds a directory to the file list
+func AddDir(dirname string) error {
+	bag.Logger.Debugf("Add directory %q to recursive file list", dirname)
+	filepath.WalkDir(dirname, dirWalker)
+	return nil
+}
 
+// InitDirs starts indexing the files.
+func InitDirs(basedir string) error {
+	var err error
 	for _, dir := range []string{"fonts", "img"} {
-		dir = filepath.Join(root, dir)
-		bag.Logger.Debugf("Add directory %q to recursive file list", dir)
-		filepath.WalkDir(dir, dirWalker)
+		dir = filepath.Join(basedir, dir)
+		if err = AddDir(dir); err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
 func dirWalker(path string, d fs.DirEntry, err error) error {
-	if d.Type().IsRegular() {
+	if d != nil && d.Type().IsRegular() {
 		filelist[filepath.Base(path)] = path
 	}
 	return nil
@@ -51,6 +56,22 @@ func FindFile(filename string) (string, error) {
 
 	bag.Logger.Debugf("File lookup %q not found", filename)
 	return "", fmt.Errorf("%w: %s", os.ErrNotExist, filename)
+}
+
+func isFontFile(filename string) bool {
+	l := strings.ToLower(filename)
+	return strings.HasSuffix(l, ".ttf") || strings.HasSuffix(l, ".otf")
+}
+
+// FindFontFiles returns a list of all font files (otf,ttf)
+func FindFontFiles() []string {
+	var ret []string
+	for _, fn := range filelist {
+		if isFontFile(fn) {
+			ret = append(ret, fn)
+		}
+	}
+	return ret
 }
 
 func fileexists(fn string) bool {

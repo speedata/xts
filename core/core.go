@@ -15,6 +15,7 @@ import (
 	"github.com/speedata/boxesandglue/frontend"
 	"github.com/speedata/goxml"
 	xpath "github.com/speedata/goxpath"
+	"github.com/speedata/xts/pdfdraw"
 )
 
 var (
@@ -30,7 +31,7 @@ func init() {
 }
 
 type xtsDocument struct {
-	cfg               *XTSCofig
+	cfg               *XTSConfig
 	document          *frontend.Document
 	layoutcss         *csshtml.CSS
 	data              *xpath.Parser
@@ -44,22 +45,27 @@ type xtsDocument struct {
 	defaultGridGapY   bag.ScaledPoint
 	defaultGridNx     int
 	defaultGridNy     int
-	pagetypes         []*pagetype
+	masterpages       []*pagetype
 	currentPage       *page
 	currentGrid       *grid
 	currentGroup      *group
 	tracing           VTrace
+	// for “global” variables
+	store map[any]any
 }
 
 func newXTSDocument() *xtsDocument {
-	return &xtsDocument{
+	xd := &xtsDocument{
 		defaultGridWidth:  oneCM,
 		defaultGridHeight: oneCM,
 		defaultGridGapX:   0,
 		defaultGridGapY:   0,
 		layoutcss:         csshtml.NewCSSParser(),
 		groups:            make(map[string]*group),
+		fontsizes:         make(map[string][2]bag.ScaledPoint),
+		store:             make(map[any]any),
 	}
+	return xd
 }
 
 var inSetupPage bool
@@ -88,8 +94,8 @@ func (xd *xtsDocument) setupPage() {
 	}
 }
 
-// XTSCofig is the configuration file for PDF generation.
-type XTSCofig struct {
+// XTSConfig is the configuration file for PDF generation.
+type XTSConfig struct {
 	Layoutfile  io.ReadCloser
 	Datafile    io.ReadCloser
 	Outfile     io.WriteCloser
@@ -98,7 +104,7 @@ type XTSCofig struct {
 }
 
 // RunXTS is the entry point
-func RunXTS(cfg *XTSCofig) error {
+func RunXTS(cfg *XTSConfig) error {
 	starttime := time.Now()
 	var err error
 	var layoutxml *goxml.XMLDocument
@@ -122,6 +128,8 @@ func RunXTS(cfg *XTSCofig) error {
 	if d.data, err = xpath.NewParser(cfg.Datafile); err != nil {
 		return err
 	}
+	// connect the main document to the xpath parser, so we can access the
+	// document related information in the layout functions
 	d.data.Ctx.Store = map[interface{}]interface{}{
 		"xd": d,
 	}
@@ -184,24 +192,24 @@ func RunXTS(cfg *XTSCofig) error {
 	return nil
 }
 
-// Add necessary callbacks to boxes and glue callback mechanism
-// for tracing purpose.
+// Add necessary callbacks to boxes and glue callback mechanism for tracing
+// purpose.
 func (xd *xtsDocument) registerCallbacks() {
 	preShipout := func(pg *document.Page) {
 		xtspage := pg.Userdata["xtspage"].(*page)
 		curGrid := xtspage.pagegrid
+		pageArea := curGrid.areas[pageAreaName]
 		// Draw grid when requested
 		if xd.IsTrace(VTraceAllocation) {
 			vlist := node.NewVList()
 			rule := node.NewRule()
-
 			pdfinstructions := make([]string, 0, len(xd.currentGrid.allocatedBlocks))
-			pdfinstructions = append(pdfinstructions, "q")
+			pdfinstructions = append(pdfinstructions, "q 1 1 0 rg")
 
 			for k, v := range curGrid.allocatedBlocks {
 				if v > 0 {
 					x, y := k.XY()
-					pdfinstructions = append(pdfinstructions, fmt.Sprintf(" 1 1 0 rg %s %s %s %s re f", curGrid.posX(x, pageAreaName), xtspage.pageHeight-curGrid.posY(y, pageAreaName), curGrid.gridWidth, -curGrid.gridHeight))
+					pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s %s %s %s re f", curGrid.posX(x, pageArea), xtspage.pageHeight-curGrid.posY(y, pageArea), curGrid.gridWidth, -curGrid.gridHeight))
 				}
 			}
 			pdfinstructions = append(pdfinstructions, " Q")
@@ -220,14 +228,16 @@ func (xd *xtsDocument) registerCallbacks() {
 			ht := xtspage.pageHeight - curGrid.marginTop - curGrid.marginBottom
 			var pdfinstructions []string
 			// page
-			pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s %s %s %s re S", x, y, wd, ht))
+			rect := pdfdraw.NewStandalone().LineWidth(bag.MustSp("0.5pt")).ColorNonstroking(*xd.document.GetColor("darkblue")).Rect(x, y, wd, ht).Stroke().String()
+			pdfinstructions = append(pdfinstructions, rect)
 			gridMaxX := xtspage.pageWidth - curGrid.marginRight
-			gridMaxY := xtspage.pageHeight - curGrid.marginTop
-			pdfinstructions = append(pdfinstructions, "0.4 w")
 
-			gridX := x + curGrid.gridWidth
+			pdfinstructions = append(pdfinstructions, "0.4 w")
+			pdfinstructions = append(pdfinstructions, "[2] 0 d")
+
+			gridX := x
 			// vertical grid rules
-			for i := 1; gridX < gridMaxX; i++ {
+			for i := 0; gridX < gridMaxX; i++ {
 				switch {
 				case i%10 == 0:
 					pdfinstructions = append(pdfinstructions, "0.1 G")
@@ -236,17 +246,17 @@ func (xd *xtsDocument) registerCallbacks() {
 				default:
 					pdfinstructions = append(pdfinstructions, "0.9 G")
 				}
-				pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s %s m %s %s l S", gridX, y, gridX, gridMaxY))
-				gridX += xd.currentGrid.gridGapX
-				if xd.currentGrid.gridGapX > 0 && gridX < gridMaxX {
-					pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s %s m %s %s l S", gridX, y, gridX, gridMaxY))
+				pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s 0 m %s %s l S", gridX, gridX, xtspage.pageHeight))
+				if xd.currentGrid.gridGapX > 0 && gridX < gridMaxX && i > 0 {
+					gridX += xd.currentGrid.gridGapX
+					pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s 0  m %s %s l S", gridX, gridX, xtspage.pageHeight))
 				}
 				gridX += xd.currentGrid.gridWidth
 			}
 
 			// horizontal grid rules from top to bottom
-			gridY := xtspage.pageHeight - curGrid.gridHeight - curGrid.marginTop
-			for i := 1; gridY > y; i++ {
+			gridY := xtspage.pageHeight - curGrid.marginTop
+			for i := 0; gridY > y; i++ {
 				switch {
 				case i%10 == 0:
 					pdfinstructions = append(pdfinstructions, "0.1 G")
@@ -255,21 +265,21 @@ func (xd *xtsDocument) registerCallbacks() {
 				default:
 					pdfinstructions = append(pdfinstructions, "0.9 G")
 				}
-				pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s %s m %s %s l S", x, gridY, gridMaxX, gridY))
-				gridY -= xd.currentGrid.gridGapY
-				if xd.currentGrid.gridGapY > 0 && gridY > y {
-					pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s %s m %s %s l S", x, gridY, gridMaxX, gridY))
+				pdfinstructions = append(pdfinstructions, fmt.Sprintf("0 %s m %s %s l S", gridY, xtspage.pageWidth, gridY))
+				if xd.currentGrid.gridGapY > 0 && gridY > y && i > 0 {
+					gridY -= xd.currentGrid.gridGapY
+					pdfinstructions = append(pdfinstructions, fmt.Sprintf("0 %s m %s %s l S", gridY, xtspage.pageWidth, gridY))
 				}
 				gridY -= xd.currentGrid.gridHeight
 			}
 			pageframe := fmt.Sprintf("0 0 %s %s re S", xtspage.pageWidth, xtspage.pageHeight)
 			pdfinstructions = append(pdfinstructions, pageframe)
 
-			pdfinstructions = append(pdfinstructions, " 2 w 1 0 0 RG ")
+			pdfinstructions = append(pdfinstructions, "[] 0 d 0.4 w 1 0 0 RG ")
 			for _, area := range curGrid.areas {
 				for _, rect := range area.frame {
-					posX := xd.currentGrid.posX(rect.col, pageAreaName)
-					posY := xtspage.pageHeight - xd.currentGrid.posY(rect.row, pageAreaName)
+					posX := xd.currentGrid.posX(rect.col, area)
+					posY := xtspage.pageHeight - xd.currentGrid.posY(rect.row, area)
 					wd := xd.currentGrid.width(rect.width)
 					ht := xd.currentGrid.height(rect.height) * -1
 					frame := fmt.Sprintf("%s %s %s %s re S", posX, posY, wd, ht)

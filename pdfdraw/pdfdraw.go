@@ -10,12 +10,20 @@ import (
 
 // Object represents a set of PDF instructions to draw a PDF graphic
 type Object struct {
-	pdfstring []string
+	pdfstring    []string
+	encapsulated bool
 }
 
 // New creates a new PDF object.
 func New() *Object {
 	return &Object{}
+}
+
+// NewStandalone creates a new PDF object encapsulated in q ... Q .
+func NewStandalone() *Object {
+	return &Object{
+		encapsulated: true,
+	}
 }
 
 // Color sets the stroking and nonstroking color
@@ -36,12 +44,12 @@ func (pd *Object) ColorStroking(col document.Color) *Object {
 // “none”, then no color will be set.
 func (pd *Object) ColorNonstroking(col document.Color) *Object {
 	if col.Space != document.ColorNone {
-		pd.pdfstring = append(pd.pdfstring, col.PDFStringFG())
+		pd.pdfstring = append(pd.pdfstring, col.PDFStringBG())
 	}
 	return pd
 }
 
-// Curveto appends a bezier cuve from the current point to point 3 controlled by
+// Curveto appends a bezier curve from the current point to point 3 controlled by
 // points 1 and 2.
 func (pd *Object) Curveto(x1, y1, x2, y2, x3, y3 bag.ScaledPoint) *Object {
 	pd.pdfstring = append(pd.pdfstring, fmt.Sprintf("%s %s %s %s %s %s c", x1, y1, x2, y2, x3, y3))
@@ -106,12 +114,51 @@ func (pd *Object) Rect(x, y, wd, ht bag.ScaledPoint) *Object {
 	return pd
 }
 
+// Save saves the graphics state.
+func (pd *Object) Save() *Object {
+	pd.pdfstring = append(pd.pdfstring, "q")
+	return pd
+}
+
+// Restore restores the graphics state.
+func (pd *Object) Restore() *Object {
+	pd.pdfstring = append(pd.pdfstring, "Q")
+	return pd
+}
+
 // Fill fills the current object
 func (pd *Object) Fill() *Object {
 	pd.pdfstring = append(pd.pdfstring, "f")
 	return pd
 }
 
+// Stroke paints the current object without filling it
+func (pd *Object) Stroke() *Object {
+	pd.pdfstring = append(pd.pdfstring, "S")
+	return pd
+}
+
+// LineWidth sets the line width.
+func (pd *Object) LineWidth(wd bag.ScaledPoint) *Object {
+	pd.pdfstring = append(pd.pdfstring, fmt.Sprintf("%s w", wd))
+	return pd
+}
+
+// SetDash sets the dash pattern. Arguments in dasharray must be > 0
+func (pd *Object) SetDash(dasharray []uint, dashphase uint) *Object {
+	pd.pdfstring = append(pd.pdfstring, fmt.Sprintf("%d %d d", dasharray, dashphase))
+	return pd
+}
+
+// String returns the PDF instructions used for
 func (pd *Object) String() string {
-	return strings.Join(pd.pdfstring, " ")
+	ret := []string{}
+	if pd.encapsulated {
+		ret = append(ret, "q")
+	}
+	ret = append(ret, pd.pdfstring...)
+	if pd.encapsulated {
+		ret = append(ret, "Q")
+	}
+	return strings.Join(ret, " ")
 }

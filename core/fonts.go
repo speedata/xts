@@ -1,7 +1,13 @@
 package core
 
 import (
+	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/boxesandglue/frontend"
+)
+
+var (
+	tenpoint    = bag.MustSp("10pt")
+	twelvepoint = bag.MustSp("12pt")
 )
 
 func (xd *xtsDocument) defaultfont() error {
@@ -32,5 +38,8 @@ func (xd *xtsDocument) defaultfont() error {
 	ff.AddMember(xd.fontsources["TeXGyreHeros-Italic"], frontend.FontWeight400, frontend.FontStyleItalic)
 	ff.AddMember(xd.fontsources["TeXGyreHeros-Bold"], frontend.FontWeight700, frontend.FontStyleNormal)
 	ff.AddMember(xd.fontsources["TeXGyreHeros-BoldItalic"], frontend.FontWeight700, frontend.FontStyleItalic)
+
+	xd.fontsizes["text"] = [2]bag.ScaledPoint{tenpoint, twelvepoint}
+
 	return nil
 }

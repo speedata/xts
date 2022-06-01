@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	pageAreaName    string = "__defaultarea"
-	defaultAreaName string = "__defaultarea"
+	pageAreaName    string = "__pagearea"
+	defaultAreaName string = "__pagearea"
 )
 
 type pagetype struct {
@@ -32,14 +32,14 @@ func (xd *xtsDocument) newPagetype(name string, test string) (*pagetype, error) 
 		test: test,
 	}
 
-	xd.pagetypes = append(xd.pagetypes, pt)
+	xd.masterpages = append(xd.masterpages, pt)
 	return pt, nil
 }
 
 func (xd *xtsDocument) detectPagetype(name string) (*pagetype, error) {
 	var thispagetype *pagetype
-	for i := len(xd.pagetypes) - 1; i >= 0; i-- {
-		thispagetype = xd.pagetypes[i]
+	for i := len(xd.masterpages) - 1; i >= 0; i-- {
+		thispagetype = xd.masterpages[i]
 		seq, err := xd.data.Evaluate(thispagetype.test)
 		if err != nil {
 			return nil, err
@@ -177,28 +177,26 @@ func (p *page) String() string {
 	return fmt.Sprintf("XTS page %d wd/ht: %s/%s margins: %s %s %s %s", p.pagenumber, p.pageWidth, p.pageHeight, g.marginLeft, g.marginTop, g.marginRight, g.marginBottom)
 }
 
-func (xd *xtsDocument) OutputAt(vl *node.VList, col coord, row coord, allocate bool, areaname string, what string) error {
+func (xd *xtsDocument) OutputAt(vl *node.VList, col coord, row coord, allocate bool, area *area, what string) error {
 	areatext := ""
-	if areaname != pageAreaName {
-		areatext = fmt.Sprintf("%s [%d]: ", areaname, 1)
+	if area.name != pageAreaName {
+		areatext = fmt.Sprintf("%s [%d]: ", area.name, 1)
 	}
 	var currentGroup *group
 	if currentGroup = xd.currentGroup; currentGroup != nil {
-		if areaname != pageAreaName {
-			bag.Logger.Errorf("Cannot use area (%s) within a group (%s)", areaname, currentGroup.name)
+		if area.name != pageAreaName {
+			bag.Logger.Errorf("Cannot use area (%s) within a group (%s)", area.name, currentGroup.name)
 		}
 		if currentGroup.contents == nil {
 			currentGroup.contents = vl
 		}
-
 	} else {
 		bag.Logger.Infof("PlaceObject: output %s at (%s%d,%d)", what, areatext, col, row)
-		columnLength := xd.currentGrid.posX(col, areaname)
-		rowLength := xd.currentGrid.posY(row, areaname)
-
+		columnLength := xd.currentGrid.posX(col, area)
+		rowLength := xd.currentGrid.posY(row, area)
 		xd.currentPage.outputAbsolute(columnLength, rowLength, vl)
 	}
 
-	xd.currentGrid.allocate(col, row, areaname, vl.Width, vl.Height)
+	xd.currentGrid.allocate(col, row, area, vl.Width, vl.Height+vl.Depth)
 	return nil
 }
