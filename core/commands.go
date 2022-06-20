@@ -46,6 +46,7 @@ func init() {
 		"Loop":             cmdLoop,
 		"Message":          cmdMessage,
 		"NextFrame":        cmdNextFrame,
+		"PDFOptions":       cmdPDFOptions,
 		"Options":          cmdOptions,
 		"Pageformat":       cmdPageformat,
 		"Paragraph":        cmdParagraph,
@@ -710,6 +711,21 @@ func cmdNextFrame(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	return nil, nil
 }
 
+func cmdPDFOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		ShowHyperlinks *bool
+	}{}
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+
+	if attValues.ShowHyperlinks != nil {
+		xd.document.Doc.ShowHyperlinks = *attValues.ShowHyperlinks
+	}
+	return nil, nil
+}
+
 func cmdOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
@@ -1160,6 +1176,7 @@ func cmdTrace(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		Grid           *bool
 		Hyphenation    *bool
 		Gridallocation *bool
+		Hyperlinks     *bool
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -1177,6 +1194,14 @@ func cmdTrace(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 			xd.SetVTrace(VTraceHyphenation)
 		} else {
 			xd.ClearVTrace(VTraceHyphenation)
+		}
+	}
+
+	if attValues.Hyperlinks != nil {
+		if *attValues.Hyperlinks {
+			xd.document.Doc.SetVTrace(document.VTraceHyperlinks)
+		} else {
+			xd.document.Doc.ClearVTrace(document.VTraceHyperlinks)
 		}
 	}
 

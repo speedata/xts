@@ -21,6 +21,7 @@
     <optional><cmd name="DefineMasterpage"/></optional>
     <optional><cmd name="LoadFontfile"/></optional>
     <optional><cmd name="Options"/></optional>
+    <optional><cmd name="PDFOptions"/></optional>
     <optional><cmd name="Pageformat"/></optional>
     <optional><cmd name="Record"/></optional>
     <optional><cmd name="SetGrid"/></optional>
@@ -2258,6 +2259,29 @@
   </command>
 
 
+  <command en="PDFOptions">
+    <description xml:lang="en">
+      <para>Set PDF options</para>
+    </description>
+    <description xml:lang="de">
+      <para>Setze PDF Optionen</para>
+    </description>
+    <attribute en="showhyperlinks" optional="yes"  type="boolean">
+      <description xml:lang="en">
+        <para>Show hyperlinks in Adobe Acrobat and perhaps other PDF viewers.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Zeige Hyperlinks im Adobe Acrobat und ggf anderen PDF-Anzeigeprogrammen.</para>
+     </description>
+    </attribute>
+
+    <example xml:lang="en">
+
+    </example>
+    <seealso></seealso>
+  </command>
+
+
   <command en="PlaceObject">
     <description xml:lang="en">
       <para>Outputs a rectangular object (image, table, box, barcode or textblock).</para>
@@ -3267,6 +3291,30 @@
         </description>
         <description xml:lang="de">
           <para>Rasterbelegung nicht zeigen (Voreinstellung).</para>
+        </description>
+      </choice>
+    </attribute>
+    <attribute en="hyperlinks" optional="yes">
+      <description xml:lang="en">
+        <para>Draw a box around hyperlinks.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Wenn 'yes', dann zeichnet XTS einen Rahmen um die Hyperlinks.</para>
+      </description>
+      <choice en="yes">
+        <description xml:lang="en">
+          <para>Show the hyperlinks.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Zeige die Hyperlinks.</para>
+        </description>
+      </choice>
+      <choice en="no">
+        <description xml:lang="en">
+          <para>Don't show the hyperlinks (default).</para>
+        </description>
+        <description xml:lang="de">
+          <para>Die Hyperlinks werden nicht angezeigt (Voreinstellung).</para>
         </description>
       </choice>
     </attribute>
