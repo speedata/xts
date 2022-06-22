@@ -14,6 +14,7 @@ import (
 	"github.com/speedata/boxesandglue/pdfbackend/pdf"
 	"github.com/speedata/goxml"
 	xpath "github.com/speedata/goxpath"
+	"github.com/speedata/textlayout/harfbuzz"
 	"github.com/speedata/xts/pdfdraw"
 )
 
@@ -416,7 +417,7 @@ func cmdDefineMasterpage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Seque
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
-
+	xd.layoutNS = layoutelt.Namespaces
 	pt, err := xd.newPagetype(attValues.Name, attValues.Test)
 	if err != nil {
 		return nil, err
@@ -595,7 +596,7 @@ func cmdProcessNode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		return nil, err
 	}
 	var eval xpath.Sequence
-	eval, err = evaluateXPath(xd, layoutelt, attValues.Select)
+	eval, err = evaluateXPath(xd, layoutelt.Namespaces, attValues.Select)
 	if err != nil {
 		bag.Logger.Errorf("ProcessNode (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
 		return nil, err
@@ -646,7 +647,9 @@ func cmdLoop(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 		return nil, err
 	}
 	var eval xpath.Sequence
-	eval, err = evaluateXPath(xd, layoutelt, attValues.Select)
+
+	xd.layoutNS = layoutelt.Namespaces
+	eval, err = evaluateXPath(xd, layoutelt.Namespaces, attValues.Select)
 	if err != nil {
 		return nil, err
 	}
@@ -676,7 +679,7 @@ func cmdMessage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	}
 	var eval xpath.Sequence
 	if attValues.Select != nil {
-		eval, err = evaluateXPath(xd, layoutelt, *attValues.Select)
+		eval, err = evaluateXPath(xd, layoutelt.Namespaces, *attValues.Select)
 		if err != nil {
 			bag.Logger.Errorf("Message (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
 			return nil, err
@@ -731,6 +734,8 @@ func cmdOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	attValues := &struct {
 		Mainlanguage *string
 		Bleed        *bag.ScaledPoint
+		Cutmarks     *bool
+		Features     *string
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -746,6 +751,18 @@ func cmdOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 
 	if attValues.Bleed != nil {
 		xd.document.Doc.Bleed = *attValues.Bleed
+	}
+	if attValues.Cutmarks != nil {
+		xd.document.Doc.ShowCutmarks = *attValues.Cutmarks
+	}
+	if features := attValues.Features; features != nil {
+		for _, str := range strings.Split(*features, ",") {
+			f, err := harfbuzz.ParseFeature(str)
+			if err != nil {
+				bag.Logger.Errorf("cannot parse OpenType feature tag %q.", str)
+			}
+			xd.document.DefaultFeatures = append(xd.document.DefaultFeatures, f)
+		}
 	}
 
 	return xpath.Sequence{}, nil
@@ -822,10 +839,13 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	var columnLength, rowLength bag.ScaledPoint
 
 	var rowSet, colSet bool
-	if columnInt, err = strconv.Atoi(attValues.Column); err == nil {
+	if colF, err := strconv.ParseFloat(attValues.Column, 64); err == nil {
 		colSet = true
 		pos = positioningGrid
+		columnInt = int(colF)
 		col = coord(columnInt)
+	} else {
+		bag.Logger.Debug(err)
 	}
 
 	if rowInt, err = strconv.Atoi(attValues.Row); err == nil {
@@ -833,14 +853,14 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		pos = positioningGrid
 		row = coord(rowInt)
 	}
-
 	if pos == positioningGrid && colSet != rowSet {
-		bag.Logger.Errorf("line %d: both column and row must be integers with grid positioning", layoutelt.Line)
 		if !colSet {
-			col, columnInt = 1, 1
+			col = area.currentCol
+			columnInt = int(col)
 		}
 		if !rowSet {
-			row, rowInt = 1, 1
+			row = area.currentRow
+			rowInt = int(row)
 		}
 	} else if pos == positioningUnknown {
 		if columnLength, err = bag.Sp(attValues.Column); err == nil {
@@ -1226,7 +1246,7 @@ func cmdValue(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	}
 
 	if attValues.Select != nil {
-		eval, err := evaluateXPath(xd, layoutelt, *attValues.Select)
+		eval, err := evaluateXPath(xd, layoutelt.Namespaces, *attValues.Select)
 		if err != nil {
 			return nil, err
 		}

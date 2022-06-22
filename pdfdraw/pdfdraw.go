@@ -35,7 +35,7 @@ func (pd *Object) Color(col document.Color) *Object {
 // ColorStroking sets the stroking color
 func (pd *Object) ColorStroking(col document.Color) *Object {
 	if col.Space != document.ColorNone {
-		pd.pdfstring = append(pd.pdfstring, col.PDFStringFG())
+		pd.pdfstring = append(pd.pdfstring, col.PDFStringStroking())
 	}
 	return pd
 }
@@ -44,7 +44,7 @@ func (pd *Object) ColorStroking(col document.Color) *Object {
 // “none”, then no color will be set.
 func (pd *Object) ColorNonstroking(col document.Color) *Object {
 	if col.Space != document.ColorNone {
-		pd.pdfstring = append(pd.pdfstring, col.PDFStringBG())
+		pd.pdfstring = append(pd.pdfstring, col.PDFStringNonStroking())
 	}
 	return pd
 }

@@ -55,7 +55,7 @@ var (
 )
 
 // getXMLAttributes fills the struct at v with the attribute values of the current element.
-func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v interface{}) error {
+func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 	attributes := make(map[string]string)
 	for _, attrib := range layoutelt.Attributes() {
 		attributes[attrib.Name] = attrib.Value
@@ -274,8 +274,8 @@ func (xd *xtsDocument) getAttributeHeight(name string, element *goxml.Element, m
 }
 
 // evaluateXPath runs an XPath expression.
-func evaluateXPath(xd *xtsDocument, layoutelt *goxml.Element, xpath string) (xpath.Sequence, error) {
-	xd.data.Ctx.Namespaces = layoutelt.Namespaces
+func evaluateXPath(xd *xtsDocument, namespaces map[string]string, xpath string) (xpath.Sequence, error) {
+	xd.data.Ctx.Namespaces = namespaces
 	return xd.data.Evaluate(xpath)
 }
 

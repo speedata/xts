@@ -11,12 +11,22 @@ const fnNS = "urn:speedata.de/2021/xtsfunctions/en"
 
 func init() {
 	goxpath.RegisterFunction(&goxpath.Function{Name: "current-row", Namespace: fnNS, F: fnCurrentRow, MinArg: 0, MaxArg: 1})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "current-page", Namespace: fnNS, F: fnCurrentPage, MinArg: 0, MaxArg: 0})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "dummytext", Namespace: fnNS, F: fnDummytext, MinArg: 0, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "even", Namespace: fnNS, F: fnEven, MinArg: 1, MaxArg: 1})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "number-of-columns", Namespace: fnNS, F: fnNumberOfColumns, MinArg: 0, MaxArg: 1})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "number-of-rows", Namespace: fnNS, F: fnNumberOfRows, MinArg: 0, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "group-height", Namespace: fnNS, F: fnGroupheight, MinArg: 1, MaxArg: 2})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "group-width", Namespace: fnNS, F: fnGroupwidth, MinArg: 1, MaxArg: 2})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "file-exists", Namespace: fnNS, F: fnFileExists, MinArg: 1, MaxArg: 1})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "romannumeral", Namespace: fnNS, F: fnRomannumeral, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "odd", Namespace: fnNS, F: fnOdd, MinArg: 1, MaxArg: 1})
+}
+
+func fnCurrentPage(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	xd := ctx.Store["xd"].(*xtsDocument)
+	cp := xd.currentPagenumber
+	return goxpath.Sequence{cp}, nil
 }
 
 func fnCurrentRow(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
@@ -47,11 +57,41 @@ func fnDummytext(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequenc
 }
 
 func fnEven(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
-	nv, err := goxpath.NumberValue(args[0])
+	nv, err := args[0].IntValue()
 	if err != nil {
 		return nil, err
 	}
-	return goxpath.Sequence{int(nv)%2 == 0}, nil
+	return goxpath.Sequence{nv%2 == 0}, nil
+}
+
+func fnNumberOfColumns(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	areaname := defaultAreaName
+	if len(args) > 0 {
+		firstArg := args[0]
+		areaname = firstArg.Stringvalue()
+	}
+	var area *area
+	var ok bool
+	xd := ctx.Store["xd"].(*xtsDocument)
+	if area, ok = xd.currentGrid.areas[areaname]; !ok {
+		return nil, fmt.Errorf("area %s unknown", areaname)
+	}
+	return goxpath.Sequence{int(area.frame[area.currentFrame].width)}, nil
+}
+
+func fnNumberOfRows(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	areaname := defaultAreaName
+	if len(args) > 0 {
+		firstArg := args[0]
+		areaname = firstArg.Stringvalue()
+	}
+	var area *area
+	var ok bool
+	xd := ctx.Store["xd"].(*xtsDocument)
+	if area, ok = xd.currentGrid.areas[areaname]; !ok {
+		return nil, fmt.Errorf("area %s unknown", areaname)
+	}
+	return goxpath.Sequence{int(area.frame[area.currentFrame].height)}, nil
 }
 
 func fnGroupheight(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
@@ -98,6 +138,46 @@ func fnGroupwidth(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequen
 func fnFileExists(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
 	seq := args[0]
 	return goxpath.Sequence{fileexists(seq.Stringvalue())}, nil
+}
+
+func fnRomannumeral(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	number, err := args[0].IntValue()
+	if err != nil {
+		return nil, err
+	}
+	maxRomanNumber := 3999
+	if number > maxRomanNumber || number < 0 {
+		return nil, fmt.Errorf("romannumeral: number out of range: %d (0-3999)", number)
+	}
+
+	conversions := []struct {
+		value int
+		digit string
+	}{
+		{1000, "M"},
+		{900, "CM"},
+		{500, "D"},
+		{400, "CD"},
+		{100, "C"},
+		{90, "XC"},
+		{50, "L"},
+		{40, "XL"},
+		{10, "X"},
+		{9, "IX"},
+		{5, "V"},
+		{4, "IV"},
+		{1, "I"},
+	}
+
+	var roman strings.Builder
+	for _, conversion := range conversions {
+		for number >= conversion.value {
+			roman.WriteString(conversion.digit)
+			number -= conversion.value
+		}
+	}
+
+	return goxpath.Sequence{roman.String()}, nil
 }
 
 func fnOdd(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {

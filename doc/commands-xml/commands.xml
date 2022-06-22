@@ -2107,6 +2107,38 @@
         <para>Die Größe des Anschnitts (bleed). Voreinstellung ist 0mm.</para>
       </description>
     </attribute>
+    <attribute en="cutmarks" optional="yes">
+      <description xml:lang="en">
+        <para>Cut marks / crop marks will be placed in the PDF. The distance of the marks from the imaginary center is determined by the attribute <tt>trim</tt>, but is at least 5mm. The length of the cut marks is 1cm. The default of this attribute is <tt>no</tt>, that means no cut marks will be displayed.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Beschnittmarken (crop marks) werden ausgegeben. Der Abstand der Schnittmarken vom gedachten Mittelpunkt ergibt sich durch die Beschnittzugabe, mindestens beträgt sie jedoch 5pt. Die Länge der Schnittmarke ist 1cm. Voreinstellung ist nein, d.h. es werden keine Schnittmarken ausgegeben.</para>
+      </description>
+      <choice en="yes">
+        <description xml:lang="en">
+          <para>Show crop marks.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Beschnittmarken anzeigen.</para>
+        </description>
+      </choice>
+      <choice en="no">
+        <description xml:lang="en">
+          <para>Don't show crop marks (default).</para>
+        </description>
+        <description xml:lang="de">
+          <para>Beschnittmarken nicht anzeigen (Voreinstellung).</para>
+        </description>
+      </choice>
+    </attribute>
+    <attribute en="features" type="text" optional="yes">
+      <description xml:lang="en">
+        <para>A comma separated list of OpenType features such as +kern,-liga. Used as a default for all paragraphs.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Eine kommaseparierte Liste mit OpenType Features wie +kern,-liga. Wird als Voreinstellung für alle Absätze benutzt.</para>
+      </description>
+    </attribute>
     <attribute en="mainlanguage" optional="yes" allowxpath="yes">
       <description xml:lang="en">
         <para>The default language for text (hyphenation and rendering). You can also set the default language on the command line and locally set it at <cmd name="Paragraph"/> and <cmd name="Textblock" />.</para>

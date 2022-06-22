@@ -40,7 +40,8 @@ func (xd *xtsDocument) detectPagetype(name string) (*pagetype, error) {
 	var thispagetype *pagetype
 	for i := len(xd.masterpages) - 1; i >= 0; i-- {
 		thispagetype = xd.masterpages[i]
-		seq, err := xd.data.Evaluate(thispagetype.test)
+
+		seq, err := evaluateXPath(xd, xd.layoutNS, thispagetype.test)
 		if err != nil {
 			return nil, err
 		}
@@ -77,6 +78,7 @@ func clearPage(xd *xtsDocument) {
 
 func newPage(xd *xtsDocument) (*page, func(), error) {
 	bag.Logger.Debug("newPage")
+	xd.currentPagenumber++
 	g := newGrid(xd)
 	pt, err := xd.detectPagetype("")
 	if err != nil {
@@ -163,7 +165,7 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 	}
 	// CHECK
 	docPage := pg.bagPage
-	docPage.Userdata = make(map[interface{}]interface{})
+	docPage.Userdata = make(map[any]any)
 	docPage.Userdata["xtspage"] = pg
 	return pg, f, nil
 }

@@ -49,7 +49,9 @@ type xtsDocument struct {
 	currentPage       *page
 	currentGrid       *grid
 	currentGroup      *group
+	currentPagenumber int
 	tracing           VTrace
+	layoutNS          map[string]string
 	// for “global” variables
 	store map[any]any
 }
@@ -130,7 +132,7 @@ func RunXTS(cfg *XTSConfig) error {
 	}
 	// connect the main document to the xpath parser, so we can access the
 	// document related information in the layout functions
-	d.data.Ctx.Store = map[interface{}]interface{}{
+	d.data.Ctx.Store = map[any]any{
 		"xd": d,
 	}
 	cfg.Datafile.Close()
@@ -237,7 +239,7 @@ func (xd *xtsDocument) registerCallbacks() {
 
 			gridX := x
 			// vertical grid rules
-			for i := 0; gridX < gridMaxX; i++ {
+			for i := 0; gridX <= gridMaxX; i++ {
 				switch {
 				case i%10 == 0:
 					pdfinstructions = append(pdfinstructions, "0.1 G")
@@ -256,7 +258,7 @@ func (xd *xtsDocument) registerCallbacks() {
 
 			// horizontal grid rules from top to bottom
 			gridY := xtspage.pageHeight - curGrid.marginTop
-			for i := 0; gridY > y; i++ {
+			for i := 0; gridY >= y; i++ {
 				switch {
 				case i%10 == 0:
 					pdfinstructions = append(pdfinstructions, "0.1 G")

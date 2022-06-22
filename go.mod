@@ -4,9 +4,9 @@ go 1.18
 
 require (
 	github.com/alecthomas/chroma v0.10.0
-	github.com/speedata/boxesandglue v0.0.0-20220618111430-c38f49ba2b34
+	github.com/speedata/boxesandglue v0.0.0-20220622120118-1dc1bb229d16
 	github.com/speedata/goxml v0.0.0-20220304094847-e25a4c712d89
-	github.com/speedata/goxpath v0.0.0-20220501190814-7db6127442ec
+	github.com/speedata/goxpath v0.0.0-20220621125312-417b6e9f1004
 	github.com/speedata/optionparser v1.0.1
 	github.com/speedata/textlayout v0.0.0-20220525185931-f2d16b648f68
 	go.uber.org/zap v1.21.0
