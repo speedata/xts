@@ -6,16 +6,16 @@ import (
 	"strings"
 
 	"github.com/speedata/boxesandglue/backend/bag"
+	"github.com/speedata/boxesandglue/backend/color"
 	"github.com/speedata/boxesandglue/backend/document"
-	pdfdocument "github.com/speedata/boxesandglue/backend/document"
 	"github.com/speedata/boxesandglue/backend/node"
 	"github.com/speedata/boxesandglue/csshtml"
 	"github.com/speedata/boxesandglue/frontend"
+	"github.com/speedata/boxesandglue/frontend/pdfdraw"
 	"github.com/speedata/boxesandglue/pdfbackend/pdf"
 	"github.com/speedata/goxml"
 	xpath "github.com/speedata/goxpath"
 	"github.com/speedata/textlayout/harfbuzz"
-	"github.com/speedata/xts/pdfdraw"
 )
 
 type commandFunc func(*xtsDocument, *goxml.Element) (xpath.Sequence, error)
@@ -30,6 +30,7 @@ func init() {
 		"A":                cmdA,
 		"Attribute":        cmdAttribute,
 		"B":                cmdB,
+		"Bookmark":         cmdBookmark,
 		"Box":              cmdBox,
 		"Circle":           cmdCircle,
 		"ClearPage":        cmdClearpage,
@@ -146,6 +147,44 @@ func cmdB(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	return xpath.Sequence{te}, err
 }
 
+func cmdBookmark(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Select string `sdxml:"mustexist"`
+		Level  int
+		Open   bool
+	}{}
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	var eval xpath.Sequence
+	eval, err = xd.data.Evaluate(attValues.Select)
+	dest := getNumDest()
+	dest.Callback = func(n node.Node) string {
+		startStop := n.(*node.StartStop)
+		num := startStop.Value.(int)
+		destObj := xd.document.Doc.GetDest(num)
+		destObj.X = 0
+		title := eval.Stringvalue()
+		outline := &pdf.Outline{
+			Title: title,
+			Dest:  destObj,
+			Open:  attValues.Open,
+		}
+		curOutlines := &xd.document.Doc.PDFWriter.Outlines
+		for i := 1; i < attValues.Level; i++ {
+			if len(*curOutlines) == 0 {
+				bag.Logger.Errorf("level %d bookmark does not exist for new bookmark (title %s)", i, title)
+			} else {
+				curOutlines = &(*curOutlines)[len(*curOutlines)-1].Children
+			}
+		}
+		*curOutlines = append(*curOutlines, outline)
+		return ""
+	}
+	return xpath.Sequence{dest}, nil
+}
+
 func cmdBox(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	attValues := &struct {
 		Class           string
@@ -174,7 +213,7 @@ func cmdBox(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	}
 
 	attrs, _ := csshtml.ResolveAttributes(a.Find("box").First().Nodes[0].Attr)
-	var bgcolor *pdfdocument.Color
+	var bgcolor *color.Color
 	if bgc, ok := attrs["background-color"]; ok {
 		bgcolor = xd.document.GetColor(bgc)
 	} else {
@@ -182,7 +221,7 @@ func cmdBox(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	}
 
 	r := node.NewRule()
-	if bgcolor.Space != pdfdocument.ColorNone {
+	if bgcolor.Space != color.ColorNone {
 		str := pdfdraw.New().Color(*bgcolor).Rect(0, 0, attValues.Width, -attValues.Height).Fill().String()
 		r.Pre = str
 	}
@@ -223,7 +262,7 @@ func cmdCircle(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 	}
 
 	attrs, _ := csshtml.ResolveAttributes(a.Find("circle").First().Nodes[0].Attr)
-	var bgcolor *pdfdocument.Color
+	var bgcolor *color.Color
 	if bgc, ok := attrs["background-color"]; ok {
 		bgcolor = xd.document.GetColor(bgc)
 	} else {
@@ -232,7 +271,7 @@ func cmdCircle(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 
 	r := node.NewRule()
 
-	if bgcolor.Space != pdfdocument.ColorNone {
+	if bgcolor.Space != color.ColorNone {
 		str := pdfdraw.New().Color(*bgcolor).Circle(0, 0, *attValues.RadiusX, *attValues.RadiusY).Fill().String()
 		r.Pre = str
 	}
@@ -314,10 +353,10 @@ func cmdDefineColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
-	col := pdfdocument.Color{}
+	col := color.Color{}
 	switch attValues.Model {
 	case "cmyk":
-		col.Space = pdfdocument.ColorCMYK
+		col.Space = color.ColorCMYK
 		var c, m, y, k int
 		if c, err = strconv.Atoi(attValues.C); err != nil {
 			return nil, fmt.Errorf("DefineColor: cannot parse value for c (line %d)", layoutelt.Line)
@@ -337,7 +376,7 @@ func cmdDefineColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		col.K = float64(k) / 100.0
 	case "rgb":
 		// 0-100
-		col.Space = pdfdocument.ColorRGB
+		col.Space = color.ColorRGB
 		var r, g, b int
 		if r, err = strconv.Atoi(attValues.R); err != nil {
 			return nil, fmt.Errorf("DefineColor: cannot parse value for r (line %d)", layoutelt.Line)
@@ -353,7 +392,7 @@ func cmdDefineColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		col.B = float64(b) / 100.0
 	case "RGB":
 		// 0-255
-		col.Space = pdfdocument.ColorRGB
+		col.Space = color.ColorRGB
 		var r, g, b int
 		if r, err = strconv.Atoi(attValues.R); err != nil {
 			return nil, fmt.Errorf("DefineColor: cannot parse value for r (line %d)", layoutelt.Line)
@@ -368,7 +407,7 @@ func cmdDefineColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		col.G = float64(g) / 255.0
 		col.B = float64(b) / 255.0
 	case "spotcolor":
-		col.Space = pdfdocument.ColorSpotcolor
+		col.Space = color.ColorSpotcolor
 	case "":
 		// let's hope the user has provided a value field...
 		if attValues.Value == "" {
@@ -718,11 +757,27 @@ func cmdPDFOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 	var err error
 	attValues := &struct {
 		ShowHyperlinks *bool
+		Title          *string
+		Author         *string
+		Creator        *string
+		Subject        *string
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 
+	if attValues.Author != nil {
+		xd.document.Doc.Author = *attValues.Author
+	}
+	if attValues.Creator != nil {
+		xd.document.Doc.Creator = *attValues.Creator
+	}
+	if attValues.Title != nil {
+		xd.document.Doc.Title = *attValues.Title
+	}
+	if attValues.Subject != nil {
+		xd.document.Doc.Subject = *attValues.Subject
+	}
 	if attValues.ShowHyperlinks != nil {
 		xd.document.Doc.ShowHyperlinks = *attValues.ShowHyperlinks
 	}
@@ -1160,6 +1215,8 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		switch t := itm.(type) {
 		case *frontend.TypesettingElement:
 			te.Items = append(te.Items, t)
+		case node.Node:
+			te.Items = append(te.Items, t)
 		default:
 			bag.Logger.DPanicf("cmdTextblock: unknown type %T", t)
 		}
@@ -1168,6 +1225,7 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	if err != nil {
 		return nil, err
 	}
+
 	frontend.Hyphenate(hlist, xd.document.Doc.DefaultLanguage)
 	node.AppendLineEndAfter(tail)
 
@@ -1197,6 +1255,7 @@ func cmdTrace(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		Hyphenation    *bool
 		Gridallocation *bool
 		Hyperlinks     *bool
+		Dests          *bool
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -1206,6 +1265,14 @@ func cmdTrace(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 			xd.SetVTrace(VTraceGrid)
 		} else {
 			xd.ClearVTrace(VTraceGrid)
+		}
+	}
+
+	if attValues.Dests != nil {
+		if *attValues.Dests {
+			xd.document.Doc.SetVTrace(document.VTraceDest)
+		} else {
+			xd.document.Doc.ClearVTrace(document.VTraceDest)
 		}
 	}
 

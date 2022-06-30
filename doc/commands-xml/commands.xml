@@ -637,6 +637,68 @@
     <seealso><cmd name="I"/>, <ref name="fonts"/></seealso>
   </command>
 
+
+  <command en="Bookmark">
+    <description xml:lang="en">
+      <para>Create a bookmark for the PDF viewer (e.g. Adobe Reader). When the user clicks on a bookmark, the PDF viewer <quote>jumps</quote> to that place in the document.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Erstellt ein Lesezeichen für den PDF Betrachter (z.B. Adobe Reader). Wenn der Leser auf das Lesezeichen klickt, springt der PDF Betrachter an diese Stelle im Dokument.</para>
+    </description>
+    <childelements/>
+    <attribute en="level" type="number" optional="no">
+      <description xml:lang="en">
+        <para>1 is the top level, 2 is the next level, etc.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Hierarchieebene. 1 ist die höchste Ebene, zwei die nächst tiefere Ebene etc.</para>
+      </description>
+    </attribute>
+    <attribute en="open" optional="yes">
+      <description xml:lang="en">
+        <para>If yes, the child elements are shown. If no, the child elements are hidden.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Bestimmt, ob die Kind-Lesezeichen dargestellt werden sollen oder nicht.</para>
+      </description>
+      <choice en="yes">
+        <description xml:lang="en">
+          <para>Show children.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Zeige Kinder.</para>
+        </description>
+      </choice>
+      <choice en="no">
+        <description xml:lang="en">
+          <para>Hide children.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Verstecke Kinder.</para>
+        </description>
+      </choice>
+    </attribute>
+    <attribute en="select" type="xpath" optional="no">
+      <description xml:lang="en">
+        <para>Title of the bookmark</para>
+      </description>
+      <description xml:lang="de">
+        <para>Titel des Lesezeichens</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<Bookmark level="1" select="$title" open="no" />]]></listing>
+      <para>Create a bookmark on level 1 (top level) with the title stored in the variable <tt>title</tt>.</para>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Bookmark level="1" select="$titel" open="no"/>]]></listing>
+      <para>Erzeugt ein Lesezeichen der Stufe 1 (höchste Stufe) mit dem Titel, der in der Variablen <tt>titel</tt> steht.</para>
+    </example>
+    <seealso>
+      <cmd name="Textblock"/>
+    </seealso>
+  </command>
+
   <command en="Bold">
     <description xml:lang="en">
       <para>Name of the font face that should be used when switching to »bold«.</para>
@@ -2298,6 +2360,22 @@
     <description xml:lang="de">
       <para>Setze PDF Optionen</para>
     </description>
+    <attribute en="author" optional="yes" type="text" since="3.1.18">
+      <description xml:lang="en">
+        <para>Set the author of the document</para>
+      </description>
+      <description xml:lang="de">
+        <para>Legt den Autor des Dokuments fest</para>
+      </description>
+    </attribute>
+    <attribute en="creator" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>Set the creator application of the document</para>
+      </description>
+      <description xml:lang="de">
+        <para>Legt die Anwendung des Dokuments fest</para>
+      </description>
+    </attribute>
     <attribute en="showhyperlinks" optional="yes"  type="boolean">
       <description xml:lang="en">
         <para>Show hyperlinks in Adobe Acrobat and perhaps other PDF viewers.</para>
@@ -2305,6 +2383,22 @@
       <description xml:lang="de">
         <para>Zeige Hyperlinks im Adobe Acrobat und ggf anderen PDF-Anzeigeprogrammen.</para>
      </description>
+    </attribute>
+    <attribute en="subject" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>Set the subject of the document</para>
+      </description>
+      <description xml:lang="de">
+        <para>Legt den Betreff (subject) des Dokuments fest</para>
+      </description>
+    </attribute>
+    <attribute en="title" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>Set the title of the document</para>
+      </description>
+      <description xml:lang="de">
+        <para>Legt den Titel des Dokuments fest</para>
+      </description>
     </attribute>
 
     <example xml:lang="en">
@@ -3214,6 +3308,7 @@
     <childelements>
       <oneOrMore>
         <choice>
+          <cmd name="Bookmark"/>
           <cmd name="Copy-of"/>
           <cmd name="Paragraph"/>
         </choice>
@@ -3323,6 +3418,30 @@
         </description>
         <description xml:lang="de">
           <para>Rasterbelegung nicht zeigen (Voreinstellung).</para>
+        </description>
+      </choice>
+    </attribute>
+    <attribute en="dests" optional="yes">
+      <description xml:lang="en">
+        <para>Draw PDF destinations with a black circle.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Zeige PDF Ziele mit einem schwarzen Kreis.</para>
+      </description>
+      <choice en="yes">
+        <description xml:lang="en">
+          <para>Show dest.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Zeige Ziele.</para>
+        </description>
+      </choice>
+      <choice en="no">
+        <description xml:lang="en">
+          <para>Don't show dests (default).</para>
+        </description>
+        <description xml:lang="de">
+          <para>Ziele nicht zeigen (Voreinstellung).</para>
         </description>
       </choice>
     </attribute>

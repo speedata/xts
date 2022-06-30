@@ -13,21 +13,31 @@ import (
 	"github.com/speedata/boxesandglue/backend/node"
 	"github.com/speedata/boxesandglue/csshtml"
 	"github.com/speedata/boxesandglue/frontend"
+	"github.com/speedata/boxesandglue/frontend/pdfdraw"
 	"github.com/speedata/goxml"
 	xpath "github.com/speedata/goxpath"
-	"github.com/speedata/xts/pdfdraw"
 )
 
 var (
-	errAttribNotFound = errors.New("Attribute not found")
-	attributeValueRE  *regexp.Regexp
-	oneCM             = bag.MustSp("1cm")
+	errAttribNotFound  = errors.New("Attribute not found")
+	attributeValueRE   *regexp.Regexp
+	oneCM              = bag.MustSp("1cm")
+	destinationNumbers = make(chan int)
 	// Version is a semantic version
 	Version string
 )
 
 func init() {
 	attributeValueRE = regexp.MustCompile(`\{(.*?)\}`)
+	go genIntegerSequence(destinationNumbers)
+}
+
+func genIntegerSequence(ids chan int) {
+	i := int(0)
+	for {
+		ids <- i
+		i++
+	}
 }
 
 type xtsDocument struct {
@@ -87,7 +97,7 @@ func (xd *xtsDocument) setupPage() {
 	if err != nil {
 		bag.Logger.Error(err)
 	}
-	bag.Logger.Infof("Page %s created wd: %d, ht: %d", p.pagetype.name, p.pagegrid.nx, p.pagegrid.ny)
+	bag.Logger.Infof("Page %s created wd: %d, ht: %d grid cells", p.pagetype.name, p.pagegrid.nx, p.pagegrid.ny)
 	xd.pages = append(xd.pages, p)
 	xd.currentPage = p
 	inSetupPage = false
@@ -192,6 +202,13 @@ func RunXTS(cfg *XTSConfig) error {
 
 	bag.Logger.Infof("Finished in %s", time.Now().Sub(starttime))
 	return nil
+}
+
+func getNumDest() *node.StartStop {
+	dest := node.NewStartStop()
+	dest.Action = node.ActionDest
+	dest.Value = <-destinationNumbers
+	return dest
 }
 
 // Add necessary callbacks to boxes and glue callback mechanism for tracing
