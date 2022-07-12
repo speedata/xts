@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 
@@ -36,25 +37,27 @@ func init() {
 		"ClearPage":        cmdClearpage,
 		"Contents":         cmdContents,
 		"Copy-of":          cmdCopyof,
-		"DefineFontfamily": cmdDefineFontfamily,
 		"DefineColor":      cmdDefineColor,
+		"DefineFontfamily": cmdDefineFontfamily,
 		"DefineFontsize":   cmdDefineFontsize,
 		"DefineMasterpage": cmdDefineMasterpage,
 		"Element":          cmdElement,
 		"ForAll":           cmdForall,
 		"Group":            cmdGroup,
 		"Image":            cmdImage,
+		"LoadDataset":      cmdLoadDataset,
 		"LoadFontfile":     cmdLoadFontfile,
 		"Loop":             cmdLoop,
 		"Message":          cmdMessage,
 		"NextFrame":        cmdNextFrame,
-		"PDFOptions":       cmdPDFOptions,
 		"Options":          cmdOptions,
 		"Pageformat":       cmdPageformat,
 		"Paragraph":        cmdParagraph,
+		"PDFOptions":       cmdPDFOptions,
 		"PlaceObject":      cmdPlaceObject,
 		"ProcessNode":      cmdProcessNode,
 		"Record":           cmdRecord,
+		"SaveDataset":      cmdSaveDataset,
 		"SetGrid":          cmdSetGrid,
 		"SetVariable":      cmdSetVariable,
 		"Span":             cmdSpan,
@@ -598,6 +601,52 @@ func cmdImage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 
 }
 
+func cmdLoadDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Href *string
+		Name *string
+	}{}
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	var filename string
+	if attValues.Name != nil {
+		filename = xd.jobname + "-" + *attValues.Name + ".xml"
+	} else if attValues.Href != nil {
+		filename = *attValues.Href
+	}
+	xmlPath, err := xd.cfg.FindFile(filename)
+	if xmlPath == "" {
+		bag.Logger.Infof("LoadDataset file %s does not exist", filename)
+		return nil, nil
+	}
+	r, err := os.Open(xmlPath)
+	if err != nil {
+		return nil, err
+	}
+	bag.Logger.Infof("LoadDataset file %s loaded", filename)
+	saveData := xd.data
+	defer r.Close()
+	xd.data, err = xpath.NewParser(r)
+	if err != nil {
+		return nil, err
+	}
+	oldContext := xd.data.Ctx.SetContext(xpath.Sequence{})
+	xd.data.Ctx.Store = map[any]any{
+		"xd": xd,
+	}
+	if dd, ok := dataDispatcher["root"]; ok {
+		if rec, ok := dd[""]; ok {
+			_, err = dispatch(xd, rec, xd.data)
+		}
+	}
+	xd.data.Ctx.SetContext(xpath.Sequence{oldContext})
+	xd.data = saveData
+
+	return nil, nil
+}
+
 func cmdLoadFontfile(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
@@ -661,18 +710,18 @@ func cmdProcessNode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 func cmdRecord(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
-		Match string `sdxml:"mustexist"`
-		Mode  string
+		Element string `sdxml:"mustexist"`
+		Mode    string
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 
-	dp := dataDispatcher[attValues.Match]
+	dp := dataDispatcher[attValues.Element]
 	if dp == nil {
-		dataDispatcher[attValues.Match] = make(map[string]*goxml.Element)
+		dataDispatcher[attValues.Element] = make(map[string]*goxml.Element)
 	}
-	dataDispatcher[attValues.Match][attValues.Mode] = layoutelt
+	dataDispatcher[attValues.Element][attValues.Mode] = layoutelt
 	return nil, nil
 }
 
@@ -977,6 +1026,60 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	}
 
 	return seq, nil
+}
+
+func cmdSaveDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	attValues := &struct {
+		Href        *string
+		Name        *string
+		Elementname string
+		Select      *string
+	}{}
+	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	var eval xpath.Sequence
+	var err error
+	if attValues.Select != nil {
+		eval, err = xd.data.Evaluate(*attValues.Select)
+		if err != nil {
+			bag.Logger.Errorf("SaveDataset (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
+			return nil, err
+		}
+	} else {
+		eval, err = dispatch(xd, layoutelt, xd.data)
+		if err != nil {
+			return nil, err
+		}
+	}
+	root := goxml.NewElement()
+	root.Name = attValues.Elementname
+	for _, itm := range eval {
+		if elt, ok := itm.(goxml.Element); ok {
+			root.Append(elt)
+		}
+	}
+
+	var filename string
+	if attValues.Name != nil {
+		filename = xd.jobname + "-" + *attValues.Name + ".xml"
+	} else if attValues.Href != nil {
+		filename = *attValues.Href
+	}
+
+	if filename == "" {
+		return nil, fmt.Errorf("SaveDataset (line %d) filename must be provided via name or href", layoutelt.Line)
+	}
+
+	w, err := os.Create(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer w.Close()
+	bag.Logger.Infof("Write XML file %s", filename)
+	_, err = w.Write([]byte(root.ToXML()))
+
+	return nil, err
 }
 
 func cmdSetGrid(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {

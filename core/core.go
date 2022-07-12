@@ -43,6 +43,7 @@ func genIntegerSequence(ids chan int) {
 type xtsDocument struct {
 	cfg               *XTSConfig
 	document          *frontend.Document
+	jobname           string
 	layoutcss         *csshtml.CSS
 	data              *xpath.Parser
 	pages             []*page
@@ -76,6 +77,7 @@ func newXTSDocument() *xtsDocument {
 		groups:            make(map[string]*group),
 		fontsizes:         make(map[string][2]bag.ScaledPoint),
 		store:             make(map[any]any),
+		jobname:           "publisher",
 	}
 	return xd
 }
