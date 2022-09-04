@@ -115,6 +115,7 @@ type XTSConfig struct {
 	Outfile     io.WriteCloser
 	OutFilename string
 	FindFile    func(string) (string, error)
+	DumpFile    io.Writer
 }
 
 // RunXTS is the entry point
@@ -201,6 +202,15 @@ func RunXTS(cfg *XTSConfig) error {
 	if err = d.document.Finish(); err != nil {
 		return err
 	}
+	if cfg.DumpFile != nil {
+		d.document.Doc.OutputXMLDump(cfg.DumpFile)
+		if closer, ok := cfg.DumpFile.(io.WriteCloser); ok {
+			err = closer.Close()
+			if err != nil {
+				return err
+			}
+		}
+	}
 
 	bag.Logger.Infof("Finished in %s", time.Now().Sub(starttime))
 	return nil
@@ -247,30 +257,35 @@ func (xd *xtsDocument) registerCallbacks() {
 			y := curGrid.marginBottom
 			wd := xtspage.pageWidth - curGrid.marginLeft - curGrid.marginRight
 			ht := xtspage.pageHeight - curGrid.marginTop - curGrid.marginBottom
-			var pdfinstructions []string
 			// page
-			rect := pdfdraw.NewStandalone().LineWidth(bag.MustSp("0.5pt")).ColorNonstroking(*xd.document.GetColor("darkblue")).Rect(x, y, wd, ht).Stroke().String()
-			pdfinstructions = append(pdfinstructions, rect)
-			gridMaxX := xtspage.pageWidth - curGrid.marginRight
+			halfpt := bag.ScaledPointFromFloat(0.5)
+			lightgray := *xd.document.GetColor("lightgray")
+			gray := *xd.document.GetColor("gray")
+			darkgray := *xd.document.GetColor("darkgray")
+			red := *xd.document.GetColor("red")
+			darkblue := *xd.document.GetColor("darkblue")
 
-			pdfinstructions = append(pdfinstructions, "0.4 w")
-			pdfinstructions = append(pdfinstructions, "[2] 0 d")
+			gridDebug := pdfdraw.NewStandalone().LineWidth(halfpt).ColorStroking(darkblue).Rect(x, y, wd, ht).Stroke()
+
+			// pdfinstructions = append(pdfinstructions, rect)
+			gridMaxX := xtspage.pageWidth - curGrid.marginRight
+			gridDebug.LineWidth(halfpt).SetDash([]uint{2}, 0)
 
 			gridX := x
 			// vertical grid rules
 			for i := 0; gridX <= gridMaxX; i++ {
 				switch {
 				case i%10 == 0:
-					pdfinstructions = append(pdfinstructions, "0.1 G")
+					gridDebug.ColorStroking(darkgray)
 				case i%5 == 0:
-					pdfinstructions = append(pdfinstructions, "0.7 G")
+					gridDebug.ColorStroking(gray)
 				default:
-					pdfinstructions = append(pdfinstructions, "0.9 G")
+					gridDebug.ColorStroking(lightgray)
 				}
-				pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s 0 m %s %s l S", gridX, gridX, xtspage.pageHeight))
+				gridDebug.Moveto(gridX, 0).Lineto(gridX, xtspage.pageHeight).Stroke()
 				if xd.currentGrid.gridGapX > 0 && gridX < gridMaxX && i > 0 {
 					gridX += xd.currentGrid.gridGapX
-					pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s 0  m %s %s l S", gridX, gridX, xtspage.pageHeight))
+					gridDebug.Moveto(gridX, 0).Lineto(gridX, xtspage.pageHeight).Stroke()
 				}
 				gridX += xd.currentGrid.gridWidth
 			}
@@ -280,35 +295,32 @@ func (xd *xtsDocument) registerCallbacks() {
 			for i := 0; gridY >= y; i++ {
 				switch {
 				case i%10 == 0:
-					pdfinstructions = append(pdfinstructions, "0.1 G")
+					gridDebug.ColorStroking(darkgray)
 				case i%5 == 0:
-					pdfinstructions = append(pdfinstructions, "0.7 G")
+					gridDebug.ColorStroking(gray)
 				default:
-					pdfinstructions = append(pdfinstructions, "0.9 G")
+					gridDebug.ColorStroking(lightgray)
 				}
-				pdfinstructions = append(pdfinstructions, fmt.Sprintf("0 %s m %s %s l S", gridY, xtspage.pageWidth, gridY))
+				gridDebug.Moveto(0, gridY).Lineto(xtspage.pageWidth, gridY).Stroke()
 				if xd.currentGrid.gridGapY > 0 && gridY > y && i > 0 {
 					gridY -= xd.currentGrid.gridGapY
-					pdfinstructions = append(pdfinstructions, fmt.Sprintf("0 %s m %s %s l S", gridY, xtspage.pageWidth, gridY))
+					gridDebug.Moveto(0, gridY).Lineto(xtspage.pageWidth, gridY).Stroke()
 				}
 				gridY -= xd.currentGrid.gridHeight
 			}
-			pageframe := fmt.Sprintf("0 0 %s %s re S", xtspage.pageWidth, xtspage.pageHeight)
-			pdfinstructions = append(pdfinstructions, pageframe)
+			gridDebug.Rect(0, 0, xtspage.pageWidth, xtspage.pageHeight).Stroke().SetDash([]uint{}, 0).LineWidth(bag.ScaledPointFromFloat(0.4)).ColorStroking(red)
 
-			pdfinstructions = append(pdfinstructions, "[] 0 d 0.4 w 1 0 0 RG ")
 			for _, area := range curGrid.areas {
 				for _, rect := range area.frame {
 					posX := xd.currentGrid.posX(rect.col, area)
 					posY := xtspage.pageHeight - xd.currentGrid.posY(rect.row, area)
 					wd := xd.currentGrid.width(rect.width)
 					ht := xd.currentGrid.height(rect.height) * -1
-					frame := fmt.Sprintf("%s %s %s %s re S", posX, posY, wd, ht)
-					pdfinstructions = append(pdfinstructions, frame)
+					gridDebug.Rect(posX, posY, wd, ht).Stroke()
 				}
 			}
 
-			rule.Pre = strings.Join(pdfinstructions, " ")
+			rule.Pre = gridDebug.String()
 			vlist.List = node.Hpack(rule)
 			pg.Background = append(pg.Background, document.Object{Vlist: vlist, X: 0, Y: 0})
 

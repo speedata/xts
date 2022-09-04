@@ -92,10 +92,12 @@ func dothings() error {
 	if err != nil {
 		return err
 	}
+	var dumpOutputFileName string
 
 	op := optionparser.NewOptionParser()
 	op.On("--systemfonts", "Use system fonts", &configuration.systemfonts)
 	op.On("--verbose", "Print more debugging information", &configuration.verbose)
+	op.On("--dumpoutput FILENAME", "Complete XML dump of generated PDF file", &dumpOutputFileName)
 	op.Command("list-fonts", "List installed fonts")
 	op.Command("run", "Load layout and data files and create PDF")
 	op.Command("version", "Print version information")
@@ -154,6 +156,17 @@ func dothings() error {
 			OutFilename: "publisher.pdf",
 			FindFile:    core.FindFile,
 		}
+
+		if fn := dumpOutputFileName; fn != "" {
+			fmt.Println("****dumping ", fn)
+			w, err := os.Create(fn)
+			if err != nil {
+				return err
+			}
+			xc.DumpFile = w
+
+		}
+
 		if err = core.RunXTS(xc); err != nil {
 			return err
 		}

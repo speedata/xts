@@ -44,6 +44,7 @@ func init() {
 		"Element":          cmdElement,
 		"ForAll":           cmdForall,
 		"Group":            cmdGroup,
+		"I":                cmdI,
 		"Image":            cmdImage,
 		"LoadDataset":      cmdLoadDataset,
 		"LoadFontfile":     cmdLoadFontfile,
@@ -63,8 +64,11 @@ func init() {
 		"Span":             cmdSpan,
 		"Stylesheet":       cmdStylesheet,
 		"Switch":           cmdSwitch,
+		"Table":            cmdTable,
 		"Textblock":        cmdTextblock,
+		"Td":               cmdTd,
 		"Trace":            cmdTrace,
+		"Tr":               cmdTr,
 		"Value":            cmdValue,
 	}
 }
@@ -192,6 +196,7 @@ func cmdBox(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	attValues := &struct {
 		Class           string
 		ID              string
+		Style           string
 		Backgroundcolor string          `sdxml:"default:black"`
 		Width           bag.ScaledPoint `sdxml:"mustexist"`
 		Height          bag.ScaledPoint `sdxml:"mustexist"`
@@ -200,22 +205,11 @@ func cmdBox(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
-
-	htmlString := `<box `
-	if class := attValues.Class; class != "" {
-		htmlString += fmt.Sprintf("class=%q ", class)
-	}
-	if id := attValues.ID; id != "" {
-		htmlString += fmt.Sprintf("id=%q", id)
-	}
-	htmlString += ">"
-
-	a, err := xd.layoutcss.ParseHTMLFragment(htmlString, "")
+	attrs, err := xd.applyLayoutStylesheet(attValues.Class, attValues.ID, attValues.Style, "box")
 	if err != nil {
 		return nil, err
 	}
 
-	attrs, _ := csshtml.ResolveAttributes(a.Find("box").First().Nodes[0].Attr)
 	var bgcolor *color.Color
 	if bgc, ok := attrs["background-color"]; ok {
 		bgcolor = xd.document.GetColor(bgc)
@@ -225,8 +219,9 @@ func cmdBox(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 
 	r := node.NewRule()
 	if bgcolor.Space != color.ColorNone {
-		str := pdfdraw.New().Color(*bgcolor).Rect(0, 0, attValues.Width, -attValues.Height).Fill().String()
+		str := pdfdraw.New().Save().Color(*bgcolor).Rect(0, 0, attValues.Width, -attValues.Height).Fill().String()
 		r.Pre = str
+		r.Post = pdfdraw.New().Restore().String()
 	}
 
 	r.Width = attValues.Width
@@ -239,7 +234,8 @@ func cmdCircle(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 	attValues := &struct {
 		Class           string
 		ID              string
-		Backgroundcolor string           `sdxml:"default:black"`
+		Style           string
+		Backgroundcolor *string
 		RadiusX         *bag.ScaledPoint `sdxml:"mustexist"`
 		RadiusY         *bag.ScaledPoint
 	}{}
@@ -250,38 +246,36 @@ func cmdCircle(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 		attValues.RadiusY = attValues.RadiusX
 	}
 
-	htmlString := `<circle `
-	if class := attValues.Class; class != "" {
-		htmlString += fmt.Sprintf("class=%q ", class)
-	}
-	if id := attValues.ID; id != "" {
-		htmlString += fmt.Sprintf("id=%q", id)
-	}
-	htmlString += ">"
-
-	a, err := xd.layoutcss.ParseHTMLFragment(htmlString, "")
-	if err != nil {
-		return nil, err
-	}
-
-	attrs, _ := csshtml.ResolveAttributes(a.Find("circle").First().Nodes[0].Attr)
+	attrs, err := xd.applyLayoutStylesheet(attValues.Class, attValues.ID, attValues.Style, "circle")
 	var bgcolor *color.Color
-	if bgc, ok := attrs["background-color"]; ok {
-		bgcolor = xd.document.GetColor(bgc)
+	if attValues.Backgroundcolor == nil {
+		if bgc, ok := attrs["background-color"]; ok {
+			bgcolor = xd.document.GetColor(bgc)
+		}
 	} else {
-		bgcolor = xd.document.GetColor(attValues.Backgroundcolor)
+		bgcolor = xd.document.GetColor(*attValues.Backgroundcolor)
 	}
 
 	r := node.NewRule()
+	if bgcolor == nil {
+		bgcolor = xd.document.GetColor("black")
+	}
 
 	if bgcolor.Space != color.ColorNone {
-		str := pdfdraw.New().Color(*bgcolor).Circle(0, 0, *attValues.RadiusX, *attValues.RadiusY).Fill().String()
+		str := pdfdraw.New().Save().Color(*bgcolor).Circle(0, 0, *attValues.RadiusX, *attValues.RadiusY).Fill().String()
 		r.Pre = str
+		r.Hide = true
+		r.Post = pdfdraw.New().Restore().String()
 	}
 
 	r.Width = *attValues.RadiusX * 2
 	r.Height = *attValues.RadiusY * 2
 	vl := node.Vpack(r)
+	if vl.Attributes == nil {
+		vl.Attributes = node.H{}
+	}
+	vl.Attributes["origin"] = "circle"
+
 	return xpath.Sequence{vl}, err
 }
 
@@ -554,6 +548,19 @@ func cmdGroup(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	return nil, nil
 }
 
+func cmdI(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	seq, err := dispatch(xd, layoutelt, xd.data)
+
+	te := &frontend.TypesettingElement{
+		Settings: frontend.TypesettingSettings{
+			frontend.SettingStyle: frontend.FontStyleItalic,
+		},
+	}
+	getTextvalues(te, seq, "cmdBold", layoutelt.Line)
+
+	return xpath.Sequence{te}, err
+}
+
 func cmdImage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
@@ -598,7 +605,6 @@ func cmdImage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	hl.Attributes["origin"] = "image"
 
 	return xpath.Sequence{hl}, nil
-
 }
 
 func cmdLoadDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -797,7 +803,6 @@ func cmdNextFrame(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 			area.currentFrame = 0
 			clearPage(xd)
 		}
-		area.currentRow = 0
 	}
 	return nil, nil
 }
@@ -919,6 +924,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	xd.setupPage()
 	var err error
 	attValues := &struct {
+		Allocate  bool `sdxml:"default:yes"`
 		Column    string
 		Row       string
 		Area      string
@@ -938,18 +944,20 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 
 	pos := positioningUnknown
 
-	var columnInt, rowInt int
+	var columnInt, rowInt int = 1, 1
 	var col, row coord
 	var columnLength, rowLength bag.ScaledPoint
 
 	var rowSet, colSet bool
-	if colF, err := strconv.ParseFloat(attValues.Column, 64); err == nil {
-		colSet = true
-		pos = positioningGrid
-		columnInt = int(colF)
-		col = coord(columnInt)
-	} else {
-		bag.Logger.Debug(err)
+	if attValues.Column != "" {
+		if colF, err := strconv.ParseFloat(attValues.Column, 64); err == nil {
+			colSet = true
+			pos = positioningGrid
+			columnInt = int(colF)
+			col = coord(columnInt)
+		} else {
+			bag.Logger.Debug(err)
+		}
 	}
 
 	if rowInt, err = strconv.Atoi(attValues.Row); err == nil {
@@ -959,11 +967,11 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	}
 	if pos == positioningGrid && colSet != rowSet {
 		if !colSet {
-			col = area.currentCol
+			col = area.CurrentCol()
 			columnInt = int(col)
 		}
 		if !rowSet {
-			row = area.currentRow
+			row = area.CurrentRow()
 			rowInt = int(row)
 		}
 	} else if pos == positioningUnknown {
@@ -974,7 +982,8 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 			pos = positioningAbsolute
 		}
 	}
-	xd.store["maxwidth"] = xd.currentGrid.nx
+
+	xd.store["maxwidth"] = xd.currentGrid.nx - columnInt + 1
 
 	var seq xpath.Sequence
 	if attValues.Groupname != "" {
@@ -985,6 +994,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 			return nil, err
 		}
 	}
+
 	if len(seq) == 0 {
 		bag.Logger.Warnf("line %d: no objects in PlaceObject", layoutelt.Line)
 		return nil, nil
@@ -997,13 +1007,18 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		if vl.Attributes != nil {
 			origin = vl.Attributes["origin"].(string)
 		}
+	case []*node.VList:
+		vl = t[0]
+		if vl.Attributes != nil {
+			origin = vl.Attributes["origin"].(string)
+		}
 	case *node.HList:
 		vl = node.Vpack(t)
 		if t.Attributes != nil {
 			origin = t.Attributes["origin"].(string)
 		}
 	default:
-		bag.Logger.DPanicf("PlaceObject: unknown node %v", t)
+		bag.Logger.DPanicf("PlaceObject: unknown node %T", t)
 	}
 
 	if pos == positioningUnknown {
@@ -1022,7 +1037,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	case positioningAbsolute:
 		xd.currentPage.outputAbsolute(columnLength, rowLength, vl)
 	case positioningGrid:
-		xd.OutputAt(vl, col, row, true, area, origin)
+		xd.OutputAt(vl, col, row, attValues.Allocate, area, origin)
 	}
 
 	return seq, nil
@@ -1159,29 +1174,17 @@ func cmdSpan(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 		return nil, err
 	}
 
-	htmlString := `<span `
-	if class := attValues.Class; class != "" {
-		htmlString += fmt.Sprintf("class=%q ", class)
-	}
-	if id := attValues.ID; id != "" {
-		htmlString += fmt.Sprintf("id=%q", id)
-	}
-	if style := attValues.Style; style != "" {
-		htmlString += fmt.Sprintf("style=%q", style)
-	}
-	htmlString += ">"
-
-	a, err := xd.layoutcss.ParseHTMLFragment(htmlString, "")
+	attrs, err := xd.applyLayoutStylesheet(attValues.Class, attValues.ID, attValues.Style, "span")
 	if err != nil {
 		return nil, err
 	}
+
 	seq, err := dispatch(xd, layoutelt, xd.data)
 
 	te := &frontend.TypesettingElement{
 		Settings: frontend.TypesettingSettings{},
 	}
 
-	attrs, _ := csshtml.ResolveAttributes(a.Find("span").First().Nodes[0].Attr)
 	if val, ok := attrs["color"]; ok {
 		te.Settings[frontend.SettingColor] = xd.document.GetColor(val)
 	}
@@ -1263,6 +1266,47 @@ func cmdSwitch(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 	return nil, nil
 }
 
+func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Width      bag.ScaledPoint
+		Stretch    string `sdxml:"default:no"`
+		FontFamily string
+	}{}
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	if attValues.Width == 0 {
+		attValues.Width = xd.currentGrid.width(coord(xd.store["maxwidth"].(int)))
+	}
+	tbl := frontend.Table{}
+	tbl.MaxWidth = attValues.Width
+
+	ff := xd.document.FindFontFamily("text")
+	if af := attValues.FontFamily; af != "" {
+		if fontfamily := xd.document.FindFontFamily(af); fontfamily != nil {
+			ff = fontfamily
+		}
+	}
+	tbl.FontFamily = ff
+
+	seq, err := dispatch(xd, layoutelt, xd.data)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, itm := range seq {
+		r := itm.(frontend.TableRow)
+		tbl.Rows = append(tbl.Rows, &r)
+	}
+	vls, err := xd.document.BuildTable(&tbl)
+	if err != nil {
+		return nil, err
+	}
+
+	return xpath.Sequence{vls}, nil
+}
+
 func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
@@ -1324,22 +1368,18 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 			bag.Logger.DPanicf("cmdTextblock: unknown type %T", t)
 		}
 	}
-	hlist, tail, err := xd.document.Mknodes(te)
-	if err != nil {
-		return nil, err
-	}
-
-	frontend.Hyphenate(hlist, xd.document.Doc.DefaultLanguage)
-	node.AppendLineEndAfter(tail)
-
-	ls := node.NewLinebreakSettings()
 	if attValues.Width == 0 {
 		attValues.Width = xd.currentGrid.width(coord(xd.store["maxwidth"].(int)))
 	}
 
-	ls.HSize = attValues.Width
-	ls.LineHeight = leading
-	vlist, _ := node.Linebreak(hlist, ls)
+	vlist, _, err := xd.document.FormatParagraph(te,
+		frontend.HSize(attValues.Width),
+		frontend.Leading(leading),
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	if vlist == nil {
 		return nil, nil
 	}
@@ -1349,6 +1389,155 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	vlist.Attributes["origin"] = "textblock"
 
 	return xpath.Sequence{vlist}, nil
+}
+
+func cmdTr(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Valign string
+	}{}
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+
+	seq, err := dispatch(xd, layoutelt, xd.data)
+	if err != nil {
+		return nil, err
+	}
+	tr := frontend.TableRow{}
+	for _, itm := range seq {
+		c := itm.(frontend.TableCell)
+		tr.Cells = append(tr.Cells, &c)
+	}
+	switch attValues.Valign {
+	case "top":
+		tr.VAlign = frontend.VAlignTop
+	case "bottom":
+		tr.VAlign = frontend.VAlignBottom
+	case "middle":
+		tr.VAlign = frontend.VAlignMiddle
+	}
+
+	return xpath.Sequence{tr}, nil
+}
+
+func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		BorderBottom      *bag.ScaledPoint `sdxml:"attr:border-bottom"`
+		BorderTop         *bag.ScaledPoint `sdxml:"attr:border-top"`
+		BorderLeft        *bag.ScaledPoint `sdxml:"attr:border-left"`
+		BorderRight       *bag.ScaledPoint `sdxml:"attr:border-right"`
+		BorderBottomColor *string          `sdxml:"attr:border-bottom-color"`
+		BorderTopColor    *string          `sdxml:"attr:border-top-color"`
+		BorderLeftColor   *string          `sdxml:"attr:border-left-color"`
+		BorderRightColor  *string          `sdxml:"attr:border-right-color"`
+		Valign            string
+		Class             string
+		ID                string
+		Style             string
+	}{}
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	seq, err := dispatch(xd, layoutelt, xd.data)
+	if err != nil {
+		return nil, err
+	}
+
+	tc := frontend.TableCell{}
+	for _, itm := range seq {
+		c := itm.(*frontend.TypesettingElement)
+		tc.Contents = append(tc.Contents, c)
+	}
+
+	attrs, err := xd.applyLayoutStylesheet(attValues.Class, attValues.ID, attValues.Style, "table", "tr", "td")
+	if err != nil {
+		return nil, err
+	}
+
+	if wd, ok := attrs["border-bottom-width"]; ok {
+		tc.BorderBottomWidth, err = bag.Sp(wd)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if wd, ok := attrs["border-top-width"]; ok {
+		tc.BorderTopWidth, err = bag.Sp(wd)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if wd, ok := attrs["border-left-width"]; ok {
+		tc.BorderLeftWidth, err = bag.Sp(wd)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if wd, ok := attrs["border-right-width"]; ok {
+		tc.BorderRightWidth, err = bag.Sp(wd)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if col, ok := attrs["border-bottom-color"]; ok {
+		tc.BorderBottomColor = xd.document.GetColor(col)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if col, ok := attrs["border-top-color"]; ok {
+		tc.BorderTopColor = xd.document.GetColor(col)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if col, ok := attrs["border-left-color"]; ok {
+		tc.BorderLeftColor = xd.document.GetColor(col)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if col, ok := attrs["border-right-color"]; ok {
+		tc.BorderRightColor = xd.document.GetColor(col)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if bb := attValues.BorderBottom; bb != nil {
+		tc.BorderBottomWidth = *bb
+	}
+	if bb := attValues.BorderTop; bb != nil {
+		tc.BorderTopWidth = *bb
+	}
+	if bb := attValues.BorderLeft; bb != nil {
+		tc.BorderLeftWidth = *bb
+	}
+	if bb := attValues.BorderRight; bb != nil {
+		tc.BorderRightWidth = *bb
+	}
+	if attValues.BorderBottomColor != nil {
+		tc.BorderBottomColor = xd.document.GetColor(*attValues.BorderBottomColor)
+	}
+	if attValues.BorderTopColor != nil {
+		tc.BorderTopColor = xd.document.GetColor(*attValues.BorderTopColor)
+	}
+	if attValues.BorderLeftColor != nil {
+		tc.BorderLeftColor = xd.document.GetColor(*attValues.BorderLeftColor)
+	}
+	if attValues.BorderRightColor != nil {
+		tc.BorderRightColor = xd.document.GetColor(*attValues.BorderRightColor)
+	}
+	switch attValues.Valign {
+	case "top":
+		tc.VAlign = frontend.VAlignTop
+	case "bottom":
+		tc.VAlign = frontend.VAlignBottom
+	case "middle":
+		tc.VAlign = frontend.VAlignMiddle
+	}
+
+	return xpath.Sequence{tc}, nil
 }
 
 func cmdTrace(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {

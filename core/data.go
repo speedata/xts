@@ -7,10 +7,56 @@ import (
 	"strings"
 
 	"github.com/speedata/boxesandglue/backend/bag"
+	"github.com/speedata/boxesandglue/csshtml"
 	"github.com/speedata/boxesandglue/frontend"
 	"github.com/speedata/goxml"
 	xpath "github.com/speedata/goxpath"
 )
+
+// applyLayoutStylesheet creates an HTML fragment, applies CSS and reads the
+// attributes from the fragment. This is handy when styling layout elements with CSS.
+func (xd *xtsDocument) applyLayoutStylesheet(classname string, id string, style string, eltnames ...string) (map[string]string, error) {
+	htmlstrings := []string{}
+	for i, eltname := range eltnames {
+		if i == len(eltnames)-1 {
+			htmlstrings = append(htmlstrings, "<", eltname)
+			if classname != "" {
+				htmlstrings = append(htmlstrings, fmt.Sprintf(" class=%q ", classname))
+			}
+			if id != "" {
+				htmlstrings = append(htmlstrings, fmt.Sprintf(" id=%q", id))
+			}
+			if style != "" {
+				htmlstrings = append(htmlstrings, fmt.Sprintf(" style=%q", style))
+			}
+			htmlstrings = append(htmlstrings, ">")
+		} else {
+			htmlstrings = append(htmlstrings, "<"+eltname+">")
+
+		}
+	}
+	for i, j := 0, len(eltnames)-1; i < j; i, j = i+1, j-1 {
+		eltnames[i], eltnames[j] = eltnames[j], eltnames[i]
+	}
+
+	for _, eltname := range eltnames {
+		htmlstrings = append(htmlstrings, "</"+eltname+">")
+	}
+
+	htmlstring := strings.Join(htmlstrings, "")
+
+	a, err := xd.layoutcss.ParseHTMLFragment(htmlstring, "")
+	if err != nil {
+		return nil, err
+	}
+
+	n := a.Find(eltnames[0]).Nodes
+	if len(n) == 0 {
+		return map[string]string{}, nil
+	}
+	attrs, _ := csshtml.ResolveAttributes(a.Find(eltnames[0]).First().Nodes[0].Attr)
+	return attrs, nil
+}
 
 // Get the values from the child elements of B, Paragraph and its ilk and fill
 // the provided typesetting element to get a recursive data structure.
@@ -118,7 +164,10 @@ func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 				bag.Logger.Errorf("Layout line %d: attribute %s on element %s not found", layoutelt.Line, fieldName, layoutelt.Name)
 				return fmt.Errorf("line %d: attribute %s on element %s not found", layoutelt.Line, fieldName, layoutelt.Name)
 			}
-			attValue = dflt
+			if dflt != "" {
+				attValue = dflt
+				hasAttribute = true
+			}
 		}
 		if hasAttribute {
 			switch field.Type() {
@@ -169,7 +218,6 @@ func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 				}
 				field.Set(reflect.ValueOf(&wd).Convert(scaledPointsPtrType))
 			}
-
 		}
 	}
 	return nil

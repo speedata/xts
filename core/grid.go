@@ -10,19 +10,37 @@ import (
 )
 
 type area struct {
-	currentRow   coord
-	currentCol   coord
 	currentFrame int
 	name         string
 	frame        []*gridRect
 }
 
-func (a area) String() string {
+func (area area) String() string {
 	var ret []string
-	for _, f := range a.frame {
+	for _, f := range area.frame {
 		ret = append(ret, f.String())
 	}
-	return fmt.Sprintf("%s: %s", a.name, strings.Join(ret, "|"))
+	return fmt.Sprintf("%s: %s", area.name, strings.Join(ret, "|"))
+}
+
+// CurrentRow returns the current row of the current active frame.
+func (area *area) CurrentRow() coord {
+	return area.frame[area.currentFrame].row
+}
+
+// CurrentCol returns the current column of the current active frame.
+func (area *area) CurrentCol() coord {
+	return area.frame[area.currentFrame].col
+}
+
+// SetCurrentRow sets the current row in the active frame in the area.
+func (area *area) SetCurrentRow(row coord) {
+	area.frame[area.currentFrame].row = row
+}
+
+// SetCurrentCol sets the current column in the active frame in the area.
+func (area *area) SetCurrentCol(col coord) {
+	area.frame[area.currentFrame].col = col
 }
 
 type allocationMatrix map[gridCoord]int
@@ -196,8 +214,8 @@ func (g *grid) allocate(x, y coord, area *area, wd, ht bag.ScaledPoint) {
 	var offsetX coord
 	var offsetY coord
 
-	offsetX = area.frame[area.currentFrame].col
-	offsetY = area.frame[area.currentFrame].row
+	offsetX = area.CurrentCol()
+	offsetY = area.CurrentRow()
 
 	for col := coord(1); col <= g.widthToColumns(wd); col++ {
 		for row := coord(1); row <= g.heightToRows(ht); row++ {
@@ -225,20 +243,21 @@ func (g *grid) allocate(x, y coord, area *area, wd, ht bag.ScaledPoint) {
 	}
 	col := x + g.widthToColumns(wd)
 	if col > coord(g.nx) {
-		area.currentCol = 1
-		area.currentRow = y + g.heightToRows(ht)
+		area.SetCurrentCol(1)
+		area.SetCurrentRow(y + g.heightToRows(ht))
 	}
 }
 func (g *grid) findFreeSpaceForObject(vl *node.VList, area *area) (gridCoord, error) {
-	if area.currentRow == 0 {
-		area.currentRow = 1
+	if area.CurrentRow() == 0 {
+		area.SetCurrentRow(1)
 	}
-	if area.currentCol == 0 {
-		area.currentCol = 1
+	if area.CurrentCol() == 0 {
+		area.SetCurrentCol(1)
 	}
-	rowOffset := area.frame[area.currentFrame].row
+	// this doesn't make sense, check
+	rowOffset := area.CurrentRow()
 
-	row := area.currentRow + rowOffset - 1
+	row := area.CurrentRow() + rowOffset - 1
 	wdCols := g.widthToColumns(vl.Width)
 
 	// if g.currentCol >= coord(g.nx) {
@@ -246,7 +265,7 @@ func (g *grid) findFreeSpaceForObject(vl *node.VList, area *area) (gridCoord, er
 	// }
 	col := g.fitsInRow(row, wdCols, area)
 	if col > 0 {
-		col = col - area.frame[area.currentFrame].col + 1
+		col = col - area.CurrentCol() + 1
 	}
 	xy := newGridCoord(col, row-rowOffset+1)
 
@@ -259,7 +278,7 @@ func (g *grid) nextRow() {
 }
 
 func (g *grid) fitsInRow(y coord, wdCols coord, area *area) coord {
-	col := area.currentCol + area.frame[area.currentFrame].col - 1
+	col := area.CurrentCol() - 1
 	row := y
 	for {
 		if g.allocatedBlocks.allocValue(col, row) > 0 && int(col) <= g.nx {
@@ -276,12 +295,4 @@ func (g *grid) fitsInRow(y coord, wdCols coord, area *area) coord {
 		}
 	}
 	return col
-}
-
-func (g *grid) CurrentRow(area *area, framenumber int) int {
-	return int(area.currentRow)
-}
-
-func (g *grid) CurrentCol(area *area, framenumber int) int {
-	return int(area.currentCol)
 }

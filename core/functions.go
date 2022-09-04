@@ -41,7 +41,7 @@ func fnCurrentRow(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequen
 	if area, ok = xd.currentGrid.areas[areaname]; !ok {
 		return nil, fmt.Errorf("area %s unknown", areaname)
 	}
-	return goxpath.Sequence{int(xd.currentGrid.CurrentRow(area, 1))}, nil
+	return goxpath.Sequence{int(area.CurrentRow())}, nil
 }
 
 func fnDummytext(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {

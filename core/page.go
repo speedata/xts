@@ -181,9 +181,7 @@ func (p *page) String() string {
 
 func (xd *xtsDocument) OutputAt(vl *node.VList, col coord, row coord, allocate bool, area *area, what string) error {
 	areatext := ""
-	if area.name != pageAreaName {
-		areatext = fmt.Sprintf("%s [%d]: ", area.name, 1)
-	}
+
 	var currentGroup *group
 	if currentGroup = xd.currentGroup; currentGroup != nil {
 		if area.name != pageAreaName {
@@ -193,12 +191,17 @@ func (xd *xtsDocument) OutputAt(vl *node.VList, col coord, row coord, allocate b
 			currentGroup.contents = vl
 		}
 	} else {
+		// for debugging
+		if area.name != pageAreaName {
+			areatext = fmt.Sprintf("%s [%d]: ", area.name, 1)
+		}
 		bag.Logger.Infof("PlaceObject: output %s at (%s%d,%d)", what, areatext, col, row)
 		columnLength := xd.currentGrid.posX(col, area)
 		rowLength := xd.currentGrid.posY(row, area)
 		xd.currentPage.outputAbsolute(columnLength, rowLength, vl)
 	}
-
-	xd.currentGrid.allocate(col, row, area, vl.Width, vl.Height+vl.Depth)
+	if allocate {
+		xd.currentGrid.allocate(col, row, area, vl.Width, vl.Height+vl.Depth)
+	}
 	return nil
 }
