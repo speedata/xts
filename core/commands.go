@@ -108,7 +108,7 @@ func cmdA(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	}
 	hl := document.Hyperlink{URI: attValues.Href}
 
-	te := &frontend.TypesettingElement{
+	te := &frontend.Paragraph{
 		Settings: frontend.TypesettingSettings{
 			frontend.SettingHyperlink: hl,
 		},
@@ -144,7 +144,7 @@ func cmdAttribute(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 func cmdB(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	seq, err := dispatch(xd, layoutelt, xd.data)
 
-	te := &frontend.TypesettingElement{
+	te := &frontend.Paragraph{
 		Settings: frontend.TypesettingSettings{
 			frontend.SettingFontWeight: frontend.FontWeight700,
 		},
@@ -551,7 +551,7 @@ func cmdGroup(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 func cmdI(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	seq, err := dispatch(xd, layoutelt, xd.data)
 
-	te := &frontend.TypesettingElement{
+	te := &frontend.Paragraph{
 		Settings: frontend.TypesettingSettings{
 			frontend.SettingStyle: frontend.FontStyleItalic,
 		},
@@ -907,7 +907,7 @@ func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		return nil, err
 	}
 
-	te := &frontend.TypesettingElement{
+	te := &frontend.Paragraph{
 		Settings: make(frontend.TypesettingSettings),
 	}
 	if attValues.Color != "" {
@@ -1181,7 +1181,7 @@ func cmdSpan(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 
 	seq, err := dispatch(xd, layoutelt, xd.data)
 
-	te := &frontend.TypesettingElement{
+	te := &frontend.Paragraph{
 		Settings: frontend.TypesettingSettings{},
 	}
 
@@ -1351,7 +1351,7 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		return nil, err
 	}
 
-	te := &frontend.TypesettingElement{
+	te := &frontend.Paragraph{
 		Settings: frontend.TypesettingSettings{
 			frontend.SettingFontFamily: ff,
 			frontend.SettingSize:       fontsize,
@@ -1360,7 +1360,7 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 
 	for _, itm := range seq {
 		switch t := itm.(type) {
-		case *frontend.TypesettingElement:
+		case *frontend.Paragraph:
 			te.Items = append(te.Items, t)
 		case node.Node:
 			te.Items = append(te.Items, t)
@@ -1447,7 +1447,7 @@ func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 
 	tc := frontend.TableCell{}
 	for _, itm := range seq {
-		c := itm.(*frontend.TypesettingElement)
+		c := itm.(*frontend.Paragraph)
 		tc.Contents = append(tc.Contents, c)
 	}
 
