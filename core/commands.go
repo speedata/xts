@@ -197,7 +197,7 @@ func cmdBox(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		Class           string
 		ID              string
 		Style           string
-		Backgroundcolor string          `sdxml:"default:black"`
+		Backgroundcolor string          `sdxml:"default:-"`
 		Width           bag.ScaledPoint `sdxml:"mustexist"`
 		Height          bag.ScaledPoint `sdxml:"mustexist"`
 	}{}
@@ -218,15 +218,18 @@ func cmdBox(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	}
 
 	r := node.NewRule()
+	r.Hide = true
+	r.Pre, r.Post = xd.document.HTMLBorder(attValues.Width, attValues.Height, 0, attrs)
 	if bgcolor.Space != color.ColorNone {
-		str := pdfdraw.New().Save().Color(*bgcolor).Rect(0, 0, attValues.Width, -attValues.Height).Fill().String()
-		r.Pre = str
-		r.Post = pdfdraw.New().Restore().String()
+		r.Pre += pdfdraw.New().Color(*bgcolor).Rect(0, 0, attValues.Width, -attValues.Height).Fill().String()
+	} else {
+
 	}
 
-	r.Width = attValues.Width
-	r.Height = attValues.Height
 	vl := node.Vpack(r)
+	vl.Width = attValues.Width
+	vl.Height = attValues.Height
+
 	return xpath.Sequence{vl}, err
 }
 
@@ -1372,8 +1375,7 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		attValues.Width = xd.currentGrid.width(coord(xd.store["maxwidth"].(int)))
 	}
 
-	vlist, _, err := xd.document.FormatParagraph(te,
-		frontend.HSize(attValues.Width),
+	vlist, _, err := xd.document.FormatParagraph(te, attValues.Width,
 		frontend.Leading(leading),
 	)
 	if err != nil {
