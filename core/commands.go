@@ -1426,6 +1426,7 @@ func cmdTr(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
+		Align             string
 		BorderBottom      *bag.ScaledPoint `sdxml:"attr:border-bottom"`
 		BorderTop         *bag.ScaledPoint `sdxml:"attr:border-top"`
 		BorderLeft        *bag.ScaledPoint `sdxml:"attr:border-left"`
@@ -1539,6 +1540,16 @@ func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		tc.VAlign = frontend.VAlignMiddle
 	}
 
+	switch attValues.Align {
+	case "left":
+		tc.HAlign = frontend.HAlignLeft
+	case "right":
+		tc.HAlign = frontend.HAlignRight
+	case "center":
+		tc.HAlign = frontend.HAlignCenter
+	case "justified":
+		tc.HAlign = frontend.HAlignJustified
+	}
 	return xpath.Sequence{tc}, nil
 }
 
