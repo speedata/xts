@@ -50,6 +50,7 @@ type xtsDocument struct {
 	groups            map[string]*group
 	fontsources       map[string]*frontend.FontSource
 	fontsizes         map[string][2]bag.ScaledPoint
+	textformats       map[string]textformat
 	defaultGridWidth  bag.ScaledPoint
 	defaultGridHeight bag.ScaledPoint
 	defaultGridGapX   bag.ScaledPoint
@@ -77,6 +78,7 @@ func newXTSDocument() *xtsDocument {
 		groups:            make(map[string]*group),
 		fontsizes:         make(map[string][2]bag.ScaledPoint),
 		store:             make(map[any]any),
+		textformats:       make(map[string]textformat),
 		jobname:           "publisher",
 	}
 	return xd
@@ -134,6 +136,7 @@ func RunXTS(cfg *XTSConfig) error {
 	if err = d.defaultfont(); err != nil {
 		return err
 	}
+	d.defaultTextformats()
 
 	if layoutxml, err = goxml.Parse(cfg.Layoutfile); err != nil {
 		return err
@@ -176,6 +179,8 @@ func RunXTS(cfg *XTSConfig) error {
 	if len(dataNameSeq) != 1 {
 		return fmt.Errorf("Could not find the root name for the data xml")
 	}
+	bag.Logger.Info("Start processing data")
+
 	rootname := dataNameSeq[0].(string)
 	_, err = dispatch(d, layoutRoot, d.data)
 	if err != nil {
@@ -183,7 +188,6 @@ func RunXTS(cfg *XTSConfig) error {
 		return err
 	}
 
-	bag.Logger.Info("Start processing data")
 	d.data.Ctx.Root()
 	var startDispatcher *goxml.Element
 	var ok bool

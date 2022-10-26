@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -24,6 +25,8 @@ type commandFunc func(*xtsDocument, *goxml.Element) (xpath.Sequence, error)
 var (
 	dataDispatcher = make(map[string]map[string]*goxml.Element)
 	dispatchTable  map[string]commandFunc
+	unitRE         = regexp.MustCompile(`(.*?)(sp|mm|cm|in|pt|px|pc|m)`)
+	astRE          = regexp.MustCompile(`(\d*)\*`)
 )
 
 func init() {
@@ -35,12 +38,15 @@ func init() {
 		"Box":              cmdBox,
 		"Circle":           cmdCircle,
 		"ClearPage":        cmdClearpage,
+		"Column":           cmdColumn,
+		"Columns":          cmdColumns,
 		"Contents":         cmdContents,
 		"Copy-of":          cmdCopyof,
 		"DefineColor":      cmdDefineColor,
 		"DefineFontfamily": cmdDefineFontfamily,
 		"DefineFontsize":   cmdDefineFontsize,
 		"DefineMasterpage": cmdDefineMasterpage,
+		"DefineTextformat": cmdDefineTextformat,
 		"Element":          cmdElement,
 		"ForAll":           cmdForall,
 		"Group":            cmdGroup,
@@ -282,6 +288,63 @@ func cmdCircle(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 	return xpath.Sequence{vl}, err
 }
 
+func cmdColumn(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Width string
+	}{}
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	g := node.NewGlue()
+	split := strings.Split(attValues.Width, "plus")
+	var unitString string
+	var stretchString string
+	if len(split) == 1 {
+		if unitRE.MatchString(split[0]) {
+			unitString = split[0]
+		} else if astRE.MatchString(split[0]) {
+			stretchString = split[0]
+		}
+	} else {
+		if unitRE.MatchString(split[0]) {
+			unitString = split[0]
+		}
+		if astRE.MatchString(split[1]) {
+			stretchString = split[1]
+		}
+	}
+
+	if unitString != "" {
+		g.Width = bag.MustSp(unitString)
+	}
+	if astRE.MatchString(stretchString) {
+		astMatch := astRE.FindAllStringSubmatch(stretchString, -1)
+		if c := astMatch[0][1]; c != "" {
+			stretch, err := strconv.Atoi(c)
+			if err != nil {
+				return nil, err
+			}
+			g.Stretch = bag.ScaledPoint(stretch) * bag.Factor
+		} else {
+			g.Stretch = bag.Factor
+		}
+		g.StretchOrder = 1
+	}
+	cs := frontend.ColSpec{
+		ColumnWidth: g,
+	}
+	return xpath.Sequence{cs}, nil
+}
+
+func cmdColumns(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	seq, err := dispatch(xd, layoutelt, xd.data)
+	if err != nil {
+		return nil, err
+	}
+	return seq, nil
+}
+
 func cmdClearpage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	clearPage(xd)
 	return nil, nil
@@ -472,6 +535,31 @@ func cmdDefineMasterpage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Seque
 
 	pt.layoutElt = layoutelt
 	return xpath.Sequence{}, nil
+}
+
+func cmdDefineTextformat(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Alignment string
+		Name      string
+	}{}
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+
+	tf := textformat{}
+	switch attValues.Alignment {
+	case "leftaligned":
+		tf.halignment = frontend.HAlignLeft
+	case "rightaligned":
+		tf.halignment = frontend.HAlignRight
+	case "centered":
+		tf.halignment = frontend.HAlignCenter
+	case "justified":
+		tf.halignment = frontend.HAlignJustified
+	}
+	xd.defineTextformat(attValues.Name, tf)
+	return nil, nil
 }
 
 func cmdElement(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -898,8 +986,9 @@ func cmdPageformat(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
-		Color    string
-		Features string
+		Color      string
+		Features   string
+		Textformat string
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -918,6 +1007,13 @@ func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	}
 	if attValues.Features != "" {
 		te.Settings[frontend.SettingOpenTypeFeature] = attValues.Features
+	}
+	if name := attValues.Textformat; name != "" {
+		if tf, ok := xd.textformats[name]; ok {
+			if tf.halignment != frontend.HAlignDefault {
+				te.Settings[frontend.SettingHAlign] = tf.halignment
+			}
+		}
 	}
 	getTextvalues(te, seq, "cmdParagraph", layoutelt.Line)
 	return xpath.Sequence{te}, nil
@@ -1299,14 +1395,19 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	}
 
 	for _, itm := range seq {
-		r := itm.(frontend.TableRow)
-		tbl.Rows = append(tbl.Rows, &r)
+		switch t := itm.(type) {
+		case frontend.TableRow:
+			tbl.Rows = append(tbl.Rows, &t)
+		case frontend.ColSpec:
+			tbl.ColSpec = append(tbl.ColSpec, t)
+		default:
+			fmt.Println(t)
+		}
 	}
 	vls, err := xd.document.BuildTable(&tbl)
 	if err != nil {
 		return nil, err
 	}
-
 	return xpath.Sequence{vls}, nil
 }
 
@@ -1316,6 +1417,7 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		Fontsize   string
 		Width      bag.ScaledPoint
 		FontFamily string
+		Parsep     bag.ScaledPoint
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -1353,44 +1455,53 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	if err != nil {
 		return nil, err
 	}
+	textblock := node.NewVList()
 
-	te := &frontend.Paragraph{
-		Settings: frontend.TypesettingSettings{
-			frontend.SettingFontFamily: ff,
-			frontend.SettingSize:       fontsize,
-		},
-	}
+	for i, itm := range seq {
+		te := &frontend.Paragraph{
+			Settings: frontend.TypesettingSettings{
+				frontend.SettingFontFamily: ff,
+				frontend.SettingSize:       fontsize,
+			},
+		}
 
-	for _, itm := range seq {
 		switch t := itm.(type) {
 		case *frontend.Paragraph:
+			if align := t.Settings[frontend.SettingHAlign]; align != 0 {
+				te.Settings[frontend.SettingHAlign] = align
+			}
 			te.Items = append(te.Items, t)
 		case node.Node:
 			te.Items = append(te.Items, t)
 		default:
 			bag.Logger.DPanicf("cmdTextblock: unknown type %T", t)
 		}
-	}
-	if attValues.Width == 0 {
-		attValues.Width = xd.currentGrid.width(coord(xd.store["maxwidth"].(int)))
+		if attValues.Width == 0 {
+			attValues.Width = xd.currentGrid.width(coord(xd.store["maxwidth"].(int)))
+		}
+
+		vlist, _, err := xd.document.FormatParagraph(te, attValues.Width,
+			frontend.Leading(leading),
+		)
+		if err != nil {
+			return nil, err
+		}
+		textblock.List = node.InsertAfter(textblock.List, node.Tail(textblock.List), vlist)
+		if i < len(seq) && attValues.Parsep != 0 {
+			g := node.NewGlue()
+			g.Width = attValues.Parsep
+			textblock.List = node.InsertAfter(textblock.List, vlist, g)
+		}
 	}
 
-	vlist, _, err := xd.document.FormatParagraph(te, attValues.Width,
-		frontend.Leading(leading),
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	if vlist == nil {
+	if textblock.List == nil {
 		return nil, nil
 	}
-	if vlist.Attributes == nil {
-		vlist.Attributes = node.H{}
+	if textblock.Attributes == nil {
+		textblock.Attributes = node.H{}
 	}
-	vlist.Attributes["origin"] = "textblock"
-
-	return xpath.Sequence{vlist}, nil
+	textblock.Attributes["origin"] = "textblock"
+	return xpath.Sequence{textblock}, nil
 }
 
 func cmdTr(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -1435,6 +1546,8 @@ func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		BorderTopColor    *string          `sdxml:"attr:border-top-color"`
 		BorderLeftColor   *string          `sdxml:"attr:border-left-color"`
 		BorderRightColor  *string          `sdxml:"attr:border-right-color"`
+		Colspan           int
+		Rowspan           int
 		Valign            string
 		Class             string
 		ID                string
@@ -1549,6 +1662,13 @@ func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		tc.HAlign = frontend.HAlignCenter
 	case "justified":
 		tc.HAlign = frontend.HAlignJustified
+	}
+
+	if cs := attValues.Colspan; cs != 0 {
+		tc.ExtraColspan = cs - 1
+	}
+	if rs := attValues.Rowspan; rs != 0 {
+		tc.ExtraRowspan = rs - 1
 	}
 	return xpath.Sequence{tc}, nil
 }

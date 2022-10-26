@@ -278,7 +278,7 @@ func (g *grid) nextRow() {
 }
 
 func (g *grid) fitsInRow(y coord, wdCols coord, area *area) coord {
-	col := area.CurrentCol() - 1
+	col := area.CurrentCol()
 	row := y
 	for {
 		if g.allocatedBlocks.allocValue(col, row) > 0 && int(col) <= g.nx {

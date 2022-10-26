@@ -21,6 +21,7 @@
     <optional><cmd name="DefineFontfamily"/></optional>
     <optional><cmd name="DefineFontsize"/></optional>
     <optional><cmd name="DefineMasterpage"/></optional>
+    <optional><cmd name="DefineTextformat"/></optional>
     <optional><cmd name="LoadFontfile"/></optional>
     <optional><cmd name="Options"/></optional>
     <optional><cmd name="PDFOptions"/></optional>
@@ -1040,6 +1041,184 @@
   </command>
 
 
+  <command en="Column">
+    <description xml:lang="en">
+      <para>Set the properties of a column in the table.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Gibt die Eigenschaften einer Spalte in einer Tabelle an.</para>
+    </description>
+    <childelements/>
+    <attribute en="align" optional="yes">
+      <description xml:lang="en">
+        <para>The horizontal alignment of the table cells in this column. Can be overridden in a cell (<cmd name="Td"/>).</para>
+      </description>
+      <description xml:lang="de">
+        <para>Die horizontale Ausrichtung des Tabelleninhalts. Kann in einer Zelle (<cmd name="Td"/>) überschrieben werden.</para>
+      </description>
+      <choice en="left">
+        <description xml:lang="en">
+          <para>The table cells are left aligned.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Die Tabellenzellen dieser Spalte werden linksbündig ausgerichtet.</para>
+        </description>
+      </choice>
+      <choice en="center">
+        <description xml:lang="en">
+          <para>The table cells are horizontally centered.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Die Tabellenzellen dieser Spalte werden horizontal zentriert.</para>
+        </description>
+      </choice>
+      <choice en="right">
+        <description xml:lang="en">
+          <para>The table cells are right aligned.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Die Tabellenzellen dieser Spalte werden rechtsbündig ausgerichtet.</para>
+        </description>
+      </choice>
+    </attribute>
+    <attribute en="backgroundcolor" type="text" optional="yes">
+      <description xml:lang="en">
+        <para>All cells in this column have this background color.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Farbe der Tabellenspalte.</para>
+      </description>
+    </attribute>
+    <attribute en="padding-left" optional="yes" since="3.1.8" type="length">
+      <description xml:lang="en">
+        <para>Set the left padding for the column</para>
+      </description>
+      <description xml:lang="de">
+        <para>Setze das linke padding für diese Spalte</para>
+      </description>
+    </attribute>
+    <attribute en="padding-right" optional="yes" since="3.1.8" type="length">
+      <description xml:lang="en">
+        <para>Set the right padding for the column</para>
+      </description>
+      <description xml:lang="de">
+        <para>Setze das rechte padding für diese Spalte</para>
+      </description>
+    </attribute>
+    <attribute en="width" type="numberlengthorstar" optional="yes">
+      <description xml:lang="en">
+        <para>Width of the column. Argument can be a number (in grid cells) a length (e.g. 2cm) or a *-number (e.g. 4*).</para>
+      </description>
+      <description xml:lang="de">
+        <para>Breite der Spalte. Kann entweder in Rasterzellen (Zahl), absoluten Maßangaben (z.B. 1cm) oder in <tt>*</tt>-Angaben (z.B. <tt>4*</tt>) angegeben werden.</para>
+      </description>
+    </attribute>
+    <attribute en="valign" optional="yes">
+      <description xml:lang="en">
+        <para>The vertical alignment of the cells in this column. Can be overridden in a cell (<cmd name="Td"/>).</para>
+      </description>
+      <description xml:lang="de">
+        <para>Die vertikale Ausrichtung des Tabelleninhalts. Kann in einer Zelle (Td) überschrieben werden.</para>
+      </description>
+      <choice en="top">
+        <description xml:lang="en">
+          <para>The table cells are top aligned.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Die Tabellenzellen dieser Spalte werden oben ausgerichtet.</para>
+        </description>
+      </choice>
+      <choice en="middle">
+        <description xml:lang="en">
+          <para>The table cells are vertically centered.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Die Tabellenzellen dieser Spalte werden vertikal zentriert ausgerichtet.</para>
+        </description>
+      </choice>
+      <choice en="bottom">
+        <description xml:lang="en">
+          <para>The table cells are aligned at the bottom.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Die Tabellenzellen dieser Spalte werden  unten ausgerichtet.</para>
+        </description>
+      </choice>
+    </attribute>
+    <example xml:lang="en">
+      <para>See the example at <cmd name="Columns"/>.</para>
+    </example>
+    <example xml:lang="de">
+      <para>Siehe das Beispiel bei <cmd name="Columns"/>.</para>
+    </example>
+    <seealso>
+      <cmd name="Table"/>
+      <cmd name="Columns"/>
+    </seealso>
+  </command>
+
+
+  <command en="Columns">
+    <description xml:lang="en">
+      <para>Set the widths and other properties of the columns in a table.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Legt die Spaltenbreiten und andere Eigenschaften einer Tabelle fest.</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <choice>
+          <cmd name="Column"/>
+          <cmd name="Copy-of"/>
+          <cmd name="ForAll"/>
+          <cmd name="Loop"/>
+          <cmd name="Switch"/>
+        </choice>
+      </oneOrMore>
+    </childelements>
+    <remark xml:lang="en">
+      <para>The <tt>*</tt> widths in the command »Column« allow dynamic cell widths. For that the total width of the table must be set and the attribute (on <cmd name="Table"/>) <tt>stretch</tt> must be set to <tt>max</tt>.
+        The widths of the columns are calculated as follows: first the absolute widths are taken into account. After that, the <tt>*</tt> columns are distributed across the remaining space. The
+        numbers before the <tt>*</tt> denote the fraction of the space. In the example below the third column gets 1/6 of the remaining width, the fourth column get 5/6.</para>
+    </remark>
+    <remark xml:lang="de">
+      <para>Die <tt>*</tt>-Breitenangaben im Element »Column« ermöglicht eine dynamische Aufteilung der Spaltenbreite. Dazu muss die Tabellenbreite vorgegeben sein und das Attribut <tt>stretch</tt> bei <cmd name="Table"/> auf <tt>max</tt>
+        stehen. Die Spaltenbreiten berechnen sich wie folgt: erst werden die fixen Breitenangaben berücksichtigt. Anschließend werden die <tt>*</tt>-Spalten auf den verbleibenden Platz verteilt. Die Angaben
+        vor den Sternchen dienen der Verteilung innerhalb der <tt>*</tt>-Spalten. Im Beispiel unten nimmt die vierte Spalte in etwa den fünffachen Platz der dritten Spalte ein. Angenommen die Tabelle sollte
+        32mm breit werden. Die fixen Spalten nehmen davon 20mm in Anspruch, übrig bleiben 12 mm. Diese 12mm werden auf die beiden Spalten verteilt, 2mm entfallen auf die <tt>1*</tt>-Spalte (1/6 von 12mm), 10mm
+        auf die <tt>5*</tt>-Spalte (5/6 von 12mm).</para>
+    </remark><example xml:lang="en">
+      <listing><![CDATA[<Table>
+  <Columns>
+    <Column width="14mm" />
+    <Column width="2" />
+    <Column width="1*" align="right" valign="top" />
+    <Column width="5*" />
+    <Column width="5mm" backgroundcolor="gray" />
+    <Tr>
+       ....
+    </Tr>
+  </Columns>
+</Table>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Table>
+  <Columns>
+    <Column width="14mm" />
+    <Column width="2" />
+    <Column width="1*" align="right" valign="top" />
+    <Column width="5*" />
+    <Column width="5mm" backgroundcolor="grau" />
+  </Columns>
+</Table>]]></listing>
+    </example>
+    <seealso>
+      <cmd name="Table"/>, <cmd name="Column"/>
+    </seealso>
+  </command>
+
+
   <command en="Contents">
     <description xml:lang="en">
       <para>Marks the contents of a <cmd name="Group"/>, a virtual area.</para>
@@ -1511,6 +1690,103 @@
     <seealso><ref name="xpath"/>, <cmd name="AtPageCreation"/>,  <cmd name="AtPageShipout"/>,   <cmd name="PositioningArea"/>,  <cmd name="ClearPage"/>, <cmd name="DefineMatter"/>
     </seealso>
   </command>
+
+
+  <command en="DefineTextformat">
+    <description xml:lang="en">
+      <para>Define text formatting instructions. A textformat is used to align and indent text.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Definiert ein Textformat. Ein Textformat dient zur Formatierung von Absätzen (Einrückung und Ausrichtung). Auf die definierten Textformate kann im Layout (in den Elementen Paragraph und Textblock) zurückgegriffen werden.</para>
+    </description>
+    <childelements/>
+    <attribute en="alignment" optional="yes">
+      <description xml:lang="en">
+        <para>Determines the formatting of the text. It defaults to justified.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Bestimmt die Formatierung des Textes. Voreinstellung ist justified.</para>
+      </description>
+      <choice en="justified">
+        <description xml:lang="en">
+          <para>Textblock has a rectangular shape.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Der Text hat eine rechteckige Form.</para>
+        </description>
+      </choice>
+      <choice en="leftaligned">
+        <description xml:lang="en">
+          <para>The text is ragged at the right margin.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Der Text flattert am rechten Rand.</para>
+        </description>
+      </choice>
+      <choice en="rightaligned">
+        <description xml:lang="en">
+          <para>The text is ragged right at the left margin.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Der Text flattert am linken Rand</para>
+        </description>
+      </choice>
+      <choice en="centered">
+        <description xml:lang="en">
+          <para>The text is ragged at the left and the right margin.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Der Text ist im Flattersatz an beiden Rändern (rechts und links) gesetzt.</para>
+        </description>
+      </choice>
+    </attribute>
+    <attribute en="name" type="text" optional="no">
+      <description xml:lang="en">
+        <para>Name of the textformat that is used later in the layout.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name des Textformats, unter dem es später im Layoutregelwerk angesprochen wird.</para>
+      </description>
+    </attribute>
+    <remark xml:lang="en">
+      <para>The textformats <tt>text</tt>, <tt>center</tt>, <tt>left</tt> and <tt>right</tt> are predefined. They stand for justified, centered, left aligned and right aligned text.</para>
+    </remark>
+    <remark xml:lang="de">
+      <para>Die Textformate <tt>text</tt>, <tt>center</tt>, <tt>left</tt> und <tt>right</tt> sind vordefiniert. Sie stehen für Blocksatz, zentrierten, linksbündigen und rechtsbündigen Text.</para>
+    </remark>
+    <example xml:lang="en">
+      <listing><![CDATA[<DefineTextformat name="text with indentation" alignment="justified" indentation="1cm"/>
+
+<Record element="...">
+  <PlaceObject>
+    <Textblock textformat="text with indentation">
+    <Paragraph>
+      <Value>Text ...</Value>
+    </Paragraph>
+  </Textblock>
+  </PlaceObject>
+</Record>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Layout>
+  <DefineTextformat name="Text mit Einrückung" alignment="justified" indentation="1cm" />
+  ...
+  <Record element="...">
+    <Textblock textformat="Text mit Einrückung">
+      <Paragraph>
+        <Value>Text ...</Value>
+      </Paragraph>
+    </Textblock>
+  </Record>
+</Layout>]]></listing>
+    </example>
+    <seealso>
+      <cmd name="Textblock"/>,
+      <cmd name="Paragraph"/>
+    </seealso>
+  </command>
+
 
   <command en="Element">
     <description xml:lang="en">
@@ -2410,6 +2686,14 @@
         <para>Name der Schriftfamilie. Voreinstellung ist »text« (mit kleinem t).</para>
       </description>
     </attribute>
+    <attribute en="textformat" type="text" optional="yes">
+      <description xml:lang="en">
+        <para>Name of the textformat that is applied to the paragraph. If none is specified the textformat <tt>text</tt> is used.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name des zu benutzenden Textformats. Wird kein Textformat angegeben, nimmt das System das Textformat <tt>text</tt>.</para>
+      </description>
+    </attribute>
     <example xml:lang="en">
       <listing><![CDATA[<Textblock>
   <Paragraph fontfamily="Title">
@@ -2446,6 +2730,7 @@
     <description xml:lang="de">
       <para>Setze PDF Optionen</para>
     </description>
+    <childelements/>
     <attribute en="author" optional="yes" type="text" since="3.1.18">
       <description xml:lang="en">
         <para>Set the author of the document</para>
@@ -2486,9 +2771,11 @@
         <para>Legt den Titel des Dokuments fest</para>
       </description>
     </attribute>
-
     <example xml:lang="en">
-
+      <listing><![CDATA[<PDFOptions author="A. U. Thor" subject="An interesting story" />]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<PDFOptions author="A. U. Thor" subject="An interesting story" />]]></listing>
     </example>
     <seealso></seealso>
   </command>
@@ -3431,6 +3718,7 @@
         <interleave>
           <optional><cmd name="Tr"/></optional>
           <optional><cmd name="Copy-of"/></optional>
+          <optional><cmd name="Columns"/></optional>
         </interleave>
       </oneOrMore>
     </childelements>
@@ -4097,6 +4385,14 @@
       </description>
       <description xml:lang="de">
         <para>Setze die Schriftgröße und den Zeilenabstand. Es kann eine mit <cmd name="DefineFontsize"/> vordefinierte Größe verwendet werden oder eine Zeichenkette wie "10pt/12pt", die die Schriftgröße und den Zeilenabstand bestimmt.</para>
+      </description>
+    </attribute>
+    <attribute en="parsep" optional="yes" type="length">
+      <description xml:lang="en">
+        <para>The vertical distance between two paragraphs.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Der vertikale Abstand zwischen zwei Absätzen.</para>
       </description>
     </attribute>
     <attribute en="width" type="number" optional="yes">
