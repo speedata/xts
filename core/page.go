@@ -6,6 +6,7 @@ import (
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/boxesandglue/backend/document"
 	"github.com/speedata/boxesandglue/backend/node"
+	"github.com/speedata/boxesandglue/frontend"
 	"github.com/speedata/goxml"
 )
 
@@ -179,7 +180,7 @@ func (p *page) String() string {
 	return fmt.Sprintf("XTS page %d wd/ht: %s/%s margins: %s %s %s %s", p.pagenumber, p.pageWidth, p.pageHeight, g.marginLeft, g.marginTop, g.marginRight, g.marginBottom)
 }
 
-func (xd *xtsDocument) OutputAt(vl *node.VList, col coord, row coord, allocate bool, area *area, what string) error {
+func (xd *xtsDocument) OutputAt(vl *node.VList, col coord, row coord, allocate bool, area *area, what string, halign frontend.HorizontalAlignment) error {
 	areatext := ""
 
 	var currentGroup *group
@@ -196,9 +197,15 @@ func (xd *xtsDocument) OutputAt(vl *node.VList, col coord, row coord, allocate b
 			areatext = fmt.Sprintf("%s [%d]: ", area.name, 1)
 		}
 		bag.Logger.Infof("PlaceObject: output %s at (%s%d,%d)", what, areatext, col, row)
+
+		shiftRight := bag.ScaledPoint(0)
+		if halign == frontend.HAlignRight {
+			shiftRight = xd.currentGrid.width(6) - vl.Width
+		}
+
 		columnLength := xd.currentGrid.posX(col, area)
 		rowLength := xd.currentGrid.posY(row, area)
-		xd.currentPage.outputAbsolute(columnLength, rowLength, vl)
+		xd.currentPage.outputAbsolute(columnLength+shiftRight, rowLength, vl)
 	}
 	if allocate {
 		xd.currentGrid.allocate(col, row, area, vl.Width, vl.Height+vl.Depth)

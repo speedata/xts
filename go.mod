@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/alecthomas/chroma v0.10.0
-	github.com/speedata/boxesandglue v0.0.0-20221026144636-69b8566a5dc5
+	github.com/speedata/boxesandglue v0.0.0-20221101094729-232b56485bb0
 	github.com/speedata/goxml v0.0.0-20220304094847-e25a4c712d89
 	github.com/speedata/goxpath v0.0.0-20220621125312-417b6e9f1004
 	github.com/speedata/optionparser v1.0.1

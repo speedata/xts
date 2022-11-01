@@ -2847,6 +2847,54 @@
         <para>Wenn eine Gruppe ausgegeben werden soll, muss der Name hier angegeben werden.</para>
       </description>
     </attribute>
+    <attribute en="halign" optional="yes" allowxpath="yes">
+      <description xml:lang="en">
+        <para>When an object is placed on the grid and it's width is not a multiple of grid width, there is a space left on the page between the object an the next grid cell. With this attribute you can instruct the software where to place the gap.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Wird ein Objekt ausgegeben, das kein vielfaches der Rasterbreite ist, dann gibt das Attribut die horizontale Ausrichtung an. ›left‹ beispielsweise bedeutet, dass der freie Platz rechts des Objekts bleibt. Voreinstellung ist ›left‹.</para>
+      </description>
+      <choice en="left">
+        <description xml:lang="en">
+          <para>The object is aligned at the left.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Das Objekt wird links ausgerichtet.</para>
+        </description>
+      </choice>
+      <choice en="right">
+        <description xml:lang="en">
+          <para>The object is aligned to the right.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Das Objekt wird rechts ausgerichtet.</para>
+        </description>
+      </choice>
+    </attribute>
+    <attribute en="hreference" optional="yes" allowxpath="yes">
+      <description xml:lang="en">
+        <para>Determines the placement of the object relative to the given column. If 'left' (which is the default), the given column is the left border of the object. If 'right', the column determines the right edge of the object.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Bestimmt, ob die angegebene Spalte die linke oder die rechte Kante vom Objekt bezeichnet.</para>
+      </description>
+      <choice en="left">
+        <description xml:lang="en">
+          <para>The object is placed in given column.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Das Objekt wird in der angegebenen Spalte platziert.</para>
+        </description>
+      </choice>
+      <choice en="right">
+        <description xml:lang="en">
+          <para>The given columns determines the right edge of the border.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Das Objekt wird mit dem rechten Rand in der gegebenen Spalte am rechten Rand ausgerichtet.</para>
+        </description>
+      </choice>
+    </attribute>
     <attribute en="row" type="numberorlength" optional="yes">
       <description xml:lang="en">
         <para>The row where the object is placed. If none given, the publisher tries to find a row by itself. You can give a number (in grid cells) or an absolute value (from top left).</para>

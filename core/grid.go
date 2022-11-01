@@ -91,8 +91,8 @@ func (am allocationMatrix) String() string {
 	return ret.String()
 }
 
-type gridCoord uint64
-type coord uint32
+type gridCoord int64
+type coord int32
 
 func (c coord) String() string {
 	return fmt.Sprintf("%d", c)

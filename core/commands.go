@@ -114,7 +114,7 @@ func cmdA(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	}
 	hl := document.Hyperlink{URI: attValues.Href}
 
-	te := &frontend.Paragraph{
+	te := &frontend.Text{
 		Settings: frontend.TypesettingSettings{
 			frontend.SettingHyperlink: hl,
 		},
@@ -150,7 +150,7 @@ func cmdAttribute(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 func cmdB(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	seq, err := dispatch(xd, layoutelt, xd.data)
 
-	te := &frontend.Paragraph{
+	te := &frontend.Text{
 		Settings: frontend.TypesettingSettings{
 			frontend.SettingFontWeight: frontend.FontWeight700,
 		},
@@ -642,7 +642,7 @@ func cmdGroup(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 func cmdI(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	seq, err := dispatch(xd, layoutelt, xd.data)
 
-	te := &frontend.Paragraph{
+	te := &frontend.Text{
 		Settings: frontend.TypesettingSettings{
 			frontend.SettingStyle: frontend.FontStyleItalic,
 		},
@@ -999,7 +999,7 @@ func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		return nil, err
 	}
 
-	te := &frontend.Paragraph{
+	te := &frontend.Text{
 		Settings: make(frontend.TypesettingSettings),
 	}
 	if attValues.Color != "" {
@@ -1023,11 +1023,13 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	xd.setupPage()
 	var err error
 	attValues := &struct {
-		Allocate  bool `sdxml:"default:yes"`
-		Column    string
-		Row       string
-		Area      string
-		Groupname string
+		Allocate   bool `sdxml:"default:yes"`
+		Area       string
+		Column     string
+		Row        string
+		Groupname  string
+		HAlign     string
+		HReference string
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -1131,12 +1133,23 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		columnInt = int(col)
 		rowInt = int(row)
 	}
+	halign := frontend.HAlignLeft
+	if attValues.HAlign == "right" {
+		halign = frontend.HAlignRight
+	}
 
 	switch pos {
 	case positioningAbsolute:
+		if attValues.HReference == "right" {
+			columnLength -= vl.Width
+		}
 		xd.currentPage.outputAbsolute(columnLength, rowLength, vl)
 	case positioningGrid:
-		xd.OutputAt(vl, col, row, attValues.Allocate, area, origin)
+		if attValues.HReference == "right" {
+			wd := xd.currentGrid.widthToColumns(vl.Width)
+			col = col - wd + 1
+		}
+		xd.OutputAt(vl, col, row, attValues.Allocate, area, origin, halign)
 	}
 
 	return seq, nil
@@ -1280,7 +1293,7 @@ func cmdSpan(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 
 	seq, err := dispatch(xd, layoutelt, xd.data)
 
-	te := &frontend.Paragraph{
+	te := &frontend.Text{
 		Settings: frontend.TypesettingSettings{},
 	}
 
@@ -1458,7 +1471,7 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	textblock := node.NewVList()
 
 	for i, itm := range seq {
-		te := &frontend.Paragraph{
+		te := &frontend.Text{
 			Settings: frontend.TypesettingSettings{
 				frontend.SettingFontFamily: ff,
 				frontend.SettingSize:       fontsize,
@@ -1466,7 +1479,7 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		}
 
 		switch t := itm.(type) {
-		case *frontend.Paragraph:
+		case *frontend.Text:
 			if align := t.Settings[frontend.SettingHAlign]; align != 0 {
 				te.Settings[frontend.SettingHAlign] = align
 			}
@@ -1563,7 +1576,7 @@ func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 
 	tc := frontend.TableCell{}
 	for _, itm := range seq {
-		c := itm.(*frontend.Paragraph)
+		c := itm.(*frontend.Text)
 		tc.Contents = append(tc.Contents, c)
 	}
 

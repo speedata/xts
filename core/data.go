@@ -59,8 +59,8 @@ func (xd *xtsDocument) applyLayoutStylesheet(classname string, id string, style 
 }
 
 // Get the values from the child elements of B, Paragraph and its ilk and fill
-// the provided typesetting element to get a recursive data structure.
-func getTextvalues(te *frontend.Paragraph, seq xpath.Sequence, cmdname string, line int) {
+// the provided Text struct to get a recursive data structure.
+func getTextvalues(te *frontend.Text, seq xpath.Sequence, cmdname string, line int) {
 	for _, itm := range seq {
 		switch t := itm.(type) {
 		case *goxml.Element:
@@ -73,7 +73,7 @@ func getTextvalues(te *frontend.Paragraph, seq xpath.Sequence, cmdname string, l
 			te.Items = append(te.Items, t)
 		case int:
 			te.Items = append(te.Items, fmt.Sprintf("%d", t))
-		case *frontend.Paragraph:
+		case *frontend.Text:
 			te.Items = append(te.Items, t)
 		case []goxml.XMLNode:
 			te.Items = append(te.Items, seq.Stringvalue())
@@ -148,7 +148,7 @@ func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 			if allowXPath {
 				attValue = attributeValueRE.ReplaceAllStringFunc(a, func(a string) string {
 					// strip curly braces
-					seq, err := xd.data.Evaluate(a[1 : len(a)-1])
+					seq, err := evaluateXPath(xd, layoutelt.Namespaces, a[1:len(a)-1])
 					if err != nil {
 						bag.Logger.Errorf("Layout line %d: %s", layoutelt.Line, err)
 						return ""
