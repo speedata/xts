@@ -1177,12 +1177,12 @@
       </oneOrMore>
     </childelements>
     <remark xml:lang="en">
-      <para>The <tt>*</tt> widths in the command »Column« allow dynamic cell widths. For that the total width of the table must be set and the attribute (on <cmd name="Table"/>) <tt>stretch</tt> must be set to <tt>max</tt>.
+      <para>The <tt>*</tt> widths in the command »Column« allow dynamic cell widths. For that the total width of the table must be set and the attribute (on <cmd name="Table"/>) <tt>stretch</tt> must be set to <tt>yes</tt>.
         The widths of the columns are calculated as follows: first the absolute widths are taken into account. After that, the <tt>*</tt> columns are distributed across the remaining space. The
         numbers before the <tt>*</tt> denote the fraction of the space. In the example below the third column gets 1/6 of the remaining width, the fourth column get 5/6.</para>
     </remark>
     <remark xml:lang="de">
-      <para>Die <tt>*</tt>-Breitenangaben im Element »Column« ermöglicht eine dynamische Aufteilung der Spaltenbreite. Dazu muss die Tabellenbreite vorgegeben sein und das Attribut <tt>stretch</tt> bei <cmd name="Table"/> auf <tt>max</tt>
+      <para>Die <tt>*</tt>-Breitenangaben im Element »Column« ermöglicht eine dynamische Aufteilung der Spaltenbreite. Dazu muss die Tabellenbreite vorgegeben sein und das Attribut <tt>stretch</tt> bei <cmd name="Table"/> auf <tt>yes</tt>
         stehen. Die Spaltenbreiten berechnen sich wie folgt: erst werden die fixen Breitenangaben berücksichtigt. Anschließend werden die <tt>*</tt>-Spalten auf den verbleibenden Platz verteilt. Die Angaben
         vor den Sternchen dienen der Verteilung innerhalb der <tt>*</tt>-Spalten. Im Beispiel unten nimmt die vierte Spalte in etwa den fünffachen Platz der dritten Spalte ein. Angenommen die Tabelle sollte
         32mm breit werden. Die fixen Spalten nehmen davon 20mm in Anspruch, übrig bleiben 12 mm. Diese 12mm werden auf die beiden Spalten verteilt, 2mm entfallen auf die <tt>1*</tt>-Spalte (1/6 von 12mm), 10mm
@@ -3842,12 +3842,12 @@
         <para>Name der Schriftfamilie, die benutzt werden soll. Wenn keine Schriftart angegeben ist, wird auf die Schriftart ›text‹ umgeschaltet.</para>
       </description>
     </attribute>
-    <attribute en="leading" type="length" optional="yes">
+    <attribute en="fontsize" optional="yes" allowxpath="yes" type="text">
       <description xml:lang="en">
-        <para>The distance between two rows.</para>
+        <para>Set the font size. You can use a name predefined with <cmd name="DefineFontsize"/> or a string such as "10pt/12pt" to set the font size and the leading. Defaults to 'text'.</para>
       </description>
       <description xml:lang="de">
-        <para>Der Abstand zwischen zwei Zeilen.</para>
+        <para>Setze die Schriftgröße und den Zeilenabstand. Es kann eine mit <cmd name="DefineFontsize"/> vordefinierte Größe verwendet werden oder eine Zeichenkette wie "10pt/12pt", die die Schriftgröße und den Zeilenabstand bestimmt. Voreeinstellung ist 'text'.</para>
       </description>
     </attribute>
     <attribute en="padding" type="length" optional="yes">
@@ -3865,7 +3865,7 @@
       <description xml:lang="de">
         <para>Wenn der Tabelleninhalt schmal ist und stretch den Wert nein hat, dann nimmt die Tabelle nur den benötigten Platz ein. Wenn der Tabelleninhalt breit ist oder stretch den Wert max hat, dann nimmt die Tabelle den Wert aus dem Attribut breite ein.</para>
       </description>
-      <choice en="max">
+      <choice en="yes">
         <description xml:lang="en">
           <para>Stretch the table to its given width.</para>
         </description>
@@ -3932,7 +3932,7 @@
       <listing><![CDATA[
 <Record element="data">
   <PlaceObject>
-    <Table stretch="max" padding="1pt">
+    <Table stretch="yes" padding="1pt">
       <Tablehead>
         <Tr backgroundcolor="gray">
           <Td colspan="3"/>
@@ -4004,7 +4004,7 @@
       <para>Kann man die Tabelle über folgendes Layout ausgeben:</para>
       <listing><![CDATA[<Record element="data">
   <PlaceObject>
-    <Table padding="1mm" stretch="max">
+    <Table padding="1mm" stretch="yes">
       <Tablehead>
         <Tablerule rulewidth="1pt" />
         <Tr align="center">
@@ -4372,7 +4372,7 @@
 
 <Record element="data">
    <PlaceObject>
-     <Table stretch="max">
+     <Table stretch="yes">
        <Columns>
          <Column width="5cm"/>
        </Columns>
@@ -4429,10 +4429,10 @@
     </attribute>
     <attribute en="fontsize" optional="yes" allowxpath="yes" type="text">
       <description xml:lang="en">
-        <para>Set the font size. You can use a name predefined with <cmd name="DefineFontsize"/> or a string such as "10pt/12pt" to set the font size and the leading.</para>
+        <para>Set the font size. You can use a name predefined with <cmd name="DefineFontsize"/> or a string such as "10pt/12pt" to set the font size and the leading. Defaults to 'text'.</para>
       </description>
       <description xml:lang="de">
-        <para>Setze die Schriftgröße und den Zeilenabstand. Es kann eine mit <cmd name="DefineFontsize"/> vordefinierte Größe verwendet werden oder eine Zeichenkette wie "10pt/12pt", die die Schriftgröße und den Zeilenabstand bestimmt.</para>
+        <para>Setze die Schriftgröße und den Zeilenabstand. Es kann eine mit <cmd name="DefineFontsize"/> vordefinierte Größe verwendet werden oder eine Zeichenkette wie "10pt/12pt", die die Schriftgröße und den Zeilenabstand bestimmt. Voreeinstellung ist 'text'.</para>
       </description>
     </attribute>
     <attribute en="parsep" optional="yes" type="length">

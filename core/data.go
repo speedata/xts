@@ -58,6 +58,29 @@ func (xd *xtsDocument) applyLayoutStylesheet(classname string, id string, style 
 	return attrs, nil
 }
 
+func (xd *xtsDocument) getFontSizeLeading(size string) (bag.ScaledPoint, bag.ScaledPoint, error) {
+	var err error
+	fontsize := xd.fontsizes["text"][0]
+	leading := xd.fontsizes["text"][1]
+	if sp := strings.Split(size, "/"); len(sp) == 2 {
+		if fontsize, err = bag.Sp(sp[0]); err != nil {
+			return fontsize, leading, err
+		}
+		if leading, err = bag.Sp(sp[1]); err != nil {
+			return fontsize, leading, err
+		}
+	} else if fs, ok := xd.fontsizes[size]; ok {
+		fontsize = fs[0]
+		leading = fs[1]
+	} else if size == "" {
+		// ok, ignore
+		bag.Logger.Debug("use default font size text")
+	} else {
+		return fontsize, leading, fmt.Errorf("unknown font size %s", size)
+	}
+	return fontsize, leading, nil
+}
+
 // Get the values from the child elements of B, Paragraph and its ilk and fill
 // the provided Text struct to get a recursive data structure.
 func getTextvalues(te *frontend.Text, seq xpath.Sequence, cmdname string, line int) {

@@ -25,35 +25,37 @@ func (area area) String() string {
 
 // CurrentRow returns the current row of the current active frame.
 func (area *area) CurrentRow() coord {
-	return area.frame[area.currentFrame].row
+	return area.frame[area.currentFrame].currentRow
 }
 
 // CurrentCol returns the current column of the current active frame.
 func (area *area) CurrentCol() coord {
-	return area.frame[area.currentFrame].col
+	return area.frame[area.currentFrame].currentCol
 }
 
 // SetCurrentRow sets the current row in the active frame in the area.
 func (area *area) SetCurrentRow(row coord) {
-	area.frame[area.currentFrame].row = row
+	area.frame[area.currentFrame].currentRow = row
 }
 
 // SetCurrentCol sets the current column in the active frame in the area.
 func (area *area) SetCurrentCol(col coord) {
-	area.frame[area.currentFrame].col = col
+	area.frame[area.currentFrame].currentCol = col
 }
 
 type allocationMatrix map[gridCoord]int
 
 type gridRect struct {
-	row    coord
-	col    coord
-	width  coord
-	height coord
+	row        coord
+	col        coord
+	width      coord
+	height     coord
+	currentCol coord
+	currentRow coord
 }
 
 func (gr *gridRect) String() string {
-	return fmt.Sprintf("%d/%d wd: %d ht: %d", gr.col, gr.row, gr.width, gr.height)
+	return fmt.Sprintf("%d/%d wd: %d ht: %d cur: (%d,%d)", gr.col, gr.row, gr.width, gr.height, gr.currentCol, gr.currentRow)
 }
 
 func (am allocationMatrix) allocate(x, y coord) {
@@ -149,13 +151,29 @@ func newGrid(xd *xtsDocument) *grid {
 	return g
 }
 
+// convenience function to get the current row of the area.
+func (g *grid) currentRowArea(areaname string) coord {
+	if area, ok := g.areas[areaname]; ok {
+		return area.CurrentRow()
+	}
+	return 0
+}
+
+// convenience function to get the current column of the area.
+func (g *grid) currentColArea(areaname string) coord {
+	if area, ok := g.areas[areaname]; ok {
+		return area.CurrentCol()
+	}
+	return 0
+}
+
 // Connect the grid to a page and initialize the allocation matrix.
 func (g *grid) setPage(p *page) {
 	g.page = p
 	g.allocatedBlocks = make(allocationMatrix)
 	g.areas[pageAreaName] = &area{
 		name:  pageAreaName,
-		frame: []*gridRect{{1, 1, coord(g.nx), coord(g.ny)}},
+		frame: []*gridRect{{1, 1, coord(g.nx), coord(g.ny), 1, 1}},
 	}
 }
 
@@ -214,8 +232,8 @@ func (g *grid) allocate(x, y coord, area *area, wd, ht bag.ScaledPoint) {
 	var offsetX coord
 	var offsetY coord
 
-	offsetX = area.CurrentCol()
-	offsetY = area.CurrentRow()
+	offsetX = area.frame[area.currentFrame].col
+	offsetY = area.frame[area.currentFrame].row
 
 	for col := coord(1); col <= g.widthToColumns(wd); col++ {
 		for row := coord(1); row <= g.heightToRows(ht); row++ {
@@ -245,31 +263,34 @@ func (g *grid) allocate(x, y coord, area *area, wd, ht bag.ScaledPoint) {
 	if col > coord(g.nx) {
 		area.SetCurrentCol(1)
 		area.SetCurrentRow(y + g.heightToRows(ht))
+	} else {
+		area.SetCurrentCol(col)
+		area.SetCurrentRow(y)
 	}
 }
-func (g *grid) findFreeSpaceForObject(vl *node.VList, area *area) (gridCoord, error) {
-	if area.CurrentRow() == 0 {
-		area.SetCurrentRow(1)
-	}
-	if area.CurrentCol() == 0 {
-		area.SetCurrentCol(1)
-	}
-	// this doesn't make sense, check
-	rowOffset := area.CurrentRow()
 
-	row := area.CurrentRow() + rowOffset - 1
+func (g *grid) findSuitableRow(vl *node.VList, startColumn coord, area *area) coord {
 	wdCols := g.widthToColumns(vl.Width)
+	htCols := g.heightToRows(vl.Height + vl.Depth)
+	frameMarginTop := area.frame[area.currentFrame].row - 1
+	areaHeight := area.frame[area.currentFrame].height
 
-	// if g.currentCol >= coord(g.nx) {
-	// 	g.nextRow()
-	// }
-	col := g.fitsInRow(row, wdCols, area)
-	if col > 0 {
-		col = col - area.CurrentCol() + 1
+	for row := area.CurrentRow() + frameMarginTop; row < areaHeight+frameMarginTop; row++ {
+		if row+htCols > areaHeight {
+			break
+		}
+		fits := true
+		for r := row; r < row+htCols; r++ {
+			if !g.fitsInRow(startColumn, r, wdCols, area) {
+				fits = false
+				break
+			}
+		}
+		if fits {
+			return row
+		}
 	}
-	xy := newGridCoord(col, row-rowOffset+1)
-
-	return xy, nil
+	return 1
 }
 
 func (g *grid) nextRow() {
@@ -277,22 +298,11 @@ func (g *grid) nextRow() {
 	// g.currentRow++
 }
 
-func (g *grid) fitsInRow(y coord, wdCols coord, area *area) coord {
-	col := area.CurrentCol()
-	row := y
-	for {
-		if g.allocatedBlocks.allocValue(col, row) > 0 && int(col) <= g.nx {
-			col++
-		} else {
-			break
+func (g *grid) fitsInRow(col coord, row coord, wdCols coord, area *area) bool {
+	for c := col; c < col+wdCols-1; c++ {
+		if g.allocatedBlocks.allocValue(c, row) > 0 {
+			return false
 		}
 	}
-	nowhere := newGridCoord(0, 0)
-
-	for i := col; i < col+wdCols; i++ {
-		if g.allocatedBlocks.allocValue(i, row) > 0 {
-			return coord(nowhere)
-		}
-	}
-	return col
+	return true
 }

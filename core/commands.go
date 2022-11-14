@@ -1121,17 +1121,16 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	default:
 		bag.Logger.DPanicf("PlaceObject: unknown node %T", t)
 	}
-
 	if pos == positioningUnknown {
 		pos = positioningGrid
-		xy, err := xd.currentGrid.findFreeSpaceForObject(vl, area)
-		if err != nil {
-			return nil, err
+		startCol := area.CurrentCol()
+		if startCol+xd.currentGrid.widthToColumns(vl.Width) > coord(xd.currentGrid.nx) {
+			startCol = 1
 		}
+		row = xd.currentGrid.findSuitableRow(vl, startCol, area)
 		bag.Logger.Debugf("looking for free space for %s", origin)
-		col, row = xy.XY()
-		columnInt = int(col)
-		rowInt = int(row)
+		col = startCol
+
 	}
 	halign := frontend.HAlignLeft
 	if attValues.HAlign == "right" {
@@ -1382,8 +1381,9 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	var err error
 	attValues := &struct {
 		Width      bag.ScaledPoint
-		Stretch    string `sdxml:"default:no"`
+		Stretch    bool
 		FontFamily string
+		FontSize   string
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -1391,8 +1391,15 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	if attValues.Width == 0 {
 		attValues.Width = xd.currentGrid.width(coord(xd.store["maxwidth"].(int)))
 	}
+
+	fontsize, leading, err := xd.getFontSizeLeading(attValues.FontSize)
+	if err != nil {
+		return nil, err
+	}
+
 	tbl := frontend.Table{}
 	tbl.MaxWidth = attValues.Width
+	tbl.Stretch = attValues.Stretch
 
 	ff := xd.document.FindFontFamily("text")
 	if af := attValues.FontFamily; af != "" {
@@ -1401,6 +1408,8 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		}
 	}
 	tbl.FontFamily = ff
+	tbl.FontSize = fontsize
+	tbl.Leading = leading
 
 	seq, err := dispatch(xd, layoutelt, xd.data)
 	if err != nil {
@@ -1435,40 +1444,21 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
-
-	leading := xd.fontsizes["text"][1]
-	fontsize := xd.fontsizes["text"][0]
-	attrFontsize := attValues.Fontsize
-
 	ff := xd.document.FindFontFamily("text")
 	if af := attValues.FontFamily; af != "" {
 		if fontfamily := xd.document.FindFontFamily(af); fontfamily != nil {
 			ff = fontfamily
 		}
 	}
-
-	if sp := strings.Split(attrFontsize, "/"); len(sp) == 2 {
-		if fontsize, err = bag.Sp(sp[0]); err != nil {
-			return nil, err
-		}
-		if leading, err = bag.Sp(sp[1]); err != nil {
-			return nil, err
-		}
-	} else if fs, ok := xd.fontsizes[attrFontsize]; ok {
-		fontsize = fs[0]
-		leading = fs[1]
-	} else if attrFontsize == "" {
-		// ok, ignore
-		bag.Logger.Debug("use default font size text")
-	} else {
-		return nil, fmt.Errorf("unknown font size %s", attrFontsize)
+	fontsize, leading, err := xd.getFontSizeLeading(attValues.Fontsize)
+	if err != nil {
+		return nil, err
 	}
-
 	seq, err := dispatch(xd, layoutelt, xd.data)
 	if err != nil {
 		return nil, err
 	}
-	textblock := node.NewVList()
+	var vlists node.Node
 
 	for i, itm := range seq {
 		te := &frontend.Text{
@@ -1499,17 +1489,18 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		if err != nil {
 			return nil, err
 		}
-		textblock.List = node.InsertAfter(textblock.List, node.Tail(textblock.List), vlist)
+		vlists = node.InsertAfter(vlists, node.Tail(vlists), vlist)
 		if i < len(seq) && attValues.Parsep != 0 {
 			g := node.NewGlue()
 			g.Width = attValues.Parsep
-			textblock.List = node.InsertAfter(textblock.List, vlist, g)
+			vlists = node.InsertAfter(vlists, vlist, g)
 		}
 	}
 
-	if textblock.List == nil {
+	if vlists == nil {
 		return nil, nil
 	}
+	textblock := node.Vpack(vlists)
 	if textblock.Attributes == nil {
 		textblock.Attributes = node.H{}
 	}
@@ -1559,6 +1550,11 @@ func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		BorderTopColor    *string          `sdxml:"attr:border-top-color"`
 		BorderLeftColor   *string          `sdxml:"attr:border-left-color"`
 		BorderRightColor  *string          `sdxml:"attr:border-right-color"`
+		Padding           *bag.ScaledPoint
+		PaddingBottom     *bag.ScaledPoint `sdxml:"attr:padding-bottom"`
+		PaddingTop        *bag.ScaledPoint `sdxml:"attr:padding-top"`
+		PaddingLeft       *bag.ScaledPoint `sdxml:"attr:padding-left"`
+		PaddingRight      *bag.ScaledPoint `sdxml:"attr:padding-right"`
 		Colspan           int
 		Rowspan           int
 		Valign            string
@@ -1605,6 +1601,30 @@ func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	}
 	if wd, ok := attrs["border-right-width"]; ok {
 		tc.BorderRightWidth, err = bag.Sp(wd)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if wd, ok := attrs["padding-bottom"]; ok {
+		tc.PaddingBottom, err = bag.Sp(wd)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if wd, ok := attrs["padding-top"]; ok {
+		tc.PaddingTop, err = bag.Sp(wd)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if wd, ok := attrs["padding-left"]; ok {
+		tc.PaddingLeft, err = bag.Sp(wd)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if wd, ok := attrs["padding-right"]; ok {
+		tc.PaddingRight, err = bag.Sp(wd)
 		if err != nil {
 			return nil, err
 		}
@@ -1657,6 +1677,25 @@ func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	if attValues.BorderRightColor != nil {
 		tc.BorderRightColor = xd.document.GetColor(*attValues.BorderRightColor)
 	}
+	if p := attValues.Padding; p != nil {
+		tc.PaddingLeft = *p
+		tc.PaddingRight = *p
+		tc.PaddingTop = *p
+		tc.PaddingBottom = *p
+	}
+	if p := attValues.PaddingRight; p != nil {
+		tc.PaddingRight = *p
+	}
+	if p := attValues.PaddingLeft; p != nil {
+		tc.PaddingLeft = *p
+	}
+	if p := attValues.PaddingTop; p != nil {
+		tc.PaddingTop = *p
+	}
+	if p := attValues.PaddingBottom; p != nil {
+		tc.PaddingBottom = *p
+	}
+
 	switch attValues.Valign {
 	case "top":
 		tc.VAlign = frontend.VAlignTop
