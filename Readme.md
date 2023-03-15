@@ -12,4 +12,4 @@ AGPL v3 - see License.md
 
 # Contact
 
-Patrick Gundlach, <gundlach@speedata>
+Patrick Gundlach, <gundlach@speedata.de>

@@ -10,6 +10,7 @@
     <optional><cmd name="Loop"/></optional>
     <optional><cmd name="Message"/></optional>
     <optional><cmd name="NextFrame"/></optional>
+    <optional><cmd name="NextRow"/></optional>
     <optional><cmd name="PlaceObject"/></optional>
     <optional><cmd name="SaveDataset"/></optional>
     <optional><cmd name="Switch"/></optional>
@@ -41,6 +42,7 @@
     <optional><cmd name="Loop"/></optional>
     <optional><cmd name="Message"/></optional>
     <optional><cmd name="NextFrame"/></optional>
+    <optional><cmd name="NextRow"/></optional>
     <optional><cmd name="PlaceObject"/></optional>
     <optional><cmd name="ProcessNode"/></optional>
     <optional><cmd name="SaveDataset"/></optional>
@@ -52,7 +54,9 @@
     <zeroOrMore>
       <choice>
         <cmd name="A"/>
+        <cmd name="Action"/>
         <cmd name="B"/>
+        <cmd name="Br"/>
         <cmd name="I"/>
         <cmd name="Value"/>
         <cmd name="Span"/>
@@ -441,6 +445,8 @@
   </defineattribute>
 
   <definelist name="languagesshortcodes">--|bg|ca|cs|cy|da|de|el|en|en_GB|en_US|eo|es|et|eu|fi|fr|ga|gl|grc|gu|hi|hr|hu|hy|id|is|it|kn|ku|lt|lv|ml|nb|nl|nn|pl|pt|ro|ru|sc|sk|sl|sr|sv|tr|uk|zh</definelist>
+
+
   <command en="A">
     <description xml:lang="en">
       <para>Insert hyperlink to a URL.</para>
@@ -465,6 +471,14 @@
       </description>
       <description xml:lang="de">
         <para>Das Ziel des Hyperlinks. Beispiel: <tt>https://www.speedata.de</tt></para>
+      </description>
+    </attribute>
+    <attribute en="link" type="text" optional="yes">
+      <description xml:lang="en">
+        <para>The target of the document link (a Mark). Example: <tt>article123</tt></para>
+      </description>
+      <description xml:lang="de">
+        <para>Das Ziel des Dokumentlinks. Beispiel: <tt>article123</tt>. Ziele werden mit Action/Mark erzeugt</para>
       </description>
     </attribute>
     <example xml:lang="en">
@@ -493,6 +507,91 @@
     </example>
     <seealso/>
   </command>
+
+
+
+  <command en="Action">
+    <description xml:lang="en">
+      <para>Associates an action with a text. Once the text is placed on the page, the associated action will be executed. The action can be compared to an invisible character. When the publisher outputs the character, the corresponding instructions will be run.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Assoziiert eine Aktion mit einem Text. Sobald der Text auf einer Seite platziert wird, wird die dazugehörige Aktion ausgeführt. Die Aktion kann man sich als unsichtbares Zeichen vorstellen. Wenn der Publisher das unsichtbare Zeichen ausgibt, werden die Anweisungen in der Aktion ausgeführt.</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <cmd name="Mark"/>
+      </oneOrMore>
+    </childelements>
+    <example xml:lang="en">
+      <listing><![CDATA[<Pageformat width="210mm" height="4cm"/>
+
+<Record element="data">
+  <PlaceObject>
+    <Textblock>
+      <Paragraph>
+        <Value>
+          Row
+          Row
+          Row
+          Row
+        </Value>
+      </Paragraph>
+    </Textblock>
+    <Textblock>
+      <Action>
+        <Mark select="'textstart'"/>
+      </Action>
+      <Paragraph>
+        <Value>
+          Row
+          Row
+          Row
+        </Value>
+      </Paragraph>
+    </Textblock>
+  </PlaceObject>
+  <ClearPage/>
+  <Message select="sd:pagenumber('textstart')"></Message>
+</Record>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Pageformat width="210mm" height="4cm"/>
+
+<Record element="data">
+  <PlaceObject>
+    <Textblock>
+      <Paragraph>
+        <Value>
+        Zeile
+        Zeile
+        Zeile
+        Zeile
+        </Value>
+      </Paragraph>
+    </Textblock>
+    <Textblock>
+      <Action>
+        <Mark select="'Textanfang'"/>
+      </Action>
+      <Paragraph>
+        <Value>
+          Zeile
+          Zeile
+          Zeile
+        </Value>
+      </Paragraph>
+    </Textblock>
+  </PlaceObject>
+  <ClearPage/>
+  <Message select="sd:pagenumber('Textanfang')"/>
+</Record>
+]]></listing>
+    </example>
+    <seealso><cmd name="Textblock"/>, <cmd name="Mark"/></seealso>
+  </command>
+
+
 
   <command en="AtPageCreation">
     <description xml:lang="en">
@@ -643,6 +742,242 @@
     <seealso><cmd name="I"/>, <ref name="fonts"/></seealso>
   </command>
 
+
+  <command en="Br">
+    <description xml:lang="en">
+      <para>Insert a newline</para>
+    </description>
+    <description xml:lang="de">
+      <para>Fügt einen Zeilenumbruch ein</para>
+    </description>
+    <childelements/>
+    <example xml:lang="en">
+      <listing><![CDATA[<Record element="data">
+  <PlaceObject>
+   <Textblock>
+     <Paragraph>
+       <Value>Hello</Value><Br/><Value>world</Value>
+     </Paragraph>
+   </Textblock>
+  </PlaceObject>
+</Record>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Record element="data">
+  <PlaceObject>
+    <Textblock>
+      <Paragraph><Value>Hallo</Value><Br/><Value>Welt</Value>
+      </Paragraph>
+    </Textblock>
+  </PlaceObject>
+</Record>
+]]></listing>
+    </example>
+    <seealso/>
+  </command>
+
+
+  <command en="Barcode" pro="yes">
+    <description xml:lang="en">
+      <para>Print a 1d or 2d barcode. To be used in <cmd name="PlaceObject"/>.</para>
+    </description>
+    <description xml:lang="de">
+    <para>Erzeugt einen 1D oder 2D Strichcode (barcode), der in <cmd name="PlaceObject"/> ausgegeben werden kann.</para>
+  </description>
+    <childelements/>
+    <attribute en="color" optional="yes" since="4.5.11" allowxpath="yes">
+      <description xml:lang="en">
+        <para>Color of the barcode. Must be defined with <cmd name="DefineColor"/> before use. Currently only used for QR codes.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Farbe des Strichcodes. Muss vorher mit <cmd name="DefineColor"/> definiert worden sein. Derzeit nur für QR-Codes.</para>
+      </description>
+    </attribute>
+    <attribute en="eclevel" optional="yes" since="2.7.10">
+      <description xml:lang="en">
+        <para>Set the error correction level for QR-codes. If not provided, the system uses the maximum level for minimum size. The higher the level, the more error correction is in the QR-code.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Setzt den Fehlerkorrekturlevel für QR-Codes. Wenn nicht angegeben, nutzt das System den maximalen Level für die kleinste QR-Code Größe. Je höher der Level, desto mehr Fehlerkorrektur ist im QR-Code.</para>
+      </description>
+      <choice en="L">
+        <description xml:lang="en">
+          <para>Set the lowest level (1) with approx. 7% recovery.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Setzt den kleinsten Fehlerkorrekturwert (1) mit ca. 7% Korrektur.</para>
+        </description>
+      </choice>
+      <choice en="M">
+        <description xml:lang="en">
+          <para>Set the second lowest level (2) with approx. 15% recovery.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Setzt den zweitkleinsten Fehlerkorrekturwert (2) mit ca. 15% Korrektur.</para>
+        </description>
+      </choice>
+      <choice en="Q">
+        <description xml:lang="en">
+          <para>Set the second highest level (3) with approx. 25% recovery.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Setzt den zweitgrößten Fehlerkorrekturwert (3) mit ca. 25% Korrektur.</para>
+        </description>
+      </choice>
+      <choice en="H">
+        <description xml:lang="en">
+          <para>Set the highest level (4) with approx. 35% recovery.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Setzt den größten Fehlerkorrekturwert (4) mit ca. 35% Korrektur.</para>
+        </description>
+      </choice>
+    </attribute>
+    <attribute en="fontfamily" type="text" optional="yes">
+      <description xml:lang="en">
+        <para>Name of the font of the text that can be placed beneath the barcode. Not used in all codes.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name der Schriftart des Textes, der ggf. unterhalb des Strichcodes ausgegeben wird. Nicht in allen Codes verwendet.</para>
+      </description>
+    </attribute>
+    <attribute en="height" type="numberorlength" optional="yes">
+      <description xml:lang="en">
+        <para>Height of the barcode.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Höhe des Strichcodes.</para>
+      </description>
+    </attribute>
+    <attribute en="keepfontsize" optional="yes" type="boolean" since="4.1.2">
+      <description xml:lang="en">
+        <para>Try to keep the size of the requested font. Works with EAN13 only.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Versuche die Schriftgröße beizubehalten (EAN13).</para>
+      </description>
+    </attribute>
+    <attribute en="overshoot" optional="yes" type="number">
+      <description xml:lang="en">
+        <para>The factor denoting the extra length of the outer and middle bar. Only useful with EAN13.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Der Faktor, um den die äußeren und der innere Balken die normalen Balken übersteigt. Nur anwendbar bei EAN13.</para>
+      </description>
+    </attribute>
+    <attribute en="select" type="xpath" optional="no">
+      <description xml:lang="en">
+        <para>The data to be encoded in the barcode.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Wert, der als Strichcode kodiert werden soll.</para>
+      </description>
+    </attribute>
+    <attribute en="showtext" optional="yes">
+      <description xml:lang="en">
+        <para>Should the text be written under the barcode?</para>
+      </description>
+      <description xml:lang="de">
+        <para>Bestimmt, ob unterhalb des Barcodes der Text erscheint.</para>
+      </description>
+      <choice en="yes">
+        <description xml:lang="en">
+          <para>Write text beneath the barcode.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Text unterhalb des Barcodes schreiben.</para>
+        </description>
+      </choice>
+      <choice en="no">
+        <description xml:lang="en">
+          <para>Don't display text.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Keinen Text anzeigen.</para>
+        </description>
+      </choice>
+    </attribute>
+    <attribute en="type" optional="no">
+      <description xml:lang="en">
+        <para>Type of the barcode. One of <tt>EAN13</tt>, <tt>Code128</tt> or <tt>QRCode</tt>.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Typ des Strichcodes. Kann <tt>EAN13</tt>, <tt>Code128</tt> oder <tt>QRCode</tt> sein.</para>
+      </description>
+      <choice en="QRCode">
+        <description xml:lang="en">
+          <para>Create an »optimal« QR code in terms of error correction and size.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Erzeugt einen QR-Code, der für den Inhalt die kleinstmögliche Größe und den besten Fehlerkorrekturwert hat, sofern kein Fehlerkorrekturlevel angegeben ist.</para>
+        </description>
+      </choice>
+      <choice en="Code128">
+        <description xml:lang="en">
+          <para>Generate a code 128 barcode for numbers and text.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Erzeugt einen Code 128 Barcode für Ziffern und Text (ohne Umlaute)</para>
+        </description>
+      </choice>
+      <choice en="EAN13">
+        <description xml:lang="en">
+          <para>Create an EAN13 barcode for 13 digits.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Erzeugt einen EAN13 Barcode mit genau 13 Ziffern.</para>
+        </description>
+      </choice>
+    </attribute>
+    <attribute en="width" type="numberorlength" optional="yes">
+      <description xml:lang="en">
+        <para>Width of the barcode</para>
+      </description>
+      <description xml:lang="de">
+        <para>Breite des Strichcodes</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<PlaceObject>
+  <Barcode select="'speedata Publisher'" type="Code128" showtext="yes"/>
+</PlaceObject>]]></listing>
+      <para>gives</para>
+      <image file="ref-code128-speedata-publisher.png"/>
+      <listing><![CDATA[<PlaceObject>
+  <Barcode select="4242002518169" type="EAN13"/>
+</PlaceObject>]]></listing>
+      <para>becomes</para>
+      <image file="ref-ean13-supertex.png" width="300"/>
+      <para>And finally the QR code</para>
+      <listing><![CDATA[<PlaceObject>
+  <Barcode select="'http://www.speedata.de'" type="QRCode" height="5"/>
+</PlaceObject>
+]]></listing>
+      <para>looks like</para>
+      <image file="ref-speedata-publisher-qrcode.png" width="300"/>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<PlaceObject>
+  <Barcode select="'speedata Publisher'" type="Code128" showtext="yes"/>
+</PlaceObject>]]></listing>
+      <para>ergibt</para>
+      <image file="ref-code128-speedata-publisher.png"/>
+      <listing><![CDATA[<PlaceObject>
+  <Barcode select="4242002518169" type="EAN13"/>
+</PlaceObject>]]></listing>
+      <para>wird zu</para>
+      <image file="ref-ean13-supertex.png" width="30%"/>
+      <para>und</para>
+      <listing><![CDATA[<PlaceObject>
+  <Barcode select="'http://www.speedata.de'" type="QRCode" height="5"/>
+</PlaceObject>
+]]></listing>
+      <para>wird zu</para>
+      <image file="ref-speedata-publisher-qrcode.png" width="30%"/>
+    </example>
+    <seealso><cmd name="PlaceObject"/></seealso>
+  </command>
 
   <command en="Bookmark">
     <description xml:lang="en">
@@ -915,7 +1250,7 @@
       <para>Erzeugt einen Kreis oder eine Ellipse.</para>
     </description>
     <childelements/>
-    <attribute en="backgroundcolor" type="text" optional="yes" css="background-color">
+    <attribute en="background-color" type="text" optional="yes" css="background-color">
       <description xml:lang="en">
         <para>Color of the circle.</para>
       </description>
@@ -931,7 +1266,7 @@
         <para>CSS Klasse für diesen Kreis.</para>
       </description>
     </attribute>
-    <attribute en="framecolor" type="text" optional="yes" css="color">
+    <attribute en="border-color" type="text" optional="yes" css="color">
       <description xml:lang="en">
         <para>Color of the circle line.</para>
       </description>
@@ -947,15 +1282,31 @@
         <para>CSS id für diesen Kreis.</para>
       </description>
     </attribute>
-    <attribute en="radiusx" type="numberorlength" optional="no">
+    <attribute en="origin-x" type="zerotohundred" optional="yes">
       <description xml:lang="en">
-        <para>Radius of the circle in grid cells (horizontal) or as an absolute length. Use with <tt>radiusy</tt> to create an ellipse.</para>
+        <para>Determines the horizontal area where the coordinates from <cmd name="PlaceObject" /> are located. Value is from 0 (left edge) to 100 (right edge), with a default of 50 (horizontally centered).</para>
       </description>
       <description xml:lang="de">
-        <para>Radius des Kreises in Rasterzellen (horizontal) oder als absolute Maßangabe. In Verbindung mit <tt>radiusy</tt> lässt sich eine Ellipse erzeugen.</para>
+        <para>Bestimmt den horizontalen Bereich, der an den angegebenen Koordinaten bei <cmd name="PlaceObject"/> liegt. Die Werte liegen zwischen 0 (linke Kante) und 100 (rechte Kante), wobei die Voreinstellung 50 ist.</para>
       </description>
     </attribute>
-    <attribute en="radiusy" type="numberorlength" optional="yes">
+    <attribute en="origin-y" type="zerotohundred" optional="yes">
+      <description xml:lang="en">
+        <para>Determines the vertical area where the coordinates from <cmd name="PlaceObject" /> are located. Value is from 0 (top edge) to 100 (bottom edge), with a default of 50 (verically centered).</para>
+      </description>
+      <description xml:lang="de">
+        <para>Bestimmt den vertikalen Bereich, der an den angegebenen Koordinaten bei <cmd name="PlaceObject"/> liegt. Die Werte liegen zwischen 0 (obere Kante) und 100 (untere Kante), wobei die Voreinstellung 50 ist.</para>
+      </description>
+    </attribute>
+    <attribute en="radius-x" type="numberorlength" optional="no">
+      <description xml:lang="en">
+        <para>Radius of the circle in grid cells (horizontal) or as an absolute length. Use with <tt>radius-y</tt> to create an ellipse.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Radius des Kreises in Rasterzellen (horizontal) oder als absolute Maßangabe. In Verbindung mit <tt>radius-y</tt> lässt sich eine Ellipse erzeugen.</para>
+      </description>
+    </attribute>
+    <attribute en="radius-y" type="numberorlength" optional="yes">
       <description xml:lang="en">
         <para>Radius of the ellipse in grid cells (vertical) or as an absolute length.</para>
       </description>
@@ -963,7 +1314,7 @@
         <para>Radius der Ellipse in Rasterzellen (vertikal) oder als absolute Maßangabe.</para>
       </description>
     </attribute>
-    <attribute en="rulewidth" type="length" optional="yes">
+    <attribute en="border-width" type="length" optional="yes">
       <description xml:lang="en">
         <para>The thickness of the border that is drawn around the object.</para>
       </description>
@@ -974,7 +1325,7 @@
     <example xml:lang="en">
       <listing><![CDATA[<DefineColor name="mygreen" model="cmyk" c="22" m="0" y="55" k="0"/>
 <PlaceObject row="5" column="5" >
-    <Circle radiusx="10mm" backgroundcolor="blue" framecolor="mygreen" rulewidth="1mm"/>
+    <Circle radius-x="10mm" background-color="blue" border-color="mygreen" border-width="1mm"/>
 </PlaceObject>
 ]]></listing>
       <para>looks like</para>
@@ -983,7 +1334,7 @@
     <example xml:lang="de">
       <listing><![CDATA[<DefineColor name="meingrün" model="cmyk" c="22" m="0" y="55" k="0"/>
 <PlaceObject>
-  <Circle radiusx="10mm" backgroundcolor="blue" framecolor="meingrün" rulewidth="1mm"/>
+  <Circle radius-x="10mm" background-color="blue" border-color="meingrün" border-width="1mm"/>
 </PlaceObject>
 ]]></listing>
       <para>erzeugt einen Kreis</para>
@@ -2316,6 +2667,11 @@
   </command>
 
 
+  <!--
+      ****************************************************************************************
+      * Message
+      ****************************************************************************************
+  -->
   <command en="Message">
     <description xml:lang="en">
       <para>Writes a message onto the console and to the protocol file.</para>
@@ -2345,14 +2701,14 @@
         <para>Inhalt der Nachricht. Alternativ dazu: Kindelemente Wert innerhalb des Elements »<cmd name="Message"/>«</para>
       </description>
     </attribute>
-    <attribute en="error" optional="yes">
+    <attribute en="type" optional="yes">
       <description xml:lang="en">
-        <para>Generate an error besides writing the message.</para>
+        <para>The type of the message.</para>
       </description>
       <description xml:lang="de">
-        <para>Zusätzlich einen Fehler melden.</para>
+        <para>Der Typ der Nachricht.</para>
       </description>
-      <choice en="yes">
+      <choice en="error">
         <description xml:lang="en">
           <para>Report an error.</para>
         </description>
@@ -2360,14 +2716,31 @@
           <para>Fehler ausgeben.</para>
         </description>
       </choice>
-      <choice en="no">
+      <choice en="warning">
         <description xml:lang="en">
-          <para>Do not report an error (default).</para>
+          <para>Report a warning.</para>
         </description>
         <description xml:lang="de">
-          <para>Keinen Fehler ausgeben (Voreinstellung).</para>
+          <para>Warnung ausgeben.</para>
         </description>
       </choice>
+      <choice en="debug">
+        <description xml:lang="en">
+          <para>Report a debug message.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Debug-Nachricht ausgeben.</para>
+        </description>
+      </choice>
+      <choice en="info">
+        <description xml:lang="en">
+          <para>Report an information (default).</para>
+        </description>
+        <description xml:lang="de">
+          <para>Information ausgeben (Voreinstellung).</para>
+        </description>
+      </choice>
+
     </attribute>
     <attribute en="errorcode" optional="yes" type="number" >
       <description xml:lang="en">
@@ -2403,6 +2776,11 @@
     <seealso/>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * Layout
+      ****************************************************************************************
+  -->
   <command en="Layout">
     <description xml:lang="en">
       <para>This command is the root element in the Layout instructions.</para>
@@ -2485,6 +2863,145 @@
     <seealso/>
   </command>
 
+
+  <!--
+      ****************************************************************************************
+      Mark
+      ****************************************************************************************
+  -->
+  <command en="Mark">
+    <description xml:lang="en">
+      <para>Sets an invisible mark into the output. This is helpful when you want to know on which page the mark is placed on.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Setzt eine unsichtbare Markierung in die Ausgabe. Das ist hilfreich, um die Seitenzahl zu bestimmen, auf der die Marke gelandet ist.</para>
+    </description>
+    <childelements/>
+    <attribute en="append" optional="yes">
+      <description xml:lang="en">
+        <para>When yes, append the current page to the previous values of the mark. Useful to get page ranges in an index. (Default is no.)</para>
+      </description>
+      <description xml:lang="de">
+        <para>Wenn 'yes', dann wird die aktuelle Seitenzahl an den letzten Wert angehängt (mit Komma separiert). Nützlich, um Seitenzahlen wie S. 3-5 im Index zu erstellen. Voreinstellung ist nein.</para>
+      </description>
+      <choice en="yes">
+        <description xml:lang="en">
+          <para>Append the page number to the previous value of the mark.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Die Seitenzahl an die vorherigen Werte anhängen.</para>
+        </description>
+      </choice>
+      <choice en="no">
+        <description xml:lang="en">
+          <para>Replace the previous value.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Den vorherigen Wert ersetzen.</para>
+        </description>
+      </choice>
+    </attribute>
+    <attribute en="select" type="xpath" optional="no">
+      <description xml:lang="en">
+        <para>The name of the mark to be set.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Der Name des Markers, der gesetzt wird.</para>
+      </description>
+    </attribute>
+    <attribute en="shiftup" optional="yes" since="4.13.2" type="length">
+      <description xml:lang="en">
+        <para>Raise the position of the hyperlink anchor by this amount.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Verschiebe die Position des Hyperlink-Ankers um diesen Betrag.</para>
+      </description>
+    </attribute>
+    <attribute en="pdftarget" optional="yes" since="3.3.8" type="boolean">
+      <description xml:lang="en">
+        <para>Set a pdf target that can be referenced by <cmd name="A"/></para>
+      </description>
+      <description xml:lang="de">
+        <para>Setze ein PDF-Ziel, das mit <cmd name="A"/> referenziert werden kann.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<Pageformat width="210mm" height="4cm"/>
+
+<Record element="data">
+  <PlaceObject>
+    <Textblock>
+      <Paragraph>
+        <Value>
+          Row
+          Row
+          Row
+          Row
+        </Value>
+      </Paragraph>
+    </Textblock>
+    <Textblock>
+      <Action>
+        <Mark select="'textstart'"/>
+      </Action>
+      <Paragraph>
+        <Value>
+          Row
+          Row
+          Row
+        </Value>
+      </Paragraph>
+    </Textblock>
+  </PlaceObject>
+  <ClearPage/>
+  <Message select="sd:pagenumber('textstart')"></Message>
+</Record>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Pageformat width="210mm" height="4cm"/>
+
+<Record element="data">
+  <PlaceObject>
+    <Textblock>
+      <Paragraph>
+        <Value>
+        Zeile
+        Zeile
+        Zeile
+        Zeile
+        </Value>
+      </Paragraph>
+    </Textblock>
+    <Textblock>
+      <Action>
+        <Mark select="'Textanfang'"/>
+      </Action>
+      <Paragraph>
+        <Value>
+          Zeile
+          Zeile
+          Zeile
+        </Value>
+      </Paragraph>
+    </Textblock>
+  </PlaceObject>
+  <ClearPage/>
+  <Message select="sd:pagenumber('Textanfang')"/>
+</Record>
+]]></listing>
+    </example>
+    <info xml:lang="en">
+      <para>Marks get saved for subsequent runs.</para>
+    </info>
+    <info xml:lang="de">
+      <para>Marker werden für nachfolgende Läufe gespeichert.</para>
+    </info>
+    <seealso><cmd name="Action"/></seealso>
+  </command>
+
+
+
   <command en="NextFrame">
     <description xml:lang="en">
       <para>Switch to the next free frame of a positioning area.</para>
@@ -2515,6 +3032,70 @@
     </seealso>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * NextRow
+      ****************************************************************************************
+  -->
+  <command en="NextRow">
+    <description xml:lang="en">
+      <para>The virtual cursor is set on the next free row.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Der virtuelle Cursor wird auf die nächste freie Zeile gesetzt.</para>
+    </description>
+    <childelements/>
+    <attribute en="area" type="text" optional="yes">
+      <description xml:lang="en">
+        <para>Name of the area of the virtual cursor.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name des Bereichs, in dem der Cursor bewegt wird.</para>
+      </description>
+    </attribute>
+    <attribute en="row" type="number" optional="yes">
+      <description xml:lang="en">
+        <para>The absolute number of the row for the cursor. If no row is given, the system tries to find a completely free row (perhaps on an empty page).</para>
+      </description>
+      <description xml:lang="de">
+        <para>Zeile für den virtuellen Cursor. Wird keine Zeile angegeben, dann sucht sich der Publisher selbständig eine freie Zeile (ggf. auf einer neuen Seite oder in einem neuen Platzierungsrahmen).</para>
+      </description>
+    </attribute>
+    <attribute en="rows" type="number" optional="yes">
+      <description xml:lang="en">
+        <para>The number of rows to clear. Defaults to 1.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Anzahl der Zeilen, die frei gehalten werden sollen. Vorgabe: 1.</para>
+      </description>
+    </attribute>
+    <example xml:lang="de">
+      <listing><![CDATA[<Record element="image">
+  <NextRow row="5"/>
+  <PlaceObject column="{column}">
+    <Image width="10" file="{.}"/>
+  </PlaceObject>
+</Record>]]></listing>
+      <para>This places the image on row 5.</para>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Record element="bild">
+  <NeueZeile row="5" />
+  <PlaceObject column="{$spalte}">
+    <Image width="10" file="{.}" />
+  </PlaceObject>
+</Record>]]></listing>
+    </example>
+    <seealso>
+    </seealso>
+  </command>
+
+
+  <!--
+      ****************************************************************************************
+      * Options
+      ****************************************************************************************
+  -->
   <command en="Options">
     <description xml:lang="en">
       <para>Set publisher specific options.</para>
@@ -2791,6 +3372,7 @@
     <childelements>
       <oneOrMore>
         <interleave>
+          <optional><cmd name="Barcode"/></optional>
           <optional><cmd name="Box"/></optional>
           <optional><cmd name="Circle"/></optional>
           <optional><cmd name="Image"/></optional>
@@ -3151,6 +3733,11 @@
     </seealso>
   </command>
 
+  <!--
+      ****************************************************************************************
+      Regular
+      ****************************************************************************************
+  -->
   <command en="Regular">
     <description xml:lang="en">
       <para>The (symbolic) name of the fontface for regular text, i.e. without bold or italic.</para>
@@ -3200,6 +3787,9 @@
       <cmd name="BoldItalic"/>
     </seealso>
   </command>
+
+
+
 
   <command en="SaveDataset">
     <description xml:lang="en">
@@ -3297,6 +3887,8 @@
   </command>
 
 
+
+
   <command en="SetGrid">
     <description xml:lang="en">
       <para>Set size of the grid cells. All objects are placed in the grid.</para>
@@ -3361,6 +3953,9 @@
     </example>
     <seealso></seealso>
   </command>
+
+
+
 
 
   <command en="SetVariable">
@@ -3507,6 +4102,8 @@
   </command>
 
 
+
+
   <command en="Span" css="span">
     <description xml:lang="en">
       <para>Surround text by styling options.</para>
@@ -3575,6 +4172,10 @@
     </example>
     <seealso></seealso>
   </command>
+
+
+
+
 
   <command en="Switch">
     <description xml:lang="en">
@@ -4413,6 +5014,7 @@
     <childelements>
       <oneOrMore>
         <choice>
+          <cmd name="Action"/>
           <cmd name="Bookmark"/>
           <cmd name="Copy-of"/>
           <cmd name="Paragraph"/>
@@ -4834,6 +5436,11 @@
       <interleave>
         <zeroOrMore>
           <text/>
+        </zeroOrMore>
+        <zeroOrMore>
+          <element name="br">
+            <empty/>
+          </element>
         </zeroOrMore>
       </interleave>
     </childelements>

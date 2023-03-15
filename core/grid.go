@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/speedata/boxesandglue/backend/bag"
-	"github.com/speedata/boxesandglue/backend/node"
 )
 
 type area struct {
@@ -184,10 +183,8 @@ func (g *grid) String() string {
 // posX returns the horizontal offset relative to the left page border. Column 1
 // returns the margin left.
 func (g *grid) posX(column coord, area *area) bag.ScaledPoint {
-	if column == 0 {
-		return bag.ScaledPoint(0)
-	}
-	posx := g.marginLeft + bag.ScaledPoint(column-1)*g.gridWidth
+	offsetX := area.frame[area.currentFrame].col
+	posx := g.marginLeft + bag.ScaledPoint(column+offsetX-2)*g.gridWidth
 	if column > 1 {
 		posx += bag.ScaledPoint(column-2) * g.gridGapX
 	}
@@ -197,10 +194,8 @@ func (g *grid) posX(column coord, area *area) bag.ScaledPoint {
 // posY returns the vertical offset relative to the top page border. Row 1
 // returns the top margin.
 func (g *grid) posY(row coord, area *area) bag.ScaledPoint {
-	if row == 0 {
-		return bag.ScaledPoint(0)
-	}
-	posy := g.marginTop + bag.ScaledPoint(row-1)*g.gridHeight
+	offsetY := area.frame[area.currentFrame].row
+	posy := g.marginTop + bag.ScaledPoint(row+offsetY-2)*g.gridHeight
 	if row > 1 {
 		posy += bag.ScaledPoint(row-2) * g.gridGapY
 	}
@@ -269,14 +264,12 @@ func (g *grid) allocate(x, y coord, area *area, wd, ht bag.ScaledPoint) {
 	}
 }
 
-func (g *grid) findSuitableRow(vl *node.VList, startColumn coord, area *area) coord {
-	wdCols := g.widthToColumns(vl.Width)
-	htCols := g.heightToRows(vl.Height + vl.Depth)
+func (g *grid) findSuitableRow(wdCols coord, htCols coord, startColumn coord, area *area) coord {
 	frameMarginTop := area.frame[area.currentFrame].row - 1
 	areaHeight := area.frame[area.currentFrame].height
 
 	for row := area.CurrentRow() + frameMarginTop; row < areaHeight+frameMarginTop; row++ {
-		if row+htCols > areaHeight {
+		if row+htCols-1 > areaHeight {
 			break
 		}
 		fits := true
@@ -293,12 +286,20 @@ func (g *grid) findSuitableRow(vl *node.VList, startColumn coord, area *area) co
 	return 1
 }
 
-func (g *grid) nextRow() {
-	// g.currentCol = 1
-	// g.currentRow++
+func (g *grid) nextRow(area *area) {
+	wd := area.frame[area.currentFrame].width
+
+	if area.CurrentCol() == 1 {
+		area.SetCurrentRow(area.CurrentRow() + 1)
+	}
+	r := g.findSuitableRow(wd, 1, 1, area)
+	area.SetCurrentRow(r)
 }
 
 func (g *grid) fitsInRow(col coord, row coord, wdCols coord, area *area) bool {
+	col += area.frame[area.currentFrame].col
+	row += area.frame[area.currentFrame].row
+
 	for c := col; c < col+wdCols-1; c++ {
 		if g.allocatedBlocks.allocValue(c, row) > 0 {
 			return false

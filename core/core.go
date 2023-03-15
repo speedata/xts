@@ -58,6 +58,8 @@ type xtsDocument struct {
 	defaultGridNx     int
 	defaultGridNy     int
 	masterpages       []*pagetype
+	marker            mapmarker
+	aux               *auxfile // contents of the previous run, if available
 	currentPage       *page
 	currentGrid       *grid
 	currentGroup      *group
@@ -79,6 +81,7 @@ func newXTSDocument() *xtsDocument {
 		fontsizes:         make(map[string][2]bag.ScaledPoint),
 		store:             make(map[any]any),
 		textformats:       make(map[string]textformat),
+		marker:            make(mapmarker),
 		jobname:           "publisher",
 	}
 	return xd
@@ -132,7 +135,7 @@ func RunXTS(cfg *XTSConfig) error {
 	if d.document, err = frontend.New(cfg.OutFilename); err != nil {
 		return err
 	}
-
+	d.document.Doc.CompressLevel = 9
 	if err = d.defaultfont(); err != nil {
 		return err
 	}
@@ -146,6 +149,10 @@ func RunXTS(cfg *XTSConfig) error {
 	if d.data, err = xpath.NewParser(cfg.Datafile); err != nil {
 		return err
 	}
+	if d.aux, err = d.readAuxFile(); err != nil {
+		return err
+	}
+
 	// connect the main document to the xpath parser, so we can access the
 	// document related information in the layout functions
 	d.data.Ctx.Store = map[any]any{
@@ -215,16 +222,11 @@ func RunXTS(cfg *XTSConfig) error {
 			}
 		}
 	}
-
+	if err = d.writeAuxXML(); err != nil {
+		return err
+	}
 	bag.Logger.Infof("Finished in %s", time.Now().Sub(starttime))
 	return nil
-}
-
-func getNumDest() *node.StartStop {
-	dest := node.NewStartStop()
-	dest.Action = node.ActionDest
-	dest.Value = <-destinationNumbers
-	return dest
 }
 
 // Add necessary callbacks to boxes and glue callback mechanism for tracing
@@ -316,8 +318,8 @@ func (xd *xtsDocument) registerCallbacks() {
 
 			for _, area := range curGrid.areas {
 				for _, rect := range area.frame {
-					posX := xd.currentGrid.posX(rect.col, area)
-					posY := xtspage.pageHeight - xd.currentGrid.posY(rect.row, area)
+					posX := xd.currentGrid.posX(1, area)
+					posY := xtspage.pageHeight - xd.currentGrid.posY(1, area)
 					wd := xd.currentGrid.width(rect.width)
 					ht := xd.currentGrid.height(rect.height) * -1
 					gridDebug.Rect(posX, posY, wd, ht).Stroke()

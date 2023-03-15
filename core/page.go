@@ -70,6 +70,8 @@ type page struct {
 	pageWidth  bag.ScaledPoint // total width of the (PDF) page
 	pageHeight bag.ScaledPoint // total height of the (PDF) page
 	pagegrid   *grid
+	markerid   int
+	markerids  chan int
 }
 
 func clearPage(xd *xtsDocument) {
@@ -114,6 +116,7 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 		pagegrid:   g,
 		pageWidth:  d.DefaultPageWidth,
 		pageHeight: d.DefaultPageHeight,
+		pagenumber: xd.currentPagenumber,
 	}
 	g.setPage(pg)
 
@@ -151,6 +154,8 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 								col:    coord(attValues.Column),
 								width:  coord(attValues.Width),
 								height: coord(attValues.Height),
+								currentCol: 1,
+								currentRow: 1,
 							}
 							rects = append(rects, &rect)
 						}
@@ -164,11 +169,22 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 		}
 
 	}
+	// per page unique marker ids
+	pg.markerids = make(chan int)
+	go pg.genMarkerIDs(pg.markerids)
+
 	// CHECK
 	docPage := pg.bagPage
 	docPage.Userdata = make(map[any]any)
 	docPage.Userdata["xtspage"] = pg
 	return pg, f, nil
+}
+
+func (p *page) genMarkerIDs(ids chan int) {
+	for {
+		ids <- p.markerid
+		p.markerid++
+	}
 }
 
 func (p *page) outputAbsolute(x, y bag.ScaledPoint, vl *node.VList) {

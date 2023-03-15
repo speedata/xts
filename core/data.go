@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/speedata/boxesandglue/backend/bag"
+	"github.com/speedata/boxesandglue/backend/node"
 	"github.com/speedata/boxesandglue/csshtml"
 	"github.com/speedata/boxesandglue/frontend"
 	"github.com/speedata/goxml"
@@ -14,7 +15,8 @@ import (
 )
 
 // applyLayoutStylesheet creates an HTML fragment, applies CSS and reads the
-// attributes from the fragment. This is handy when styling layout elements with CSS.
+// attributes from the fragment. This is handy when styling layout elements with
+// CSS.
 func (xd *xtsDocument) applyLayoutStylesheet(classname string, id string, style string, eltnames ...string) (map[string]string, error) {
 	htmlstrings := []string{}
 	for i, eltname := range eltnames {
@@ -84,9 +86,19 @@ func (xd *xtsDocument) getFontSizeLeading(size string) (bag.ScaledPoint, bag.Sca
 // Get the values from the child elements of B, Paragraph and its ilk and fill
 // the provided Text struct to get a recursive data structure.
 func getTextvalues(te *frontend.Text, seq xpath.Sequence, cmdname string, line int) {
+	if len(seq) == 0 {
+		te.Items = append(te.Items, "\u200B")
+		return
+	}
 	for _, itm := range seq {
 		switch t := itm.(type) {
 		case *goxml.Element:
+			if t.Name == "br" {
+				te.Items = append(te.Items, "\n")
+			} else {
+				te.Items = append(te.Items, t.Stringvalue())
+			}
+		case *goxml.Attribute:
 			te.Items = append(te.Items, t.Stringvalue())
 		case float64:
 			te.Items = append(te.Items, strconv.FormatFloat(t, 'f', -1, 64))
@@ -100,8 +112,10 @@ func getTextvalues(te *frontend.Text, seq xpath.Sequence, cmdname string, line i
 			te.Items = append(te.Items, t)
 		case []goxml.XMLNode:
 			te.Items = append(te.Items, seq.Stringvalue())
+		case *node.StartStop:
+			te.Items = append(te.Items, t)
 		default:
-			bag.Logger.DPanicf("%s (line %d): unknown type %T", cmdname, line, t)
+			bag.Logger.DPanicf("%s (line %d): unknown type %T (getTextvalues)", cmdname, line, t)
 		}
 	}
 }
@@ -113,21 +127,44 @@ func getStructTag(f reflect.StructField, tagName string) string {
 var (
 	dummyBool           bool
 	dummyStr            string
+	dummyInt            int
 	dummySP             bag.ScaledPoint
 	boolType            = reflect.TypeOf(true)
 	boolPtrType         = reflect.TypeOf(&dummyBool)
 	stringType          = reflect.TypeOf("")
 	stringPtrType       = reflect.TypeOf(&dummyStr)
 	intType             = reflect.TypeOf(0)
+	intPtrType          = reflect.TypeOf(&dummyInt)
 	scaledPointsType    = reflect.TypeOf(dummySP)
 	scaledPointsPtrType = reflect.TypeOf(&dummySP)
 )
 
-// getXMLAttributes fills the struct at v with the attribute values of the current element.
+// getXMLAttributes fills the struct at v with the attribute values of the
+// current element.
 func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 	attributes := make(map[string]string)
+
+	// Activate this code to get attributes from <Attributes><Attribute>
+	// elements:
+	//  for _, v := range layoutelt.Children() {
+	//  if elt, ok := v.(*goxml.Element); ok {
+	//      if elt.Name == "Attributes" {
+	//          seq, err := dispatch(xd, elt, xd.data)
+	//          if err != nil {
+	//              return err
+	//          }
+	//          for _, itm := range seq {
+	//              if attr, ok := itm.(goxml.Attribute); ok {
+	//                  attributes[attr.Name] = attr.Value
+	//              }
+	//          }
+	//      }
+	//  }
+	// }
+
 	for _, attrib := range layoutelt.Attributes() {
-		attributes[attrib.Name] = attrib.Value
+		name := strings.ReplaceAll(attrib.Name, "-", "")
+		attributes[name] = attrib.Value
 	}
 
 	val := reflect.ValueOf(v)
@@ -155,10 +192,10 @@ func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 		structField := val.Type().Field(i)
 		fieldName := strings.ToLower(structField.Name)
 		for _, tag := range strings.Split(getStructTag(structField, "sdxml"), ",") {
-			if strings.HasPrefix(tag, "default:") {
-				dflt = strings.TrimPrefix(tag, "default:")
-			} else if strings.HasPrefix(tag, "attr") {
-				fieldName = strings.TrimPrefix(tag, "attr:")
+			if suffix, ok := strings.CutPrefix(tag, "default:"); ok {
+				dflt = suffix
+			} else if suffix, ok := strings.CutPrefix(tag, "attr:"); ok {
+				fieldName = suffix
 			} else if tag == "mustexist" {
 				mustexist = true
 			} else if tag == "noescape" {
@@ -200,6 +237,12 @@ func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 					return err
 				}
 				field.SetInt(int64(attInt))
+			case intPtrType:
+				attInt, err := strconv.Atoi(attValue)
+				if err != nil {
+					return err
+				}
+				field.Set(reflect.ValueOf(&attInt))
 			case stringType:
 				field.SetString(attValue)
 			case stringPtrType:
@@ -344,10 +387,14 @@ func (xd *xtsDocument) getAttributeHeight(name string, element *goxml.Element, m
 	return bag.Sp(val)
 }
 
-// evaluateXPath runs an XPath expression.
+// evaluateXPath runs an XPath expression. It saves and restores the current
+// context.
 func evaluateXPath(xd *xtsDocument, namespaces map[string]string, xpath string) (xpath.Sequence, error) {
+	oldContext := xd.data.Ctx.GetContext()
 	xd.data.Ctx.Namespaces = namespaces
-	return xd.data.Evaluate(xpath)
+	seq, err := xd.data.Evaluate(xpath)
+	xd.data.Ctx.SetContext(oldContext)
+	return seq, err
 }
 
 func getFourValues(str string) map[string]string {

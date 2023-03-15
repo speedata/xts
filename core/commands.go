@@ -32,8 +32,11 @@ var (
 func init() {
 	dispatchTable = map[string]commandFunc{
 		"A":                cmdA,
+		"Action":           cmdAction,
 		"Attribute":        cmdAttribute,
 		"B":                cmdB,
+		"Br":               cmdBr,
+		"Barcode":          cmdBarcode,
 		"Bookmark":         cmdBookmark,
 		"Box":              cmdBox,
 		"Circle":           cmdCircle,
@@ -55,8 +58,10 @@ func init() {
 		"LoadDataset":      cmdLoadDataset,
 		"LoadFontfile":     cmdLoadFontfile,
 		"Loop":             cmdLoop,
+		"Mark":             cmdMark,
 		"Message":          cmdMessage,
 		"NextFrame":        cmdNextFrame,
+		"NextRow":          cmdNextRow,
 		"Options":          cmdOptions,
 		"Pageformat":       cmdPageformat,
 		"Paragraph":        cmdParagraph,
@@ -103,6 +108,7 @@ func cmdA(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
 		Href string
+		Link string
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -112,7 +118,7 @@ func cmdA(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	if err != nil {
 		return nil, err
 	}
-	hl := document.Hyperlink{URI: attValues.Href}
+	hl := document.Hyperlink{URI: attValues.Href, Local: attValues.Link}
 
 	te := &frontend.Text{
 		Settings: frontend.TypesettingSettings{
@@ -122,6 +128,39 @@ func cmdA(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	getTextvalues(te, seq, "cmdA", layoutelt.Line)
 
 	return xpath.Sequence{te}, err
+}
+
+func cmdAction(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	seq, err := dispatch(xd, layoutelt, xd.data)
+	if err != nil {
+		return nil, err
+	}
+	var ret xpath.Sequence
+	for _, itm := range seq {
+		if m, ok := itm.(marker); ok {
+			var dest *node.StartStop
+			if m.pdftarget {
+				dest = getNameDest(m.name)
+			} else {
+				dest = node.NewStartStop()
+			}
+
+			dest.Attributes = node.H{
+				"page": xd.currentPage,
+			}
+			dest.Callback = func(n node.Node) string {
+				startStop := n.(*node.StartStop)
+				cp := startStop.Attributes["page"].(*page)
+				m.pagenumber = cp.pagenumber
+				m.id = <-cp.markerids
+				xd.marker[m.name] = m
+				return ""
+			}
+
+			ret = append(ret, dest)
+		}
+	}
+	return ret, nil
 }
 
 func cmdAttribute(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -160,6 +199,44 @@ func cmdB(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	return xpath.Sequence{te}, err
 }
 
+func cmdBr(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	te := frontend.NewText()
+	te.Items = append(te.Items, "\n")
+	return xpath.Sequence{te}, nil
+}
+
+func cmdBarcode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Select string `sdxml:"mustexist"`
+		Type   string
+		Width  bag.ScaledPoint `sdxml:"mustexist"`
+	}{}
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	var eval xpath.Sequence
+	eval, err = xd.data.Evaluate(attValues.Select)
+
+	var bcType int
+	switch attValues.Type {
+	case "EAN13":
+		bcType = barcodeEAN13
+	case "Code128":
+		bcType = barcodeCode128
+	case "QRCode":
+		bcType = barcodeQR
+	default:
+		return nil, fmt.Errorf("Unknown barcode type %q", attValues.Type)
+	}
+	var bc node.Node
+	if bc, err = createBarcode(bcType, eval.Stringvalue(), attValues.Width, xd); err != nil {
+		return nil, err
+	}
+
+	return xpath.Sequence{bc}, nil
+}
+
 func cmdBookmark(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
@@ -173,10 +250,13 @@ func cmdBookmark(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, err
 	var eval xpath.Sequence
 	eval, err = xd.data.Evaluate(attValues.Select)
 	dest := getNumDest()
+
+	// this callback turns the dest object into an outline object by adding the
+	// dest to the Outlines slice of the PDFWriter.
 	dest.Callback = func(n node.Node) string {
 		startStop := n.(*node.StartStop)
 		num := startStop.Value.(int)
-		destObj := xd.document.Doc.GetDest(num)
+		destObj := xd.document.Doc.GetNumDest(num)
 		destObj.X = 0
 		title := eval.Stringvalue()
 		outline := &pdf.Outline{
@@ -203,7 +283,7 @@ func cmdBox(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		Class           string
 		ID              string
 		Style           string
-		Backgroundcolor string          `sdxml:"default:-"`
+		Backgroundcolor *string
 		Width           bag.ScaledPoint `sdxml:"mustexist"`
 		Height          bag.ScaledPoint `sdxml:"mustexist"`
 	}{}
@@ -216,26 +296,17 @@ func cmdBox(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		return nil, err
 	}
 
-	var bgcolor *color.Color
-	if bgc, ok := attrs["background-color"]; ok {
-		bgcolor = xd.document.GetColor(bgc)
-	} else {
-		bgcolor = xd.document.GetColor(attValues.Backgroundcolor)
+	hv := xd.document.CSSPropertiesToValues(attrs)
+	if attValues.Backgroundcolor != nil {
+		hv.BackgroundColor = xd.document.GetColor(*attValues.Backgroundcolor)
+	} else if _, ok := attrs["background-color"]; ok {
+		// already parsed
 	}
 
-	r := node.NewRule()
-	r.Hide = true
-	r.Pre, r.Post = xd.document.HTMLBorder(attValues.Width, attValues.Height, 0, attrs)
-	if bgcolor.Space != color.ColorNone {
-		r.Pre += pdfdraw.New().Color(*bgcolor).Rect(0, 0, attValues.Width, -attValues.Height).Fill().String()
-	} else {
-
-	}
-
-	vl := node.Vpack(r)
-	vl.Width = attValues.Width
-	vl.Height = attValues.Height
-
+	vl := node.NewVList()
+	vl.Width = attValues.Width - hv.BorderLeftWidth - hv.BorderRightWidth
+	vl.Height = attValues.Height - hv.BorderTopWidth - hv.BorderBottomWidth
+	vl = xd.document.HTMLBorder(vl, hv)
 	return xpath.Sequence{vl}, err
 }
 
@@ -245,18 +316,26 @@ func cmdCircle(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 		ID              string
 		Style           string
 		Backgroundcolor *string
+		Borderwidth     *bag.ScaledPoint
+		Bordercolor     *string
 		RadiusX         *bag.ScaledPoint `sdxml:"mustexist"`
 		RadiusY         *bag.ScaledPoint
+		OriginX         int `sdxml:"default:50"`
+		OriginY         int `sdxml:"default:50"`
 	}{}
 	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
+
 	if attValues.RadiusY == nil {
 		attValues.RadiusY = attValues.RadiusX
 	}
 
+	rx, ry := *attValues.RadiusX, *attValues.RadiusY
 	attrs, err := xd.applyLayoutStylesheet(attValues.Class, attValues.ID, attValues.Style, "circle")
-	var bgcolor *color.Color
+
+	var bgcolor, bordercolor *color.Color
+	var borderwidth bag.ScaledPoint
 	if attValues.Backgroundcolor == nil {
 		if bgc, ok := attrs["background-color"]; ok {
 			bgcolor = xd.document.GetColor(bgc)
@@ -265,25 +344,48 @@ func cmdCircle(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 		bgcolor = xd.document.GetColor(*attValues.Backgroundcolor)
 	}
 
+	if attValues.Bordercolor == nil {
+		if bgc, ok := attrs["border-color"]; ok {
+			bordercolor = xd.document.GetColor(bgc)
+		}
+	} else {
+		bordercolor = xd.document.GetColor(*attValues.Bordercolor)
+	}
+
+	if attValues.Borderwidth == nil {
+		if bgc, ok := attrs["border-width"]; ok {
+			borderwidth = bag.MustSp(bgc)
+		}
+	} else {
+		borderwidth = *attValues.Borderwidth
+	}
+
+	circ := pdfdraw.New().Save().Circle(rx, ry*-1, rx, ry)
+	if bgcolor != nil && bgcolor.Space != color.ColorNone && bordercolor != nil && bordercolor.Space != color.ColorNone {
+		circ.ColorNonstroking(*bgcolor)
+		circ.ColorStroking(*bordercolor).LineWidth(borderwidth)
+		circ.StrokeFill()
+	} else if bordercolor != nil && bordercolor.Space != color.ColorNone {
+		circ.ColorStroking(*bordercolor).LineWidth(borderwidth)
+		circ.Stroke()
+	} else if bgcolor != nil && bgcolor.Space != color.ColorNone {
+		circ.ColorNonstroking(*bgcolor)
+		circ.Fill()
+	}
 	r := node.NewRule()
-	if bgcolor == nil {
-		bgcolor = xd.document.GetColor("black")
-	}
+	r.Pre = circ.String()
+	r.Hide = true
+	r.Post = pdfdraw.New().Restore().String()
 
-	if bgcolor.Space != color.ColorNone {
-		str := pdfdraw.New().Save().Color(*bgcolor).Circle(0, 0, *attValues.RadiusX, *attValues.RadiusY).Fill().String()
-		r.Pre = str
-		r.Hide = true
-		r.Post = pdfdraw.New().Restore().String()
-	}
-
-	r.Width = *attValues.RadiusX * 2
-	r.Height = *attValues.RadiusY * 2
+	r.Width = rx * 2
+	r.Height = ry * 2
 	vl := node.Vpack(r)
 	if vl.Attributes == nil {
 		vl.Attributes = node.H{}
 	}
 	vl.Attributes["origin"] = "circle"
+	vl.Attributes["shiftX"] = -1 * (r.Width * bag.ScaledPoint(attValues.OriginX) / 100)
+	vl.Attributes["shiftY"] = -1 * (r.Height * bag.ScaledPoint(attValues.OriginY) / 100)
 
 	return xpath.Sequence{vl}, err
 }
@@ -792,6 +894,7 @@ func cmdProcessNode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	for i, itm := range eval {
 		xd.data.Ctx.Pos = i + 1
 		if elt, ok := itm.(*goxml.Element); ok {
+			xd.data.Ctx.SetContext(xpath.Sequence{elt})
 			if dd, ok := dataDispatcher[elt.Name]; ok {
 				if rec, ok := dd[attValues.Mode]; ok {
 					_, err = dispatch(xd, rec, xd.data)
@@ -854,9 +957,39 @@ func cmdLoop(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 	return nil, nil
 }
 
+func cmdMark(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Select    string `sdxml:"noescape"`
+		Append    bool
+		PDFTarget bool
+		ShiftUP   bag.ScaledPoint
+	}{}
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+
+	eval, err := evaluateXPath(xd, layoutelt.Namespaces, attValues.Select)
+	if err != nil {
+		return nil, err
+	}
+	var seq xpath.Sequence
+	for _, itm := range eval {
+		seq = append(seq, marker{
+			name:      itm.(string),
+			append:    attValues.Append,
+			pdftarget: attValues.PDFTarget,
+			shiftup:   attValues.ShiftUP,
+		})
+	}
+
+	return seq, nil
+}
+
 func cmdMessage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
+		Type   *string
 		Select *string `sdxml:"noescape"`
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
@@ -875,7 +1008,18 @@ func cmdMessage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 			return nil, err
 		}
 	}
-	bag.Logger.Infof("Message (line %d): %s", layoutelt.Line, eval.Stringvalue())
+	f := bag.Logger.Infof
+	if t := attValues.Type; t != nil {
+		switch *t {
+		case "debug":
+			f = bag.Logger.Debugf
+		case "warning":
+			f = bag.Logger.Warnf
+		case "error":
+			f = bag.Logger.Errorf
+		}
+	}
+	f("Message (line %d): %s", layoutelt.Line, eval.Stringvalue())
 	return nil, nil
 }
 
@@ -926,6 +1070,36 @@ func cmdPDFOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 	if attValues.ShowHyperlinks != nil {
 		xd.document.Doc.ShowHyperlinks = *attValues.ShowHyperlinks
 	}
+	return nil, nil
+}
+
+func cmdNextRow(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	xd.setupPage()
+	var err error
+	attValues := &struct {
+		Area string
+		Row  *int
+		Rows *int
+	}{}
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	if attValues.Area == "" {
+		attValues.Area = defaultAreaName
+	}
+	var area *area
+	var ok bool
+	if area, ok = xd.currentGrid.areas[attValues.Area]; !ok {
+		return nil, fmt.Errorf("area %s not found", attValues.Area)
+	}
+	if attValues.Row != nil {
+		area.SetCurrentRow(coord(*attValues.Row))
+	} else if r := attValues.Rows; r != nil {
+		area.SetCurrentRow(area.CurrentRow() + coord(*r))
+	} else {
+		xd.currentGrid.nextRow(area)
+	}
+	area.SetCurrentCol(1)
 	return nil, nil
 }
 
@@ -988,7 +1162,7 @@ func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	attValues := &struct {
 		Color      string
 		Features   string
-		Textformat string
+		Textformat *string
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -1008,11 +1182,13 @@ func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	if attValues.Features != "" {
 		te.Settings[frontend.SettingOpenTypeFeature] = attValues.Features
 	}
-	if name := attValues.Textformat; name != "" {
-		if tf, ok := xd.textformats[name]; ok {
+	if name := attValues.Textformat; name != nil {
+		if tf, ok := xd.textformats[*name]; ok {
 			if tf.halignment != frontend.HAlignDefault {
 				te.Settings[frontend.SettingHAlign] = tf.halignment
 			}
+		} else {
+			bag.Logger.Warnf("text format %q not found", *name)
 		}
 	}
 	getTextvalues(te, seq, "cmdParagraph", layoutelt.Line)
@@ -1061,30 +1237,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		}
 	}
 
-	if rowInt, err = strconv.Atoi(attValues.Row); err == nil {
-		rowSet = true
-		pos = positioningGrid
-		row = coord(rowInt)
-	}
-	if pos == positioningGrid && colSet != rowSet {
-		if !colSet {
-			col = area.CurrentCol()
-			columnInt = int(col)
-		}
-		if !rowSet {
-			row = area.CurrentRow()
-			rowInt = int(row)
-		}
-	} else if pos == positioningUnknown {
-		if columnLength, err = bag.Sp(attValues.Column); err == nil {
-			pos = positioningAbsolute
-		}
-		if rowLength, err = bag.Sp(attValues.Row); err == nil {
-			pos = positioningAbsolute
-		}
-	}
-
-	xd.store["maxwidth"] = xd.currentGrid.nx - columnInt + 1
+	xd.store["maxwidth"] = int(area.frame[area.currentFrame].width-area.CurrentCol()) + 1
 
 	var seq xpath.Sequence
 	if attValues.Groupname != "" {
@@ -1101,12 +1254,19 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		return nil, nil
 	}
 	var origin string
+	var shiftX, shiftY bag.ScaledPoint
 	var vl *node.VList
 	switch t := seq[0].(type) {
 	case *node.VList:
 		vl = t
 		if vl.Attributes != nil {
 			origin = vl.Attributes["origin"].(string)
+			if sx, ok := vl.Attributes["shiftX"]; ok {
+				shiftX = sx.(bag.ScaledPoint)
+			}
+			if sy, ok := vl.Attributes["shiftY"]; ok {
+				shiftY = sy.(bag.ScaledPoint)
+			}
 		}
 	case []*node.VList:
 		vl = t[0]
@@ -1121,13 +1281,41 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	default:
 		bag.Logger.DPanicf("PlaceObject: unknown node %T", t)
 	}
+
+	if rowInt, err = strconv.Atoi(attValues.Row); err == nil {
+		rowSet = true
+		pos = positioningGrid
+		row = coord(rowInt)
+	}
+	if pos == positioningGrid && colSet != rowSet {
+		if !colSet {
+			col = area.CurrentCol()
+			columnInt = int(col)
+		}
+		if !rowSet {
+			wdCols := xd.currentGrid.widthToColumns(vl.Width)
+			htCols := xd.currentGrid.heightToRows(vl.Height + vl.Depth)
+			row = xd.currentGrid.findSuitableRow(wdCols, htCols, col, area)
+			rowInt = int(row)
+		}
+	} else if pos == positioningUnknown {
+		if columnLength, err = bag.Sp(attValues.Column); err == nil {
+			pos = positioningAbsolute
+		}
+		if rowLength, err = bag.Sp(attValues.Row); err == nil {
+			pos = positioningAbsolute
+		}
+	}
+
 	if pos == positioningUnknown {
 		pos = positioningGrid
 		startCol := area.CurrentCol()
 		if startCol+xd.currentGrid.widthToColumns(vl.Width) > coord(xd.currentGrid.nx) {
 			startCol = 1
 		}
-		row = xd.currentGrid.findSuitableRow(vl, startCol, area)
+		wdCols := xd.currentGrid.widthToColumns(vl.Width)
+		htCols := xd.currentGrid.heightToRows(vl.Height + vl.Depth)
+		row = xd.currentGrid.findSuitableRow(wdCols, htCols, startCol, area)
 		bag.Logger.Debugf("looking for free space for %s", origin)
 		col = startCol
 
@@ -1142,15 +1330,29 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		if attValues.HReference == "right" {
 			columnLength -= vl.Width
 		}
+		columnLength += shiftX
+		rowLength += shiftY
 		xd.currentPage.outputAbsolute(columnLength, rowLength, vl)
 	case positioningGrid:
 		if attValues.HReference == "right" {
 			wd := xd.currentGrid.widthToColumns(vl.Width)
 			col = col - wd + 1
 		}
+		if shiftX != 0 {
+			col = col + xd.currentGrid.widthToColumns(shiftX)
+		}
+		if shiftY != 0 {
+			row = row + xd.currentGrid.heightToRows(shiftY)
+		}
 		xd.OutputAt(vl, col, row, attValues.Allocate, area, origin, halign)
-	}
 
+		// if the current column is right of the area, go to the start of the
+		// next row below the object.
+		if col+xd.currentGrid.widthToColumns(vl.Width) > area.frame[area.currentFrame].width {
+			area.SetCurrentRow(row + xd.currentGrid.heightToRows(vl.Height+vl.Depth))
+			area.SetCurrentCol(1)
+		}
+	}
 	return seq, nil
 }
 
@@ -1440,6 +1642,7 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		Width      bag.ScaledPoint
 		FontFamily string
 		Parsep     bag.ScaledPoint
+		Textformat *string `sdxml:"default:text"`
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -1459,7 +1662,6 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		return nil, err
 	}
 	var vlists node.Node
-
 	for i, itm := range seq {
 		te := &frontend.Text{
 			Settings: frontend.TypesettingSettings{
@@ -1467,10 +1669,19 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 				frontend.SettingSize:       fontsize,
 			},
 		}
+		if name := attValues.Textformat; name != nil {
+			if tf, ok := xd.textformats[*name]; ok {
+				if tf.halignment != frontend.HAlignDefault {
+					te.Settings[frontend.SettingHAlign] = tf.halignment
+				}
+			} else {
+				bag.Logger.Warnf("text format %q not found", *name)
+			}
+		}
 
 		switch t := itm.(type) {
 		case *frontend.Text:
-			if align := t.Settings[frontend.SettingHAlign]; align != 0 {
+			if align, found := t.Settings[frontend.SettingHAlign]; found && align != frontend.HAlignDefault {
 				te.Settings[frontend.SettingHAlign] = align
 			}
 			te.Items = append(te.Items, t)
@@ -1479,13 +1690,12 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		default:
 			bag.Logger.DPanicf("cmdTextblock: unknown type %T", t)
 		}
+		// if no width is requested, we use the maximum available width
 		if attValues.Width == 0 {
 			attValues.Width = xd.currentGrid.width(coord(xd.store["maxwidth"].(int)))
 		}
 
-		vlist, _, err := xd.document.FormatParagraph(te, attValues.Width,
-			frontend.Leading(leading),
-		)
+		vlist, _, err := xd.document.FormatParagraph(te, attValues.Width, frontend.Leading(leading))
 		if err != nil {
 			return nil, err
 		}
@@ -1572,8 +1782,15 @@ func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 
 	tc := frontend.TableCell{}
 	for _, itm := range seq {
-		c := itm.(*frontend.Text)
-		tc.Contents = append(tc.Contents, c)
+		switch t := itm.(type) {
+		case *frontend.Text:
+			tc.Contents = append(tc.Contents, t)
+		case *node.HList:
+			tc.Contents = append(tc.Contents, t)
+		default:
+			bag.Logger.DPanicf("pack table cell, unknown type %T\n", t)
+		}
+
 	}
 
 	attrs, err := xd.applyLayoutStylesheet(attValues.Class, attValues.ID, attValues.Style, "table", "tr", "td")
