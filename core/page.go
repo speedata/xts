@@ -150,10 +150,10 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 								return nil, nil, err
 							}
 							rect := gridRect{
-								row:    coord(attValues.Row),
-								col:    coord(attValues.Column),
-								width:  coord(attValues.Width),
-								height: coord(attValues.Height),
+								row:        coord(attValues.Row),
+								col:        coord(attValues.Column),
+								width:      coord(attValues.Width),
+								height:     coord(attValues.Height),
 								currentCol: 1,
 								currentRow: 1,
 							}
@@ -212,7 +212,7 @@ func (xd *xtsDocument) OutputAt(vl *node.VList, col coord, row coord, allocate b
 		if area.name != pageAreaName {
 			areatext = fmt.Sprintf("%s [%d]: ", area.name, 1)
 		}
-		bag.Logger.Infof("PlaceObject: output %s at (%s%d,%d)", what, areatext, col, row)
+		bag.Logger.Debugf("PlaceObject: output %s at (%s%d,%d)", what, areatext, col, row)
 
 		shiftRight := bag.ScaledPoint(0)
 		if halign == frontend.HAlignRight {

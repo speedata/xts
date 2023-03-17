@@ -104,7 +104,7 @@ func (xd *xtsDocument) setupPage() {
 	if err != nil {
 		bag.Logger.Error(err)
 	}
-	bag.Logger.Infof("Page %s created wd: %d, ht: %d grid cells", p.pagetype.name, p.pagegrid.nx, p.pagegrid.ny)
+	bag.Logger.Infof("Page %d type %s created wd: %d, ht: %d grid cells", p.pagenumber, p.pagetype.name, p.pagegrid.nx, p.pagegrid.ny)
 	xd.pages = append(xd.pages, p)
 	xd.currentPage = p
 	inSetupPage = false

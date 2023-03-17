@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/alecthomas/chroma v0.10.0
+	github.com/pelletier/go-toml/v2 v2.0.7
 	github.com/speedata/barcode v0.0.0-20230307084753-486c4d51cb34
 	github.com/speedata/boxesandglue v0.0.0-20230315105829-baa812dbda93
 	github.com/speedata/goxml v0.0.0-20220304094847-e25a4c712d89

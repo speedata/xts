@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/md5"
 	"fmt"
 	"io"
 	"os"
@@ -11,6 +12,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
+	"github.com/pelletier/go-toml/v2"
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/optionparser"
 	"github.com/speedata/textlayout/fonts/truetype"
@@ -18,44 +20,75 @@ import (
 )
 
 var (
-	version       string
 	configuration = &config{
-		verbose:     false,
-		systemfonts: false,
+		Verbose:     false,
+		Systemfonts: false,
+		Jobname:     "publisher",
+		Data:        "data.xml",
+		Layout:      "layout.xml",
 	}
+	configfilename string = "publisher.cfg"
 )
 
 // config holds global configuration that is not document dependant.
 type config struct {
-	verbose     bool
-	systemfonts bool
-	basedir     string
+	Verbose     bool
+	Systemfonts bool
+	Basedir     string
+	Jobname     string
+	Data        string
+	Layout      string
 }
 
-func newZapLogger(verbose bool) (*zap.SugaredLogger, error) {
-	cfg := zap.Config{
-		Encoding:    "console",
-		OutputPaths: []string{"stdout"},
-		EncoderConfig: zapcore.EncoderConfig{
-			EncodeLevel: zapcore.LowercaseColorLevelEncoder,
-			LevelKey:    "level",
-			MessageKey:  "message",
-		},
-	}
-	if verbose {
-		cfg.Level = zap.NewAtomicLevelAt(zapcore.DebugLevel)
-	} else {
-		cfg.Level = zap.NewAtomicLevelAt(zapcore.InfoLevel)
-	}
-	logger, err := cfg.Build()
+// Create a new logger instance which logs info to stdout and perhaps more to
+// the protocol file.
+func newZapLogger() (*zap.SugaredLogger, error) {
+	protocolFile := configuration.Jobname + ".protocol"
+	w, err := os.Create(protocolFile)
 	if err != nil {
 		return nil, err
 	}
+
+	infoPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
+		return lvl >= zapcore.InfoLevel
+	})
+	debugPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
+		return lvl >= zapcore.DebugLevel
+	})
+
+	var protocolPriority zap.LevelEnablerFunc
+	if configuration.Verbose {
+		protocolPriority = debugPriority
+	} else {
+		protocolPriority = infoPriority
+	}
+
+	colorEncoder := zapcore.EncoderConfig{
+		EncodeLevel: zapcore.LowercaseColorLevelEncoder,
+		LevelKey:    "level",
+		MessageKey:  "message",
+	}
+	simpleEncoder := zapcore.EncoderConfig{
+		EncodeLevel: zapcore.LowercaseLevelEncoder,
+		LevelKey:    "level",
+		MessageKey:  "message",
+	}
+
+	consoleDebugging := zapcore.Lock(os.Stdout)
+	consoleEncoder := zapcore.NewConsoleEncoder(colorEncoder)
+
+	fileEncoder := zapcore.NewConsoleEncoder(simpleEncoder)
+	core := zapcore.NewTee(
+		zapcore.NewCore(consoleEncoder, consoleDebugging, infoPriority),
+		zapcore.NewCore(fileEncoder, w, protocolPriority),
+	)
+
+	logger := zap.New(core)
 	return logger.Sugar(), nil
 }
 
 func listFonts() error {
-	core.InitDirs(configuration.basedir)
+	core.InitDirs(configuration.Basedir)
 	ff := core.FindFontFiles()
 	ret := make([]string, len(ff))
 	for i, fontfile := range ff {
@@ -87,7 +120,7 @@ func dothings() error {
 	if err != nil {
 		return err
 	}
-	configuration.basedir = filepath.Join(filepath.Dir(pathToXTS), "..")
+	configuration.Basedir = filepath.Join(filepath.Dir(pathToXTS), "..")
 	currentDir, err := os.Getwd()
 	if err != nil {
 		return err
@@ -95,21 +128,28 @@ func dothings() error {
 	var dumpOutputFileName string
 
 	op := optionparser.NewOptionParser()
-	op.On("--systemfonts", "Use system fonts", &configuration.systemfonts)
-	op.On("--verbose", "Print more debugging information", &configuration.verbose)
+	op.On("-c NAME", "--config", "Read the config file with the given NAME. Default: 'publisher.cfg'", &configfilename)
+	op.On("--jobname NAME", "The name of the resulting PDF file (without extension), default is 'publisher'", &configuration.Jobname)
+	op.On("--systemfonts", "Use system fonts", &configuration.Systemfonts)
+	op.On("--verbose", "Put more debugging information into the protocol file", &configuration.Verbose)
 	op.On("--dumpoutput FILENAME", "Complete XML dump of generated PDF file", &dumpOutputFileName)
 	op.Command("list-fonts", "List installed fonts")
-	op.Command("run", "Load layout and data files and create PDF")
+	op.Command("clean", "Remove auxiliary and protocol files")
+	op.Command("run", "Load layout and data files and create PDF (default)")
 	op.Command("version", "Print version information")
 	err = op.Parse()
 	if err != nil {
 		op.Help()
 		return err
 	}
-	if bag.Logger, err = newZapLogger(configuration.verbose); err != nil {
-		return err
+	if data, err := os.ReadFile(configfilename); err == nil {
+		if err = toml.Unmarshal(data, configuration); err != nil {
+			fmt.Println(err.(*toml.DecodeError).String())
+			return err
+		}
 	}
-	if configuration.systemfonts {
+
+	if configuration.Systemfonts {
 		fontfolders, err := core.FontFolder()
 		if err != nil {
 			return err
@@ -126,34 +166,72 @@ func dothings() error {
 	}
 
 	switch cmd {
+	case "clean":
+		jobname := configuration.Jobname
+		files, err := filepath.Glob(jobname + "*")
+		if err != nil {
+			return err
+		}
+		for _, v := range files {
+			switch filepath.Ext(v) {
+			case ".protocol":
+				fmt.Printf("Remove %s\n", v)
+				if err = os.Remove(v); err != nil {
+					return err
+				}
+			}
+			if v == jobname+"-aux.xml" {
+				fmt.Printf("Remove %s\n", v)
+				if err = os.Remove(v); err != nil {
+					return err
+				}
+			}
+		}
+
 	case "list-fonts":
 		if err = listFonts(); err != nil {
 			bag.Logger.Error(err)
 			return err
 		}
 	case "run":
-		core.InitDirs(configuration.basedir)
+		if bag.Logger, err = newZapLogger(); err != nil {
+			return err
+		}
+
+		core.InitDirs(configuration.Basedir)
 		core.AddDir(currentDir)
 		var layoutpath, datapath string
 		var lr, dr io.ReadCloser
-
-		if layoutpath, err = core.FindFile("layout.xml"); err != nil {
+		if layoutpath, err = core.FindFile(configuration.Layout); err != nil {
 			return err
 		}
 		if lr, err = os.Open(layoutpath); err != nil {
 			return err
 		}
-		if datapath, err = core.FindFile("data.xml"); err != nil {
+		if datapath, err = core.FindFile(configuration.Data); err != nil {
 			return err
 		}
 		if dr, err = os.Open(datapath); err != nil {
 			return err
 		}
 
+		if configuration.Verbose {
+			data, err := os.ReadFile(layoutpath)
+			if err != nil {
+				return err
+			}
+			bag.Logger.Debugf("md5 checksum %s: %x", configuration.Layout, md5.Sum(data))
+			data, err = os.ReadFile(datapath)
+			if err != nil {
+				return err
+			}
+			bag.Logger.Debugf("md5 checksum %s: %x", configuration.Data, md5.Sum(data))
+		}
+
 		xc := &core.XTSConfig{
 			Layoutfile:  lr,
 			Datafile:    dr,
-			OutFilename: "publisher.pdf",
+			OutFilename: configuration.Jobname + ".pdf",
 			FindFile:    core.FindFile,
 		}
 

@@ -773,6 +773,7 @@ func cmdImage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 
 	filename, err := xd.cfg.FindFile(attValues.Href)
 	if err != nil {
+		bag.Logger.Error(err)
 		return nil, err
 	}
 	var imgObj *pdf.Imagefile
