@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
@@ -114,6 +115,62 @@ func listFonts() error {
 	}
 	return nil
 }
+func scaffold(extra ...string) error {
+	var err error
+	fmt.Print("Creating layout.xml and data.xml in ")
+	if len(extra) > 0 {
+		dir := extra[0]
+		fmt.Println("a new directory", dir)
+		err = os.MkdirAll(dir, 0755)
+		if err != nil {
+			return err
+		}
+		err = os.Chdir(dir)
+		if err != nil {
+			return err
+		}
+	} else {
+		fmt.Println("current directory")
+	}
+
+	// Let's not overwrite existing files
+	_, err = os.Stat("data.xml")
+	if err == nil {
+		return fmt.Errorf("data.xml already exists")
+	}
+	_, err = os.Stat("layout.xml")
+	if err == nil {
+		return fmt.Errorf("layout.xml already exists")
+	}
+
+	dataTxt := `<data>Hello, world!</data>
+`
+	layoutTxt := `<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+    <Record element="data">
+        <PlaceObject>
+            <Textblock>
+                <Paragraph>
+                    <Value select="."/>
+                </Paragraph>
+            </Textblock>
+        </PlaceObject>
+    </Record>
+</Layout>
+`
+
+	err = ioutil.WriteFile("data.xml", []byte(dataTxt), 0644)
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile("layout.xml", []byte(layoutTxt), 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func dothings() error {
 	pathToXTS, err := os.Executable()
@@ -187,12 +244,16 @@ func dothings() error {
 				}
 			}
 		}
-
 	case "list-fonts":
 		if err = listFonts(); err != nil {
 			bag.Logger.Error(err)
 			return err
 		}
+	case "new":
+		if err = scaffold(op.Extra[1:]...); err != nil {
+			return err
+		}
+		os.Exit(0)
 	case "run":
 		if bag.Logger, err = newZapLogger(); err != nil {
 			return err
