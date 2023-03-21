@@ -1,0 +1,40 @@
+# {{ .Command.Name }}
+
+{{with .Command.Since}}_since version {{.}}_{{end}}
+
+{{  .Command.DescriptionMarkdown }}
+
+##  Child elements
+
+{{ childelements (.Command.Childelements ) }}
+
+##  Parent elements
+
+{{ parentelements .Command }}
+
+
+## Attributes
+{{ with .Command.Attributes }}
+{{ range $.Command.Attributes }}
+
+`{{.Name}}` ({{atttypeinfo .}}{{ with .CSS }}, "CSS property": {{.}}{{end -}})
+{{- with .Since}}, _since version {{.}}_){{end}}
+:   {{.DescriptionMarkdown }}
+{{ end }}{{else}}(none){{ end }}
+
+{{ with (.Command.RemarkMarkdown) -}}
+## Remarks
+{{ . }}
+{{ end -}}
+
+
+## Example
+
+{{ .Command.ExampleMarkdown }}
+
+
+
+{{ with (.Command.InfoMarkdown) }}
+## Info
+{{.}}
+{{end}}

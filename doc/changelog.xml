@@ -1,8 +1,0 @@
-<changelog xmlns="urn:speedata.de:2014/changelog">
-    <chapter version="0.0.1">
-        <entry version="0.0.1" date="2022-05-31">
-            <en>inital import</en>
-            <de>Initialer Import</de>
-        </entry>
-    </chapter>
-</changelog>

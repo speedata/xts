@@ -34,9 +34,13 @@ task "doc" => [:xtshelper] do
 	puts "done"
 end
 
-
+desc "Create a GitHub release (needs a git tag)"
+task "release" do
+	sh "goreleaser release --clean"
+	sh "xcrun notarytool submit -p notary dist/xts_macos_intel.zip --wait"
+	sh "xcrun notarytool submit -p notary dist/xts_macos_arm64.zip --wait"
+end
 
 task :schema => [:xtshelper] do
 	sh "bin/xtshelper genschema"
 end
-

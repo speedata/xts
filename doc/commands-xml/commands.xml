@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<commands xmlns="urn:speedata.de:2011/publisher/documentation"
+<commands xmlns="urn:speedata.de:2023/xts/documentation"
   xmlns:de="urn:speedata.de/2021/xts/en"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
   >
@@ -505,7 +505,6 @@
 </PlaceObject>
 ]]></listing>
     </example>
-    <seealso/>
   </command>
 
 
@@ -588,7 +587,6 @@
 </Record>
 ]]></listing>
     </example>
-    <seealso><cmd name="Textblock"/>, <cmd name="Mark"/></seealso>
   </command>
 
 
@@ -629,7 +627,6 @@
   </PlaceObject>
 </AtPageCreation>]]></listing>
     </example>
-    <seealso><cmd name="DefineMasterpage"/>, <cmd name="AtPageShipout"/></seealso>
   </command>
   <command en="AtPageShipout">
     <description xml:lang="en">
@@ -666,7 +663,6 @@
   </PlaceObject>
 </AtPageShipout>]]></listing>
     </example>
-    <seealso><cmd name="AtPageCreation"/>, <cmd name="DefineMasterpage"/></seealso>
   </command>
 
   <command en="Attribute">
@@ -710,12 +706,11 @@
       <para>Erzeugt diese Datenstruktur:</para>
       <listing><![CDATA[<Eintrag kapitelname=" (Inhalt von @name) " seite=" (aktuelle Seitennummer) " />]]></listing>
     </example>
-    <seealso><cmd name="Element"/></seealso>
   </command>
 
   <command en="B">
     <description xml:lang="en">
-      <para>Switch to font weight »bold«</para>
+      <para>Switch to font weight “bold”</para>
     </description>
     <description xml:lang="de">
       <para>Schaltet auf »Fett« um.</para>
@@ -739,7 +734,6 @@
 </Textblock>
 ]]></listing>
     </example>
-    <seealso><cmd name="I"/>, <ref name="fonts"/></seealso>
   </command>
 
 
@@ -774,7 +768,6 @@
 </Record>
 ]]></listing>
     </example>
-    <seealso/>
   </command>
 
 
@@ -786,7 +779,7 @@
     <para>Erzeugt einen 1D oder 2D Strichcode (barcode), der in <cmd name="PlaceObject"/> ausgegeben werden kann.</para>
   </description>
     <childelements/>
-    <attribute en="color" optional="yes" since="4.5.11" allowxpath="yes">
+    <attribute en="color" optional="yes" allowxpath="yes">
       <description xml:lang="en">
         <para>Color of the barcode. Must be defined with <cmd name="DefineColor"/> before use. Currently only used for QR codes.</para>
       </description>
@@ -794,7 +787,7 @@
         <para>Farbe des Strichcodes. Muss vorher mit <cmd name="DefineColor"/> definiert worden sein. Derzeit nur für QR-Codes.</para>
       </description>
     </attribute>
-    <attribute en="eclevel" optional="yes" since="2.7.10">
+    <attribute en="eclevel" optional="yes" >
       <description xml:lang="en">
         <para>Set the error correction level for QR-codes. If not provided, the system uses the maximum level for minimum size. The higher the level, the more error correction is in the QR-code.</para>
       </description>
@@ -850,7 +843,7 @@
         <para>Höhe des Strichcodes.</para>
       </description>
     </attribute>
-    <attribute en="keepfontsize" optional="yes" type="boolean" since="4.1.2">
+    <attribute en="keepfontsize" optional="yes" type="boolean">
       <description xml:lang="en">
         <para>Try to keep the size of the requested font. Works with EAN13 only.</para>
       </description>
@@ -907,7 +900,7 @@
       </description>
       <choice en="QRCode">
         <description xml:lang="en">
-          <para>Create an »optimal« QR code in terms of error correction and size.</para>
+          <para>Create an “optimal” QR code in terms of error correction and size.</para>
         </description>
         <description xml:lang="de">
           <para>Erzeugt einen QR-Code, der für den Inhalt die kleinstmögliche Größe und den besten Fehlerkorrekturwert hat, sofern kein Fehlerkorrekturlevel angegeben ist.</para>
@@ -976,7 +969,6 @@
       <para>wird zu</para>
       <image file="ref-speedata-publisher-qrcode.png" width="30%"/>
     </example>
-    <seealso><cmd name="PlaceObject"/></seealso>
   </command>
 
   <command en="Bookmark">
@@ -1035,14 +1027,11 @@
       <listing><![CDATA[<Bookmark level="1" select="$titel" open="no"/>]]></listing>
       <para>Erzeugt ein Lesezeichen der Stufe 1 (höchste Stufe) mit dem Titel, der in der Variablen <tt>titel</tt> steht.</para>
     </example>
-    <seealso>
-      <cmd name="Textblock"/>
-    </seealso>
   </command>
 
   <command en="Bold">
     <description xml:lang="en">
-      <para>Name of the font face that should be used when switching to »bold«.</para>
+      <para>Name of the font face that should be used when switching to “bold”.</para>
     </description>
     <description xml:lang="de">
       <para>Name der Schriftart, die für den Schnitt Fett benutzt werden soll.</para>
@@ -1084,14 +1073,11 @@
   <BoldItalic fontface="Times Fett Kursiv"/>
 </DefineFontfamily>]]></listing>
     </example>
-    <seealso>
-      <cmd name="B"/>, <cmd name="BoldItalic"/>, <cmd name="Regular"/>, <cmd name="Italic"/>
-    </seealso>
   </command>
 
   <command en="BoldItalic">
     <description xml:lang="en">
-      <para>Name of the font face that should be used when switching to »bold italic«. </para>
+      <para>Name of the font face that should be used when switching to “bold italic”. </para>
     </description>
     <description xml:lang="de">
       <para>Name der Schriftart, die für den Schnitt Fett-Kursiv benutzt werden soll.</para>
@@ -1134,12 +1120,6 @@
   <BoldItalic fontface="Times Fett Kursiv"/>
 </DefineFontfamily>]]></listing>
     </example>
-    <seealso>
-      <cmd name="B"/>,
-      <cmd name="BoldItalic"/>,
-      <cmd name="Regular"/>,
-      <cmd name="Bold"/>
-    </seealso>
   </command>
 
   <command en="Box" css="box">
@@ -1208,12 +1188,11 @@
       <para>erzeugt ein farbiges Rechteck</para>
       <image file="ref-greenbox.png"/>
     </example>
-    <seealso><cmd name="DefineColor"/>, <cmd name="PlaceObject"/></seealso>
   </command>
 
   <command en="Case">
     <description xml:lang="en">
-      <para>Part of a <cmd name="Switch"/> construct. All cases up to the first case which evaluates to »true« will be executed. If no cases match and there is a <cmd name="Otherwise"/>, this will be executed instead.</para>
+      <para>Part of a <cmd name="Switch"/> construct. All cases up to the first case which evaluates to “true” will be executed. If no cases match and there is a <cmd name="Otherwise"/>, this will be executed instead.</para>
     </description>
     <description xml:lang="de">
       <para>Stellt einen Fall einer Fallunterscheidung (<cmd name="Switch"/>) dar. Der erste Fall, der zutrifft, wird ausgeführt. Weitere Fälle werden nicht betrachtet. Wird kein Fall erfüllt, dann wird, falls vorhanden, das Element <cmd name="Otherwise"/> ausgeführt.</para>
@@ -1237,9 +1216,6 @@
     <example xml:lang="de">
       <para>Siehe das Beispiel bei <cmd name="Switch"/>.</para>
     </example>
-    <seealso>
-      <cmd name="Switch"/>, <cmd name="Otherwise"/>
-    </seealso>
   </command>
 
   <command en="Circle" css="circle">
@@ -1340,7 +1316,6 @@
       <para>erzeugt einen Kreis</para>
       <image file="ref-circlewithborder.png" width="30%"/>
     </example>
-    <seealso><cmd name="DefineColor"/>, <cmd name="PlaceObject"/></seealso>
   </command>
 
 
@@ -1388,7 +1363,6 @@
 </Record>
 ]]></listing>
     </example>
-    <seealso><cmd name="DefineMasterpage"/></seealso>
   </command>
 
 
@@ -1440,7 +1414,7 @@
         <para>Farbe der Tabellenspalte.</para>
       </description>
     </attribute>
-    <attribute en="padding-left" optional="yes" since="3.1.8" type="length">
+    <attribute en="padding-left" optional="yes" type="length">
       <description xml:lang="en">
         <para>Set the left padding for the column</para>
       </description>
@@ -1448,7 +1422,7 @@
         <para>Setze das linke padding für diese Spalte</para>
       </description>
     </attribute>
-    <attribute en="padding-right" optional="yes" since="3.1.8" type="length">
+    <attribute en="padding-right" optional="yes" type="length">
       <description xml:lang="en">
         <para>Set the right padding for the column</para>
       </description>
@@ -1502,10 +1476,6 @@
     <example xml:lang="de">
       <para>Siehe das Beispiel bei <cmd name="Columns"/>.</para>
     </example>
-    <seealso>
-      <cmd name="Table"/>
-      <cmd name="Columns"/>
-    </seealso>
   </command>
 
 
@@ -1528,7 +1498,7 @@
       </oneOrMore>
     </childelements>
     <remark xml:lang="en">
-      <para>The <tt>*</tt> widths in the command »Column« allow dynamic cell widths. For that the total width of the table must be set and the attribute (on <cmd name="Table"/>) <tt>stretch</tt> must be set to <tt>yes</tt>.
+      <para>The <tt>*</tt> widths in the command “Column” allow dynamic cell widths. For that the total width of the table must be set and the attribute (on <cmd name="Table"/>) <tt>stretch</tt> must be set to <tt>yes</tt>.
         The widths of the columns are calculated as follows: first the absolute widths are taken into account. After that, the <tt>*</tt> columns are distributed across the remaining space. The
         numbers before the <tt>*</tt> denote the fraction of the space. In the example below the third column gets 1/6 of the remaining width, the fourth column get 5/6.</para>
     </remark>
@@ -1564,9 +1534,6 @@
   </Columns>
 </Table>]]></listing>
     </example>
-    <seealso>
-      <cmd name="Table"/>, <cmd name="Column"/>
-    </seealso>
   </command>
 
 
@@ -1588,7 +1555,6 @@
     <example xml:lang="de">
       <para>Siehe das Beispiel bei <cmd name="Group"/>.</para>
     </example>
-    <seealso><cmd name="Group"/></seealso>
   </command>
 
   <command en="Copy-of">
@@ -1652,7 +1618,6 @@
       <para>nur mit dem Unterschied, dass der Inhalt vom Paragraph (<tt>@name</tt>, <tt>@symbol</tt>) ermittelt werden kann, bevor der Text ausgegeben wird. Die Zuweisung und die Textausgabe können in
         verschiedenen Regeln stehen.</para>
     </example>
-    <seealso><cmd name="Value"/>, <ref name="xpath"/>, <cmd name="SetVariable"/></seealso>
   </command>
 
   <command en="DefineColor">
@@ -1673,7 +1638,7 @@
     </attribute>
     <attribute en="colorname" type="text" optional="yes">
       <description xml:lang="en">
-        <para>The name of the spot color if model is »spotcolor«. The name must match the required color name, such as »PANTONE 116 C«.</para>
+        <para>The name of the spot color if model is “spotcolor”. The name must match the required color name, such as “PANTONE 116 C”.</para>
       </description>
       <description xml:lang="de">
         <para>Der Name der Sonderfarbe wenn das Modell auf »spotcolor« eingestellt ist. Der muss den offiziellen Namen tragen, wie z.B. »PANTONE 116 C«.</para>
@@ -1835,7 +1800,6 @@
       <para>The predefined colors are: <tt>aliceblue</tt>, <tt>black</tt>, <tt>orange</tt>, <tt>rebeccapurple</tt>, <tt>antiquewhite</tt>, <tt>aqua</tt>, <tt>aquamarine</tt>, <tt>azure</tt>, <tt>beige</tt>, <tt>bisque</tt>, <tt>blanchedalmond</tt>, <tt>blue</tt>, <tt>blueviolet</tt>, <tt>brown</tt>, <tt>burlywood</tt>, <tt>cadetblue</tt>, <tt>chartreuse</tt>, <tt>chocolate</tt>, <tt>coral</tt>, <tt>cornflowerblue</tt>, <tt>cornsilk</tt>, <tt>crimson</tt>, <tt>darkblue</tt>, <tt>darkcyan</tt>, <tt>darkgoldenrod</tt>, <tt>darkgray</tt>, <tt>darkgreen</tt>, <tt>darkgrey</tt>, <tt>darkkhaki</tt>, <tt>darkmagenta</tt>, <tt>darkolivegreen</tt>, <tt>darkorange</tt>, <tt>darkorchid</tt>, <tt>darkred</tt>, <tt>darksalmon</tt>, <tt>darkseagreen</tt>, <tt>darkslateblue</tt>, <tt>darkslategray</tt>, <tt>darkslategrey</tt>, <tt>darkturquoise</tt>, <tt>darkviolet</tt>, <tt>deeppink</tt>, <tt>deepskyblue</tt>, <tt>dimgray</tt>, <tt>dimgrey</tt>, <tt>dodgerblue</tt>, <tt>firebrick</tt>, <tt>floralwhite</tt>, <tt>forestgreen</tt>, <tt>fuchsia</tt>, <tt>gainsboro</tt>, <tt>ghostwhite</tt>, <tt>gold</tt>, <tt>goldenrod</tt>, <tt>gray</tt>, <tt>green</tt>, <tt>greenyellow</tt>, <tt>grey</tt>, <tt>honeydew</tt>, <tt>hotpink</tt>, <tt>indianred</tt>, <tt>indigo</tt>, <tt>ivory</tt>, <tt>khaki</tt>, <tt>lavender</tt>, <tt>lavenderblush</tt>, <tt>lawngreen</tt>, <tt>lemonchiffon</tt>, <tt>lightblue</tt>, <tt>lightcoral</tt>, <tt>lightcyan</tt>, <tt>lightgoldenrodyellow</tt>, <tt>lightgray</tt>, <tt>lightgreen</tt>, <tt>lightgrey</tt>, <tt>lightpink</tt>, <tt>lightsalmon</tt>, <tt>lightseagreen</tt>, <tt>lightskyblue</tt>, <tt>lightslategray</tt>, <tt>lightslategrey</tt>, <tt>lightsteelblue</tt>, <tt>lightyellow</tt>, <tt>lime</tt>, <tt>limegreen</tt>, <tt>linen</tt>, <tt>maroon</tt>, <tt>mediumaquamarine</tt>, <tt>mediumblue</tt>, <tt>mediumorchid</tt>, <tt>mediumpurple</tt>, <tt>mediumseagreen</tt>, <tt>mediumslateblue</tt>, <tt>mediumspringgreen</tt>, <tt>mediumturquoise</tt>, <tt>mediumvioletred</tt>, <tt>midnightblue</tt>, <tt>mintcream</tt>, <tt>mistyrose</tt>, <tt>moccasin</tt>, <tt>navajowhite</tt>, <tt>navy</tt>, <tt>oldlace</tt>, <tt>olive</tt>, <tt>olivedrab</tt>, <tt>orangered</tt>, <tt>orchid</tt>, <tt>palegoldenrod</tt>, <tt>palegreen</tt>, <tt>paleturquoise</tt>, <tt>palevioletred</tt>, <tt>papayawhip</tt>, <tt>peachpuff</tt>, <tt>peru</tt>, <tt>pink</tt>, <tt>plum</tt>, <tt>powderblue</tt>, <tt>purple</tt>, <tt>red</tt>, <tt>rosybrown</tt>, <tt>royalblue</tt>, <tt>saddlebrown</tt>, <tt>salmon</tt>, <tt>sandybrown</tt>, <tt>seagreen</tt>, <tt>seashell</tt>, <tt>sienna</tt>, <tt>silver</tt>, <tt>skyblue</tt>, <tt>slateblue</tt>, <tt>slategray</tt>, <tt>slategrey</tt>, <tt>snow</tt>, <tt>springgreen</tt>, <tt>steelblue</tt>, <tt>tan</tt>, <tt>teal</tt>, <tt>thistle</tt>, <tt>tomato</tt>, <tt>turquoise</tt>, <tt>violet</tt>, <tt>wheat</tt>, <tt>white</tt>, <tt>whitesmoke</tt>, <tt>yellow</tt> and <tt>yellowgreen</tt></para></info>
     <info xml:lang="de"><para>Die Farben aus CSS Level 3 sind vordefinert im RGB-Farbraum. Siehe http://www.w3.org/TR/css3-color/ für die Definitionen. Damit kann man häufige Farben wie <tt>red</tt> oder <tt>goldenrod</tt> benutzen, ohne sie vorher mit <cmd name="DefineColor"/> zu definieren.</para>
       <para>Die vordefinierten Farben sind <tt>aliceblue</tt>, <tt>black</tt>, <tt>orange</tt>, <tt>rebeccapurple</tt>, <tt>antiquewhite</tt>, <tt>aqua</tt>, <tt>aquamarine</tt>, <tt>azure</tt>, <tt>beige</tt>, <tt>bisque</tt>, <tt>blanchedalmond</tt>, <tt>blue</tt>, <tt>blueviolet</tt>, <tt>brown</tt>, <tt>burlywood</tt>, <tt>cadetblue</tt>, <tt>chartreuse</tt>, <tt>chocolate</tt>, <tt>coral</tt>, <tt>cornflowerblue</tt>, <tt>cornsilk</tt>, <tt>crimson</tt>, <tt>darkblue</tt>, <tt>darkcyan</tt>, <tt>darkgoldenrod</tt>, <tt>darkgray</tt>, <tt>darkgreen</tt>, <tt>darkgrey</tt>, <tt>darkkhaki</tt>, <tt>darkmagenta</tt>, <tt>darkolivegreen</tt>, <tt>darkorange</tt>, <tt>darkorchid</tt>, <tt>darkred</tt>, <tt>darksalmon</tt>, <tt>darkseagreen</tt>, <tt>darkslateblue</tt>, <tt>darkslategray</tt>, <tt>darkslategrey</tt>, <tt>darkturquoise</tt>, <tt>darkviolet</tt>, <tt>deeppink</tt>, <tt>deepskyblue</tt>, <tt>dimgray</tt>, <tt>dimgrey</tt>, <tt>dodgerblue</tt>, <tt>firebrick</tt>, <tt>floralwhite</tt>, <tt>forestgreen</tt>, <tt>fuchsia</tt>, <tt>gainsboro</tt>, <tt>ghostwhite</tt>, <tt>gold</tt>, <tt>goldenrod</tt>, <tt>gray</tt>, <tt>green</tt>, <tt>greenyellow</tt>, <tt>grey</tt>, <tt>honeydew</tt>, <tt>hotpink</tt>, <tt>indianred</tt>, <tt>indigo</tt>, <tt>ivory</tt>, <tt>khaki</tt>, <tt>lavender</tt>, <tt>lavenderblush</tt>, <tt>lawngreen</tt>, <tt>lemonchiffon</tt>, <tt>lightblue</tt>, <tt>lightcoral</tt>, <tt>lightcyan</tt>, <tt>lightgoldenrodyellow</tt>, <tt>lightgray</tt>, <tt>lightgreen</tt>, <tt>lightgrey</tt>, <tt>lightpink</tt>, <tt>lightsalmon</tt>, <tt>lightseagreen</tt>, <tt>lightskyblue</tt>, <tt>lightslategray</tt>, <tt>lightslategrey</tt>, <tt>lightsteelblue</tt>, <tt>lightyellow</tt>, <tt>lime</tt>, <tt>limegreen</tt>, <tt>linen</tt>, <tt>maroon</tt>, <tt>mediumaquamarine</tt>, <tt>mediumblue</tt>, <tt>mediumorchid</tt>, <tt>mediumpurple</tt>, <tt>mediumseagreen</tt>, <tt>mediumslateblue</tt>, <tt>mediumspringgreen</tt>, <tt>mediumturquoise</tt>, <tt>mediumvioletred</tt>, <tt>midnightblue</tt>, <tt>mintcream</tt>, <tt>mistyrose</tt>, <tt>moccasin</tt>, <tt>navajowhite</tt>, <tt>navy</tt>, <tt>oldlace</tt>, <tt>olive</tt>, <tt>olivedrab</tt>, <tt>orangered</tt>, <tt>orchid</tt>, <tt>palegoldenrod</tt>, <tt>palegreen</tt>, <tt>paleturquoise</tt>, <tt>palevioletred</tt>, <tt>papayawhip</tt>, <tt>peachpuff</tt>, <tt>peru</tt>, <tt>pink</tt>, <tt>plum</tt>, <tt>powderblue</tt>, <tt>purple</tt>, <tt>red</tt>, <tt>rosybrown</tt>, <tt>royalblue</tt>, <tt>saddlebrown</tt>, <tt>salmon</tt>, <tt>sandybrown</tt>, <tt>seagreen</tt>, <tt>seashell</tt>, <tt>sienna</tt>, <tt>silver</tt>, <tt>skyblue</tt>, <tt>slateblue</tt>, <tt>slategray</tt>, <tt>slategrey</tt>, <tt>snow</tt>, <tt>springgreen</tt>, <tt>steelblue</tt>, <tt>tan</tt>, <tt>teal</tt>, <tt>thistle</tt>, <tt>tomato</tt>, <tt>turquoise</tt>, <tt>violet</tt>, <tt>wheat</tt>, <tt>white</tt>, <tt>whitesmoke</tt>, <tt>yellow</tt> und <tt>yellowgreen</tt>.</para></info>
-    <seealso/>
   </command>
 
   <command en="DefineFontfamily">
@@ -1862,7 +1826,7 @@
       </description>
     </attribute>
     <remark xml:lang="en">
-      <para>The default font family is named »text« and it can be redefined by defining a new font family called »text«.</para>
+      <para>The default font family is named “text” and it can be redefined by defining a new font family called “text”.</para>
       <para>The variants bold, italic and bold italic are optional. </para>
     </remark>
     <remark xml:lang="de">
@@ -1897,9 +1861,6 @@
   <Paragraph>
    ...]]></listing>
     </example>
-    <seealso>
-      <cmd name="LoadFontfile"/>
-    </seealso>
   </command>
 
   <command en="DefineFontsize">
@@ -1940,13 +1901,12 @@
     <example xml:lang="de">
       <listing><![CDATA[<DefineFontsize name="title" fontsize="10pt" leading="12pt" />]]></listing>
     </example>
-    <seealso></seealso>
   </command>
 
 
   <command en="DefineMasterpage">
     <description xml:lang="en">
-      <para>Define a master page. A master page is chosen depending on the criterion given with the attribute »test«.</para>
+      <para>Define a master page. A master page is chosen depending on the criterion given with the attribute “test”.</para>
     </description>
     <description xml:lang="de">
       <para>Definiert eine Seitenvorlage. Anhand der Kriterien, die im Attribut test angegeben werden, wählt das System eine Seitenvorlage aus.</para>
@@ -2038,8 +1998,6 @@
   </PositioningArea>
 </Masterpage>]]></listing>
     </example>
-    <seealso><ref name="xpath"/>, <cmd name="AtPageCreation"/>,  <cmd name="AtPageShipout"/>,   <cmd name="PositioningArea"/>,  <cmd name="ClearPage"/>, <cmd name="DefineMatter"/>
-    </seealso>
   </command>
 
 
@@ -2132,10 +2090,6 @@
   </Record>
 </Layout>]]></listing>
     </example>
-    <seealso>
-      <cmd name="Textblock"/>,
-      <cmd name="Paragraph"/>
-    </seealso>
   </command>
 
 
@@ -2177,9 +2131,6 @@
   <Attribute name="seite" select=" sd:current-page()"/>
 </Element>]]></listing>
     </example>
-    <seealso>
-      <cmd name="Attribute"/>,
-    </seealso>
   </command>
 
   <command en="ForAll">
@@ -2254,7 +2205,6 @@
   <entry>c</entry>
 </data>]]></listing>
     </example>
-    <seealso><cmd name="Switch"/></seealso>
   </command>
 
   <command en="Group">
@@ -2323,10 +2273,6 @@
 </Gruppe>
 <PlaceObject groupname="Beispielgruppe" />]]></listing>
     </example>
-    <seealso>
-      <cmd name="PlaceObject"/>
-      <cmd name="Contents"/>
-    </seealso>
   </command>
 
 
@@ -2357,7 +2303,6 @@
   </Paragraph>
 </Textblock>]]></listing>
     </example>
-    <seealso><cmd name="B"/></seealso>
   </command>
 
 
@@ -2397,7 +2342,7 @@
     </attribute>
     <attribute en="maxwidth" type="numberorlength" optional="yes">
       <description xml:lang="en">
-        <para>The maximum width of the image. Only used when clip="no". Value is a number (grid cells), a length or the value »100%« for full width image.</para>
+        <para>The maximum width of the image. Only used when clip="no". Value is a number (grid cells), a length or the value “100%” for full width image.</para>
       </description>
       <description xml:lang="de">
         <para>Die maximale Breite des Bilds. Nur, wenn clip="no". Angabe in absoluten Längen, Rasterzellen oder »100%« für volle Breite.</para>
@@ -2413,7 +2358,7 @@
     </attribute>
     <attribute en="minwidth" type="numberorlength" optional="yes">
       <description xml:lang="en">
-        <para>The minimum width of the image. Only used when clip="no". Value is a number (grid cells), a length or the value »100%« for full width image.</para>
+        <para>The minimum width of the image. Only used when clip="no". Value is a number (grid cells), a length or the value “100%” for full width image.</para>
       </description>
       <description xml:lang="de">
         <para>Die minimale Breite des Bilds. Nur, wenn clip="no". Angabe in absoluten Längen, Rasterzellen oder »100%« für volle Breite.</para>
@@ -2460,7 +2405,6 @@
   </PlaceObject>
 </Record>]]></listing>
     </example>
-    <seealso><cmd name="PlaceObject"/></seealso>
   </command>
 
   <command en="Italic">
@@ -2504,12 +2448,6 @@
   <BoldItalic fontface="Helvetica Fett Kursiv"/>
 </DefineFontfamily>]]></listing>
     </example>
-    <seealso>
-      <cmd name="Bold"/>
-      <cmd name="Regular"/>
-      <cmd name="I"/>
-      <cmd name="BoldItalic"/>
-    </seealso>
   </command>
 
   <command en="LoadDataset">
@@ -2553,10 +2491,6 @@
   <ProcessNode select="planet"/>
 </Record>]]></listing>
     </example>
-    <seealso>
-      <cmd name="Element"/>,
-      <cmd name="Attribute"/>,
-      <cmd name="SaveDataset"/></seealso>
   </command>
 
 
@@ -2606,8 +2540,6 @@
     <info xml:lang="de">
       <para>Die Schriftdateien werden aus dem lokalen Suchpfad geladen. Unter Windows wird der Pfad <tt>%WINDIR%\Fonts</tt> (normalerweise <tt>C:\Windows\Fonts</tt>) und auf Mac OS X die Pfade <tt>/Library/Fonts</tt> und <tt>/System/Library/Fonts</tt> können als Ergänzung des lokalen Suchpfads dienen. Das kann mit der Option <tt>fontpath</tt> in der Konfigurationsdatei gesetzt werden.</para>
     </info>
-    <seealso>
-      <cmd name="DefineFontfamily"/></seealso>
   </command>
 
 
@@ -2663,7 +2595,6 @@
 </PlaceObject>
 ]]></listing>
     </example>
-    <seealso><cmd name="ForAll"/></seealso>
   </command>
 
 
@@ -2773,7 +2704,6 @@
   </Nachricht>
 </Record>]]></listing>
     </example>
-    <seealso/>
   </command>
 
   <!--
@@ -2860,7 +2790,6 @@
   </Record>
 </Layout>]]></listing>
     </example>
-    <seealso/>
   </command>
 
 
@@ -2909,7 +2838,7 @@
         <para>Der Name des Markers, der gesetzt wird.</para>
       </description>
     </attribute>
-    <attribute en="shiftup" optional="yes" since="4.13.2" type="length">
+    <attribute en="shiftup" optional="yes" type="length">
       <description xml:lang="en">
         <para>Raise the position of the hyperlink anchor by this amount.</para>
       </description>
@@ -2917,7 +2846,7 @@
         <para>Verschiebe die Position des Hyperlink-Ankers um diesen Betrag.</para>
       </description>
     </attribute>
-    <attribute en="pdftarget" optional="yes" since="3.3.8" type="boolean">
+    <attribute en="pdftarget" optional="yes" type="boolean">
       <description xml:lang="en">
         <para>Set a pdf target that can be referenced by <cmd name="A"/></para>
       </description>
@@ -2997,7 +2926,6 @@
     <info xml:lang="de">
       <para>Marker werden für nachfolgende Läufe gespeichert.</para>
     </info>
-    <seealso><cmd name="Action"/></seealso>
   </command>
 
 
@@ -3026,10 +2954,6 @@
   <NextFrame area="Titel" />
 </Record>]]></listing>
     </example>
-    <seealso>
-      <cmd name="PositioningArea"/>
-      <cmd name="PositioningFrame"/>
-    </seealso>
   </command>
 
   <!--
@@ -3086,8 +3010,6 @@
   </PlaceObject>
 </Record>]]></listing>
     </example>
-    <seealso>
-    </seealso>
   </command>
 
 
@@ -3173,7 +3095,6 @@
       <para>Die Liste der bekannten Sprachen und der Sprachcode im speedata Publisher sind:</para>
       <para><tt>Ancient Greek</tt> (<tt>grc</tt>), <tt>Armenian</tt> (<tt>hy</tt>), <tt>Bahasa Indonesia</tt> (<tt>id</tt>), <tt>Basque</tt> (<tt>eu</tt>), <tt>Bulgarian</tt> (<tt>bg</tt>), <tt>Catalan</tt> (<tt>ca</tt>), <tt>Chinese</tt> (<tt>zh</tt>), <tt>Croatian</tt> (<tt>hr</tt>), <tt>Czech</tt> (<tt>cs</tt>), <tt>Danish</tt> (<tt>da</tt>), <tt>Dutch</tt> (<tt>nl</tt>), <tt>English</tt> (<tt>en_GB</tt>), <tt>English (Great Britain)</tt> (<tt>en_GB</tt>), <tt>English (USA)</tt> (<tt>en_US</tt>), <tt>Esperanto</tt> (<tt>eo</tt>), <tt>Estonian</tt> (<tt>et</tt>), <tt>Finnish</tt> (<tt>fi</tt>), <tt>French</tt> (<tt>fr</tt>), <tt>Galician</tt> (<tt>gl</tt>), <tt>German</tt> (<tt>de</tt>), <tt>Greek</tt> (<tt>el</tt>), <tt>Gujarati</tt> (<tt>gu</tt>), <tt>Hindi</tt> (<tt>hi</tt>), <tt>Hungarian</tt> (<tt>hu</tt>), <tt>Icelandic</tt> (<tt>is</tt>), <tt>Irish</tt> (<tt>ga</tt>), <tt>Italian</tt> (<tt>it</tt>), <tt>Kannada</tt> (<tt>kn</tt>), <tt>Kurmanji</tt> (<tt>ku</tt>), <tt>Latvian</tt> (<tt>lv</tt>), <tt>Lithuanian</tt> (<tt>lt</tt>), <tt>Malayalam</tt> (<tt>ml</tt>), <tt>Norwegian Bokmål</tt> (<tt>nb</tt>), <tt>Norwegian Nynorsk</tt> (<tt>nn</tt>), <tt>Other</tt> (<tt>--</tt>), <tt>Polish</tt> (<tt>pl</tt>), <tt>Portuguese</tt> (<tt>pt</tt>), <tt>Romanian</tt> (<tt>ro</tt>), <tt>Russian</tt> (<tt>ru</tt>), <tt>Serbian</tt> (<tt>sr</tt>), <tt>Serbian (cyrillic)</tt> (<tt>sc</tt>), <tt>Slovak</tt> (<tt>sk</tt>), <tt>Slovenian</tt> (<tt>sl</tt>), <tt>Spanish</tt> (<tt>es</tt>), <tt>Swedish</tt> (<tt>sv</tt>), <tt>Turkish</tt> (<tt>tr</tt>), <tt>Ukrainian</tt> (<tt>uk</tt>), <tt>Welsh</tt> (<tt>cy</tt>)</para>
     </info>
-    <seealso><ref name="cutmarks"/></seealso>
   </command>
 
   <command en="Otherwise">
@@ -3194,9 +3115,6 @@
     <example xml:lang="en">
       <para>See the example at <cmd name="Switch"/>.</para>
     </example>
-    <seealso>
-      <cmd name="Switch"/>, <cmd name="Case"/>
-    </seealso>
   </command>
 
   <command en="Pageformat">
@@ -3229,7 +3147,6 @@
     <example xml:lang="de">
       <listing><![CDATA[<Pageformat width="150mm" height="150mm" />]]></listing>
     </example>
-    <seealso/>
   </command>
 
 
@@ -3261,7 +3178,7 @@
     </attribute>
     <attribute en="fontfamily" css="font-family" type="text" optional="yes">
       <description xml:lang="en">
-        <para>The name of the font family for the paragraph. The default is »text« (lowercase t).</para>
+        <para>The name of the font family for the paragraph. The default is “text” (lowercase t).</para>
       </description>
       <description xml:lang="de">
         <para>Name der Schriftfamilie. Voreinstellung ist »text« (mit kleinem t).</para>
@@ -3300,7 +3217,6 @@
       <para>wobei in den Daten ein Text steht, beispielsweise falls der aktuelle Knoten das Element <cmd name="Record"/> ist:</para>
       <listing><![CDATA[<Record>Produktbeschreibung: die Artikelnummer <i>1234</i> setzt sich aus ... </Record>]]></listing>
     </example>
-    <seealso><cmd name="Textblock"/></seealso>
   </command>
 
 
@@ -3312,7 +3228,7 @@
       <para>Setze PDF Optionen</para>
     </description>
     <childelements/>
-    <attribute en="author" optional="yes" type="text" since="3.1.18">
+    <attribute en="author" optional="yes" type="text">
       <description xml:lang="en">
         <para>Set the author of the document</para>
       </description>
@@ -3358,7 +3274,6 @@
     <example xml:lang="de">
       <listing><![CDATA[<PDFOptions author="A. U. Thor" subject="An interesting story" />]]></listing>
     </example>
-    <seealso></seealso>
   </command>
 
 
@@ -3383,7 +3298,7 @@
     </childelements>
     <attribute en="allocate" optional="yes">
       <description xml:lang="en">
-        <para>Determines if the area of the object is marked as »allocated«. With <tt>allocate="no"</tt>, the cursor position is not changed.</para>
+        <para>Determines if the area of the object is marked as “allocated”. With <tt>allocate="no"</tt>, the cursor position is not changed.</para>
       </description>
       <description xml:lang="de">
         <para>Bestimmt, ob im Raster der Platz für das Objekt als »belegt« markiert wird. Bei <tt>allocate="no"</tt> wird auch die aktuelle Zeile im Raster nicht verändert.</para>
@@ -3520,9 +3435,6 @@
       <para>Die Ausgabe kann entweder im Raster erfolgen (Angabe bei <tt>row</tt> und <tt>column</tt> ist eine Zahl) oder als absolute Positionierung (die Angaben bei <tt>row</tt> und <tt>column</tt> müssen beide vorhanden sein und
         eine Maßgangabe sein).</para>
     </info>
-    <seealso>
-      <cmd name="Textblock"/>,
-    </seealso>
   </command>
 
   <command en="PositioningArea">
@@ -3571,11 +3483,9 @@
   <PositioningFrame width="12" height="30" column="16" row="2"/>
 </PositioningArea>]]></listing>
     </example>
-    <seealso>
-      <cmd name="PositioningFrame"/>
-      <cmd name="PlaceObject"/>
-    </seealso>
   </command>
+
+
   <command en="PositioningFrame">
     <description xml:lang="en">
       <para>Defines a rectangular area for objects.</para>
@@ -3631,9 +3541,6 @@
   <PositioningFrame width="12" height="30" column="16" row="2"/>
 </PositioningArea>]]></listing>
     </example>
-    <seealso>
-      <cmd name="PositioningArea"/>
-    </seealso>
   </command>
 
   <command en="ProcessNode">
@@ -3674,7 +3581,6 @@
     <example xml:lang="de">
       <listing><![CDATA[<ProcessNode select="*" mode="summe" />]]></listing>
     </example>
-    <seealso><cmd name="Record"/></seealso>
   </command>
 
   <command en="Record">
@@ -3729,8 +3635,6 @@
 </Record>
 ]]></listing>
     </example>
-    <seealso>
-    </seealso>
   </command>
 
   <!--
@@ -3781,11 +3685,6 @@
   <BoldItalic fontface="Helvetica Fett Kursiv"/>
 </DefineFontfamily>]]></listing>
     </example>
-    <seealso>
-      <cmd name="Bold"/>
-      <cmd name="Italic"/>
-      <cmd name="BoldItalic"/>
-    </seealso>
   </command>
 
 
@@ -3881,9 +3780,6 @@
       <para>Äquivalent dazu ist:</para>
       <listing><![CDATA[<SaveDataset name="toc" elementname="Inhalt" select="$Inhalt" />]]></listing>
     </example>
-    <seealso>
-      <cmd name="Element"/>, <cmd name="Attribute"/>, <cmd name="LoadDataset"/>, <ref name="directories"/>
-    </seealso>
   </command>
 
 
@@ -3951,7 +3847,6 @@
     <example xml:lang="de">
       <listing><![CDATA[<SetGrid width="4mm" height="14pt" />]]></listing>
     </example>
-    <seealso></seealso>
   </command>
 
 
@@ -4082,9 +3977,6 @@
   </SetVariable>
 </Record>]]></listing>
     </example>
-    <seealso>
-      <cmd name="Value"/>
-    </seealso>
     <rules xml:lang="en">
       <sch:pattern>
         <sch:rule context="t:SetVariable">
@@ -4170,7 +4062,6 @@
 </Record>
 ]]></listing>
     </example>
-    <seealso></seealso>
   </command>
 
 
@@ -4235,7 +4126,7 @@
 </Record>]]></listing>
     </example>
     <info xml:lang="en">
-      <para>You have to be careful to encode the test with the rules of XML: that is »less« must be written as <tt>&amp;lt;</tt>, since <tt>&lt;</tt> must not be part of text contents.</para>
+      <para>You have to be careful to encode the test with the rules of XML: that is “less” must be written as <tt>&amp;lt;</tt>, since <tt>&lt;</tt> must not be part of text contents.</para>
       <para>A Switch may be part of nearly all commands. It dissolves and only the contents of the Case or Otherwise gets replaced by the whole construct.</para>
     </info>
     <info xml:lang="de">
@@ -4269,10 +4160,6 @@
 </Td>]]></listing>
       <para>je nach Inhalt der Variablen.</para>
     </info>
-    <seealso>
-      <cmd name="Case"/>
-      <cmd name="Otherwise"/>
-    </seealso>
   </command>
 
   <command en="Stylesheet">
@@ -4351,7 +4238,6 @@
   }
 </Stylesheet>]]></listing>
     </example>
-    <seealso><ref name="css"/></seealso>
   </command>
 
 
@@ -4371,7 +4257,7 @@
         </interleave>
       </oneOrMore>
     </childelements>
-    <attribute en="balance" optional="yes" since="3.1.24">
+    <attribute en="balance" optional="yes">
       <description xml:lang="en">
         <para>Tries to balance the table on the last page according to the number of frames. Experimental! </para>
       </description>
@@ -4483,7 +4369,7 @@
         </description>
       </choice>
     </attribute>
-    <attribute en="textformat" optional="yes" since="3.7.23" type="text" allowxpath="yes">
+    <attribute en="textformat" optional="yes" type="text" allowxpath="yes">
       <description xml:lang="en">
         <para>The text format for the table. Defaults to <tt>__leftaligned</tt> if no align attribute is given.</para>
       </description>
@@ -4499,7 +4385,7 @@
         <para>Der Bereich, den die Tabelle (maximal) im Raster belegt. Angabe in Rasterzellen oder absoluten Längenangaben. Voreinstellung ist der verfügbare Platz.</para>
       </description>
     </attribute>
-    <attribute en="vexcess" optional="yes" allowxpath="yes" since="4.5.12">
+    <attribute en="vexcess" optional="yes" allowxpath="yes">
       <description xml:lang="en">
         <para>Set behaviour when cells stretch in vertical direction due to rowspans.</para>
       </description>
@@ -4635,9 +4521,6 @@
 ]]></listing>
       <image file="ref-table-de.png" width="100%"/>
     </example>
-    <seealso>
-      <cmd name="Tr"/>,  <cmd name="Td"/>,  <cmd name="PlaceObject"/>
-    </seealso>
   </command>
 
   <command en="Td" css="td">
@@ -4726,7 +4609,7 @@
         <para>Der Name der Hintergrundfarbe, wenn die Zelle eingefärbt werden soll.</para>
       </description>
     </attribute>
-    <attribute en="background-font-family" optional="yes" css="background-font-family" type="text" since="2.3.7">
+    <attribute en="background-font-family" optional="yes" css="background-font-family" type="text">
       <description xml:lang="en">
         <para>Set the font family of the background text. Defaults to the table font.</para>
       </description>
@@ -4734,7 +4617,7 @@
         <para>Setzt die Fontfamilie für den Hintergrundtext. Voreinstellung ist die Fontfamilie für die Tabelle.</para>
       </description>
     </attribute>
-    <attribute en="background-textcolor" optional="yes" css="background-textcolor" since="2.3.7">
+    <attribute en="background-textcolor" optional="yes" css="background-textcolor">
       <description xml:lang="en">
         <para>The color of the text in the background (if any).</para>
       </description>
@@ -4742,7 +4625,7 @@
         <para>Die Farbe des Hintergrundtexts, falls vorhanden.</para>
       </description>
     </attribute>
-    <attribute en="background-size" optional="yes" css="background-size" since="2.3.7">
+    <attribute en="background-size" optional="yes" css="background-size">
       <description xml:lang="en">
         <para>Controls the size of the background text. Currently only 'contain' and 'auto' is allowed.</para>
       </description>
@@ -4757,7 +4640,7 @@
           <para>Der Text passt sich der Zellenhöhe an.</para>
         </description>
       </choice>
-      <choice en="auto" since="2.5.4">
+      <choice en="auto">
         <description xml:lang="en">
           <para>The background text is not scaled.</para>
         </description>
@@ -4766,7 +4649,7 @@
         </description>
       </choice>
     </attribute>
-    <attribute en="background-transform" optional="yes" css="background-transform" since="2.3.7">
+    <attribute en="background-transform" optional="yes" css="background-transform">
       <description xml:lang="en">
         <para>The transformation of the background text (if any). Currently supported: <tt>rotate(-40deg)</tt> (and other angles in the range 0 to -90).</para>
       </description>
@@ -4774,7 +4657,7 @@
         <para>Die Transformation des Hintergrundtexts (falls vorhanden). Derzeit wird folgende Angabe unterstützt: <tt>rotate(-40deg) (und andere Winkel im Bereich 0 bis -90).</tt></para>
       </description>
     </attribute>
-    <attribute en="background-text" optional="yes" css="background-text" since="2.3.7">
+    <attribute en="background-text" optional="yes" css="background-text">
       <description xml:lang="en">
         <para>A text that should be placed in the background of the table cell.</para>
       </description>
@@ -4854,7 +4737,7 @@
         <para>Die Anzahl der Spalten, die die Zelle überdecken soll. Voreinstellung ist 1.</para>
       </description>
     </attribute>
-    <attribute en="graphics" type="text" optional="yes" since="4.3.12">
+    <attribute en="graphics" type="text" optional="yes">
       <description xml:lang="en">
         <para>Draw the predefined MetaPost graphic around the table cell (experimental).</para>
       </description>
@@ -4910,7 +4793,7 @@
         <para>Die Anzahl der Zeilen, die die Zelle überdecken soll. Voreinstellung ist 1.</para>
       </description>
     </attribute>
-    <attribute en="rotate" optional="yes" since="3.3.7" type="number">
+    <attribute en="rotate" optional="yes" type="number">
       <description xml:lang="en">
         <para>Rotate the contents of the table cell. Positive values return clockwise. This is experimental and currently only for text.</para>
       </description>
@@ -4994,13 +4877,6 @@
 </Record>
 ]]></listing>
     </example>
-    <seealso>
-      <cmd name="Table"/>,
-      <cmd name="Tr"/>,
-      <cmd name="Paragraph"/>,
-      <cmd name="Image"/>,
-      <cmd name="Stylesheet"/>
-    </seealso>
   </command>
 
 
@@ -5074,9 +4950,6 @@
   </Textblock>
 </PlaceObject>]]></listing>
     </example>
-    <seealso>
-      <cmd name="Paragraph"/>, <cmd name="PlaceObject"/>
-    </seealso>
   </command>
 
 
@@ -5284,11 +5157,8 @@
   <Td><Paragraph><Value>EL Qual.</Value></Paragraph></Td>
 </Tr>]]></listing>
     </example>
-    <seealso>
-      <cmd name="Td"/>
-      <cmd name="Table"/>
-    </seealso>
   </command>
+
 
   <command en="Trace">
     <description xml:lang="en">
@@ -5421,7 +5291,6 @@
     <example xml:lang="en">
       <listing><![CDATA[<Trace grid="yes" />]]></listing>
     </example>
-    <seealso></seealso>
   </command>
 
 
@@ -5479,7 +5348,5 @@
   </Paragraph>
 </Textblock>]]></listing>
     </example>
-    <seealso>
-    </seealso>
   </command>
 </commands>

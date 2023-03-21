@@ -5,8 +5,6 @@ import (
 	"bytes"
 	"encoding/xml"
 	"fmt"
-	"html"
-	"html/template"
 	"io"
 	"net/url"
 	"os"
@@ -14,14 +12,12 @@ import (
 	"regexp"
 	"sort"
 	"strings"
-	// "sync"
 )
 
 var (
 	multipleSpace       *regexp.Regexp
 	everysecondast      *regexp.Regexp
 	everysecondbacktick *regexp.Regexp
-	// mutex               = &sync.Mutex{}
 )
 
 func init() {
@@ -35,7 +31,7 @@ type para struct {
 	Text     []byte `xml:",innerxml"`
 }
 
-func (p *para) HTML(lang string) string {
+func (p *para) Markdown() string {
 	ret := []string{}
 	c := p.commands
 	r := bytes.NewReader(p.Text)
@@ -65,53 +61,7 @@ func (p *para) HTML(lang string) string {
 						cmdname = x.Name
 					}
 				}
-				ret = append(ret, fmt.Sprintf(`<a href=%q>%s</a>`, x.Htmllink(), cmdname))
-			case "tt":
-				ret = append(ret, "<tt>")
-			}
-		case xml.CharData:
-			ret = append(ret, string(v.Copy()))
-		case xml.EndElement:
-			switch v.Name.Local {
-			case "tt":
-				ret = append(ret, "</tt>")
-			}
-		}
-	}
-	return "<p>" + strings.Join(ret, "") + "</p>"
-}
-
-func (p *para) Adoc(lang string) string {
-	ret := []string{}
-	c := p.commands
-	r := bytes.NewReader(p.Text)
-	dec := xml.NewDecoder(r)
-
-	for {
-		tok, err := dec.Token()
-		if err != nil && err == io.EOF {
-			break
-		}
-		if err != nil {
-			panic(err)
-		}
-		switch v := tok.(type) {
-		case xml.StartElement:
-			switch v.Name.Local {
-			case "cmd":
-				var x *Command
-				var cmdname string
-				for _, attribute := range v.Attr {
-					if attribute.Name.Local == "name" {
-						x = c.commandsEn[attribute.Value]
-						if x == nil {
-							fmt.Printf("There is an unknown cmd in the para section of %q\n", attribute.Value)
-							os.Exit(-1)
-						}
-						cmdname = x.Name
-					}
-				}
-				ret = append(ret, fmt.Sprintf(`<<%s,%s>>`, x.CmdLink(), cmdname))
+				ret = append(ret, fmt.Sprintf(`[%s](%s)`, cmdname, x.CmdLink()))
 			case "tt":
 				ret = append(ret, "`")
 			}
@@ -132,7 +82,7 @@ func (p *para) Adoc(lang string) string {
 	return a
 }
 
-func (p *para) String(lang string) string {
+func (p *para) String() string {
 	ret := []string{}
 	r := bytes.NewReader(p.Text)
 	dec := xml.NewDecoder(r)
@@ -175,15 +125,8 @@ type define struct {
 }
 
 // DescriptionText returns the description of the attribute without markup.
-func (c *Choice) DescriptionText(lang string) string {
-	var ret string
-	switch lang {
-	case "en":
-		ret = descriptiontext(c.commands, c.descriptionEn.Text, lang)
-	case "de":
-		ret = descriptiontext(c.commands, c.descriptionDe.Text, lang)
-	}
-	return ret
+func (c *Choice) DescriptionText() string {
+	return descriptiontext(c.commands, c.descriptionEn.Text)
 }
 
 // Choice represents alternative attribute values
@@ -191,6 +134,7 @@ type Choice struct {
 	commands      *Commands
 	Text          []byte `xml:",innerxml"`
 	Name          string `xml:"en,attr"`
+	Pro           bool
 	descriptionEn *description
 	descriptionDe *description
 }
@@ -204,6 +148,7 @@ type Attribute struct {
 	Type          string
 	Optional      bool
 	AllowXPath    bool
+	Pro           bool
 	commands      *Commands
 	command       *Command
 	descriptionEn *description
@@ -246,7 +191,7 @@ func (a *Attribute) Attlink() string {
 	tmp := strings.ToLower(a.Name)
 	tmp = strings.Replace(tmp, ":", "_", -1)
 	ret = append(ret, tmp)
-	return strings.Join(ret, "-")
+	return strings.Join(ret, "_")
 }
 
 // UnmarshalXML fills the attribute from the given XML segment
@@ -280,6 +225,8 @@ func (a *Attribute) UnmarshalXML(dec *xml.Decoder, start xml.StartElement) error
 					switch attribute.Name.Local {
 					case "en":
 						c.Name = attribute.Value
+					case "pro":
+						c.Pro = attribute.Value == "yes"
 					}
 				}
 				a.Choice = append(a.Choice, c)
@@ -289,78 +236,23 @@ func (a *Attribute) UnmarshalXML(dec *xml.Decoder, start xml.StartElement) error
 }
 
 // DescriptionText returns the description of the attribute without markup.
-func (a *Attribute) DescriptionText(lang string) string {
-	var ret string
-	switch lang {
-	case "en":
-		ret = descriptiontext(a.commands, a.descriptionEn.Text, lang)
-	case "de":
-		ret = descriptiontext(a.commands, a.descriptionDe.Text, lang)
-	}
-	return ret
-
+func (a *Attribute) DescriptionText() string {
+	return descriptiontext(a.commands, a.descriptionEn.Text)
 }
 
-// DescriptionHTML returns the the attribute description as an HTML blob.
-func (a *Attribute) DescriptionHTML(lang string) template.HTML {
+// DescriptionMarkdown returns the description of the attribute as an asciidoctor blob.
+func (a *Attribute) DescriptionMarkdown() string {
 	var ret []string
-	switch lang {
-	case "en":
-		ret = append(ret, a.descriptionEn.HTML())
-	case "de":
-		ret = append(ret, a.descriptionDe.HTML())
-	default:
-		return ""
-	}
-	if len(a.Choice) > 0 {
-		ret = append(ret, `<table class="attributechoice">`)
-	}
+	ret = append(ret, a.descriptionEn.Markdown())
 	var name string
 	var desc string
 	for _, c := range a.Choice {
-		switch lang {
-		case "en":
-			name = c.Name
-			desc = c.descriptionEn.HTML()
-		case "de":
-			name = c.Name
-			desc = c.descriptionDe.HTML()
+		name = c.Name
+		desc = c.descriptionEn.Markdown()
+		if c.Pro {
+			ret = append(ret, "[.profeature]")
 		}
-		ret = append(ret, "<tr><td><p>")
-		ret = append(ret, name+":")
-		ret = append(ret, "</p></td><td>")
-		ret = append(ret, desc)
-		ret = append(ret, "</td></tr>")
-	}
-	if len(a.Choice) > 0 {
-		ret = append(ret, `</table>`)
-	}
-	return template.HTML(strings.Join(ret, "\n"))
-}
-
-// DescriptionAdoc returns the description of the attribute as an asciidoctor blob.
-func (a *Attribute) DescriptionAdoc(lang string) string {
-	var ret []string
-	switch lang {
-	case "en":
-		ret = append(ret, a.descriptionEn.Adoc())
-	case "de":
-		ret = append(ret, a.descriptionDe.Adoc())
-	default:
-		return ""
-	}
-	var name string
-	var desc string
-	for _, c := range a.Choice {
-		switch lang {
-		case "en":
-			name = c.Name
-			desc = c.descriptionEn.Adoc()
-		case "de":
-			name = c.Name
-			desc = c.descriptionDe.Adoc()
-		}
-		ret = append(ret, "\n`"+name+"`:::\n"+desc)
+		ret = append(ret, "\n    `"+name+"`\n    :    "+desc)
 	}
 	return string(strings.Join(ret, "\n"))
 }
@@ -388,7 +280,8 @@ type description struct {
 	Text     []byte `xml:",innerxml"`
 }
 
-func (d *description) HTML() string {
+// Markdown returns the description in markdown format.
+func (d *description) Markdown() string {
 	if d == nil {
 		return ""
 	}
@@ -413,41 +306,7 @@ func (d *description) HTML() string {
 				if err != nil {
 					panic(err)
 				}
-				ret = append(ret, p.HTML(d.Lang))
-
-			}
-		}
-	}
-	return strings.Join(ret, "")
-}
-
-// Adoc returns the description in asciidoctor format.
-func (d *description) Adoc() string {
-	if d == nil {
-		return ""
-	}
-	r := bytes.NewReader(d.Text)
-	dec := xml.NewDecoder(r)
-	var ret []string
-	for {
-		tok, err := dec.Token()
-		if err != nil && err == io.EOF {
-			break
-		}
-		if err != nil {
-			panic(err)
-		}
-		switch v := tok.(type) {
-		case xml.StartElement:
-			switch v.Name.Local {
-			case "para":
-				p := &para{}
-				p.commands = d.commands
-				err = dec.DecodeElement(p, &v)
-				if err != nil {
-					panic(err)
-				}
-				ret = append(ret, p.Adoc(d.Lang))
+				ret = append(ret, p.Markdown())
 
 			}
 		}
@@ -480,7 +339,7 @@ func (d *description) String() string {
 				if err != nil {
 					panic(err)
 				}
-				ret = append(ret, p.String(d.Lang))
+				ret = append(ret, p.String())
 
 			}
 		}
@@ -500,6 +359,7 @@ type Command struct {
 	Name           string
 	CSS            string
 	Since          string
+	Pro            bool
 	Deprecated     bool
 	Rules          []SchematronRules `xml:"rules"`
 	childelement   *Childelement
@@ -517,14 +377,13 @@ type Command struct {
 	seealso        *seealso
 }
 
-// Parents retuns all parent commands
-func (c *Command) Parents(lang string) []*Command {
+// Parents returns all parent commands
+func (c *Command) Parents() []*Command {
+
 	var cmds []*Command
-	// mutex.Lock()
 	for k := range c.parentelements {
 		cmds = append(cmds, k)
 	}
-	// mutex.Unlock()
 	sort.Sort(commandsbyen{cmds})
 
 	return cmds
@@ -556,7 +415,9 @@ func (c *Command) UnmarshalXML(dec *xml.Decoder, start xml.StartElement) error {
 					c.descriptionEn = d
 				case "de":
 					c.descriptionDe = d
+
 				}
+
 			case "info":
 				d := &description{}
 				d.commands = c.commands
@@ -597,6 +458,8 @@ func (c *Command) UnmarshalXML(dec *xml.Decoder, start xml.StartElement) error {
 						a.Type = attribute.Value
 					case "allowxpath":
 						a.AllowXPath = attribute.Value == "yes"
+					case "pro":
+						a.Pro = attribute.Value == "yes"
 					}
 				}
 
@@ -630,17 +493,18 @@ func (c *Command) UnmarshalXML(dec *xml.Decoder, start xml.StartElement) error {
 	}
 }
 
-// Adoclink retuns the command name with ".adoc"
-func (c *Command) Adoclink() string {
+// MDlink returns the command name with ".md"
+func (c *Command) MDlink() string {
 	if c == nil {
 		return ""
 	}
 	tmp := url.URL{Path: strings.ToLower(c.Name)}
 	filenameSansExtension := tmp.String()
-	return filenameSansExtension + ".adoc"
+	filenameSansExtension = strings.Replace(filenameSansExtension, "-", "_", -1)
+	return filenameSansExtension + ".md"
 }
 
-// Htmllink retuns a text such as "mycmd.html"
+// Htmllink returns a text such as "mycmd.html"
 func (c *Command) Htmllink() string {
 	if c == nil {
 		return ""
@@ -650,7 +514,7 @@ func (c *Command) Htmllink() string {
 	return filenameSansExtension + ".html"
 }
 
-// CmdLink retuns a text such as cmd-atpageshipout
+// CmdLink returns a text such as cmd-atpageshipout
 func (c *Command) CmdLink() string {
 	if c == nil {
 		return ""
@@ -658,141 +522,33 @@ func (c *Command) CmdLink() string {
 	tmp := url.URL{Path: strings.ToLower(c.Name)}
 	filenameSansExtension := tmp.String()
 	filenameSansExtension = strings.Replace(filenameSansExtension, "-", "_", -1)
-	// this works around a bug in Hugo
-	// https://github.com/gohugoio/hugo/issues/4666
-	if strings.HasSuffix(filenameSansExtension, "index") {
-		filenameSansExtension = strings.TrimSuffix(filenameSansExtension, "index") + "index_"
-	}
-	return "cmd-" + filenameSansExtension
+	return "../" + filenameSansExtension + ".md"
 }
 
-// DescriptionHTML returns the description as a HTML blob
-func (c *Command) DescriptionHTML(lang string) template.HTML {
+// DescriptionMarkdown returns the description of the command as a asciidoctor
+// blob.
+func (c *Command) DescriptionMarkdown() string {
+	return c.descriptionEn.Markdown()
+}
+
+// RemarkMarkdown returns the remark section as a formatted asciidoctor blob.
+func (c *Command) RemarkMarkdown() string {
+	lang := "en"
 	var ret string
 	switch lang {
 	case "en":
-		ret = c.descriptionEn.HTML()
+		ret = c.remarkEn.Markdown()
 	case "de":
-		ret = c.descriptionDe.HTML()
-	default:
-		ret = ""
-	}
-	return template.HTML(ret)
-}
-
-// DescriptionAdoc returns the description of the command as a asciidoctor blob.
-func (c *Command) DescriptionAdoc(lang string) string {
-	var ret string
-	switch lang {
-	case "en":
-		ret = c.descriptionEn.Adoc()
-	case "de":
-		ret = c.descriptionDe.Adoc()
+		ret = c.remarkDe.Markdown()
 	default:
 		ret = ""
 	}
 	return ret
 }
 
-// RemarkHTML returns the remark section as a formatted HTML blob.
-func (c *Command) RemarkHTML(lang string) template.HTML {
-	var ret string
-	switch lang {
-	case "en":
-		ret = c.remarkEn.HTML()
-	case "de":
-		ret = c.remarkDe.HTML()
-	default:
-		ret = ""
-	}
-	return template.HTML(ret)
-}
-
-// RemarkAdoc retuns the remark section as a formatted asciidoctor blob.
-func (c *Command) RemarkAdoc(lang string) string {
-	var ret string
-	switch lang {
-	case "en":
-		ret = c.remarkEn.Adoc()
-	case "de":
-		ret = c.remarkDe.Adoc()
-	default:
-		ret = ""
-	}
-	return ret
-}
-
-// InfoHTML returns the info section as a HTML blob
-func (c *Command) InfoHTML(lang string) template.HTML {
-	var r *bytes.Reader
-	switch lang {
-	case "en":
-		if x := c.infoEn; x != nil {
-			r = bytes.NewReader(x.Text)
-		} else {
-			return template.HTML("")
-		}
-	case "de":
-		if x := c.infoDe; x != nil {
-			r = bytes.NewReader(x.Text)
-		} else {
-			return template.HTML("")
-		}
-	}
-
-	var ret []string
-	dec := xml.NewDecoder(r)
-
-	inListing := false
-	for {
-		tok, err := dec.Token()
-		if err != nil && err == io.EOF {
-			break
-		}
-		if err != nil {
-			panic(err)
-		}
-		switch v := tok.(type) {
-		case xml.StartElement:
-			switch v.Name.Local {
-			case "listing":
-				inListing = true
-			case "image":
-				var fn, wd string
-				for _, a := range v.Attr {
-					wd = "max-width: 90%;"
-					if a.Name.Local == "file" {
-						fn = a.Value
-					} else if a.Name.Local == "width" {
-						wd = fmt.Sprintf(`width: %s;`, a.Value)
-					}
-				}
-				ret = append(ret, fmt.Sprintf(`<img style="%s padding-left: 1em;" src="../img/%s">`, wd, fn))
-			case "para":
-				p := &para{}
-				p.commands = c.commands
-				err = dec.DecodeElement(p, &v)
-				if err != nil {
-					panic(err)
-				}
-				ret = append(ret, p.HTML(lang))
-			}
-		case xml.CharData:
-			if inListing {
-				ret = append(ret, `<pre class="syntax xml">`+html.EscapeString(string(v))+`</pre>`)
-			}
-		case xml.EndElement:
-			switch v.Name.Local {
-			case "listing":
-				inListing = false
-			}
-		}
-	}
-	return template.HTML(strings.Join(ret, ""))
-}
-
-// InfoAdoc returns the info section as a asciidoctor blob.
-func (c *Command) InfoAdoc(lang string) string {
+// InfoMarkdown returns the info section as a asciidoctor blob.
+func (c *Command) InfoMarkdown() string {
+	lang := "en"
 	var r *bytes.Reader
 	switch lang {
 	case "en":
@@ -845,18 +601,14 @@ func (c *Command) InfoAdoc(lang string) string {
 					panic(err)
 				}
 				ret = append(ret, "\n")
-				ret = append(ret, p.Adoc(lang))
+				ret = append(ret, p.Markdown())
 				ret = append(ret, "\n")
 			}
 		case xml.CharData:
 			if inListing {
-				ret = append(ret, `[source, xml]
--------------------------------------------------------------------------------
-`)
+				ret = append(ret, "\n```xml\n")
 				ret = append(ret, string(v))
-				ret = append(ret, `
--------------------------------------------------------------------------------
-`)
+				ret = append(ret, "\n```\n")
 
 			}
 		case xml.EndElement:
@@ -869,7 +621,7 @@ func (c *Command) InfoAdoc(lang string) string {
 	return strings.Join(ret, "")
 }
 
-func descriptiontext(c *Commands, text []byte, lang string) string {
+func descriptiontext(c *Commands, text []byte) string {
 	r := bytes.NewReader(text)
 	dec := xml.NewDecoder(r)
 	var ret []string
@@ -892,7 +644,7 @@ func descriptiontext(c *Commands, text []byte, lang string) string {
 				if err != nil {
 					panic(err)
 				}
-				ret = append(ret, p.String(lang))
+				ret = append(ret, p.String())
 			}
 		}
 	}
@@ -904,9 +656,9 @@ func descriptiontext(c *Commands, text []byte, lang string) string {
 func (c *Command) DescriptionText(lang string) string {
 	switch lang {
 	case "en":
-		return descriptiontext(c.commands, c.descriptionEn.Text, lang)
+		return descriptiontext(c.commands, c.descriptionEn.Text)
 	case "de":
-		return descriptiontext(c.commands, c.descriptionDe.Text, lang)
+		return descriptiontext(c.commands, c.descriptionDe.Text)
 	default:
 		return ""
 	}
@@ -919,160 +671,17 @@ type reference struct {
 	chaptername string
 }
 
-var (
-	references map[string]reference
-)
-
-func init() {
-	references = map[string]reference{
-		"fonts": {
-			"How to use fonts", "Einbinden von Schriftarten", "fonts.html", "",
-		},
-		"directories": {
-			"How to generate a table of contents and other directories", "Wie werden Verzeichnisse erstellt?", "directories.html", "",
-		},
-		"cutmarks": {
-			"Cutmarks and bleed", "Schnittmarken und Beschnittzugabe", "cutmarks.html", "",
-		},
-		"xpath": {
-			"XPath expressions", "XPath-Ausdrücke", "xpath.html", "ch-xpathfunktionen",
-		},
-		"css": {
-			"Using CSS with the speedata Publisher", "CSS im speedata Publisher", "css.html", "",
-		},
-	}
-}
-
-// SeealsoHTML retuns the see also section as a HTML blob
-func (c *Command) SeealsoHTML(lang string) template.HTML {
-	if c.seealso == nil {
-		return ""
-	}
-	ret := []string{}
-	r := bytes.NewReader(c.seealso.Text)
-	dec := xml.NewDecoder(r)
-	for {
-		tok, err := dec.Token()
-		if err != nil && err == io.EOF {
-			break
-		}
-		if err != nil {
-			panic(err)
-		}
-
-		switch v := tok.(type) {
-		case xml.StartElement:
-			switch v.Name.Local {
-			case "cmd":
-				var x *Command
-				var cmdname string
-				for _, attribute := range v.Attr {
-					if attribute.Name.Local == "name" {
-						x = c.commands.commandsEn[attribute.Value]
-						if x == nil {
-							fmt.Printf("There is an unknown cmd in the seealso section of %q (%q)\n", c.Name, attribute.Value)
-							os.Exit(-1)
-						}
-						cmdname = x.Name
-					}
-				}
-				ret = append(ret, fmt.Sprintf(`<a href=%q>%s</a>`, x.Htmllink(), cmdname))
-			case "ref":
-				var nameatt string
-				for _, attribute := range v.Attr {
-					if attribute.Name.Local == "name" {
-						nameatt = attribute.Value
-					}
-				}
-				if x, ok := references[nameatt]; ok {
-					switch lang {
-					case "en":
-						ret = append(ret, fmt.Sprintf(`<a href="../description-en/%s">%s</a>`, x.pagename, x.longnameEn))
-					case "de":
-						ret = append(ret, fmt.Sprintf(`<a href="../description-de/%s">%s</a>`, x.pagename, x.longnameDe))
-					}
-				} else {
-					ret = append(ret, nameatt)
-				}
-			}
-		case xml.CharData:
-			ret = append(ret, string(v.Copy()))
-		}
-	}
-	return template.HTML(strings.Join(ret, ""))
-}
-
-// SeealsoAdoc returns the see also section as an asciidoctor blob
-func (c *Command) SeealsoAdoc(lang string) string {
-	if c.seealso == nil {
-		return ""
-	}
-	ret := []string{}
-	r := bytes.NewReader(c.seealso.Text)
-	dec := xml.NewDecoder(r)
-	for {
-		tok, err := dec.Token()
-		if err != nil && err == io.EOF {
-			break
-		}
-		if err != nil {
-			panic(err)
-		}
-
-		switch v := tok.(type) {
-		case xml.StartElement:
-			switch v.Name.Local {
-			case "cmd":
-				var x *Command
-				var cmdname string
-				for _, attribute := range v.Attr {
-					if attribute.Name.Local == "name" {
-						x = c.commands.commandsEn[attribute.Value]
-						if x == nil {
-							fmt.Printf("There is an unknown cmd in the seealso section of %q (%q)\n", c.Name, attribute.Value)
-							os.Exit(-1)
-						}
-						cmdname = x.Name
-					}
-				}
-				ret = append(ret, fmt.Sprintf(`<a href=%q>%s</a>`, x.Htmllink(), cmdname))
-			case "ref":
-				var nameatt string
-				for _, attribute := range v.Attr {
-					if attribute.Name.Local == "name" {
-						nameatt = attribute.Value
-					}
-				}
-				if x, ok := references[nameatt]; ok {
-					switch lang {
-					case "en":
-						ret = append(ret, fmt.Sprintf(`<<%s,%s>>`, x.pagename, x.longnameEn))
-					case "de":
-						ret = append(ret, fmt.Sprintf(`<<%s,%s>>`, x.pagename, x.longnameDe))
-					}
-				} else {
-					ret = append(ret, nameatt)
-				}
-			}
-		case xml.CharData:
-			ret = append(ret, string(v.Copy()))
-		}
-	}
-	return strings.Join(ret, "")
-}
-
 // Attributes returns all attributes for the command
 func (c *Command) Attributes() []*Attribute {
-	// mutex.Lock()
 	sort.Sort(attributesbyen{c.Attr})
 	ret := make([]*Attribute, len(c.Attr))
 	copy(ret, c.Attr)
-	// mutex.Unlock()
 	return ret
 }
 
-// ExampleAdoc returns the examples section as an asciidoctor blob.
-func (c *Command) ExampleAdoc(lang string) string {
+// ExampleMarkdown returns the examples section as an markdown blob.
+func (c *Command) ExampleMarkdown() string {
+	lang := "en"
 	var r *bytes.Reader
 	switch lang {
 	case "en":
@@ -1126,18 +735,14 @@ func (c *Command) ExampleAdoc(lang string) string {
 					panic(err)
 				}
 				ret = append(ret, "\n")
-				ret = append(ret, p.Adoc(lang))
+				ret = append(ret, p.Markdown())
 				ret = append(ret, "\n")
 			}
 		case xml.CharData:
 			if inListing {
-				ret = append(ret, `[source, xml]
--------------------------------------------------------------------------------
-`)
+				ret = append(ret, "```xml\n")
 				ret = append(ret, string(v))
-				ret = append(ret, `
--------------------------------------------------------------------------------
-`)
+				ret = append(ret, "\n```\n")
 			}
 		case xml.EndElement:
 			switch v.Name.Local {
@@ -1147,76 +752,6 @@ func (c *Command) ExampleAdoc(lang string) string {
 		}
 	}
 	return strings.Join(ret, "")
-}
-
-// ExampleHTML returns the examples section as a HTML blob
-func (c *Command) ExampleHTML(lang string) template.HTML {
-	var r *bytes.Reader
-	switch lang {
-	case "en":
-		if x := c.examplesEn; len(x) != 0 {
-			r = bytes.NewReader(x[0].Text)
-		} else {
-			return template.HTML("")
-		}
-	case "de":
-		if x := c.examplesDe; len(x) != 0 {
-			r = bytes.NewReader(x[0].Text)
-		} else {
-			return template.HTML("")
-		}
-	default:
-		return template.HTML("")
-	}
-	var ret []string
-	dec := xml.NewDecoder(r)
-
-	inListing := false
-	for {
-		tok, err := dec.Token()
-		if err != nil && err == io.EOF {
-			break
-		}
-		if err != nil {
-			panic(err)
-		}
-		switch v := tok.(type) {
-		case xml.StartElement:
-			switch v.Name.Local {
-			case "listing":
-				inListing = true
-			case "image":
-				var fn, wd string
-				for _, a := range v.Attr {
-					wd = "max-width: 90%;"
-					if a.Name.Local == "file" {
-						fn = a.Value
-					} else if a.Name.Local == "width" {
-						wd = fmt.Sprintf(`width: %s;`, a.Value)
-					}
-				}
-				ret = append(ret, fmt.Sprintf(`<img style="%s padding-left: 1em;" src="../img/%s">`, wd, fn))
-			case "para":
-				p := &para{}
-				p.commands = c.commands
-				err = dec.DecodeElement(p, &v)
-				if err != nil {
-					panic(err)
-				}
-				ret = append(ret, p.HTML(lang))
-			}
-		case xml.CharData:
-			if inListing {
-				ret = append(ret, `<pre class="syntax xml">`+html.EscapeString(string(v))+`</pre>`)
-			}
-		case xml.EndElement:
-			switch v.Name.Local {
-			case "listing":
-				inListing = false
-			}
-		}
-	}
-	return template.HTML(strings.Join(ret, ""))
 }
 
 func getchildren(c *Commands, dec *xml.Decoder) []*Command {
@@ -1271,9 +806,7 @@ func (c *Command) Childelements() []*Command {
 	if c == nil {
 		return nil
 	}
-	// mutex.Lock()
 	x := c.children["en"]
-	// mutex.Unlock()
 	if x != nil {
 		return x
 	}
@@ -1283,19 +816,15 @@ func (c *Command) Childelements() []*Command {
 
 	cmds := getchildren(c.commands, dec)
 
-	// mutex.Lock()
 	for _, v := range cmds {
 		v.parentelements[c] = true
 	}
-	// mutex.Unlock()
 	sort.Sort(commandsbyen{cmds})
-	// mutex.Lock()
 	c.children["en"] = cmds
-	// mutex.Unlock()
 	return cmds
 }
 
-// GetDefineText retuns the byte value of a define section in the commands xml
+// GetDefineText returns the byte value of a define section in the commands xml
 func (c *Commands) GetDefineText(section string) []byte {
 	if t, ok := c.defines[section]; ok {
 		return t.Text
@@ -1383,6 +912,9 @@ func ReadCommandsFile(r io.Reader) (*Commands, error) {
 					if attribute.Name.Local == "since" {
 						c.Since = attribute.Value
 					}
+					if attribute.Name.Local == "pro" {
+						c.Pro = attribute.Value == "yes"
+					}
 					if attribute.Name.Local == "deprecated" {
 						c.Deprecated = attribute.Value == "yes"
 					}
@@ -1391,6 +923,11 @@ func ReadCommandsFile(r io.Reader) (*Commands, error) {
 		}
 	}
 	sort.Sort(commandsbyen{commands.commandsSortedEn})
+	// to get the full list of parent elements, the child element of each command
+	// have to be called at least once. I know this sucks...
+	for _, v := range commands.commandsEn {
+		v.Childelements()
+	}
 	return commands, nil
 }
 
