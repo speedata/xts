@@ -208,13 +208,29 @@ func cmdBr(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 func cmdBarcode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
-		Select string `sdxml:"mustexist"`
-		Type   string
-		Width  bag.ScaledPoint `sdxml:"mustexist"`
+		Select     string `sdxml:"mustexist"`
+		Type       string
+		FontFamily *string
+		FontSize   string
+		Height     bag.ScaledPoint `sdxml:"mustexist"`
+		Width      bag.ScaledPoint `sdxml:"mustexist"`
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
+
+	ff := xd.document.FindFontFamily("text")
+	if af := attValues.FontFamily; af != nil {
+		if fontfamily := xd.document.FindFontFamily(*af); fontfamily != nil {
+			ff = fontfamily
+		}
+	}
+
+	fontsize, _, err := xd.getFontSizeLeading(attValues.FontSize)
+	if err != nil {
+		return nil, err
+	}
+
 	var eval xpath.Sequence
 	eval, err = xd.data.Evaluate(attValues.Select)
 
@@ -230,7 +246,7 @@ func cmdBarcode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 		return nil, fmt.Errorf("Unknown barcode type %q", attValues.Type)
 	}
 	var bc node.Node
-	if bc, err = createBarcode(bcType, eval.Stringvalue(), attValues.Width, xd); err != nil {
+	if bc, err = createBarcode(bcType, eval.Stringvalue(), attValues.Width, attValues.Height, xd, ff, fontsize); err != nil {
 		return nil, err
 	}
 
@@ -1096,7 +1112,8 @@ func cmdNextRow(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	if attValues.Row != nil {
 		area.SetCurrentRow(coord(*attValues.Row))
 	} else if r := attValues.Rows; r != nil {
-		area.SetCurrentRow(area.CurrentRow() + coord(*r))
+		xd.currentGrid.nextRow(area)
+		area.SetCurrentRow(area.CurrentRow() + coord(*r-1))
 	} else {
 		xd.currentGrid.nextRow(area)
 	}

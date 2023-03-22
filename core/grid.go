@@ -264,16 +264,15 @@ func (g *grid) allocate(x, y coord, area *area, wd, ht bag.ScaledPoint) {
 	}
 }
 
-func (g *grid) findSuitableRow(wdCols coord, htCols coord, startColumn coord, area *area) coord {
+func (g *grid) findSuitableRow(wdCols coord, htRows coord, startColumn coord, area *area) coord {
 	frameMarginTop := area.frame[area.currentFrame].row - 1
 	areaHeight := area.frame[area.currentFrame].height
-
 	for row := area.CurrentRow() + frameMarginTop; row < areaHeight+frameMarginTop; row++ {
-		if row+htCols-1 > areaHeight {
+		if row+htRows-1 > areaHeight {
 			break
 		}
 		fits := true
-		for r := row; r < row+htCols; r++ {
+		for r := row; r < row+htRows; r++ {
 			if !g.fitsInRow(startColumn, r, wdCols, area) {
 				fits = false
 				break
@@ -297,8 +296,8 @@ func (g *grid) nextRow(area *area) {
 }
 
 func (g *grid) fitsInRow(col coord, row coord, wdCols coord, area *area) bool {
-	col += area.frame[area.currentFrame].col
-	row += area.frame[area.currentFrame].row
+	col += area.frame[area.currentFrame].col - 1
+	row += area.frame[area.currentFrame].row - 1
 
 	for c := col; c < col+wdCols-1; c++ {
 		if g.allocatedBlocks.allocValue(c, row) > 0 {

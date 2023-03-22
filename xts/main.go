@@ -24,6 +24,7 @@ var (
 	configuration = &config{
 		Verbose:     false,
 		Systemfonts: false,
+		Dummy:       false,
 		Jobname:     "publisher",
 		Data:        "data.xml",
 		Layout:      "layout.xml",
@@ -35,6 +36,7 @@ var (
 type config struct {
 	Verbose     bool
 	Systemfonts bool
+	Dummy       bool
 	Basedir     string
 	Jobname     string
 	Data        string
@@ -189,9 +191,11 @@ func dothings() error {
 	op.On("--jobname NAME", "The name of the resulting PDF file (without extension), default is 'publisher'", &configuration.Jobname)
 	op.On("--systemfonts", "Use system fonts", &configuration.Systemfonts)
 	op.On("--verbose", "Put more debugging information into the protocol file", &configuration.Verbose)
+	op.On("--dummy", "Don't read a data file, use '<data />' as input", &configuration.Dummy)
 	op.On("--dumpoutput FILENAME", "Complete XML dump of generated PDF file", &dumpOutputFileName)
 	op.Command("list-fonts", "List installed fonts")
 	op.Command("clean", "Remove auxiliary and protocol files")
+	op.Command("new", "Create simple layout and data file to start. Provide optional directory.")
 	op.Command("run", "Load layout and data files and create PDF (default)")
 	op.Command("version", "Print version information")
 	err = op.Parse()
@@ -269,11 +273,16 @@ func dothings() error {
 		if lr, err = os.Open(layoutpath); err != nil {
 			return err
 		}
-		if datapath, err = core.FindFile(configuration.Data); err != nil {
-			return err
-		}
-		if dr, err = os.Open(datapath); err != nil {
-			return err
+
+		if configuration.Dummy {
+			dr = io.NopCloser(strings.NewReader(`<data />`))
+		} else {
+			if datapath, err = core.FindFile(configuration.Data); err != nil {
+				return err
+			}
+			if dr, err = os.Open(datapath); err != nil {
+				return err
+			}
 		}
 
 		if configuration.Verbose {

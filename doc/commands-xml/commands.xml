@@ -770,7 +770,11 @@
     </example>
   </command>
 
-
+  <!--
+      ****************************************************************************************
+      * Barcode
+      ****************************************************************************************
+  -->
   <command en="Barcode" pro="yes">
     <description xml:lang="en">
       <para>Print a 1d or 2d barcode. To be used in <cmd name="PlaceObject"/>.</para>
@@ -833,6 +837,14 @@
       </description>
       <description xml:lang="de">
         <para>Name der Schriftart des Textes, der ggf. unterhalb des Strichcodes ausgegeben wird. Nicht in allen Codes verwendet.</para>
+      </description>
+    </attribute>
+    <attribute en="fontsize" optional="yes" allowxpath="yes" type="text">
+      <description xml:lang="en">
+        <para>Set the font size. You can use a name predefined with <cmd name="DefineFontsize"/> or a string such as "10pt/12pt" to set the font size and the leading. Defaults to 'text'.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Setze die Schriftgröße und den Zeilenabstand. Es kann eine mit <cmd name="DefineFontsize"/> vordefinierte Größe verwendet werden oder eine Zeichenkette wie "10pt/12pt", die die Schriftgröße und den Zeilenabstand bestimmt. Voreeinstellung ist 'text'.</para>
       </description>
     </attribute>
     <attribute en="height" type="numberorlength" optional="yes">

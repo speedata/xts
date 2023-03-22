@@ -9,6 +9,7 @@ import (
 	"github.com/speedata/barcode/qr"
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/boxesandglue/backend/node"
+	"github.com/speedata/boxesandglue/frontend"
 	"github.com/speedata/boxesandglue/frontend/pdfdraw"
 )
 
@@ -18,33 +19,61 @@ const (
 	barcodeQR
 )
 
-func createBarcode(typ int, value string, width bag.ScaledPoint, xd *xtsDocument) (node.Node, error) {
+func createBarcode(typ int, value string, width bag.ScaledPoint, height bag.ScaledPoint, xd *xtsDocument, ff *frontend.FontFamily, fontsize bag.ScaledPoint) (node.Node, error) {
+	var n node.Node
+	useText := true
+	switch typ {
+	case barcodeQR:
+		useText = false
+	}
+	var vl *node.VList
+	var err error
+	if useText {
+		txt := frontend.NewText()
+		txt.Settings[frontend.SettingSize] = fontsize
+		txt.Settings[frontend.SettingFontFamily] = ff
+		txt.Settings[frontend.SettingHAlign] = frontend.HAlignCenter
+		txt.Items = append(txt.Items, value)
+		vl, _, err = xd.document.FormatParagraph(txt, width)
+		if err != nil {
+			return nil, err
+		}
+		height -= vl.Height
+	}
 	switch typ {
 	case barcodeEAN13:
 		bc, err := ean.Encode(value)
 		if err != nil {
 			return nil, err
 		}
-		return barcodeCreate(bc, value, width, xd)
+		if n, err = barcodeCreate(bc, value, width, height, xd); err != nil {
+			return nil, err
+		}
 	case barcodeCode128:
 		bc, err := code128.Encode(value)
 		if err != nil {
 			return nil, err
 		}
-		return barcodeCreate(bc, value, width, xd)
+		if n, err = barcodeCreate(bc, value, width, height, xd); err != nil {
+			return nil, err
+		}
 	case barcodeQR:
 		bc, err := qr.Encode(value, qr.M, qr.Auto)
 		if err != nil {
 			return nil, err
 		}
-		return barcodeCreate3d(bc, value, width, xd)
-
+		return barcodeCreate3d(bc, value, width, height, xd)
 	}
 
-	return nil, nil
+	n = node.InsertAfter(n, n, vl)
+	vl = node.Vpack(n)
+	vl.Attributes = node.H{
+		"origin": "barcode",
+	}
+	return vl, nil
 }
 
-func barcodeCreate(bc barcode.Barcode, value string, width bag.ScaledPoint, xd *xtsDocument) (node.Node, error) {
+func barcodeCreate(bc barcode.Barcode, value string, width bag.ScaledPoint, height bag.ScaledPoint, xd *xtsDocument) (node.Node, error) {
 	dx := bc.Bounds().Dx()
 	wdBar := width / bag.ScaledPoint(dx)
 	bgcolor := xd.document.GetColor("black")
@@ -58,7 +87,7 @@ func barcodeCreate(bc barcode.Barcode, value string, width bag.ScaledPoint, xd *
 		at := bc.At(i, 0)
 		col, _, _, _ := at.RGBA()
 		if col == 0 {
-			d.Rect(curX, 0, wdBar, -60*bag.Factor)
+			d.Rect(curX, 0, wdBar, -height)
 			d.Fill()
 		}
 		curX += wdBar
@@ -70,22 +99,14 @@ func barcodeCreate(bc barcode.Barcode, value string, width bag.ScaledPoint, xd *
 
 	rule := node.NewRule()
 	rule.Pre = d.String()
+	rule.Height = height
+	rule.Width = width
 	rule.Hide = true
 	rule.Post = pdfdraw.New().Restore().String()
-	vl := node.Vpack(rule)
-	if vl.Attributes == nil {
-		vl.Attributes = node.H{}
-	}
-	vl.Attributes = node.H{
-		"origin": "barcode",
-	}
-	vl.Width = width
-	vl.Height = 60 * bag.Factor
-
-	return vl, nil
+	return rule, nil
 }
 
-func barcodeCreate3d(bc barcode.Barcode, value string, width bag.ScaledPoint, xd *xtsDocument) (node.Node, error) {
+func barcodeCreate3d(bc barcode.Barcode, value string, width bag.ScaledPoint, height bag.ScaledPoint, xd *xtsDocument) (node.Node, error) {
 	dx := bc.Bounds().Dx()
 	dy := bc.Bounds().Dy()
 
