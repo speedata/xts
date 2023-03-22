@@ -1,6 +1,8 @@
 # XTS XML typesetting system
 
-This repository is an experimental playground for a [speedata Publisher](https://github.com/speedata/publisher/) “next generation”. It uses the Go library [boxes and glue](https://github.com/speedata/boxesandglue) for typesetting and PDF generation.
+This repository is an experimental playground for a [speedata Publisher](https://github.com/speedata/publisher/) “next generation”.
+It uses the Go library [boxes and glue](https://github.com/speedata/boxesandglue) for typesetting and PDF generation.
+
 
 # Manual and examples
 
@@ -8,11 +10,12 @@ The [manual](https://doc.speedata.de/xts/) is at https://doc.speedata.de/xts/ an
 
 # Status
 
-This is all experimental and not safe to use.
+This is still considered experimental.
+
 
 # License
 
-AGPL v3 - see License.md
+BSD license - see License.md
 
 # Contact
 
