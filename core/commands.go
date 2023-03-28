@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	pdf "github.com/speedata/baseline-pdf"
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/boxesandglue/backend/color"
 	"github.com/speedata/boxesandglue/backend/document"
@@ -14,7 +15,6 @@ import (
 	"github.com/speedata/boxesandglue/csshtml"
 	"github.com/speedata/boxesandglue/frontend"
 	"github.com/speedata/boxesandglue/frontend/pdfdraw"
-	"github.com/speedata/boxesandglue/pdfbackend/pdf"
 	"github.com/speedata/goxml"
 	xpath "github.com/speedata/goxpath"
 	"github.com/speedata/textlayout/harfbuzz"
@@ -277,7 +277,7 @@ func cmdBookmark(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, err
 		title := eval.Stringvalue()
 		outline := &pdf.Outline{
 			Title: title,
-			Dest:  destObj,
+			Dest:  fmt.Sprintf("[ %s /XYZ %f %f 0]", destObj.PageObjectnumber.Ref(), destObj.X, destObj.Y),
 			Open:  attValues.Open,
 		}
 		curOutlines := &xd.document.Doc.PDFWriter.Outlines

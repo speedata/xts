@@ -3,10 +3,10 @@ package core
 import (
 	"math"
 
+	pdf "github.com/speedata/baseline-pdf"
 	"github.com/speedata/boxesandglue/backend/bag"
 	bagimage "github.com/speedata/boxesandglue/backend/image"
 	"github.com/speedata/boxesandglue/backend/node"
-	"github.com/speedata/boxesandglue/pdfbackend/pdf"
 )
 
 func createImageHlist(xd *xtsDocument, width, height, minwidth, maxwidth, minheight, maxheight *bag.ScaledPoint, stretch bool, imgfile *pdf.Imagefile, pagenumer int) *node.HList {
