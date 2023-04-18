@@ -1,7 +1,6 @@
 package core
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"regexp"
@@ -19,8 +18,8 @@ import (
 )
 
 var (
-	errAttribNotFound  = errors.New("Attribute not found")
-	attributeValueRE   *regexp.Regexp
+	// XPath escape sequence for attributes
+	attributeValueRE   = regexp.MustCompile(`\{(.*?)\}`)
 	oneCM              = bag.MustSp("1cm")
 	destinationNumbers = make(chan int)
 	// Version is a semantic version
@@ -28,7 +27,6 @@ var (
 )
 
 func init() {
-	attributeValueRE = regexp.MustCompile(`\{(.*?)\}`)
 	go genIntegerSequence(destinationNumbers)
 }
 
@@ -184,28 +182,25 @@ func RunXTS(cfg *XTSConfig) error {
 		return err
 	}
 	if len(dataNameSeq) != 1 {
-		return fmt.Errorf("Could not find the root name for the data xml")
+		return newTypesettingErrorFromString("Could not find the root name for the data xml")
 	}
 	bag.Logger.Info("Start processing data")
 
 	rootname := dataNameSeq[0].(string)
 	_, err = dispatch(d, layoutRoot, d.data)
 	if err != nil {
-		bag.Logger.Error(err)
-		return err
+		return newTypesettingError(err)
 	}
 
 	d.data.Ctx.Root()
 	var startDispatcher *goxml.Element
 	var ok bool
 	if startDispatcher, ok = dataDispatcher[rootname][""]; !ok {
-		bag.Logger.Errorf("Cannot find <Record> for root element %s", rootname)
-		return fmt.Errorf("Cannot find <Record> for root element %s", rootname)
+		return newTypesettingErrorFromString(fmt.Sprintf("Cannot find <Record> for root element %s", rootname))
 	}
 	_, err = dispatch(d, startDispatcher, d.data)
 	if err != nil {
-		bag.Logger.Error(err)
-		return err
+		return newTypesettingError(err)
 	}
 	if d.currentPage != nil {
 		d.currentPage.bagPage.Shipout()
@@ -354,4 +349,40 @@ func showDiscNodes(n node.Node) {
 			// ignore
 		}
 	}
+}
+
+// A TypesettingError contains the information if it has been logged, so it does
+// not appear more than once in the output.
+type TypesettingError struct {
+	Logged bool
+	Msg    string
+}
+
+func (te TypesettingError) Error() string {
+	return te.Msg
+}
+
+func newTypesettingError(err error) error {
+	if terr, ok := err.(TypesettingError); ok {
+		if !terr.Logged {
+			bag.Logger.Error(terr.Msg)
+			terr.Logged = true
+		}
+		return terr
+	}
+	return TypesettingError{
+		Msg: err.Error(),
+	}
+}
+
+func newTypesettingErrorFromString(msg string) error {
+	bag.Logger.Error(msg)
+	return TypesettingError{
+		Msg:    msg,
+		Logged: true,
+	}
+}
+
+func newTypesettingErrorFromStringf(format string, a ...any) error {
+	return newTypesettingErrorFromString(fmt.Sprintf(format, a...))
 }

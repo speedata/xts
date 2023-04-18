@@ -22,25 +22,28 @@ import (
 
 var (
 	configuration = &config{
-		Verbose:     false,
-		Systemfonts: false,
+		Data:        "data.xml",
 		Dummy:       false,
 		Jobname:     "publisher",
-		Data:        "data.xml",
 		Layout:      "layout.xml",
+		LogLevel:    "info",
+		Systemfonts: false,
+		Verbose:     false,
 	}
 	configfilename string = "publisher.cfg"
 )
 
 // config holds global configuration that is not document dependant.
 type config struct {
-	Verbose     bool
-	Systemfonts bool
-	Dummy       bool
 	Basedir     string
-	Jobname     string
 	Data        string
+	Dummy       bool
+	Jobname     string
 	Layout      string
+	LogLevel    string
+	Quiet       bool
+	Systemfonts bool
+	Verbose     bool
 }
 
 // Create a new logger instance which logs info to stdout and perhaps more to
@@ -51,6 +54,13 @@ func newZapLogger() (*zap.SugaredLogger, error) {
 	if err != nil {
 		return nil, err
 	}
+	errorPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
+		return lvl >= zapcore.ErrorLevel
+	})
+
+	warnPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
+		return lvl >= zapcore.WarnLevel
+	})
 
 	infoPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
 		return lvl >= zapcore.InfoLevel
@@ -59,13 +69,25 @@ func newZapLogger() (*zap.SugaredLogger, error) {
 		return lvl >= zapcore.DebugLevel
 	})
 
-	var protocolPriority zap.LevelEnablerFunc
+	var protocolPriority, consolePriority zap.LevelEnablerFunc
 	if configuration.Verbose {
 		protocolPriority = debugPriority
 	} else {
 		protocolPriority = infoPriority
 	}
 
+	switch configuration.LogLevel {
+	case "debug":
+		consolePriority = debugPriority
+	case "info":
+		consolePriority = infoPriority
+	case "warn":
+		consolePriority = warnPriority
+	case "error":
+		consolePriority = errorPriority
+	default:
+		return nil, fmt.Errorf("could not parse the log level %q", configuration.LogLevel)
+	}
 	colorEncoder := zapcore.EncoderConfig{
 		EncodeLevel: zapcore.LowercaseColorLevelEncoder,
 		LevelKey:    "level",
@@ -77,12 +99,17 @@ func newZapLogger() (*zap.SugaredLogger, error) {
 		MessageKey:  "message",
 	}
 
-	consoleDebugging := zapcore.Lock(os.Stdout)
+	var consoleDebugging zapcore.WriteSyncer
+	if configuration.Quiet {
+		consoleDebugging = zapcore.AddSync(io.Discard)
+	} else {
+		consoleDebugging = zapcore.Lock(os.Stdout)
+	}
 	consoleEncoder := zapcore.NewConsoleEncoder(colorEncoder)
 
 	fileEncoder := zapcore.NewConsoleEncoder(simpleEncoder)
 	core := zapcore.NewTee(
-		zapcore.NewCore(consoleEncoder, consoleDebugging, infoPriority),
+		zapcore.NewCore(consoleEncoder, consoleDebugging, consolePriority),
 		zapcore.NewCore(fileEncoder, w, protocolPriority),
 	)
 
@@ -188,11 +215,15 @@ func dothings() error {
 
 	op := optionparser.NewOptionParser()
 	op.On("-c NAME", "--config", "Read the config file with the given NAME. Default: 'publisher.cfg'", &configfilename)
-	op.On("--jobname NAME", "The name of the resulting PDF file (without extension), default is 'publisher'", &configuration.Jobname)
-	op.On("--systemfonts", "Use system fonts", &configuration.Systemfonts)
-	op.On("--verbose", "Put more debugging information into the protocol file", &configuration.Verbose)
+	op.On("--data NAME", "Name of the data file. Defaults to 'data.xml'", &configuration.Data)
 	op.On("--dummy", "Don't read a data file, use '<data />' as input", &configuration.Dummy)
 	op.On("--dumpoutput FILENAME", "Complete XML dump of generated PDF file", &dumpOutputFileName)
+	op.On("--jobname NAME", "The name of the resulting PDF file (without extension), default is 'publisher'", &configuration.Jobname)
+	op.On("--layout NAME", "Name of the layout file. Defaults to 'layout.xml'", &configuration.Layout)
+	op.On("--loglevel LVL", "Set the log level for the console to one of debug, info, warn, error", &configuration.LogLevel)
+	op.On("--quiet", "Run XTS in quiet mode", &configuration.Quiet)
+	op.On("--systemfonts", "Use system fonts", &configuration.Systemfonts)
+	op.On("--verbose", "Put more debugging information into the protocol file", &configuration.Verbose)
 	op.Command("list-fonts", "List installed fonts")
 	op.Command("clean", "Remove auxiliary and protocol files")
 	op.Command("new", "Create simple layout and data file to start. Provide optional directory.")
@@ -201,6 +232,7 @@ func dothings() error {
 	err = op.Parse()
 	if err != nil {
 		op.Help()
+		fmt.Println()
 		return err
 	}
 	if data, err := os.ReadFile(configfilename); err == nil {
@@ -327,7 +359,13 @@ func dothings() error {
 
 func main() {
 	if err := dothings(); err != nil {
-		bag.Logger.Error(err)
+		if terr, ok := err.(core.TypesettingError); ok {
+			if !terr.Logged {
+				fmt.Println("Error:", err)
+			}
+		} else {
+			fmt.Println("Error:", err)
+		}
 		os.Exit(1)
 	}
 }
