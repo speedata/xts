@@ -35,15 +35,18 @@ var (
 
 // config holds global configuration that is not document dependant.
 type config struct {
-	Basedir     string
-	Data        string
-	Dummy       bool
-	Jobname     string
-	Layout      string
-	LogLevel    string
-	Quiet       bool
-	Systemfonts bool
-	Verbose     bool
+	basedir     string
+	libdir      string
+	Data        string   `mapstructure:"data"`
+	Dummy       bool     `mapstructure:"dummy"`
+	Jobname     string   `mapstructure:"jobname"`
+	Layout      string   `mapstructure:"layout"`
+	LogLevel    string   `mapstructure:"loglevel"`
+	Filter      string   `mapstructure:"filter"`
+	Quiet       bool     `mapstructure:"quiet"`
+	Systemfonts bool     `mapstructure:"systemfonts"`
+	Verbose     bool     `mapstructure:"verbose"`
+	Trace       []string `mapstructure:"trace"`
 }
 
 // Create a new logger instance which logs info to stdout and perhaps more to
@@ -118,7 +121,7 @@ func newZapLogger() (*zap.SugaredLogger, error) {
 }
 
 func listFonts() error {
-	core.InitDirs(configuration.Basedir)
+	core.InitDirs(configuration.basedir)
 	ff := core.FindFontFiles()
 	ret := make([]string, len(ff))
 	for i, fontfile := range ff {
@@ -206,7 +209,8 @@ func dothings() error {
 	if err != nil {
 		return err
 	}
-	configuration.Basedir = filepath.Join(filepath.Dir(pathToXTS), "..")
+	configuration.basedir = filepath.Join(filepath.Dir(pathToXTS), "..")
+	configuration.libdir = filepath.Join(configuration.basedir, "lib")
 	currentDir, err := os.Getwd()
 	if err != nil {
 		return err
@@ -218,11 +222,13 @@ func dothings() error {
 	op.On("--data NAME", "Name of the data file. Defaults to 'data.xml'", &configuration.Data)
 	op.On("--dummy", "Don't read a data file, use '<data />' as input", &configuration.Dummy)
 	op.On("--dumpoutput FILENAME", "Complete XML dump of generated PDF file", &dumpOutputFileName)
+	op.On("--filter NAME", "Run Lua process before the publishing run", &configuration.Filter)
 	op.On("--jobname NAME", "The name of the resulting PDF file (without extension), default is 'publisher'", &configuration.Jobname)
 	op.On("--layout NAME", "Name of the layout file. Defaults to 'layout.xml'", &configuration.Layout)
 	op.On("--loglevel LVL", "Set the log level for the console to one of debug, info, warn, error", &configuration.LogLevel)
 	op.On("--quiet", "Run XTS in quiet mode", &configuration.Quiet)
 	op.On("--systemfonts", "Use system fonts", &configuration.Systemfonts)
+	op.On("--trace NAMES", "Set the trace to one or more of grid, allocation", &configuration.Trace)
 	op.On("--verbose", "Put more debugging information into the protocol file", &configuration.Verbose)
 	op.Command("list-fonts", "List installed fonts")
 	op.Command("clean", "Remove auxiliary and protocol files")
@@ -295,8 +301,13 @@ func dothings() error {
 			return err
 		}
 
-		core.InitDirs(configuration.Basedir)
+		core.InitDirs(configuration.basedir)
 		core.AddDir(currentDir)
+		if luafile := configuration.Filter; luafile != "" {
+			if err = runLuaScript(luafile); err != nil {
+				return err
+			}
+		}
 		var layoutpath, datapath string
 		var lr, dr io.ReadCloser
 		if layoutpath, err = core.FindFile(configuration.Layout); err != nil {
@@ -338,7 +349,6 @@ func dothings() error {
 		}
 
 		if fn := dumpOutputFileName; fn != "" {
-			fmt.Println("****dumping ", fn)
 			w, err := os.Create(fn)
 			if err != nil {
 				return err
