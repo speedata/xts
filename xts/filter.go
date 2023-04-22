@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 
 	"github.com/mitchellh/mapstructure"
+	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/xts/core"
 	"github.com/speedata/xts/xts/luacsv"
 	"github.com/speedata/xts/xts/luaxlsx"
@@ -185,12 +186,10 @@ func runtimeLoader(l *lua.LState) int {
 
 // set projectdir and variables table
 func fillRuntimeModule(mod lua.LValue) {
-	lvars := l.NewTable()
-	// for k, v := range variables {
-	// 	lvars.RawSetString(k, lua.LString(v))
-	// }
-	l.SetField(mod, "variables", lvars)
+	l.SetField(mod, "variables", getVariablesTable((l)))
 	l.SetField(mod, "options", getOptionsTable((l)))
+	l.SetField(mod, "log", getLogTable((l)))
+
 	wd, _ := os.Getwd()
 	l.SetField(mod, "projectdir", lua.LString(wd))
 }
@@ -202,6 +201,28 @@ func getOptionsTable(l *lua.LState) *lua.LTable {
 	l.SetField(mt, "__newindex", l.NewFunction(newIndexOptions))
 	l.SetMetatable(options, mt)
 	return options
+}
+
+func getVariablesTable(l *lua.LState) *lua.LTable {
+	variables := l.NewTable()
+	mt := l.NewTable()
+	l.SetField(mt, "__index", l.NewFunction(indexVariables))
+	l.SetField(mt, "__newindex", l.NewFunction(newIndexVariables))
+	l.SetMetatable(variables, mt)
+	return variables
+}
+
+func getLogTable(l *lua.LState) *lua.LTable {
+	logging := l.NewTable()
+	mt := l.NewTable()
+	l.SetFuncs(logging, map[string]lua.LGFunction{
+		"debug": debugLog,
+		"info":  infoLog,
+		"warn":  warnLog,
+		"error": errorLog,
+	}, nil)
+	l.SetMetatable(logging, mt)
+	return logging
 }
 
 // Set string
@@ -245,6 +266,54 @@ func indexOptions(l *lua.LState) int {
 	optionName := l.CheckString(2)
 	l.Push(lua.LString(fmt.Sprintf("%s", options[optionName])))
 	return 1
+}
+
+func newIndexVariables(l *lua.LState) int {
+	numberArguments := l.GetTop()
+	if numberArguments < 3 {
+		l.Push(lua.LNil)
+		return 1
+	}
+	// 1: tbl
+	// 2: key
+	// 3: value
+	variableName := l.CheckString(2)
+	value := l.CheckString(3)
+	configuration.VariablesMap[variableName] = value
+	return 0
+}
+
+func indexVariables(l *lua.LState) int {
+	numberArguments := l.GetTop()
+	if numberArguments < 2 {
+		l.Push(lua.LNil)
+		return 1
+	}
+	// 1: tbl
+	// 2: key
+	variableName := l.CheckString(2)
+	l.Push(lua.LString(fmt.Sprintf("%s", configuration.VariablesMap[variableName])))
+	return 1
+}
+
+func debugLog(l *lua.LState) int {
+	bag.Logger.Debug(l.CheckString(1))
+	return 0
+}
+
+func infoLog(l *lua.LState) int {
+	bag.Logger.Info(l.CheckString(1))
+	return 0
+}
+
+func warnLog(l *lua.LState) int {
+	bag.Logger.Warn(l.CheckString(1))
+	return 0
+}
+
+func errorLog(l *lua.LState) int {
+	bag.Logger.Error(l.CheckString(1))
+	return 0
 }
 
 // When runtime.finalizer is set, call that function after

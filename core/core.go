@@ -119,6 +119,7 @@ type XTSConfig struct {
 	OutFilename string
 	FindFile    func(string) (string, error)
 	DumpFile    io.Writer
+	Variables   map[string]any
 }
 
 // RunXTS is the entry point
@@ -155,6 +156,9 @@ func RunXTS(cfg *XTSConfig) error {
 	// document related information in the layout functions
 	d.data.Ctx.Store = map[any]any{
 		"xd": d,
+	}
+	for k, v := range cfg.Variables {
+		d.data.SetVariable(k, xpath.Sequence{v})
 	}
 	cfg.Datafile.Close()
 

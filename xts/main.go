@@ -22,31 +22,34 @@ import (
 
 var (
 	configuration = &config{
-		Data:        "data.xml",
-		Dummy:       false,
-		Jobname:     "publisher",
-		Layout:      "layout.xml",
-		LogLevel:    "info",
-		Systemfonts: false,
-		Verbose:     false,
+		Data:         "data.xml",
+		Dummy:        false,
+		Jobname:      "publisher",
+		Layout:       "layout.xml",
+		LogLevel:     "info",
+		Systemfonts:  false,
+		Verbose:      false,
+		VariablesMap: make(map[string]any),
 	}
 	configfilename string = "publisher.cfg"
 )
 
 // config holds global configuration that is not document dependant.
 type config struct {
-	basedir     string
-	libdir      string
-	Data        string   `mapstructure:"data"`
-	Dummy       bool     `mapstructure:"dummy"`
-	Jobname     string   `mapstructure:"jobname"`
-	Layout      string   `mapstructure:"layout"`
-	LogLevel    string   `mapstructure:"loglevel"`
-	Filter      string   `mapstructure:"filter"`
-	Quiet       bool     `mapstructure:"quiet"`
-	Systemfonts bool     `mapstructure:"systemfonts"`
-	Verbose     bool     `mapstructure:"verbose"`
-	Trace       []string `mapstructure:"trace"`
+	basedir      string
+	libdir       string
+	Data         string         `mapstructure:"data"`
+	Dummy        bool           `mapstructure:"dummy"`
+	Jobname      string         `mapstructure:"jobname"`
+	Layout       string         `mapstructure:"layout"`
+	LogLevel     string         `mapstructure:"loglevel"`
+	Filter       string         `mapstructure:"filter"`
+	Quiet        bool           `mapstructure:"quiet"`
+	Systemfonts  bool           `mapstructure:"systemfonts"`
+	Verbose      bool           `mapstructure:"verbose"`
+	Trace        []string       `mapstructure:"trace"`
+	Variables    []string       `mapstructure:"-" toml:"-"`
+	VariablesMap map[string]any `mapstructure:"-" toml:"variables"`
 }
 
 // Create a new logger instance which logs info to stdout and perhaps more to
@@ -230,6 +233,7 @@ func dothings() error {
 	op.On("--systemfonts", "Use system fonts", &configuration.Systemfonts)
 	op.On("--trace NAMES", "Set the trace to one or more of grid, allocation", &configuration.Trace)
 	op.On("--verbose", "Put more debugging information into the protocol file", &configuration.Verbose)
+	op.On("-v", "--var=VALUE", "Set a variable for the publishing run", &configuration.Variables)
 	op.Command("list-fonts", "List installed fonts")
 	op.Command("clean", "Remove auxiliary and protocol files")
 	op.Command("new", "Create simple layout and data file to start. Provide optional directory.")
@@ -243,8 +247,20 @@ func dothings() error {
 	}
 	if data, err := os.ReadFile(configfilename); err == nil {
 		if err = toml.Unmarshal(data, configuration); err != nil {
-			fmt.Println(err.(*toml.DecodeError).String())
+			switch t := err.(type) {
+			case *toml.DecodeError:
+				fmt.Println(t.String())
+			default:
+				return err
+			}
 			return err
+		}
+	}
+
+	for _, vars := range configuration.Variables {
+		kv := strings.Split(vars, "=")
+		if len(kv) == 2 {
+			configuration.VariablesMap[kv[0]] = kv[1]
 		}
 	}
 
@@ -346,6 +362,7 @@ func dothings() error {
 			Datafile:    dr,
 			OutFilename: configuration.Jobname + ".pdf",
 			FindFile:    core.FindFile,
+			Variables:   configuration.VariablesMap,
 		}
 
 		if fn := dumpOutputFileName; fn != "" {

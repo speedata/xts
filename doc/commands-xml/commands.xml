@@ -24,6 +24,7 @@
     <optional><cmd name="DefineMasterpage"/></optional>
     <optional><cmd name="DefineTextformat"/></optional>
     <optional><cmd name="LoadFontfile"/></optional>
+    <optional><cmd name="Message"/></optional>
     <optional><cmd name="Options"/></optional>
     <optional><cmd name="PDFOptions"/></optional>
     <optional><cmd name="Pageformat"/></optional>
