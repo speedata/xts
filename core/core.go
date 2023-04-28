@@ -80,7 +80,7 @@ func newXTSDocument() *xtsDocument {
 		store:             make(map[any]any),
 		textformats:       make(map[string]textformat),
 		marker:            make(mapmarker),
-		jobname:           "publisher",
+		jobname:           "xts",
 	}
 	return xd
 }
@@ -115,9 +115,10 @@ func (xd *xtsDocument) setupPage() {
 type XTSConfig struct {
 	Layoutfile  io.ReadCloser
 	Datafile    io.ReadCloser
+	FindFile    func(string) (string, error)
+	Mode        []string
 	Outfile     io.WriteCloser
 	OutFilename string
-	FindFile    func(string) (string, error)
 	DumpFile    io.Writer
 	Variables   map[string]any
 }

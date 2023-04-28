@@ -80,6 +80,7 @@ func init() {
 		"Td":               cmdTd,
 		"Trace":            cmdTrace,
 		"Tr":               cmdTr,
+		"U":                cmdU,
 		"Value":            cmdValue,
 	}
 }
@@ -147,7 +148,7 @@ func cmdAction(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 			dest.Attributes = node.H{
 				"page": xd.currentPage,
 			}
-			dest.Callback = func(n node.Node) string {
+			dest.ShipoutCallback = func(n node.Node) string {
 				startStop := n.(*node.StartStop)
 				cp := startStop.Attributes["page"].(*page)
 				m.pagenumber = cp.pagenumber
@@ -274,7 +275,7 @@ func cmdBookmark(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, err
 
 	// this callback turns the dest object into an outline object by adding the
 	// dest to the Outlines slice of the PDFWriter.
-	dest.Callback = func(n node.Node) string {
+	dest.ShipoutCallback = func(n node.Node) string {
 		startStop := n.(*node.StartStop)
 		num := startStop.Value.(int)
 		destObj := xd.document.Doc.GetNumDest(num)
@@ -2018,6 +2019,19 @@ func cmdTrace(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	}
 
 	return nil, nil
+}
+
+func cmdU(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	seq, err := dispatch(xd, layoutelt, xd.data)
+
+	te := &frontend.Text{
+		Settings: frontend.TypesettingSettings{
+			frontend.SettingTextDecorationLine: frontend.TextDecorationUnderline,
+		},
+	}
+	getTextvalues(te, seq, "cmdUnderline", layoutelt.Line)
+
+	return xpath.Sequence{te}, err
 }
 
 func cmdValue(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {

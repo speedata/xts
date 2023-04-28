@@ -24,14 +24,14 @@ var (
 	configuration = &config{
 		Data:         "data.xml",
 		Dummy:        false,
-		Jobname:      "publisher",
+		Jobname:      "xts",
 		Layout:       "layout.xml",
 		LogLevel:     "info",
 		Systemfonts:  false,
 		Verbose:      false,
 		VariablesMap: make(map[string]any),
 	}
-	configfilename string = "publisher.cfg"
+	configfilename string = "xts.cfg"
 )
 
 // config holds global configuration that is not document dependant.
@@ -40,10 +40,11 @@ type config struct {
 	libdir       string
 	Data         string         `mapstructure:"data"`
 	Dummy        bool           `mapstructure:"dummy"`
+	Filter       string         `mapstructure:"filter"`
 	Jobname      string         `mapstructure:"jobname"`
 	Layout       string         `mapstructure:"layout"`
 	LogLevel     string         `mapstructure:"loglevel"`
-	Filter       string         `mapstructure:"filter"`
+	Mode         []string       `mapstructure:"mode"`
 	Quiet        bool           `mapstructure:"quiet"`
 	Systemfonts  bool           `mapstructure:"systemfonts"`
 	Verbose      bool           `mapstructure:"verbose"`
@@ -219,21 +220,23 @@ func dothings() error {
 		return err
 	}
 	var dumpOutputFileName string
+	cmdline := make(map[string]string)
 
 	op := optionparser.NewOptionParser()
-	op.On("-c NAME", "--config", "Read the config file with the given NAME. Default: 'publisher.cfg'", &configfilename)
-	op.On("--data NAME", "Name of the data file. Defaults to 'data.xml'", &configuration.Data)
-	op.On("--dummy", "Don't read a data file, use '<data />' as input", &configuration.Dummy)
+	op.On("-c NAME", "--config", "Read the config file with the given NAME. Default: 'xts.cfg'", &configfilename)
+	op.On("--data NAME", "Name of the data file. Defaults to 'data.xml'", cmdline)
+	op.On("--dummy", "Don't read a data file, use '<data />' as input", cmdline)
 	op.On("--dumpoutput FILENAME", "Complete XML dump of generated PDF file", &dumpOutputFileName)
-	op.On("--filter NAME", "Run Lua process before the publishing run", &configuration.Filter)
-	op.On("--jobname NAME", "The name of the resulting PDF file (without extension), default is 'publisher'", &configuration.Jobname)
-	op.On("--layout NAME", "Name of the layout file. Defaults to 'layout.xml'", &configuration.Layout)
-	op.On("--loglevel LVL", "Set the log level for the console to one of debug, info, warn, error", &configuration.LogLevel)
-	op.On("--quiet", "Run XTS in quiet mode", &configuration.Quiet)
-	op.On("--systemfonts", "Use system fonts", &configuration.Systemfonts)
-	op.On("--trace NAMES", "Set the trace to one or more of grid, allocation", &configuration.Trace)
-	op.On("--verbose", "Put more debugging information into the protocol file", &configuration.Verbose)
-	op.On("-v", "--var=VALUE", "Set a variable for the publishing run", &configuration.Variables)
+	op.On("--filter NAME", "Run Lua process before the publishing run", cmdline)
+	op.On("--jobname NAME", "The name of the resulting PDF file (without extension), default is 'xts'", cmdline)
+	op.On("--layout NAME", "Name of the layout file. Defaults to 'layout.xml'", cmdline)
+	op.On("--loglevel LVL", "Set the log level for the console to one of debug, info, warn, error", cmdline)
+	op.On("--mode NAME", "Set mode. Multiple modes given in a comma separated list.", cmdline)
+	op.On("--quiet", "Run XTS in quiet mode", cmdline)
+	op.On("--systemfonts", "Use system fonts", cmdline)
+	op.On("--trace NAMES", "Set the trace to one or more of grid, allocation", cmdline)
+	op.On("--verbose", "Put more debugging information into the protocol file", cmdline)
+	op.On("-v", "--var=VALUE", "Set a variable for the publishing run", cmdline)
 	op.Command("list-fonts", "List installed fonts")
 	op.Command("clean", "Remove auxiliary and protocol files")
 	op.Command("new", "Create simple layout and data file to start. Provide optional directory.")
@@ -245,6 +248,7 @@ func dothings() error {
 		fmt.Println()
 		return err
 	}
+	var configFileRead []string
 	if data, err := os.ReadFile(configfilename); err == nil {
 		if err = toml.Unmarshal(data, configuration); err != nil {
 			switch t := err.(type) {
@@ -254,6 +258,42 @@ func dothings() error {
 				return err
 			}
 			return err
+		}
+		configFileRead = append(configFileRead, configfilename)
+	}
+	for k, v := range cmdline {
+		switch k {
+		case "data":
+			configuration.Data = v
+		case "dummy":
+			configuration.Dummy = (v == "true")
+		case "filter":
+			configuration.Filter = v
+		case "jobname":
+			configuration.Jobname = v
+		case "layout":
+			configuration.Layout = v
+		case "loglevel":
+			configuration.LogLevel = v
+		case "mode":
+			configuration.Mode = strings.Split(v, ",")
+		case "quiet":
+			configuration.Quiet = (v == "true")
+		case "systemfonts":
+			configuration.Systemfonts = (v == "true")
+		case "trace":
+			configuration.Trace = strings.Split(v, ",")
+		case "verbose":
+			configuration.Verbose = (v == "true")
+		case "var":
+			for _, assignment := range strings.Split(v, ",") {
+				v1 := strings.Split(assignment, "=")
+				if len(v1) == 2 {
+					configuration.VariablesMap[v1[0]] = v1[1]
+				}
+			}
+		default:
+			return fmt.Errorf("could not handle configuration %s", k)
 		}
 	}
 
@@ -316,7 +356,9 @@ func dothings() error {
 		if bag.Logger, err = newZapLogger(); err != nil {
 			return err
 		}
-
+		for _, cfg := range configFileRead {
+			bag.Logger.Infof("Use configuration file %s", cfg)
+		}
 		core.InitDirs(configuration.basedir)
 		core.AddDir(currentDir)
 		if luafile := configuration.Filter; luafile != "" {
@@ -363,6 +405,7 @@ func dothings() error {
 			OutFilename: configuration.Jobname + ".pdf",
 			FindFile:    core.FindFile,
 			Variables:   configuration.VariablesMap,
+			Mode:        configuration.Mode,
 		}
 
 		if fn := dumpOutputFileName; fn != "" {

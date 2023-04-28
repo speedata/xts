@@ -18,6 +18,7 @@ func init() {
 	goxpath.RegisterFunction(&goxpath.Function{Name: "group-height", Namespace: fnNS, F: fnGroupheight, MinArg: 1, MaxArg: 2})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "group-width", Namespace: fnNS, F: fnGroupwidth, MinArg: 1, MaxArg: 2})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "last-page-number", Namespace: fnNS, F: fnLastPagenumber, MinArg: 0, MaxArg: 0})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "mode", Namespace: fnNS, F: fnMode, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "number-of-columns", Namespace: fnNS, F: fnNumberOfColumns, MinArg: 0, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "number-of-rows", Namespace: fnNS, F: fnNumberOfRows, MinArg: 0, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "odd", Namespace: fnNS, F: fnOdd, MinArg: 1, MaxArg: 1})
@@ -72,6 +73,18 @@ func fnLastPagenumber(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Se
 		return goxpath.Sequence{a.LastPage}, nil
 	}
 	return goxpath.Sequence{0}, nil
+}
+
+func fnMode(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	xd := ctx.Store["xd"].(*xtsDocument)
+	findMode := args[0].Stringvalue()
+
+	for _, mode := range xd.cfg.Mode {
+		if mode == findMode {
+			return goxpath.Sequence{true}, nil
+		}
+	}
+	return goxpath.Sequence{false}, nil
 }
 
 func fnNumberOfColumns(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {

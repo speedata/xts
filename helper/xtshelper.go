@@ -20,7 +20,7 @@ func main() {
 
 	op := optionparser.NewOptionParser()
 	op.Command("genschema", "Generate schema (in language de, en and schema xsd and rng)")
-	op.Command("doc", "Generate speedata Publisher documentation (standalone)")
+	op.Command("doc", "Generate xts documentation (standalone)")
 	err := op.Parse()
 	if err != nil {
 		log.Fatal(err)
