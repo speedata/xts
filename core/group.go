@@ -10,6 +10,10 @@ type group struct {
 
 func (xd *xtsDocument) newGroup(groupname string) *group {
 	g := newGrid(xd)
+	g.areas[pageAreaName] = &area{
+		name:  pageAreaName,
+		frame: []*gridRect{{1, 1, coord(g.nx), coord(g.ny), 1, 1}},
+	}
 	g.inGroup = true
 	gr := group{
 		name: groupname,
