@@ -14,6 +14,35 @@ import (
 	xpath "github.com/speedata/goxpath"
 )
 
+// A seqfunc is used to defer evaluation of SetVariable
+type seqfunc func() (xpath.Sequence, error)
+
+// The next two functions store the contents of a SetVariable selection (either
+// with the attribute select or the body of the SetVariable element) and return
+// a function that evaluate with the context that is valid during the creation
+// time.
+func returnEvalSelectLater(selection string, xd *xtsDocument) seqfunc {
+	ctx := xpath.CopyContext(xd.data.Ctx)
+	return func() (xpath.Sequence, error) {
+		oldContext := xpath.CopyContext(xd.data.Ctx)
+		xd.data.Ctx = ctx
+		eval, err := xd.data.Evaluate(selection)
+		xd.data.Ctx = oldContext
+		return eval, err
+	}
+}
+
+func returnEvalBodyLater(layoutelt *goxml.Element, xd *xtsDocument) seqfunc {
+	ctx := xpath.CopyContext(xd.data.Ctx)
+	return func() (xpath.Sequence, error) {
+		oldContext := xpath.CopyContext(xd.data.Ctx)
+		xd.data.Ctx = ctx
+		eval, err := dispatch(xd, layoutelt, xd.data)
+		xd.data.Ctx = oldContext
+		return eval, err
+	}
+}
+
 // applyLayoutStylesheet creates an HTML fragment, applies CSS and reads the
 // attributes from the fragment. This is handy when styling layout elements with
 // CSS.
@@ -85,10 +114,10 @@ func (xd *xtsDocument) getFontSizeLeading(size string) (bag.ScaledPoint, bag.Sca
 
 // Get the values from the child elements of B, Paragraph and its ilk and fill
 // the provided Text struct to get a recursive data structure.
-func getTextvalues(te *frontend.Text, seq xpath.Sequence, cmdname string, line int) {
+func getTextvalues(te *frontend.Text, seq xpath.Sequence, cmdname string, line int) error {
 	if len(seq) == 0 {
 		te.Items = append(te.Items, "\u200B")
-		return
+		return nil
 	}
 	for _, itm := range seq {
 		switch t := itm.(type) {
@@ -118,6 +147,7 @@ func getTextvalues(te *frontend.Text, seq xpath.Sequence, cmdname string, line i
 			bag.Logger.DPanicf("%s (line %d): unknown type %T (getTextvalues)", cmdname, line, t)
 		}
 	}
+	return nil
 }
 
 func getStructTag(f reflect.StructField, tagName string) string {
@@ -390,10 +420,18 @@ func (xd *xtsDocument) getAttributeHeight(name string, element *goxml.Element, m
 // evaluateXPath runs an XPath expression. It saves and restores the current
 // context.
 func evaluateXPath(xd *xtsDocument, namespaces map[string]string, xpath string) (xpath.Sequence, error) {
-	oldContext := xd.data.Ctx.GetContext()
+	oldContext := xd.data.Ctx.GetContextSequence()
 	xd.data.Ctx.Namespaces = namespaces
 	seq, err := xd.data.Evaluate(xpath)
-	xd.data.Ctx.SetContext(oldContext)
+	for _, itm := range seq {
+		if f, ok := itm.(seqfunc); ok {
+			// we assume that f() re-sets the old context
+			seq, err = f()
+			return seq, err
+		}
+	}
+
+	xd.data.Ctx.SetContextSequence(oldContext)
 	return seq, err
 }
 

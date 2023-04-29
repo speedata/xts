@@ -448,6 +448,11 @@
   <definelist name="languagesshortcodes">--|bg|ca|cs|cy|da|de|el|en|en_GB|en_US|eo|es|et|eu|fi|fr|ga|gl|grc|gu|hi|hr|hu|hy|id|is|it|kn|ku|lt|lv|ml|nb|nl|nn|pl|pt|ro|ru|sc|sk|sl|sr|sv|tr|uk|zh</definelist>
 
 
+  <!--
+      ****************************************************************************************
+      * A
+      ****************************************************************************************
+  -->
   <command en="A">
     <description xml:lang="en">
       <para>Insert hyperlink to a URL.</para>
@@ -592,6 +597,11 @@
 
 
 
+  <!--
+      ****************************************************************************************
+      * AtPageCreation
+      ****************************************************************************************
+  -->
   <command en="AtPageCreation">
     <description xml:lang="en">
       <para>The contents of the element <cmd name="AtPageCreation"/> is executed the first time the page is accessed. This is used in <cmd name="DefineMasterpage"/>.</para>
@@ -629,6 +639,13 @@
 </AtPageCreation>]]></listing>
     </example>
   </command>
+
+
+  <!--
+      ****************************************************************************************
+      * AtPageShipout
+      ****************************************************************************************
+  -->
   <command en="AtPageShipout">
     <description xml:lang="en">
       <para>The enclosed instructions will be executed when the page is placed into the PDF file. Used in <cmd name="DefineMasterpage"/>.</para>
@@ -666,6 +683,11 @@
     </example>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * Attribute
+      ****************************************************************************************
+  -->
   <command en="Attribute">
     <description xml:lang="en">
       <para>Create an attribute for the <cmd name="Element"/> data structure that can be saved to the hard drive with <cmd name="SaveDataset"/>.</para>
@@ -709,6 +731,11 @@
     </example>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * B
+      ****************************************************************************************
+  -->
   <command en="B">
     <description xml:lang="en">
       <para>Switch to font weight “bold”</para>
@@ -984,6 +1011,11 @@
     </example>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * Bookmark
+      ****************************************************************************************
+  -->
   <command en="Bookmark">
     <description xml:lang="en">
       <para>Create a bookmark for the PDF viewer (e.g. Adobe Reader). When the user clicks on a bookmark, the PDF viewer <quote>jumps</quote> to that place in the document.</para>
@@ -1042,6 +1074,11 @@
     </example>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * Bold
+      ****************************************************************************************
+  -->
   <command en="Bold">
     <description xml:lang="en">
       <para>Name of the font face that should be used when switching to “bold”.</para>
@@ -1088,6 +1125,11 @@
     </example>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * BoldItalic
+      ****************************************************************************************
+  -->
   <command en="BoldItalic">
     <description xml:lang="en">
       <para>Name of the font face that should be used when switching to “bold italic”. </para>
@@ -1135,6 +1177,11 @@
     </example>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * Box
+      ****************************************************************************************
+  -->
   <command en="Box" css="box">
     <description xml:lang="en">
       <para>Create a rectangular colored area. The area must fit the grid cells.</para>
@@ -1203,6 +1250,11 @@
     </example>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * Case
+      ****************************************************************************************
+  -->
   <command en="Case">
     <description xml:lang="en">
       <para>Part of a <cmd name="Switch"/> construct. All cases up to the first case which evaluates to “true” will be executed. If no cases match and there is a <cmd name="Otherwise"/>, this will be executed instead.</para>
@@ -1231,6 +1283,11 @@
     </example>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * Circle
+      ****************************************************************************************
+  -->
   <command en="Circle" css="circle">
     <description xml:lang="en">
       <para>Create a circle or ellipse.</para>
@@ -1332,6 +1389,11 @@
   </command>
 
 
+  <!--
+      ****************************************************************************************
+      * ClearPage
+      ****************************************************************************************
+  -->
   <command en="ClearPage">
     <description xml:lang="en">
       <para>Finishes the current page. </para>
@@ -1378,7 +1440,11 @@
     </example>
   </command>
 
-
+  <!--
+      ****************************************************************************************
+      * Column
+      ****************************************************************************************
+  -->
   <command en="Column">
     <description xml:lang="en">
       <para>Set the properties of a column in the table.</para>
@@ -1492,6 +1558,11 @@
   </command>
 
 
+  <!--
+      ****************************************************************************************
+      * Columns
+      ****************************************************************************************
+  -->
   <command en="Columns">
     <description xml:lang="en">
       <para>Set the widths and other properties of the columns in a table.</para>
@@ -1549,7 +1620,11 @@
     </example>
   </command>
 
-
+  <!--
+      ****************************************************************************************
+      * Contents
+      ****************************************************************************************
+  -->
   <command en="Contents">
     <description xml:lang="en">
       <para>Marks the contents of a <cmd name="Group"/>, a virtual area.</para>
@@ -1570,6 +1645,11 @@
     </example>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * Copy-of
+      ****************************************************************************************
+  -->
   <command en="Copy-of">
     <description xml:lang="en">
       <para>Replace this element by the copy of the selection as an element structure. You can use it to construct more complex data structures.</para>
@@ -1633,6 +1713,11 @@
     </example>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * DefineColor
+      ****************************************************************************************
+  -->
   <command en="DefineColor">
     <description xml:lang="en">
       <para>Colors defined with DefineColors can be referenced later by their name.</para>
@@ -1815,6 +1900,11 @@
       <para>Die vordefinierten Farben sind <tt>aliceblue</tt>, <tt>black</tt>, <tt>orange</tt>, <tt>rebeccapurple</tt>, <tt>antiquewhite</tt>, <tt>aqua</tt>, <tt>aquamarine</tt>, <tt>azure</tt>, <tt>beige</tt>, <tt>bisque</tt>, <tt>blanchedalmond</tt>, <tt>blue</tt>, <tt>blueviolet</tt>, <tt>brown</tt>, <tt>burlywood</tt>, <tt>cadetblue</tt>, <tt>chartreuse</tt>, <tt>chocolate</tt>, <tt>coral</tt>, <tt>cornflowerblue</tt>, <tt>cornsilk</tt>, <tt>crimson</tt>, <tt>darkblue</tt>, <tt>darkcyan</tt>, <tt>darkgoldenrod</tt>, <tt>darkgray</tt>, <tt>darkgreen</tt>, <tt>darkgrey</tt>, <tt>darkkhaki</tt>, <tt>darkmagenta</tt>, <tt>darkolivegreen</tt>, <tt>darkorange</tt>, <tt>darkorchid</tt>, <tt>darkred</tt>, <tt>darksalmon</tt>, <tt>darkseagreen</tt>, <tt>darkslateblue</tt>, <tt>darkslategray</tt>, <tt>darkslategrey</tt>, <tt>darkturquoise</tt>, <tt>darkviolet</tt>, <tt>deeppink</tt>, <tt>deepskyblue</tt>, <tt>dimgray</tt>, <tt>dimgrey</tt>, <tt>dodgerblue</tt>, <tt>firebrick</tt>, <tt>floralwhite</tt>, <tt>forestgreen</tt>, <tt>fuchsia</tt>, <tt>gainsboro</tt>, <tt>ghostwhite</tt>, <tt>gold</tt>, <tt>goldenrod</tt>, <tt>gray</tt>, <tt>green</tt>, <tt>greenyellow</tt>, <tt>grey</tt>, <tt>honeydew</tt>, <tt>hotpink</tt>, <tt>indianred</tt>, <tt>indigo</tt>, <tt>ivory</tt>, <tt>khaki</tt>, <tt>lavender</tt>, <tt>lavenderblush</tt>, <tt>lawngreen</tt>, <tt>lemonchiffon</tt>, <tt>lightblue</tt>, <tt>lightcoral</tt>, <tt>lightcyan</tt>, <tt>lightgoldenrodyellow</tt>, <tt>lightgray</tt>, <tt>lightgreen</tt>, <tt>lightgrey</tt>, <tt>lightpink</tt>, <tt>lightsalmon</tt>, <tt>lightseagreen</tt>, <tt>lightskyblue</tt>, <tt>lightslategray</tt>, <tt>lightslategrey</tt>, <tt>lightsteelblue</tt>, <tt>lightyellow</tt>, <tt>lime</tt>, <tt>limegreen</tt>, <tt>linen</tt>, <tt>maroon</tt>, <tt>mediumaquamarine</tt>, <tt>mediumblue</tt>, <tt>mediumorchid</tt>, <tt>mediumpurple</tt>, <tt>mediumseagreen</tt>, <tt>mediumslateblue</tt>, <tt>mediumspringgreen</tt>, <tt>mediumturquoise</tt>, <tt>mediumvioletred</tt>, <tt>midnightblue</tt>, <tt>mintcream</tt>, <tt>mistyrose</tt>, <tt>moccasin</tt>, <tt>navajowhite</tt>, <tt>navy</tt>, <tt>oldlace</tt>, <tt>olive</tt>, <tt>olivedrab</tt>, <tt>orangered</tt>, <tt>orchid</tt>, <tt>palegoldenrod</tt>, <tt>palegreen</tt>, <tt>paleturquoise</tt>, <tt>palevioletred</tt>, <tt>papayawhip</tt>, <tt>peachpuff</tt>, <tt>peru</tt>, <tt>pink</tt>, <tt>plum</tt>, <tt>powderblue</tt>, <tt>purple</tt>, <tt>red</tt>, <tt>rosybrown</tt>, <tt>royalblue</tt>, <tt>saddlebrown</tt>, <tt>salmon</tt>, <tt>sandybrown</tt>, <tt>seagreen</tt>, <tt>seashell</tt>, <tt>sienna</tt>, <tt>silver</tt>, <tt>skyblue</tt>, <tt>slateblue</tt>, <tt>slategray</tt>, <tt>slategrey</tt>, <tt>snow</tt>, <tt>springgreen</tt>, <tt>steelblue</tt>, <tt>tan</tt>, <tt>teal</tt>, <tt>thistle</tt>, <tt>tomato</tt>, <tt>turquoise</tt>, <tt>violet</tt>, <tt>wheat</tt>, <tt>white</tt>, <tt>whitesmoke</tt>, <tt>yellow</tt> und <tt>yellowgreen</tt>.</para></info>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * DefineFontfamily
+      ****************************************************************************************
+  -->
   <command en="DefineFontfamily">
     <description xml:lang="en">
       <para>Defines a font family consisting of the shapes “regular”, “bold”, “bold italic” and “italic”. To be used in <cmd name="Paragraph"/> and <cmd name="Textblock"/> with the attribute <tt>fontfamily</tt>.</para>
@@ -1876,6 +1966,11 @@
     </example>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * DefineFontsize
+      ****************************************************************************************
+  -->
   <command en="DefineFontsize">
     <description xml:lang="en">
       <para>Set the font size and the leading</para>
@@ -1917,6 +2012,11 @@
   </command>
 
 
+  <!--
+      ****************************************************************************************
+      * DefineMasterpage
+      ****************************************************************************************
+  -->
   <command en="DefineMasterpage">
     <description xml:lang="en">
       <para>Define a master page. A master page is chosen depending on the criterion given with the attribute “test”.</para>
@@ -2014,6 +2114,11 @@
   </command>
 
 
+  <!--
+      ****************************************************************************************
+      * DefineTextformat
+      ****************************************************************************************
+  -->
   <command en="DefineTextformat">
     <description xml:lang="en">
       <para>Define text formatting instructions. A textformat is used to align and indent text.</para>
@@ -2106,6 +2211,11 @@
   </command>
 
 
+  <!--
+      ****************************************************************************************
+      * Element
+      ****************************************************************************************
+  -->
   <command en="Element">
     <description xml:lang="en">
       <para>Create a data structure that can be used to save on the hard-drive between consecutive runs (with <cmd name="SaveDataset"/>).</para>
@@ -2146,6 +2256,11 @@
     </example>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * ForAll
+      ****************************************************************************************
+  -->
   <command en="ForAll">
     <description xml:lang="en">
       <para>Executes the given commands for all elements in the data XML file that match the contents of the attribute <tt>select</tt>.</para>
@@ -2220,6 +2335,11 @@
     </example>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * Group
+      ****************************************************************************************
+  -->
   <command en="Group">
     <description xml:lang="en">
       <para>Create a virtual page that behaves like a real page but is not placed into the PDF.</para>
@@ -2290,6 +2410,11 @@
 
 
 
+  <!--
+      ****************************************************************************************
+      * I
+      ****************************************************************************************
+  -->
   <command en="I">
     <description xml:lang="en">
       <para>Switch to italic text.</para>
@@ -2319,8 +2444,11 @@
   </command>
 
 
-
-
+  <!--
+      ****************************************************************************************
+      * Image
+      ****************************************************************************************
+  -->
   <command en="Image">
     <description xml:lang="en">
       <para>Includes an external Graphic. Allowed graphic formats are PDF (.pdf), PNG (.png) and JPEG (.jpg). See below for a limitation on the number of included PDF files.</para>
@@ -2420,6 +2548,11 @@
     </example>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * Italic
+      ****************************************************************************************
+  -->
   <command en="Italic">
     <description xml:lang="en">
       <para>The font face to be used when the user switches to italic.</para>
@@ -2463,6 +2596,11 @@
     </example>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * LoadDataset
+      ****************************************************************************************
+  -->
   <command en="LoadDataset">
     <description xml:lang="en">
       <para>Load an XML file previously written by <cmd name="SaveDataset"/> (attribute name) or a well formed XML file (attribute href). The regular data processing is interrupted and the contents of the data file is taken as a data source. If the file does not exist, the call to <cmd name="LoadDataset"/> is ignored.</para>
@@ -2507,6 +2645,11 @@
   </command>
 
 
+  <!--
+      ****************************************************************************************
+      * LoadFontfile
+      ****************************************************************************************
+  -->
   <command en="LoadFontfile">
     <description xml:lang="en">
       <para>Load a font file (.otf, .ttf, .pfb) and associate it with an internal name. If a glyph is not found in the font file, an error will be raised (this can be configured via the Options command). You can specify fallbacks as a child element of Loadfontfile.</para>
@@ -2556,6 +2699,11 @@
   </command>
 
 
+  <!--
+      ****************************************************************************************
+      * Loop
+      ****************************************************************************************
+  -->
   <command en="Loop">
     <description xml:lang="en">
       <para>Repeat the contents of this element several times.</para>
@@ -2943,6 +3091,11 @@
 
 
 
+  <!--
+      ****************************************************************************************
+      * NextFRame
+      ****************************************************************************************
+  -->
   <command en="NextFrame">
     <description xml:lang="en">
       <para>Switch to the next free frame of a positioning area.</para>
@@ -3110,6 +3263,11 @@
     </info>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * Otherwise
+      ****************************************************************************************
+  -->
   <command en="Otherwise">
     <description xml:lang="en">
       <para>Default branch of a <cmd name="Switch"/> command.</para>
@@ -3130,6 +3288,11 @@
     </example>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * Pageformat
+      ****************************************************************************************
+  -->
   <command en="Pageformat">
     <description xml:lang="en">
       <para>The size of the PDF pages. Defaults to 210mm width and 297mm height (A4).</para>
@@ -3162,7 +3325,11 @@
     </example>
   </command>
 
-
+  <!--
+      ****************************************************************************************
+      * Paragraph
+      ****************************************************************************************
+  -->
   <command en="Paragraph">
     <description xml:lang="en">
       <para>Insert a paragraph of text. The width of the paragraph is inherited from the surrounding element.</para>
@@ -3233,6 +3400,11 @@
   </command>
 
 
+  <!--
+      ****************************************************************************************
+      * PDFOptions
+      ****************************************************************************************
+  -->
   <command en="PDFOptions">
     <description xml:lang="en">
       <para>Set PDF options</para>
@@ -3290,6 +3462,11 @@
   </command>
 
 
+  <!--
+      ****************************************************************************************
+      * PlaceObject
+      ****************************************************************************************
+  -->
   <command en="PlaceObject">
     <description xml:lang="en">
       <para>Outputs a rectangular object (image, table, box, barcode or textblock).</para>
@@ -3450,6 +3627,11 @@
     </info>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * PositioningArea
+      ****************************************************************************************
+  -->
   <command en="PositioningArea">
     <description xml:lang="en">
       <para>Describes an area which contains one or more frames. Elements can be placed within these frames.</para>
@@ -3499,6 +3681,11 @@
   </command>
 
 
+  <!--
+      ****************************************************************************************
+      * PositioningFrame
+      ****************************************************************************************
+  -->
   <command en="PositioningFrame">
     <description xml:lang="en">
       <para>Defines a rectangular area for objects.</para>
@@ -3556,6 +3743,11 @@
     </example>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * ProcessNode
+      ****************************************************************************************
+  -->
   <command en="ProcessNode">
     <description xml:lang="en">
       <para>Executes all given nodes. The elements, that are to be executed, are given with the attribute <tt>selection</tt>.</para>
@@ -3596,6 +3788,11 @@
     </example>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * Record
+      ****************************************************************************************
+  -->
   <command en="Record">
     <description xml:lang="en">
       <para>Contains the instructions when the publisher processes the element in the data file with the given name. The record matching the root element will be called by the software automatically, all further data handling must be done by the user.</para>
@@ -3703,6 +3900,11 @@
 
 
 
+  <!--
+      ****************************************************************************************
+      * SaveDataset
+      ****************************************************************************************
+  -->
   <command en="SaveDataset">
     <description xml:lang="en">
       <para>Saves an element/attribute structure to be used in the next publisher run. The contents must have a tree structure.</para>
@@ -3795,9 +3997,11 @@
     </example>
   </command>
 
-
-
-
+  <!--
+      ****************************************************************************************
+      * SetGrid
+      ****************************************************************************************
+  -->
   <command en="SetGrid">
     <description xml:lang="en">
       <para>Set size of the grid cells. All objects are placed in the grid.</para>
@@ -3862,10 +4066,11 @@
     </example>
   </command>
 
-
-
-
-
+  <!--
+      ****************************************************************************************
+      * SetVariable
+      ****************************************************************************************
+  -->
   <command en="SetVariable">
     <description xml:lang="en">
       <para>Associates a value with a variable name. The value can be a simple value or a more complex one consisting of several elements.</para>
@@ -3882,13 +4087,29 @@
         </interleave>
       </oneOrMore>
     </childelements>
-    <attribute en="variable" type="text" optional="no">
+    <attribute en="execute" optional="yes">
       <description xml:lang="en">
-        <para>The name of the variable that holds the contents.</para>
+        <para>Execute the contents of setvariable now or execute it on usage.</para>
       </description>
       <description xml:lang="de">
-        <para>Name der Variablen, der etwas zugewiesen werden soll.</para>
+        <para>Führe den Inhalt sofort aus oder später bei der Benutzung.</para>
       </description>
+      <choice en="now">
+        <description xml:lang="en">
+          <para>Execute the contents during SetVariable (default).</para>
+        </description>
+        <description xml:lang="de">
+          <para>Führe den Inhalt sofort aus (Voreinstellung).</para>
+        </description>
+      </choice>
+      <choice en="later">
+        <description xml:lang="en">
+          <para>Execute the contents when evaluated during <cmd name="Copy-of" />. Experimental.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Führe den Inhalt bei der Benutzung von <cmd name="Copy-of" /> aus. Experimentell.</para>
+        </description>
+      </choice>
     </attribute>
     <attribute en="select" type="xpath" optional="yes">
       <description xml:lang="en">
@@ -3921,6 +4142,14 @@
           <para>Zeige keine Informationen (Voreinstellung).</para>
         </description>
       </choice>
+    </attribute>
+    <attribute en="variable" type="text" optional="no">
+      <description xml:lang="en">
+        <para>The name of the variable that holds the contents.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name der Variablen, der etwas zugewiesen werden soll.</para>
+      </description>
     </attribute>
     <remark xml:lang="en"><para>Variables have global scope.</para></remark>
     <remark xml:lang="de"><para>Variablen haben eine globale Sichtbarkeit.</para></remark>
@@ -4007,8 +4236,11 @@
   </command>
 
 
-
-
+  <!--
+      ****************************************************************************************
+      * Span
+      ****************************************************************************************
+  -->
   <command en="Span" css="span">
     <description xml:lang="en">
       <para>Surround text by styling options.</para>
@@ -4077,10 +4309,11 @@
     </example>
   </command>
 
-
-
-
-
+  <!--
+      ****************************************************************************************
+      * Switch
+      ****************************************************************************************
+  -->
   <command en="Switch">
     <description xml:lang="en">
       <para>Create an if-then-else construct. The test attribute of each <cmd name="Case"/> commands is evaluated until it yields true. The contents of the Case gets executed. If no test succeeds, the (optional) <cmd name="Otherwise"/> gets executed.</para>
@@ -4175,6 +4408,11 @@
     </info>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * Stylesheet
+      ****************************************************************************************
+  -->
   <command en="Stylesheet">
     <description xml:lang="en">
       <para>Load a CSS file or define CSS rules</para>
@@ -4254,6 +4492,11 @@
   </command>
 
 
+  <!--
+      ****************************************************************************************
+      * Table
+      ****************************************************************************************
+  -->
   <command en="Table">
     <description xml:lang="en">
       <para>Create a table that is similar to the HTML table model.</para>
@@ -4536,6 +4779,11 @@
     </example>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * Td
+      ****************************************************************************************
+  -->
   <command en="Td" css="td">
     <description xml:lang="en">
       <para>Td wraps a table cell, just like HTML.</para>
@@ -4893,6 +5141,11 @@
   </command>
 
 
+  <!--
+      ****************************************************************************************
+      * Textblock
+      ****************************************************************************************
+  -->
   <command en="Textblock">
     <description xml:lang="en">
       <para>Create a rectangular piece of text.</para>
@@ -4965,8 +5218,11 @@
     </example>
   </command>
 
-
-
+  <!--
+      ****************************************************************************************
+      * Tr
+      ****************************************************************************************
+  -->
   <command en="Tr">
     <description xml:lang="en">
       <para>Tablerow</para>
@@ -5172,7 +5428,11 @@
     </example>
   </command>
 
-
+  <!--
+      ****************************************************************************************
+      * Trace
+      ****************************************************************************************
+  -->
   <command en="Trace">
     <description xml:lang="en">
       <para>Set debugging switches</para>
@@ -5307,6 +5567,11 @@
   </command>
 
 
+  <!--
+      ****************************************************************************************
+      * Value
+      ****************************************************************************************
+  -->
   <command en="Value">
     <description xml:lang="en">
       <para>Contains a text value that is passed to the surrounding element.</para>

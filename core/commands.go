@@ -125,7 +125,7 @@ func cmdA(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 			frontend.SettingHyperlink: hl,
 		},
 	}
-	getTextvalues(te, seq, "cmdA", layoutelt.Line)
+	err = getTextvalues(te, seq, "cmdA", layoutelt.Line)
 
 	return xpath.Sequence{te}, err
 }
@@ -187,13 +187,15 @@ func cmdAttribute(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 
 func cmdB(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	seq, err := dispatch(xd, layoutelt, xd.data)
-
+	if err != nil {
+		return nil, err
+	}
 	te := &frontend.Text{
 		Settings: frontend.TypesettingSettings{
 			frontend.SettingFontWeight: frontend.FontWeight700,
 		},
 	}
-	getTextvalues(te, seq, "cmdBold", layoutelt.Line)
+	err = getTextvalues(te, seq, "cmdBold", layoutelt.Line)
 
 	return xpath.Sequence{te}, err
 }
@@ -731,16 +733,16 @@ func cmdForall(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 		return nil, newTypesettingErrorFromStringf("ForAll (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
 	}
 
-	oldContext := xd.data.Ctx.SetContext(xpath.Sequence{})
+	oldContext := xd.data.Ctx.SetContextSequence(xpath.Sequence{})
 	for i, itm := range eval {
-		xd.data.Ctx.SetContext(xpath.Sequence{itm})
+		xd.data.Ctx.SetContextSequence(xpath.Sequence{itm})
 		xd.data.Ctx.Pos = i + 1
 		eval, err = dispatch(xd, layoutelt, xd.data)
 		if err != nil {
 			return nil, err
 		}
 	}
-	xd.data.Ctx.SetContext(xpath.Sequence{oldContext})
+	xd.data.Ctx.SetContextSequence(xpath.Sequence{oldContext})
 
 	return nil, nil
 }
@@ -767,13 +769,15 @@ func cmdGroup(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 
 func cmdI(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	seq, err := dispatch(xd, layoutelt, xd.data)
-
+	if err != nil {
+		return nil, err
+	}
 	te := &frontend.Text{
 		Settings: frontend.TypesettingSettings{
 			frontend.SettingStyle: frontend.FontStyleItalic,
 		},
 	}
-	getTextvalues(te, seq, "cmdBold", layoutelt.Line)
+	err = getTextvalues(te, seq, "cmdBold", layoutelt.Line)
 
 	return xpath.Sequence{te}, err
 }
@@ -856,7 +860,7 @@ func cmdLoadDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	if err != nil {
 		return nil, err
 	}
-	oldContext := xd.data.Ctx.SetContext(xpath.Sequence{})
+	oldContext := xd.data.Ctx.SetContextSequence(xpath.Sequence{})
 	xd.data.Ctx.Store = map[any]any{
 		"xd": xd,
 	}
@@ -865,7 +869,7 @@ func cmdLoadDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 			_, err = dispatch(xd, rec, xd.data)
 		}
 	}
-	xd.data.Ctx.SetContext(xpath.Sequence{oldContext})
+	xd.data.Ctx.SetContextSequence(xpath.Sequence{oldContext})
 	xd.data = saveData
 
 	return nil, nil
@@ -914,12 +918,12 @@ func cmdProcessNode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		return nil, err
 	}
 
-	oldContext := xd.data.Ctx.SetContext(xpath.Sequence{})
+	oldContext := xd.data.Ctx.SetContextSequence(xpath.Sequence{})
 
 	for i, itm := range eval {
 		xd.data.Ctx.Pos = i + 1
 		if elt, ok := itm.(*goxml.Element); ok {
-			xd.data.Ctx.SetContext(xpath.Sequence{elt})
+			xd.data.Ctx.SetContextSequence(xpath.Sequence{elt})
 			if dd, ok := dataDispatcher[elt.Name]; ok {
 				if rec, ok := dd[attValues.Mode]; ok {
 					_, err = dispatch(xd, rec, xd.data)
@@ -928,7 +932,7 @@ func cmdProcessNode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		}
 	}
 
-	xd.data.Ctx.SetContext(xpath.Sequence{oldContext})
+	xd.data.Ctx.SetContextSequence(xpath.Sequence{oldContext})
 	return nil, nil
 }
 
@@ -1217,8 +1221,8 @@ func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 			bag.Logger.Warnf("text format %q not found", *name)
 		}
 	}
-	getTextvalues(te, seq, "cmdParagraph", layoutelt.Line)
-	return xpath.Sequence{te}, nil
+	err = getTextvalues(te, seq, "cmdParagraph", layoutelt.Line)
+	return xpath.Sequence{te}, err
 }
 
 func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -1242,7 +1246,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	var area *area
 	var ok bool
 	if area, ok = xd.currentGrid.areas[attValues.Area]; !ok {
-		return nil, fmt.Errorf("area %s not found", attValues.Area)
+		return nil, newTypesettingErrorFromStringf(fmt.Sprintf("area %s not found", attValues.Area))
 	}
 
 	pos := positioningUnknown
@@ -1473,10 +1477,22 @@ func cmdSetVariable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	attValues := &struct {
 		Select   *string `sdxml:"noescape"`
 		Variable string  `sdxml:"mustexist"`
+		Execute  *string
 		Trace    bool
 	}{}
 	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
+	}
+
+	if ex := attValues.Execute; ex != nil {
+		if *ex == "later" {
+			if sel := attValues.Select; sel != nil {
+				xd.data.SetVariable(attValues.Variable, xpath.Sequence{returnEvalSelectLater(*sel, xd)})
+			} else {
+				xd.data.SetVariable(attValues.Variable, xpath.Sequence{returnEvalBodyLater(layoutelt, xd)})
+			}
+		}
+		return nil, nil
 	}
 
 	var eval xpath.Sequence
@@ -1517,6 +1533,9 @@ func cmdSpan(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 	}
 
 	seq, err := dispatch(xd, layoutelt, xd.data)
+	if err != nil {
+		return nil, err
+	}
 
 	te := &frontend.Text{
 		Settings: frontend.TypesettingSettings{},
@@ -1532,7 +1551,7 @@ func cmdSpan(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 		te.Settings[frontend.SettingStyle] = frontend.ResolveFontStyle(val)
 	}
 
-	getTextvalues(te, seq, "cmdSpan", layoutelt.Line)
+	err = getTextvalues(te, seq, "cmdSpan", layoutelt.Line)
 
 	return xpath.Sequence{te}, err
 }
@@ -2023,13 +2042,15 @@ func cmdTrace(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 
 func cmdU(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	seq, err := dispatch(xd, layoutelt, xd.data)
-
+	if err != nil {
+		return nil, err
+	}
 	te := &frontend.Text{
 		Settings: frontend.TypesettingSettings{
 			frontend.SettingTextDecorationLine: frontend.TextDecorationUnderline,
 		},
 	}
-	getTextvalues(te, seq, "cmdUnderline", layoutelt.Line)
+	err = getTextvalues(te, seq, "cmdUnderline", layoutelt.Line)
 
 	return xpath.Sequence{te}, err
 }

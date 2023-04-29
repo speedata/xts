@@ -11,7 +11,7 @@ require (
 	github.com/speedata/boxesandglue v0.0.0-20230428124612-ce7d9f69cbd7
 	github.com/speedata/goxlsx v1.0.2
 	github.com/speedata/goxml v0.0.0-20230322084327-216af189a791
-	github.com/speedata/goxpath v0.0.0-20230313154229-641f20471de3
+	github.com/speedata/goxpath v0.0.0-20230429114244-6d151ae32839
 	github.com/speedata/optionparser v1.0.2
 	github.com/speedata/textlayout v0.0.0-20221127101343-91e6153d36c5
 	github.com/yuin/gopher-lua v1.1.0

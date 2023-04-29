@@ -33,8 +33,8 @@ github.com/speedata/goxlsx v1.0.2 h1:hi00xy1EQhqrag4HNIc9hVEtVmTGrh3z9C1AH9ysg74
 github.com/speedata/goxlsx v1.0.2/go.mod h1:7eXkL4ZUZ2uUlnBBAmh0iwOdhOkqqstW/FmkEe2IPMY=
 github.com/speedata/goxml v0.0.0-20230322084327-216af189a791 h1:TuFrswsnJYDeyR47dXhTLzSp3GwvhPRUrRSyEXyxrGg=
 github.com/speedata/goxml v0.0.0-20230322084327-216af189a791/go.mod h1:G++cv0h2rC8ltAhvQmANDgwMbKRd3MetXlF8PLob6dw=
-github.com/speedata/goxpath v0.0.0-20230313154229-641f20471de3 h1:Sm2kb2D6PeYyjRqIfYqpRhfc5KWLrLHiXwoWMQLAoXI=
-github.com/speedata/goxpath v0.0.0-20230313154229-641f20471de3/go.mod h1:/9JLhISqlVrHRfRhf0B6d15a3TV+q4ertfm67S/q9Us=
+github.com/speedata/goxpath v0.0.0-20230429114244-6d151ae32839 h1:RThKljT+XtRorz7A4AuZiYeVm6LIeb6e/Gxx+EflPD8=
+github.com/speedata/goxpath v0.0.0-20230429114244-6d151ae32839/go.mod h1:/9JLhISqlVrHRfRhf0B6d15a3TV+q4ertfm67S/q9Us=
 github.com/speedata/hyphenation v1.0.2 h1:2rDCtAqNfbf+E56SsqbmNApsVx9CH+4fwIh1RZuu3B8=
 github.com/speedata/hyphenation v1.0.2/go.mod h1:vwrKKvBvJWFll0sVZw99hyWS/+r4YlMI7MAYjnje0nM=
 github.com/speedata/optionparser v1.0.2 h1:AzdBomgOBVjH1KyxvoFnEHjiqLch+B1PVxEWYske+aI=
