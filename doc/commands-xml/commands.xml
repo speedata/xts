@@ -3429,6 +3429,134 @@
         <para>Legt die Anwendung des Dokuments fest</para>
       </description>
     </attribute>
+    <attribute en="displaymode" optional="yes">
+      <description xml:lang="en">
+        <para>Select the display mode when opening PDF document (mainly with Acrobat).</para>
+      </description>
+      <description xml:lang="de">
+        <para>Wähle den PDF-Anzeigemodes (vornehmlich beim Adobe Acrobat).</para>
+      </description>
+      <choice en="attachments">
+        <description xml:lang="en">
+          <para>Display the attachment pane.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Zeige die Anhänge.</para>
+        </description>
+      </choice>
+      <choice en="bookmarks">
+        <description xml:lang="en">
+          <para>Display the bookmarks pane (only works if the PDF document contains at least one bookmark).</para>
+        </description>
+        <description xml:lang="de">
+          <para>Zeige die Lesezeichen (sofern das Dokument Lesezeichen enthält).</para>
+        </description>
+      </choice>
+      <choice en="fullscreen">
+        <description xml:lang="en">
+          <para>Open the document in fullscreen mode.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Öffne das Dokument im Vollbildmodus.</para>
+        </description>
+      </choice>
+      <choice en="none">
+        <description xml:lang="en">
+          <para>Do not display a special pane.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Keine besondere Anzeigeart wählen.</para>
+        </description>
+      </choice>
+      <choice en="thumbnails">
+        <description xml:lang="en">
+          <para>Display the thumbnail pane.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Die Vorschaubilder zeigen.</para>
+        </description>
+      </choice>
+    </attribute>
+    <attribute en="duplex" optional="yes">
+      <description xml:lang="en">
+        <para>Set viewer preference to one or two page printing. Default: empty.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Setze PDF Anzeigeprogramm auf einseitigen oder doppelseitigen Druck. Voreinstellung: leer.</para>
+      </description>
+      <choice en="simplex">
+        <description xml:lang="en">
+          <para>One page per sheet</para>
+        </description>
+        <description xml:lang="de">
+          <para>Eine Seite je Blatt</para>
+        </description>
+      </choice>
+      <choice en="duplexflipshortedge">
+        <description xml:lang="en">
+          <para>Two pages per sheet and flip on short edge</para>
+        </description>
+        <description xml:lang="de">
+          <para>Beidseitig und an kurzer Kante umblättern</para>
+        </description>
+      </choice>
+      <choice en="duplexfliplongedge">
+        <description xml:lang="en">
+          <para>Two pages per sheet and flip on long edge</para>
+        </description>
+        <description xml:lang="de">
+          <para>Beidseitig und an langer Kante umblättern</para>
+        </description>
+      </choice>
+    </attribute>
+    <attribute en="picktraybypdfsize" optional="yes">
+      <description xml:lang="en">
+        <para>Activate the check box in the PDF viewer for choosing the paper tray based on the page size.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Auswahlfeld im PDF-Viewer »Papierquelle gemäß PDF-Seitengröße auswählen«.</para>
+      </description>
+      <choice en="yes">
+        <description xml:lang="en">
+          <para>Activate checkbox</para>
+        </description>
+        <description xml:lang="de">
+          <para>Checkbox aktivieren</para>
+        </description>
+      </choice>
+      <choice en="no">
+        <description xml:lang="en">
+          <para>Deactivate checkbox</para>
+        </description>
+        <description xml:lang="de">
+          <para>Checkbox deaktivieren</para>
+        </description>
+      </choice>
+    </attribute>
+    <attribute en="printscaling" optional="yes">
+      <description xml:lang="en">
+        <para>Should the printer scale the pages?</para>
+      </description>
+      <description xml:lang="de">
+        <para>Soll der Drucker die Seiten skalieren?</para>
+      </description>
+      <choice en="appdefault">
+        <description xml:lang="en">
+          <para>Use the default from the PDF viewer</para>
+        </description>
+        <description xml:lang="de">
+          <para>Voreinstellung des PDF-Viewers benutzen</para>
+        </description>
+      </choice>
+      <choice en="none">
+        <description xml:lang="en">
+          <para>No page scaling</para>
+        </description>
+        <description xml:lang="de">
+          <para>Keine Seitenskalierung</para>
+        </description>
+      </choice>
+    </attribute>
     <attribute en="showhyperlinks" optional="yes"  type="boolean">
       <description xml:lang="en">
         <para>Show hyperlinks in Adobe Acrobat and perhaps other PDF viewers.</para>

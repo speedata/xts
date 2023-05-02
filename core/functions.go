@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/goxpath"
 )
 
 const fnNS = "urn:speedata.de/2021/xtsfunctions/en"
 
 func init() {
+	goxpath.RegisterFunction(&goxpath.Function{Name: "aspect-ratio", Namespace: fnNS, F: fnAspectRatio, MinArg: 1, MaxArg: 3})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "current-page", Namespace: fnNS, F: fnCurrentPage, MinArg: 0, MaxArg: 0})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "current-row", Namespace: fnNS, F: fnCurrentRow, MinArg: 0, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "dummytext", Namespace: fnNS, F: fnDummytext, MinArg: 0, MaxArg: 1})
@@ -17,6 +19,8 @@ func init() {
 	goxpath.RegisterFunction(&goxpath.Function{Name: "file-exists", Namespace: fnNS, F: fnFileExists, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "group-height", Namespace: fnNS, F: fnGroupheight, MinArg: 1, MaxArg: 2})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "group-width", Namespace: fnNS, F: fnGroupwidth, MinArg: 1, MaxArg: 2})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "image-height", Namespace: fnNS, F: fnImageHeight, MinArg: 1, MaxArg: 4})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "image-width", Namespace: fnNS, F: fnImageWidth, MinArg: 1, MaxArg: 4})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "last-page-number", Namespace: fnNS, F: fnLastPagenumber, MinArg: 0, MaxArg: 0})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "mode", Namespace: fnNS, F: fnMode, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "number-of-columns", Namespace: fnNS, F: fnNumberOfColumns, MinArg: 0, MaxArg: 1})
@@ -24,6 +28,105 @@ func init() {
 	goxpath.RegisterFunction(&goxpath.Function{Name: "odd", Namespace: fnNS, F: fnOdd, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "page-number", Namespace: fnNS, F: fnPagenumber, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "roman-numeral", Namespace: fnNS, F: fnRomannumeral, MinArg: 1, MaxArg: 1})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "total-pages", Namespace: fnNS, F: fnTotalPages, MinArg: 1, MaxArg: 1})
+}
+
+// args are the arguments from the xpath function, fnname is the function name
+// usd for error messages.
+func getImageFnArguments(args []goxpath.Sequence, fnname string) (filename string, pagenumber int, pdfbox string, unit string, err error) {
+	if len(args) == 0 {
+		err = newTypesettingErrorFromStringf("%s: no filename given", fnname)
+		return
+	}
+	pdfbox = "/MediaBox"
+	pagenumber = 1
+	for i, arg := range args {
+		if len(arg) > 1 {
+			err = newTypesettingErrorFromStringf("%s argument %d: sequence not expected", fnname, i)
+			return
+		}
+		if len(arg) == 0 {
+			continue
+		}
+		if i == 0 {
+			filename = arg.Stringvalue()
+			continue
+		}
+		switch t := arg[0].(type) {
+		case float64:
+			pagenumber = int(t)
+		case string:
+			if unitRE.MatchString(t) {
+				unit = t
+				continue
+			}
+			lcBox := strings.ToLower(t)
+			if lcBox == "mediabox" {
+				pdfbox = "/MediaBox"
+				continue
+			}
+			if lcBox == "cropbox" {
+				pdfbox = "/CropBox"
+				continue
+			}
+			if lcBox == "trimbox" {
+				pdfbox = "/TrimBox"
+				continue
+			}
+			if lcBox == "bleedbox" {
+				pdfbox = "/BleedBox"
+				continue
+			}
+			if lcBox == "artbox" {
+				pdfbox = "/ArtBox"
+				continue
+			}
+			err = newTypesettingErrorFromStringf("%s argument %d: could not parse string %q", fnname, i, t)
+			return
+		default:
+			err = newTypesettingErrorFromStringf("%s argument %d: could not parse %v", fnname, i, t)
+			return
+		}
+	}
+	if filename == "" {
+		err = newTypesettingErrorFromStringf("%s: no filename given", fnname)
+		return
+	}
+	return
+}
+
+func fnAspectRatio(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	xd := ctx.Store["xd"].(*xtsDocument)
+	xd.setupPage()
+
+	fn, pagenum, pdfbox, unit, err := getImageFnArguments(args, "aspect-ratio")
+	if unit != "" {
+		return nil, newTypesettingErrorFromString("You cannot use unit in sd:aspect-ratio()")
+	}
+	var p string
+	if p, err = FindFile(fn); err != nil {
+		return nil, err
+	}
+	imgf, err := xd.document.Doc.LoadImageFile(p)
+	if err != nil {
+		return nil, err
+	}
+	var wd, ht bag.ScaledPoint
+	switch imgf.Format {
+	case "pdf":
+		dimensions, err := imgf.GetPDFBoxDimensions(pagenum, pdfbox)
+		if err != nil {
+			return nil, err
+		}
+		wd = bag.ScaledPointFromFloat(dimensions["w"])
+		ht = bag.ScaledPointFromFloat(dimensions["h"])
+	case "png", "jpeg":
+		wd = bag.ScaledPoint(imgf.W) * bag.Factor
+		ht = bag.ScaledPoint(imgf.H) * bag.Factor
+	default:
+		return nil, newTypesettingErrorFromStringf("sd:aspect-ratio() unknown format for file %s", fn)
+	}
+	return goxpath.Sequence{wd.ToPT() / ht.ToPT()}, nil
 }
 
 func fnCurrentPage(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
@@ -67,6 +170,88 @@ func fnEven(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, er
 	return goxpath.Sequence{nv%2 == 0}, nil
 }
 
+func fnImageHeight(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	xd := ctx.Store["xd"].(*xtsDocument)
+	xd.setupPage()
+	fn, pagenum, pdfbox, unit, err := getImageFnArguments(args, "image-height")
+	if err != nil {
+		return nil, err
+	}
+	var p string
+	if p, err = FindFile(fn); err != nil {
+		return nil, err
+	}
+	imgf, err := xd.document.Doc.LoadImageFile(p)
+	if err != nil {
+		return nil, err
+	}
+	var ht bag.ScaledPoint
+	switch imgf.Format {
+	case "pdf":
+		dimensions, err := imgf.GetPDFBoxDimensions(pagenum, pdfbox)
+		if err != nil {
+			return nil, err
+		}
+		ht = bag.ScaledPointFromFloat(dimensions["h"])
+	case "png", "jpeg":
+		ht = bag.ScaledPoint(imgf.H*96/72) * bag.Factor
+	default:
+		return nil, newTypesettingErrorFromStringf("sd:image-height() unknown format for file %s", fn)
+	}
+
+	switch unit {
+	case "":
+		return goxpath.Sequence{int(xd.currentGrid.heightToRows(ht))}, nil
+	default:
+		res, err := ht.ToUnit(unit)
+		if err != nil {
+			return nil, err
+		}
+		return goxpath.Sequence{res}, nil
+	}
+}
+
+func fnImageWidth(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	xd := ctx.Store["xd"].(*xtsDocument)
+	xd.setupPage()
+	fn, pagenum, pdfbox, unit, err := getImageFnArguments(args, "image-width")
+	if err != nil {
+		return nil, err
+	}
+	var p string
+	if p, err = FindFile(fn); err != nil {
+		return nil, err
+	}
+	imgf, err := xd.document.Doc.LoadImageFile(p)
+	if err != nil {
+		return nil, err
+	}
+	var wd bag.ScaledPoint
+	switch imgf.Format {
+	case "pdf":
+		dimensions, err := imgf.GetPDFBoxDimensions(pagenum, pdfbox)
+		if err != nil {
+			return nil, err
+		}
+		wd = bag.ScaledPointFromFloat(dimensions["w"])
+	case "png", "jpeg":
+		wd = bag.ScaledPoint(imgf.W*96/72) * bag.Factor
+	default:
+		return nil, newTypesettingErrorFromStringf("sd:image-width() unknown format for file %s", fn)
+	}
+
+	switch unit {
+	case "":
+		return goxpath.Sequence{int(xd.currentGrid.widthToColumns(wd))}, nil
+	default:
+		res, err := wd.ToUnit(unit)
+		if err != nil {
+			return nil, err
+		}
+		return goxpath.Sequence{res}, nil
+	}
+}
+
 func fnLastPagenumber(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
 	xd := ctx.Store["xd"].(*xtsDocument)
 	if a := xd.aux; a != nil {
@@ -100,6 +285,21 @@ func fnNumberOfColumns(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.S
 		return nil, fmt.Errorf("area %s unknown", areaname)
 	}
 	return goxpath.Sequence{int(area.frame[area.currentFrame].width)}, nil
+}
+
+func fnTotalPages(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	xd := ctx.Store["xd"].(*xtsDocument)
+	fn := args[0].Stringvalue()
+	fullPath, err := FindFile(fn)
+	if err != nil {
+		return nil, err
+	}
+	imgf, err := xd.document.Doc.LoadImageFile(fullPath)
+	if err != nil {
+		return nil, err
+	}
+
+	return goxpath.Sequence{imgf.NumberOfPages}, nil
 }
 
 func fnNumberOfRows(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {

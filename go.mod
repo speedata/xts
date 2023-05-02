@@ -7,8 +7,8 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pelletier/go-toml/v2 v2.0.7
 	github.com/speedata/barcode v0.0.0-20230307084753-486c4d51cb34
-	github.com/speedata/baseline-pdf v0.0.0-20230328074815-f8700de52bf8
-	github.com/speedata/boxesandglue v0.0.0-20230428124612-ce7d9f69cbd7
+	github.com/speedata/baseline-pdf v0.0.0-20230502183546-13d3b6553f0e
+	github.com/speedata/boxesandglue v0.0.0-20230429141949-1c23679f7e99
 	github.com/speedata/goxlsx v1.0.2
 	github.com/speedata/goxml v0.0.0-20230322084327-216af189a791
 	github.com/speedata/goxpath v0.0.0-20230429114244-6d151ae32839

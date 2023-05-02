@@ -1074,11 +1074,15 @@ func cmdNextFrame(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 func cmdPDFOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
-		ShowHyperlinks *bool
-		Title          *string
-		Author         *string
-		Creator        *string
-		Subject        *string
+		Author            *string
+		Creator           *string
+		DisplayMode       *string
+		Duplex            *string
+		PickTrayByPDFSize *bool
+		PrintScaling      *string
+		ShowHyperlinks    *bool
+		Subject           *string
+		Title             *string
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -1089,6 +1093,45 @@ func cmdPDFOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 	}
 	if attValues.Creator != nil {
 		xd.document.Doc.Creator = *attValues.Creator
+	}
+	if dm := attValues.DisplayMode; dm != nil {
+		switch *dm {
+		case "attachments":
+			xd.document.Doc.ViewerPreferences["PageMode"] = "/UseAttachments"
+		case "bookmarks":
+			xd.document.Doc.ViewerPreferences["PageMode"] = "/UseOutlines"
+		case "fullscreen":
+			xd.document.Doc.ViewerPreferences["PageMode"] = "/FullScreen"
+		case "none":
+			xd.document.Doc.ViewerPreferences["PageMode"] = "/UseNone"
+		case "thumbnails":
+			xd.document.Doc.ViewerPreferences["PageMode"] = "/UseThumbs"
+		}
+	}
+	if dplx := attValues.Duplex; dplx != nil {
+		switch *dplx {
+		case "simplex":
+			xd.document.Doc.ViewerPreferences["Duplex"] = "/Simplex"
+		case "duplexflipshortedge":
+			xd.document.Doc.ViewerPreferences["Duplex"] = "/DuplexFlipShortEdge"
+		case "duplexfliplongedge":
+			xd.document.Doc.ViewerPreferences["Duplex"] = "/DuplexFlipLongEdge"
+		default:
+			return nil, newTypesettingErrorFromStringf("Unknown PDFOptions setting %s", *dplx)
+		}
+	}
+	if attValues.PickTrayByPDFSize != nil {
+		xd.document.Doc.ViewerPreferences["PickTrayByPDFSize"] = fmt.Sprintf("%t", *attValues.PickTrayByPDFSize)
+	}
+	if ps := attValues.PrintScaling; ps != nil {
+		switch *ps {
+		case "appdefault":
+			xd.document.Doc.ViewerPreferences["PrintScaling"] = "/AppDefault"
+		case "none":
+			xd.document.Doc.ViewerPreferences["PrintScaling"] = "/None"
+		default:
+			delete(xd.document.Doc.ViewerPreferences, "PrintScaling")
+		}
 	}
 	if attValues.Title != nil {
 		xd.document.Doc.Title = *attValues.Title
@@ -1202,7 +1245,9 @@ func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	if err != nil {
 		return nil, err
 	}
-
+	if seq == nil {
+		seq = xpath.Sequence{}
+	}
 	te := &frontend.Text{
 		Settings: make(frontend.TypesettingSettings),
 	}
