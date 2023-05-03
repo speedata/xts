@@ -16,6 +16,7 @@ import (
 	"github.com/speedata/boxesandglue/frontend"
 	"github.com/speedata/boxesandglue/frontend/pdfdraw"
 	"github.com/speedata/goxml"
+	"github.com/speedata/goxpath"
 	xpath "github.com/speedata/goxpath"
 	"github.com/speedata/textlayout/harfbuzz"
 )
@@ -25,6 +26,7 @@ type commandFunc func(*xtsDocument, *goxml.Element) (xpath.Sequence, error)
 var (
 	dataDispatcher = make(map[string]map[string]*goxml.Element)
 	dispatchTable  map[string]commandFunc
+	onlyUnitRE     = regexp.MustCompile(`^(sp|mm|cm|in|pt|px|pc|m)$`)
 	unitRE         = regexp.MustCompile(`(.*?)(sp|mm|cm|in|pt|px|pc|m)`)
 	astRE          = regexp.MustCompile(`(\d*)\*`)
 )
@@ -44,7 +46,6 @@ func init() {
 		"Column":           cmdColumn,
 		"Columns":          cmdColumns,
 		"Contents":         cmdContents,
-		"Copy-of":          cmdCopyof,
 		"DefineColor":      cmdDefineColor,
 		"DefineFontfamily": cmdDefineFontfamily,
 		"DefineFontsize":   cmdDefineFontsize,
@@ -52,6 +53,7 @@ func init() {
 		"DefineTextformat": cmdDefineTextformat,
 		"Element":          cmdElement,
 		"ForAll":           cmdForall,
+		"Function":         cmdFunction,
 		"Group":            cmdGroup,
 		"I":                cmdI,
 		"Image":            cmdImage,
@@ -65,6 +67,7 @@ func init() {
 		"Options":          cmdOptions,
 		"Pageformat":       cmdPageformat,
 		"Paragraph":        cmdParagraph,
+		"Param":            ignoreFunction,
 		"PDFOptions":       cmdPDFOptions,
 		"PlaceObject":      cmdPlaceObject,
 		"ProcessNode":      cmdProcessNode,
@@ -83,6 +86,10 @@ func init() {
 		"U":                cmdU,
 		"Value":            cmdValue,
 	}
+}
+
+func ignoreFunction(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	return nil, nil
 }
 
 func dispatch(xd *xtsDocument, layoutelement *goxml.Element, data *xpath.Parser) (xpath.Sequence, error) {
@@ -485,23 +492,6 @@ func cmdContents(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, err
 	return nil, nil
 }
 
-func cmdCopyof(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
-	var err error
-	attValues := &struct {
-		Select string `sdxml:"mustexist"`
-	}{}
-	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
-		return nil, err
-	}
-	var eval xpath.Sequence
-	eval, err = xd.data.Evaluate(attValues.Select)
-	if err != nil {
-		return nil, newTypesettingErrorFromStringf("CopyOf (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
-	}
-
-	return eval, nil
-}
-
 func cmdDefineFontfamily(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
@@ -732,18 +722,67 @@ func cmdForall(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 	if err != nil {
 		return nil, newTypesettingErrorFromStringf("ForAll (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
 	}
+	var ret xpath.Sequence
 
 	oldContext := xd.data.Ctx.SetContextSequence(xpath.Sequence{})
 	for i, itm := range eval {
 		xd.data.Ctx.SetContextSequence(xpath.Sequence{itm})
 		xd.data.Ctx.Pos = i + 1
-		eval, err = dispatch(xd, layoutelt, xd.data)
+		neval, err := dispatch(xd, layoutelt, xd.data)
 		if err != nil {
 			return nil, err
 		}
+		for _, nitm := range neval {
+			ret = append(ret, nitm)
+		}
 	}
 	xd.data.Ctx.SetContextSequence(xpath.Sequence{oldContext})
+	return ret, nil
+}
 
+func cmdFunction(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Name string `sdxml:"mustexist"`
+	}{}
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+
+	params := []string{}
+	for _, cld := range layoutelt.Children() {
+		if cldElt, ok := cld.(*goxml.Element); ok && cldElt.Name == "Param" {
+			paramValues := &struct {
+				Name string `sdxml:"mustexist"`
+			}{}
+			if err = getXMLAttributes(xd, cldElt, paramValues); err != nil {
+				return nil, err
+			}
+			params = append(params, paramValues.Name)
+		}
+	}
+
+	prefixName := strings.Split(attValues.Name, ":")
+	if len(prefixName) != 2 {
+		return nil, newTypesettingErrorFromStringf("Function (line %d): function name needs a namespace prefix", layoutelt.Line)
+	}
+	var ns string
+	var ok bool
+	prefix := prefixName[0]
+	name := prefixName[1]
+	if ns, ok = layoutelt.Namespaces[prefix]; !ok {
+		return nil, newTypesettingErrorFromStringf("Function: unknown name space prefix %s", prefix)
+	}
+	a := func(ctx *xpath.Context, args []xpath.Sequence) (xpath.Sequence, error) {
+		sf := returnEvalBodyLater(layoutelt, xd, ctx)
+		for i := 0; i < len(params); i++ {
+			xd.data.SetVariable(params[i], args[i])
+		}
+		return sf()
+	}
+	minArg := len(params)
+	maxArg := len(params)
+	goxpath.RegisterFunction(&goxpath.Function{Name: name, Namespace: ns, F: a, MinArg: minArg, MaxArg: maxArg})
 	return nil, nil
 }
 
@@ -1522,22 +1561,10 @@ func cmdSetVariable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	attValues := &struct {
 		Select   *string `sdxml:"noescape"`
 		Variable string  `sdxml:"mustexist"`
-		Execute  *string
 		Trace    bool
 	}{}
 	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
-	}
-
-	if ex := attValues.Execute; ex != nil {
-		if *ex == "later" {
-			if sel := attValues.Select; sel != nil {
-				xd.data.SetVariable(attValues.Variable, xpath.Sequence{returnEvalSelectLater(*sel, xd)})
-			} else {
-				xd.data.SetVariable(attValues.Variable, xpath.Sequence{returnEvalBodyLater(layoutelt, xd)})
-			}
-		}
-		return nil, nil
 	}
 
 	var eval xpath.Sequence
@@ -1668,6 +1695,7 @@ func cmdSwitch(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 }
 
 func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	xd.setupPage()
 	var err error
 	attValues := &struct {
 		Width      bag.ScaledPoint
@@ -1679,7 +1707,13 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		return nil, err
 	}
 	if attValues.Width == 0 {
-		attValues.Width = xd.currentGrid.width(coord(xd.store["maxwidth"].(int)))
+		var mw coord
+		if mwInt, ok := xd.store["maxwidth"].(int); ok {
+			mw = coord(mwInt)
+		} else {
+			mw = coord(xd.currentGrid.nx)
+		}
+		attValues.Width = xd.currentGrid.width(mw)
 	}
 
 	fontsize, leading, err := xd.getFontSizeLeading(attValues.FontSize)
@@ -1724,6 +1758,7 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 }
 
 func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	xd.setupPage()
 	var err error
 	attValues := &struct {
 		Fontsize   string
@@ -1780,7 +1815,13 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		}
 		// if no width is requested, we use the maximum available width
 		if attValues.Width == 0 {
-			attValues.Width = xd.currentGrid.width(coord(xd.store["maxwidth"].(int)))
+			var mw coord
+			if mwInt, ok := xd.store["maxwidth"].(int); ok {
+				mw = coord(mwInt)
+			} else {
+				mw = coord(xd.currentGrid.nx)
+			}
+			attValues.Width = xd.currentGrid.width(mw)
 		}
 
 		vlist, _, err := xd.document.FormatParagraph(te, attValues.Width, frontend.Leading(leading))

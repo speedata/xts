@@ -21,7 +21,7 @@ type seqfunc func() (xpath.Sequence, error)
 // with the attribute select or the body of the SetVariable element) and return
 // a function that evaluate with the context that is valid during the creation
 // time.
-func returnEvalSelectLater(selection string, xd *xtsDocument) seqfunc {
+func returnEvalSelectLaterWithCurrentContext(selection string, xd *xtsDocument) seqfunc {
 	ctx := xpath.CopyContext(xd.data.Ctx)
 	return func() (xpath.Sequence, error) {
 		oldContext := xpath.CopyContext(xd.data.Ctx)
@@ -32,13 +32,22 @@ func returnEvalSelectLater(selection string, xd *xtsDocument) seqfunc {
 	}
 }
 
-func returnEvalBodyLater(layoutelt *goxml.Element, xd *xtsDocument) seqfunc {
+func returnEvalBodyLaterWithCurrentContext(layoutelt *goxml.Element, xd *xtsDocument) seqfunc {
 	ctx := xpath.CopyContext(xd.data.Ctx)
 	return func() (xpath.Sequence, error) {
 		oldContext := xpath.CopyContext(xd.data.Ctx)
 		xd.data.Ctx = ctx
 		eval, err := dispatch(xd, layoutelt, xd.data)
 		xd.data.Ctx = oldContext
+		return eval, err
+	}
+}
+
+func returnEvalBodyLater(layoutelt *goxml.Element, xd *xtsDocument, ctx *xpath.Context) seqfunc {
+	oldCtx := xpath.CopyContext(ctx)
+	return func() (xpath.Sequence, error) {
+		eval, err := dispatch(xd, layoutelt, xd.data)
+		xd.data.Ctx = oldCtx
 		return eval, err
 	}
 }

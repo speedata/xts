@@ -26,6 +26,11 @@ var (
 	Version string
 )
 
+const (
+	// SDNAMESPACE is the speedata XTS layout rules namespace
+	SDNAMESPACE string = "urn:speedata.de/2021/xts/en"
+)
+
 func init() {
 	go genIntegerSequence(destinationNumbers)
 }
@@ -177,6 +182,14 @@ func RunXTS(cfg *XTSConfig) error {
 	if err != nil {
 		return err
 	}
+	// Check if the layout file is in the correct name space
+	if ns := layoutRoot.Namespaces[layoutRoot.Prefix]; ns != SDNAMESPACE {
+		if ns == "" {
+			ns = "none"
+		}
+		return newTypesettingErrorFromStringf("the layout file must be in the name space %s, found %s", SDNAMESPACE, ns)
+	}
+
 	d.document.Doc.DefaultLanguage, err = frontend.GetLanguage("en")
 	if err != nil {
 		return err

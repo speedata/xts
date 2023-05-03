@@ -5,12 +5,14 @@
   >
 
   <define name="Switchcontents">
+    <optional><cmd name="Column"/></optional>
     <optional><cmd name="ClearPage"/></optional>
     <optional><cmd name="LoadDataset"/></optional>
     <optional><cmd name="Loop"/></optional>
     <optional><cmd name="Message"/></optional>
     <optional><cmd name="NextFrame"/></optional>
     <optional><cmd name="NextRow"/></optional>
+    <optional><cmd name="Paragraph"/></optional>
     <optional><cmd name="PlaceObject"/></optional>
     <optional><cmd name="SaveDataset"/></optional>
     <optional><cmd name="Switch"/></optional>
@@ -23,6 +25,7 @@
     <optional><cmd name="DefineFontsize"/></optional>
     <optional><cmd name="DefineMasterpage"/></optional>
     <optional><cmd name="DefineTextformat"/></optional>
+    <optional><cmd name="Function"/></optional>
     <optional><cmd name="LoadFontfile"/></optional>
     <optional><cmd name="Message"/></optional>
     <optional><cmd name="Options"/></optional>
@@ -49,6 +52,7 @@
     <optional><cmd name="SaveDataset"/></optional>
     <optional><cmd name="SetVariable"/></optional>
     <optional><cmd name="Switch"/></optional>
+    <optional><cmd name="Value"/></optional>
   </define>
 
   <define name="Textvalues">
@@ -1574,10 +1578,10 @@
       <oneOrMore>
         <choice>
           <cmd name="Column"/>
-          <cmd name="Copy-of"/>
           <cmd name="ForAll"/>
           <cmd name="Loop"/>
           <cmd name="Switch"/>
+          <cmd name="Value"/>
         </choice>
       </oneOrMore>
     </childelements>
@@ -1645,73 +1649,6 @@
     </example>
   </command>
 
-  <!--
-      ****************************************************************************************
-      * Copy-of
-      ****************************************************************************************
-  -->
-  <command en="Copy-of">
-    <description xml:lang="en">
-      <para>Replace this element by the copy of the selection as an element structure. You can use it to construct more complex data structures.</para>
-    </description>
-    <description xml:lang="de">
-      <para>Ersetzt dieses Element mit dem Inhalt von <tt>select</tt> als Elementstruktur. Dient zum „Zusammenbauen“ von Texten und Tabellen.</para>
-    </description>
-    <childelements/>
-    <attribute en="select" type="xpath" optional="no">
-      <description xml:lang="en">
-        <para>The selection (most likely a variable) that is to be copied.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Die Auswahl (eine Variable) die kopiert werden soll.</para>
-      </description>
-    </attribute>
-    <example xml:lang="en">
-      <listing><![CDATA[<SetVariable variable="myparagraph">
-  <Paragraph>
-    <Value select="@name"/><Value>, Symbol=</Value><Value select="@symbol"/>
-  </Paragraph>
-</SetVariable>
-<PlaceObject>
-  <Textblock>
-    <Copy-of select="$myparagraph"/>
-  </Textblock>
-</PlaceObject>
-]]></listing>
-      <para>is the same as</para>
-      <listing><![CDATA[<PlaceObject>
-  <Textblock>
-    <Paragraph>
-      <Value select="@name"/><Value>, Symbol=</Value><Value select="@symbol"/>
-    </Paragraph>
-  </Textblock>
-</PlaceObject>]]></listing>
-      <para>with the exception that the values of <tt>@name</tt> and <tt>@symbol</tt> can be evaluated before the text gets output.</para>
-    </example>
-    <example xml:lang="de">
-      <listing><![CDATA[<SetVariable variable="meinabsatz">
-  <Paragraph>
-    <Value select="@name"/><Value>, Symbol=</Value><Value select="@symbol"/>
-  </Paragraph>
-</SetVariable>
-<PlaceObject>
-  <Textblock>
-    <Copy-of select="$meinabsatz"/>
-  </Textblock>
-</PlaceObject>]]></listing>
-      <para>ist dasselbe wie</para>
-      <listing><![CDATA[<PlaceObject>
-  <Textblock>
-    <Paragraph>
-      <Value select="@name"/><Value>, Symbol=</Value><Value select="@symbol"/>
-    </Paragraph>
-  </Textblock>
-</PlaceObject>
-]]></listing>
-      <para>nur mit dem Unterschied, dass der Inhalt vom Paragraph (<tt>@name</tt>, <tt>@symbol</tt>) ermittelt werden kann, bevor der Text ausgegeben wird. Die Zuweisung und die Textausgabe können in
-        verschiedenen Regeln stehen.</para>
-    </example>
-  </command>
 
   <!--
       ****************************************************************************************
@@ -2334,6 +2271,104 @@
 </data>]]></listing>
     </example>
   </command>
+
+  <!--
+      ****************************************************************************************
+      * Function
+      ****************************************************************************************
+  -->
+  <command en="Function">
+    <description xml:lang="en">
+      <para>Define a function</para>
+    </description>
+    <description xml:lang="de">
+      <para>Definiere eine Funktion</para>
+    </description>
+    <childelements>
+      <zeroOrMore>
+        <cmd name="Param"></cmd>
+      </zeroOrMore>
+      <oneOrMore>
+        <optional><cmd name="ClearPage"/></optional>
+        <optional><cmd name="Column"/></optional>
+        <optional><cmd name="Columns"/></optional>
+        <optional><cmd name="ForAll"/></optional>
+        <optional><cmd name="Group"/></optional>
+        <optional><cmd name="LoadDataset"/></optional>
+        <optional><cmd name="Loop"/></optional>
+        <optional><cmd name="Message"/></optional>
+        <optional><cmd name="NextFrame"/></optional>
+        <optional><cmd name="NextRow"/></optional>
+        <optional><cmd name="PlaceObject"/></optional>
+        <optional><cmd name="ProcessNode"/></optional>
+        <optional><cmd name="SaveDataset"/></optional>
+        <optional><cmd name="SetVariable"/></optional>
+        <optional><cmd name="Switch"/></optional>
+        <optional><cmd name="Value"/></optional>
+      </oneOrMore>
+    </childelements>
+    <attribute en="name" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>The name of the function (with namespace prefix).</para>
+      </description>
+      <description xml:lang="de">
+        <para>Der Name der Funktion (mit Namensraum-Präfix)</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en"
+    xmlns:fn="mynamespace"
+    >
+
+  <Record element="data">
+    <PlaceObject>
+        <Textblock>
+            <Paragraph>
+                <Value select="fn:add(3,4)"></Value>
+            </Paragraph>
+        </Textblock>
+    </PlaceObject>
+</Record>
+
+...
+
+<Function name="fn:add">
+    <Param name="a" />
+    <Param name="b" />
+    <Value select="$a + $b" />
+</Function>
+]]></listing>
+      <para>Print out the number 7.</para>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en"
+    xmlns:fn="mynamespace"
+    >
+
+  <Record element="data">
+    <PlaceObject>
+        <Textblock>
+            <Paragraph>
+                <Value select="fn:add(3,4)"></Value>
+            </Paragraph>
+        </Textblock>
+    </PlaceObject>
+</Record>
+
+...
+
+<Function name="fn:add">
+    <Param name="a" />
+    <Param name="b" />
+    <Value select="$a + $b" />
+</Function>
+]]></listing>
+      <para>Gibt die Zahl 7 aus.</para>
+    </example>
+  </command>
+
 
   <!--
       ****************************************************************************************
@@ -3399,6 +3434,34 @@
     </example>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * Param
+      ****************************************************************************************
+  -->
+  <command en="Param">
+    <description xml:lang="en">
+      <para>Specify a parameter for a function definition.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Lege einen Parameter für eine Funktionsdefinition fest.</para>
+    </description>
+    <childelements></childelements>
+    <attribute en="name" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>The name of the parameter.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Der Name des Parameters</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <para>See the example at <cmd name="Function"/></para>
+    </example>
+    <example xml:lang="de">
+      <para>Siehe das Bespiel bei <cmd name="Function"/>.</para>
+    </example>
+  </command>
 
   <!--
       ****************************************************************************************
@@ -3611,6 +3674,7 @@
           <optional><cmd name="Image"/></optional>
           <optional><cmd name="Table"/></optional>
           <optional><cmd name="Textblock"/></optional>
+          <optional><cmd name="Value"/></optional>
         </interleave>
       </oneOrMore>
     </childelements>
@@ -4042,10 +4106,10 @@
     </description>
     <childelements>
       <oneOrMore>
-        <optional><cmd name="Loop"/></optional>
         <optional><cmd name="Element"/></optional>
-        <optional><cmd name="Copy-of"/></optional>
         <optional><cmd name="ForAll"/></optional>
+        <optional><cmd name="Loop"/></optional>
+        <optional><cmd name="Value"/></optional>
       </oneOrMore>
     </childelements>
     <attribute en="href" type="text" optional="yes">
@@ -4110,7 +4174,7 @@
     </example>
     <example xml:lang="en">
       <listing><![CDATA[<SaveDataset name="toc" elementname="Contents">
-  <Copy-of select="$contents"/>
+  <Value select="$contents"/>
 </SaveDataset>
 ]]></listing>
       <para>is equivalent to</para>
@@ -4118,7 +4182,7 @@
     </example>
     <example xml:lang="de">
       <listing><![CDATA[<SaveDataset name="toc" elementname="Inhalt">
-   <Copy-of select="$Inhalt"/>
+   <Value select="$Inhalt"/>
 </SaveDataset>]]></listing>
       <para>Äquivalent dazu ist:</para>
       <listing><![CDATA[<SaveDataset name="toc" elementname="Inhalt" select="$Inhalt" />]]></listing>
@@ -4209,36 +4273,14 @@
     <childelements>
       <oneOrMore>
         <interleave>
-          <optional><cmd name="Paragraph"/></optional>
           <optional><cmd name="Element"/></optional>
+          <optional><cmd name="Paragraph"/></optional>
           <optional><cmd name="Value"/></optional>
+          <optional><cmd name="Table"/></optional>
+          <optional><cmd name="Textblock"/></optional>
         </interleave>
       </oneOrMore>
     </childelements>
-    <attribute en="execute" optional="yes">
-      <description xml:lang="en">
-        <para>Execute the contents of setvariable now or execute it on usage.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Führe den Inhalt sofort aus oder später bei der Benutzung.</para>
-      </description>
-      <choice en="now">
-        <description xml:lang="en">
-          <para>Execute the contents during SetVariable (default).</para>
-        </description>
-        <description xml:lang="de">
-          <para>Führe den Inhalt sofort aus (Voreinstellung).</para>
-        </description>
-      </choice>
-      <choice en="later">
-        <description xml:lang="en">
-          <para>Execute the contents when evaluated during <cmd name="Copy-of" />. Experimental.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Führe den Inhalt bei der Benutzung von <cmd name="Copy-of" /> aus. Experimentell.</para>
-        </description>
-      </choice>
-    </attribute>
     <attribute en="select" type="xpath" optional="yes">
       <description xml:lang="en">
         <para>The value of the contents.</para>
@@ -4635,9 +4677,9 @@
     <childelements>
       <oneOrMore>
         <interleave>
-          <optional><cmd name="Tr"/></optional>
-          <optional><cmd name="Copy-of"/></optional>
           <optional><cmd name="Columns"/></optional>
+          <optional><cmd name="Tr"/></optional>
+          <optional><cmd name="Value"/></optional>
         </interleave>
       </oneOrMore>
     </childelements>
@@ -4924,13 +4966,13 @@
         <choice>
           <cmd name="Bookmark"/>
           <cmd name="Box"/>
-          <cmd name="Copy-of"/>
           <cmd name="ForAll"/>
           <cmd name="Image"/>
           <cmd name="Loop"/>
           <cmd name="Paragraph"/>
           <cmd name="Switch"/>
           <cmd name="Table"/>
+          <cmd name="Value"/>
         </choice>
       </zeroOrMore>
     </childelements>
@@ -5285,9 +5327,10 @@
       <oneOrMore>
         <choice>
           <cmd name="Action"/>
+          <cmd name="ForAll"/>
           <cmd name="Bookmark"/>
-          <cmd name="Copy-of"/>
           <cmd name="Paragraph"/>
+          <cmd name="Value"/>
         </choice>
       </oneOrMore>
     </childelements>
@@ -5366,7 +5409,7 @@
         <optional>
           <cmd name="Td"/>
         </optional>
-        <optional><cmd name="Copy-of"/></optional>
+        <optional><cmd name="Value"/></optional>
         <optional>
           <cmd name="Switch"/>
         </optional>

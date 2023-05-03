@@ -56,7 +56,7 @@ func getImageFnArguments(args []goxpath.Sequence, fnname string) (filename strin
 		case float64:
 			pagenumber = int(t)
 		case string:
-			if unitRE.MatchString(t) {
+			if onlyUnitRE.MatchString(t) {
 				unit = t
 				continue
 			}
@@ -194,7 +194,7 @@ func fnImageHeight(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Seque
 		}
 		ht = bag.ScaledPointFromFloat(dimensions["h"])
 	case "png", "jpeg":
-		ht = bag.ScaledPoint(imgf.H*96/72) * bag.Factor
+		ht = bag.ScaledPoint(imgf.H/96*72) * bag.Factor
 	default:
 		return nil, newTypesettingErrorFromStringf("sd:image-height() unknown format for file %s", fn)
 	}
@@ -235,7 +235,7 @@ func fnImageWidth(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequen
 		}
 		wd = bag.ScaledPointFromFloat(dimensions["w"])
 	case "png", "jpeg":
-		wd = bag.ScaledPoint(imgf.W*96/72) * bag.Factor
+		wd = bag.ScaledPoint(imgf.W/96*72) * bag.Factor
 	default:
 		return nil, newTypesettingErrorFromStringf("sd:image-width() unknown format for file %s", fn)
 	}
