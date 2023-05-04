@@ -1,9 +1,13 @@
 require "pathname"
 @versions = {}
 
-File.read("version").each_line do |line|
-	product,versionnumber = line.chomp.split(/=/)
-	@versions[product]=versionnumber
+if File.file?("version") then
+	File.read("version").each_line do |line|
+		product,versionnumber = line.chomp.split(/=/)
+		@versions[product]=versionnumber
+	end
+else
+	@versions["xts_version"]="1.0.0"
 end
 
 installdir = Pathname.new(__FILE__).join("..")
@@ -41,6 +45,12 @@ task "release" do
 	sh "xcrun notarytool submit -p notary dist/xts_macos_arm64.zip --wait"
 end
 
+desc "Create the schema files"
 task :schema => [:xtshelper] do
 	sh "bin/xtshelper genschema"
+end
+
+desc "Update the version information from the latest git tag"
+task :updateversion do
+	sh "git describe| sed s,v,xts_version=, > version"
 end
