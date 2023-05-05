@@ -3710,12 +3710,36 @@
         <para>Name des Platzierungsbereich, in dem das Objekt ausgegeben werden soll.</para>
       </description>
     </attribute>
+    <attribute en="background" optional="yes" type="boolean">
+      <description xml:lang="en">
+        <para>Fill the background of the object with a color, given by backgroundcolor.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Erzeugt einen farbigen Hintergrund für das Objekt. Das Attribut »backgroundcolor« gibt die Farbe an.</para>
+      </description>
+    </attribute>
+    <attribute en="backgroundcolor" type="text" optional="yes">
+      <description xml:lang="en">
+        <para>Color of the background if “background” is set to “yes”.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Hintergrundfarbe wenn das Objekt mit einer Farbe hinterlegt werden soll.</para>
+      </description>
+    </attribute>
     <attribute en="column" type="numberorlength" optional="yes">
       <description xml:lang="en">
         <para>If contents is a number: the grid cell from the left margin of the area. If it is a length: the absolute position from the left paper margin. If this attribute is omitted, the system tries to place the object by itself.</para>
       </description>
       <description xml:lang="de">
         <para>Zahl: Die Spalte im Raster, in der das Objekt ausgegeben wird. Wird die Spalte nicht angegeben, so sucht sich das System selbständig eine passende freie Zeile für das Objekt. Maßangabe: die Position von der linken Blattkante.</para>
+      </description>
+    </attribute>
+    <attribute en="frame" optional="yes" type="boolean">
+      <description xml:lang="en">
+        <para>Draw a frame around the object.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Es wird ein Rahmen um das Objekt gezeichnet.</para>
       </description>
     </attribute>
     <attribute en="groupname" type="text" optional="yes">

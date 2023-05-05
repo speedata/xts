@@ -1313,13 +1313,16 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	xd.setupPage()
 	var err error
 	attValues := &struct {
-		Allocate   bool `sdxml:"default:yes"`
-		Area       string
-		Column     string
-		Row        string
-		Groupname  string
-		HAlign     string
-		HReference string
+		Allocate        bool `sdxml:"default:yes"`
+		Area            string
+		Background      bool
+		BackgroundColor string
+		Column          string
+		Frame           bool
+		Row             string
+		Groupname       string
+		HAlign          string
+		HReference      string
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -1394,6 +1397,19 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		}
 	default:
 		bag.Logger.DPanicf("PlaceObject: unknown node %T", t)
+	}
+	if attValues.Frame {
+		r := node.NewRule()
+		r.Hide = true
+		r.Pre = pdfdraw.NewStandalone().Rect(0, 0, vl.Width, -vl.Height).Stroke().String()
+		vl.List = node.InsertBefore(vl.List, vl.List, r)
+	}
+	if attValues.Background {
+		col := xd.document.GetColor(attValues.BackgroundColor)
+		r := node.NewRule()
+		r.Hide = true
+		r.Pre = pdfdraw.NewStandalone().Rect(0, 0, vl.Width, -vl.Height).ColorNonstroking(*col).Fill().String()
+		vl.List = node.InsertBefore(vl.List, vl.List, r)
 	}
 
 	if rowInt, err = strconv.Atoi(attValues.Row); err == nil {
