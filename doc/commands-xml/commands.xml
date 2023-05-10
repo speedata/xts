@@ -2556,6 +2556,54 @@
         <para>Dehnt das Bild bis eine der Angaben von maxheight und maxwidth erreich ist. Hilfreich um Bilder so groß wie möglich aber innerhalb gewisser Grenzen anzeigen zu lassen.</para>
       </description>
     </attribute>
+    <attribute en="visiblebox" optional="yes" allowxpath="yes">
+      <description xml:lang="en">
+        <para>The PDF box that represents the visible area of the included image. Default is “cropbox”.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Die PDF-Box, die den sichtbaren Bereich angibt des eingebundenen PDFs angibt. Voreinstellung ist »cropbox«.</para>
+      </description>
+      <choice en="artbox">
+        <description xml:lang="en">
+          <para>Use the artbox as the visible area. The artbox is usually not contained in a PDF.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Nutze die artbox als sichtbaren Bereich. Diese Box ist normalerweise in PDF-Dateien nicht enthalten.</para>
+        </description>
+      </choice>
+      <choice en="bleedbox">
+        <description xml:lang="en">
+          <para>Use the bleedbox of the included PDF.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Nutze die bleedbox des eingebundenen PDFs.</para>
+        </description>
+      </choice>
+      <choice en="cropbox">
+        <description xml:lang="en">
+          <para>Use the cropbox of the included PDF (default).</para>
+        </description>
+        <description xml:lang="de">
+          <para>Nutze die cropbox der eingebundenen PDF-Datei (Voreinstellung).</para>
+        </description>
+      </choice>
+      <choice en="mediabox">
+        <description xml:lang="en">
+          <para>Use the mediabox of the included PDF. This is the largest box.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Nutze die mediabox der eingebundenen PDF-Datei. Das ist die größte Box.</para>
+        </description>
+      </choice>
+      <choice en="trimbox">
+        <description xml:lang="en">
+          <para>Use the trimbox of the includes PDF. The trimbox is the final paper size. For example, the trim box of an A4 PDF is 210mm x 297mm.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Nutze die trimbox der eingebundenen PDF-Datei. Die trimbox ist die Papiergröße. Beispielsweise hat die trimbox eines A4-PDFs die Größe 210mm x 297mm.</para>
+        </description>
+      </choice>
+    </attribute>
     <attribute en="width" type="numberorlength" optional="yes">
       <description xml:lang="en">
         <para>Image width. One of 'auto' (default, take image width), '100%' (whole area width), length (such as '3cm') or number (in grid cells).</para>

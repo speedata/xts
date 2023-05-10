@@ -7,8 +7,8 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pelletier/go-toml/v2 v2.0.7
 	github.com/speedata/barcode v0.0.0-20230307084753-486c4d51cb34
-	github.com/speedata/baseline-pdf v0.0.0-20230502183546-13d3b6553f0e
-	github.com/speedata/boxesandglue v0.0.0-20230429141949-1c23679f7e99
+	github.com/speedata/baseline-pdf v0.0.0-20230510191409-e05e171c99fc
+	github.com/speedata/boxesandglue v0.0.0-20230510192258-07974508cd05
 	github.com/speedata/goxlsx v1.0.2
 	github.com/speedata/goxml v0.0.0-20230322084327-216af189a791
 	github.com/speedata/goxpath v0.0.0-20230429114244-6d151ae32839
@@ -25,7 +25,7 @@ require (
 	github.com/andybalholm/cascadia v1.3.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/speedata/css/scanner v0.0.0-20201005071706-2ed32c3ce553 // indirect
-	github.com/speedata/gofpdi v1.0.15 // indirect
+	github.com/speedata/gofpdi v1.0.17 // indirect
 	github.com/speedata/hyphenation v1.0.2 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect

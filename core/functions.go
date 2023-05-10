@@ -32,7 +32,8 @@ func init() {
 }
 
 // args are the arguments from the xpath function, fnname is the function name
-// usd for error messages.
+// usd for error messages. The function returns one of "/MediaBox", "/CropBox",
+// "/TrimBox", "/BleedBox" or "/ArtBox".
 func getImageFnArguments(args []goxpath.Sequence, fnname string) (filename string, pagenumber int, pdfbox string, unit string, err error) {
 	if len(args) == 0 {
 		err = newTypesettingErrorFromStringf("%s: no filename given", fnname)
@@ -99,7 +100,7 @@ func fnAspectRatio(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Seque
 	xd := ctx.Store["xd"].(*xtsDocument)
 	xd.setupPage()
 
-	fn, pagenum, pdfbox, unit, err := getImageFnArguments(args, "aspect-ratio")
+	fn, pagenumber, pdfbox, unit, err := getImageFnArguments(args, "aspect-ratio")
 	if unit != "" {
 		return nil, newTypesettingErrorFromString("You cannot use unit in sd:aspect-ratio()")
 	}
@@ -107,14 +108,14 @@ func fnAspectRatio(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Seque
 	if p, err = FindFile(fn); err != nil {
 		return nil, err
 	}
-	imgf, err := xd.document.Doc.LoadImageFile(p)
+	imgf, err := xd.document.Doc.LoadImageFileWithBox(p, pdfbox, pagenumber)
 	if err != nil {
 		return nil, err
 	}
 	var wd, ht bag.ScaledPoint
 	switch imgf.Format {
 	case "pdf":
-		dimensions, err := imgf.GetPDFBoxDimensions(pagenum, pdfbox)
+		dimensions, err := imgf.GetPDFBoxDimensions(pagenumber, pdfbox)
 		if err != nil {
 			return nil, err
 		}
@@ -181,7 +182,7 @@ func fnImageHeight(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Seque
 	if p, err = FindFile(fn); err != nil {
 		return nil, err
 	}
-	imgf, err := xd.document.Doc.LoadImageFile(p)
+	imgf, err := xd.document.Doc.LoadImageFileWithBox(p, pdfbox, pagenum)
 	if err != nil {
 		return nil, err
 	}
@@ -222,7 +223,7 @@ func fnImageWidth(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequen
 	if p, err = FindFile(fn); err != nil {
 		return nil, err
 	}
-	imgf, err := xd.document.Doc.LoadImageFile(p)
+	imgf, err := xd.document.Doc.LoadImageFileWithBox(p, pdfbox, pagenum)
 	if err != nil {
 		return nil, err
 	}

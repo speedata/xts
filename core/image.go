@@ -13,7 +13,7 @@ func createImageHlist(xd *xtsDocument, width, height, minwidth, maxwidth, minhei
 	if pagenumer == 0 {
 		pagenumer = 1
 	}
-	ii := xd.document.Doc.CreateImage(imgfile, pagenumer)
+	ii := xd.document.Doc.CreateImage(imgfile, pagenumer, imgfile.Box)
 
 	wd, ht := calculateImageSize(ii, width, height, minwidth, maxwidth, minheight, maxheight, stretch)
 	imgNode := node.NewImage()

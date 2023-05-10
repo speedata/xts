@@ -824,27 +824,45 @@ func cmdI(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 func cmdImage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
-		Href      string `sdxml:"mustexist"`
-		Height    *bag.ScaledPoint
-		Width     *bag.ScaledPoint
-		MinHeight *bag.ScaledPoint
-		MinWidth  *bag.ScaledPoint
-		MaxHeight *bag.ScaledPoint
-		MaxWidth  *bag.ScaledPoint
-		Stretch   bool
-		Page      int
+		Href       string `sdxml:"mustexist"`
+		Height     *bag.ScaledPoint
+		Width      *bag.ScaledPoint
+		MinHeight  *bag.ScaledPoint
+		MinWidth   *bag.ScaledPoint
+		MaxHeight  *bag.ScaledPoint
+		MaxWidth   *bag.ScaledPoint
+		Stretch    bool
+		Page       int
+		VisibleBox string `sdxml:"default:cropbox"`
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
-
+	if attValues.Page == 0 {
+		attValues.Page = 1
+	}
 	filename, err := xd.cfg.FindFile(attValues.Href)
 	if err != nil {
 		bag.Logger.Error(err)
 		return nil, err
 	}
+
+	var box string
+	switch attValues.VisibleBox {
+	case "cropbox":
+		box = "/CropBox"
+	case "mediabox":
+		box = "/MediaBox"
+	case "bleedbox":
+		box = "/BleedBox"
+	case "trimbox":
+		box = "/TrimBox"
+	case "artbox":
+		box = "/ArtBox"
+	}
+
 	var imgObj *pdf.Imagefile
-	imgObj, err = xd.document.Doc.LoadImageFile(filename)
+	imgObj, err = xd.document.Doc.LoadImageFileWithBox(filename, box, attValues.Page)
 	if err != nil {
 		return nil, err
 	}
@@ -1408,7 +1426,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		col := xd.document.GetColor(attValues.BackgroundColor)
 		r := node.NewRule()
 		r.Hide = true
-		r.Pre = pdfdraw.NewStandalone().Rect(0, 0, vl.Width, -vl.Height).ColorNonstroking(*col).Fill().String()
+		r.Pre = pdfdraw.NewStandalone().ColorNonstroking(*col).Rect(0, 0, vl.Width, -vl.Height).Fill().String()
 		vl.List = node.InsertBefore(vl.List, vl.List, r)
 	}
 
