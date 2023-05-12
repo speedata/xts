@@ -1,7 +1,14 @@
 package core
 
 import (
+	"crypto/md5"
+	"crypto/sha1"
+	"crypto/sha256"
+	"crypto/sha512"
+	"encoding/hex"
 	"fmt"
+	"math"
+	"strconv"
 	"strings"
 
 	"github.com/speedata/boxesandglue/backend/bag"
@@ -12,22 +19,30 @@ const fnNS = "urn:speedata.de/2021/xtsfunctions/en"
 
 func init() {
 	goxpath.RegisterFunction(&goxpath.Function{Name: "aspect-ratio", Namespace: fnNS, F: fnAspectRatio, MinArg: 1, MaxArg: 3})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "attribute", Namespace: fnNS, F: fnAttribute, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "current-page", Namespace: fnNS, F: fnCurrentPage, MinArg: 0, MaxArg: 0})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "current-row", Namespace: fnNS, F: fnCurrentRow, MinArg: 0, MaxArg: 1})
-	goxpath.RegisterFunction(&goxpath.Function{Name: "dummytext", Namespace: fnNS, F: fnDummytext, MinArg: 0, MaxArg: 1})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "dummy-text", Namespace: fnNS, F: fnDummytext, MinArg: 0, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "even", Namespace: fnNS, F: fnEven, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "file-exists", Namespace: fnNS, F: fnFileExists, MinArg: 1, MaxArg: 1})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "format-number", Namespace: fnNS, F: fnFormatNumber, MinArg: 3, MaxArg: 3})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "group-height", Namespace: fnNS, F: fnGroupheight, MinArg: 1, MaxArg: 2})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "group-width", Namespace: fnNS, F: fnGroupwidth, MinArg: 1, MaxArg: 2})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "image-height", Namespace: fnNS, F: fnImageHeight, MinArg: 1, MaxArg: 4})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "image-width", Namespace: fnNS, F: fnImageWidth, MinArg: 1, MaxArg: 4})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "last-page-number", Namespace: fnNS, F: fnLastPagenumber, MinArg: 0, MaxArg: 0})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "md5", Namespace: fnNS, F: fnMdFive, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "mode", Namespace: fnNS, F: fnMode, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "number-of-columns", Namespace: fnNS, F: fnNumberOfColumns, MinArg: 0, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "number-of-rows", Namespace: fnNS, F: fnNumberOfRows, MinArg: 0, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "odd", Namespace: fnNS, F: fnOdd, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "page-number", Namespace: fnNS, F: fnPagenumber, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "roman-numeral", Namespace: fnNS, F: fnRomannumeral, MinArg: 1, MaxArg: 1})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "sha1", Namespace: fnNS, F: fnShaOne, MinArg: 1, MaxArg: 1})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "sha256", Namespace: fnNS, F: fnShaTwoFiveSix, MinArg: 1, MaxArg: 1})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "sha512", Namespace: fnNS, F: fnShaFiveOneTwo, MinArg: 1, MaxArg: 1})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "variable", Namespace: fnNS, F: fnVariable, MinArg: 1, MaxArg: 1})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "to-unit", Namespace: fnNS, F: fnToUnit, MinArg: 1, MaxArg: 3})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "total-pages", Namespace: fnNS, F: fnTotalPages, MinArg: 1, MaxArg: 1})
 }
 
@@ -96,6 +111,43 @@ func getImageFnArguments(args []goxpath.Sequence, fnname string) (filename strin
 	return
 }
 
+func reverseString(in string) string {
+	c := []rune(in)
+	n := len(c)
+
+	for i := 0; i < n/2; i++ {
+		c[i], c[n-1-i] = c[n-1-i], c[i]
+	}
+
+	return string(c)
+}
+
+func insertSeparator(num string, sep string) string {
+	n := []rune(num)
+	l := len(n)
+
+	var firstpos int
+	if n[0] == '-' {
+		firstpos = 1
+	}
+
+	var sb strings.Builder
+	for i := l - 1; i >= 0; i-- {
+		sb.WriteRune(n[i])
+		if (l-i)%3 == 0 && i > firstpos {
+			sb.WriteString(sep)
+		}
+	}
+
+	return reverseString(sb.String())
+}
+func formatNumber(f float64, thousands string, decimalpoint string) string {
+	a := strconv.FormatFloat(f, 'f', -1, 64)
+	parts := strings.Split(a, ".")
+	parts[0] = insertSeparator(parts[0], thousands)
+	return strings.Join(parts, decimalpoint)
+}
+
 func fnAspectRatio(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
 	xd := ctx.Store["xd"].(*xtsDocument)
 	xd.setupPage()
@@ -128,6 +180,13 @@ func fnAspectRatio(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Seque
 		return nil, newTypesettingErrorFromStringf("sd:aspect-ratio() unknown format for file %s", fn)
 	}
 	return goxpath.Sequence{wd.ToPT() / ht.ToPT()}, nil
+}
+
+func fnAttribute(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	xd := ctx.Store["xd"].(*xtsDocument)
+	firstArg := args[0]
+	attrname := firstArg.Stringvalue()
+	return evaluateXPath(xd, ctx.Namespaces, fmt.Sprintf("@*[local-name() = %q]", attrname))
 }
 
 func fnCurrentPage(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
@@ -261,6 +320,12 @@ func fnLastPagenumber(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Se
 	return goxpath.Sequence{0}, nil
 }
 
+func fnMdFive(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	str := args[0].Stringvalue()
+	sum := md5.Sum([]byte(str))
+	return goxpath.Sequence{fmt.Sprintf("%x", sum)}, nil
+}
+
 func fnMode(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
 	xd := ctx.Store["xd"].(*xtsDocument)
 	findMode := args[0].Stringvalue()
@@ -286,6 +351,32 @@ func fnNumberOfColumns(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.S
 		return nil, fmt.Errorf("area %s unknown", areaname)
 	}
 	return goxpath.Sequence{int(area.frame[area.currentFrame].width)}, nil
+}
+
+func fnToUnit(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	if len(args) < 2 {
+		return nil, fmt.Errorf("sd:to-unit() requires two ore three arguments")
+	}
+	fn := args[0].Stringvalue()
+	unit := args[1].Stringvalue()
+	val, err := bag.Sp(fn)
+	if err != nil {
+		return nil, err
+	}
+	f, err := val.ToUnit(unit)
+	if err != nil {
+		return nil, err
+	}
+	if len(args) == 2 {
+		return goxpath.Sequence{f}, nil
+	}
+	prec, err := args[2].IntValue()
+	if err != nil {
+		return nil, err
+	}
+	precisionFactor := math.Pow10(prec)
+	rounded := math.Round(precisionFactor*f) / precisionFactor
+	return goxpath.Sequence{rounded}, nil
 }
 
 func fnTotalPages(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
@@ -316,6 +407,21 @@ func fnNumberOfRows(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequ
 		return nil, fmt.Errorf("area %s unknown", areaname)
 	}
 	return goxpath.Sequence{int(area.frame[area.currentFrame].height)}, nil
+}
+
+func fnFormatNumber(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	num := args[0]
+	thousandsSep := args[1]
+	decimalComma := args[2]
+
+	if len(num) != 1 {
+		return nil, fmt.Errorf("the first argument of format-number must have a cardinality of 1")
+	}
+	f, err := goxpath.NumberValue(num)
+	if err != nil {
+		return nil, err
+	}
+	return goxpath.Sequence{formatNumber(f, thousandsSep.Stringvalue(), decimalComma.Stringvalue())}, nil
 }
 
 func fnGroupheight(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
@@ -420,4 +526,32 @@ func fnOdd(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, err
 		return nil, err
 	}
 	return goxpath.Sequence{int(nv)%2 == 1}, nil
+}
+
+func fnShaOne(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	str := args[0].Stringvalue()
+	h := sha1.New()
+	h.Write([]byte(str))
+	return goxpath.Sequence{hex.EncodeToString(h.Sum(nil))}, nil
+}
+
+func fnShaTwoFiveSix(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	str := args[0].Stringvalue()
+	h := sha256.New()
+	h.Write([]byte(str))
+	return goxpath.Sequence{hex.EncodeToString(h.Sum(nil))}, nil
+}
+
+func fnShaFiveOneTwo(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	str := args[0].Stringvalue()
+	h := sha512.New()
+	h.Write([]byte(str))
+	return goxpath.Sequence{hex.EncodeToString(h.Sum(nil))}, nil
+}
+
+func fnVariable(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	xd := ctx.Store["xd"].(*xtsDocument)
+	firstArg := args[0]
+	varname := firstArg.Stringvalue()
+	return evaluateXPath(xd, ctx.Namespaces, fmt.Sprintf("$%s", varname))
 }

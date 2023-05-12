@@ -6,7 +6,9 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 	"sort"
 	"strings"
 
@@ -208,6 +210,24 @@ func scaffold(extra ...string) error {
 	return nil
 }
 
+func openURL(url string) error {
+	cmd := []string{}
+	switch runtime.GOOS {
+	case "darwin":
+		cmd = append(cmd, "open", "-u")
+	case "linux":
+		cmd = append(cmd, "xdg-open")
+	case "windows":
+		cmd = append(cmd, "start")
+	default:
+		fmt.Printf("Open your browser at %s\n", url)
+		return nil
+	}
+	cmd = append(cmd, url)
+	ecmd := exec.Command(cmd[0], cmd[1:]...)
+	return ecmd.Run()
+}
+
 func dothings() error {
 	pathToXTS, err := os.Executable()
 	if err != nil {
@@ -239,6 +259,7 @@ func dothings() error {
 	op.On("-v", "--var=VALUE", "Set a variable for the publishing run", cmdline)
 	op.Command("list-fonts", "List installed fonts")
 	op.Command("clean", "Remove auxiliary and protocol files")
+	op.Command("doc", "Open the documentation (web page)")
 	op.Command("new", "Create simple layout and data file to start. Provide optional directory.")
 	op.Command("run", "Load layout and data files and create PDF (default)")
 	op.Command("version", "Print version information")
@@ -342,6 +363,8 @@ func dothings() error {
 				}
 			}
 		}
+	case "doc":
+		return openURL("https://doc.speedata.de/xts/")
 	case "list-fonts":
 		if err = listFonts(); err != nil {
 			bag.Logger.Error(err)

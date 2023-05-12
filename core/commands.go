@@ -771,7 +771,7 @@ func cmdFunction(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, err
 	prefix := prefixName[0]
 	name := prefixName[1]
 	if ns, ok = layoutelt.Namespaces[prefix]; !ok {
-		return nil, newTypesettingErrorFromStringf("Function: unknown name space prefix %s", prefix)
+		return nil, newTypesettingErrorFromStringf("Function (line %d): unknown name space prefix %s", layoutelt.Line, prefix)
 	}
 	a := func(ctx *xpath.Context, args []xpath.Sequence) (xpath.Sequence, error) {
 		sf := returnEvalBodyLater(layoutelt, xd, ctx)
