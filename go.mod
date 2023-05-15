@@ -8,7 +8,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.7
 	github.com/speedata/barcode v0.0.0-20230307084753-486c4d51cb34
 	github.com/speedata/baseline-pdf v0.0.0-20230510191409-e05e171c99fc
-	github.com/speedata/boxesandglue v0.0.0-20230510192258-07974508cd05
+	github.com/speedata/boxesandglue v0.0.0-20230515104653-c3bf0ca8d739
 	github.com/speedata/goxlsx v1.0.2
 	github.com/speedata/goxml v0.0.0-20230322084327-216af189a791
 	github.com/speedata/goxpath v0.0.0-20230429114244-6d151ae32839

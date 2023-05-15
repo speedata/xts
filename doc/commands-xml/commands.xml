@@ -63,6 +63,7 @@
         <cmd name="B"/>
         <cmd name="Br"/>
         <cmd name="I"/>
+        <cmd name="U"/>
         <cmd name="Value"/>
         <cmd name="Span"/>
       </choice>
@@ -5806,6 +5807,40 @@
     </attribute>
     <example xml:lang="en">
       <listing><![CDATA[<Trace grid="yes" />]]></listing>
+    </example>
+  </command>
+
+
+  <!--
+      ****************************************************************************************
+      * U
+      ****************************************************************************************
+  -->
+  <command en="U">
+    <description xml:lang="en">
+      <para>Underline text.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Unterstreiche Text.</para>
+    </description>
+    <childelements>
+      <reference name="Textvalues"/>
+    </childelements>
+    <example xml:lang="en">
+      <listing><![CDATA[<Textblock>
+  <Paragraph>
+    <U><Value>underlined text</Value></U>
+  </Paragraph>
+</Textblock>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Textblock>
+  <Paragraph>
+    <U><Value>Unterstrichener Text</Value></U>
+  </Paragraph>
+</Textblock>
+]]></listing>
     </example>
   </command>
 

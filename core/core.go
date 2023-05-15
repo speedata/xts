@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -88,6 +89,66 @@ func newXTSDocument() *xtsDocument {
 		jobname:           "xts",
 	}
 	return xd
+}
+
+// Check if requestedVersion can be used in productVersion.
+func checkVersion(requestedVersion, productVersion string) error {
+	if requestedVersion == "" {
+		// no version information in the layout file, ok!
+		return nil
+	}
+
+	xtsVersionSplit := strings.Split(productVersion, ".")
+	if len(xtsVersionSplit) != 3 {
+		return fmt.Errorf("XTS version %q looks incorrect", productVersion)
+	}
+	if strings.Contains(xtsVersionSplit[2], "-") {
+		// this is probably a SHA1 based development version and should always work.
+		return nil
+	}
+	var xtsVersionArray [3]int
+	var err error
+	for i, v := range xtsVersionSplit {
+		if xtsVersionArray[i], err = strconv.Atoi(v); err != nil {
+			return err
+		}
+	}
+
+	layoutVersionSplit := strings.Split(requestedVersion, ".")
+	if len(layoutVersionSplit) > 0 {
+		if i, err := strconv.Atoi(layoutVersionSplit[0]); err == nil {
+			if i > xtsVersionArray[0] {
+				goto versionMismatch
+			} else if i < xtsVersionArray[0] {
+				return nil
+			}
+		} else {
+			return err
+		}
+	}
+	if len(requestedVersion) > 1 {
+		if i, err := strconv.Atoi(layoutVersionSplit[1]); err == nil {
+			if i > xtsVersionArray[1] {
+				goto versionMismatch
+			} else if i < xtsVersionArray[1] {
+				return nil
+			}
+		} else {
+			return err
+		}
+	}
+	if len(requestedVersion) > 2 {
+		if i, err := strconv.Atoi(layoutVersionSplit[2]); err == nil {
+			if i > xtsVersionArray[2] {
+				goto versionMismatch
+			}
+		} else {
+			return err
+		}
+	}
+	return nil
+versionMismatch:
+	return fmt.Errorf("requested layout version %q and xts version %q don't match", requestedVersion, productVersion)
 }
 
 var inSetupPage bool
@@ -188,6 +249,14 @@ func RunXTS(cfg *XTSConfig) error {
 			ns = "none"
 		}
 		return newTypesettingErrorFromStringf("the layout file must be in the name space %s, found %s", SDNAMESPACE, ns)
+	}
+	for _, attr := range layoutRoot.Attributes() {
+		if attr.Name == "version" {
+			if err = checkVersion(attr.Value, Version); err != nil {
+				return err
+			}
+			break
+		}
 	}
 
 	d.document.Doc.DefaultLanguage, err = frontend.GetLanguage("en")
