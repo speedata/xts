@@ -49,6 +49,7 @@ type xtsDocument struct {
 	document          *frontend.Document
 	jobname           string
 	layoutcss         *csshtml.CSS
+	datacss           *csshtml.CSS
 	data              *xpath.Parser
 	pages             []*page
 	groups            map[string]*group
@@ -81,6 +82,7 @@ func newXTSDocument() *xtsDocument {
 		defaultGridGapX:   0,
 		defaultGridGapY:   0,
 		layoutcss:         csshtml.NewCSSParser(),
+		datacss:           csshtml.NewCSSParser(),
 		groups:            make(map[string]*group),
 		fontsizes:         make(map[string][2]bag.ScaledPoint),
 		store:             make(map[any]any),

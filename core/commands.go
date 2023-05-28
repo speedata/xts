@@ -132,8 +132,7 @@ func cmdA(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 			frontend.SettingHyperlink: hl,
 		},
 	}
-	err = getTextvalues(te, seq, "cmdA", layoutelt.Line)
-
+	err = xd.getTextvalues(te, seq, "cmdA", layoutelt.Line)
 	return xpath.Sequence{te}, err
 }
 
@@ -202,8 +201,7 @@ func cmdB(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 			frontend.SettingFontWeight: frontend.FontWeight700,
 		},
 	}
-	err = getTextvalues(te, seq, "cmdBold", layoutelt.Line)
-
+	err = xd.getTextvalues(te, seq, "cmdBold", layoutelt.Line)
 	return xpath.Sequence{te}, err
 }
 
@@ -510,13 +508,16 @@ func cmdDefineFontfamily(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Seque
 			}
 			switch c.Name {
 			case "Regular":
-				ff.AddMember(xd.fontsources[fontface], frontend.FontWeight400, frontend.FontStyleNormal)
+				err = ff.AddMember(xd.fontsources[fontface], frontend.FontWeight400, frontend.FontStyleNormal)
 			case "Italic":
-				ff.AddMember(xd.fontsources[fontface], frontend.FontWeight400, frontend.FontStyleItalic)
+				err = ff.AddMember(xd.fontsources[fontface], frontend.FontWeight400, frontend.FontStyleItalic)
 			case "Bold":
-				ff.AddMember(xd.fontsources[fontface], frontend.FontWeight700, frontend.FontStyleNormal)
+				err = ff.AddMember(xd.fontsources[fontface], frontend.FontWeight700, frontend.FontStyleNormal)
 			case "BoldItalic":
-				ff.AddMember(xd.fontsources[fontface], frontend.FontWeight700, frontend.FontStyleItalic)
+				err = ff.AddMember(xd.fontsources[fontface], frontend.FontWeight700, frontend.FontStyleItalic)
+			}
+			if err != nil {
+				return nil, newTypesettingError(fmt.Errorf("DefineFontFamily (line %d) %s: %w", layoutelt.Line, c.Name, err))
 			}
 		}
 	}
@@ -816,8 +817,7 @@ func cmdI(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 			frontend.SettingStyle: frontend.FontStyleItalic,
 		},
 	}
-	err = getTextvalues(te, seq, "cmdBold", layoutelt.Line)
-
+	err = xd.getTextvalues(te, seq, "cmdBold", layoutelt.Line)
 	return xpath.Sequence{te}, err
 }
 
@@ -1292,6 +1292,7 @@ func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	attValues := &struct {
 		Color      string
 		Features   string
+		FontFamily string
 		Textformat *string
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
@@ -1305,14 +1306,18 @@ func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	if seq == nil {
 		seq = xpath.Sequence{}
 	}
-	te := &frontend.Text{
-		Settings: make(frontend.TypesettingSettings),
-	}
+	te := frontend.NewText()
+
 	if attValues.Color != "" {
 		te.Settings[frontend.SettingColor] = attValues.Color
 	}
 	if attValues.Features != "" {
 		te.Settings[frontend.SettingOpenTypeFeature] = attValues.Features
+	}
+	if af := attValues.FontFamily; af != "" {
+		if fontfamily := xd.document.FindFontFamily(af); fontfamily != nil {
+			te.Settings[frontend.SettingFontFamily] = fontfamily
+		}
 	}
 	if name := attValues.Textformat; name != nil {
 		if tf, ok := xd.textformats[*name]; ok {
@@ -1323,7 +1328,7 @@ func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 			bag.Logger.Warnf("text format %q not found", *name)
 		}
 	}
-	err = getTextvalues(te, seq, "cmdParagraph", layoutelt.Line)
+	err = xd.getTextvalues(te, seq, "cmdParagraph", layoutelt.Line)
 	return xpath.Sequence{te}, err
 }
 
@@ -1657,7 +1662,7 @@ func cmdSpan(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 		te.Settings[frontend.SettingStyle] = frontend.ResolveFontStyle(val)
 	}
 
-	err = getTextvalues(te, seq, "cmdSpan", layoutelt.Line)
+	err = xd.getTextvalues(te, seq, "cmdSpan", layoutelt.Line)
 
 	return xpath.Sequence{te}, err
 }
@@ -1688,7 +1693,7 @@ func cmdStylesheet(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 	case "layout":
 		xd.layoutcss.Stylesheet = append(xd.layoutcss.Stylesheet, parsedStyles)
 	case "data":
-		bag.Logger.Errorf("not implemented yet: scope=%q in Stylesheet (line %d)", attValues.Scope, layoutelt.Line)
+		xd.datacss.Stylesheet = append(xd.datacss.Stylesheet, parsedStyles)
 	default:
 		bag.Logger.Errorf("unknown scope: %q in Stylesheet (line %d)", attValues.Scope, layoutelt.Line)
 	}
@@ -1814,6 +1819,26 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	if err != nil {
 		return nil, err
 	}
+
+	if attValues.Width == 0 {
+		var mw coord
+		if mwInt, ok := xd.store["maxwidth"].(int); ok {
+			mw = coord(mwInt)
+		} else {
+			mw = coord(xd.currentGrid.nx)
+		}
+		attValues.Width = xd.currentGrid.width(mw)
+	}
+
+	var tf textformat
+	if tfname := attValues.Textformat; tfname != nil {
+		if tfn, ok := xd.textformats[*tfname]; ok {
+			tf = tfn
+		} else {
+			bag.Logger.Warnf("text format %q not found", *tfname)
+		}
+	}
+
 	seq, err := dispatch(xd, layoutelt, xd.data)
 	if err != nil {
 		return nil, err
@@ -1826,39 +1851,33 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 				frontend.SettingSize:       fontsize,
 			},
 		}
-		if name := attValues.Textformat; name != nil {
-			if tf, ok := xd.textformats[*name]; ok {
-				if tf.halignment != frontend.HAlignDefault {
-					te.Settings[frontend.SettingHAlign] = tf.halignment
-				}
-			} else {
-				bag.Logger.Warnf("text format %q not found", *name)
-			}
+		if tf.halignment != frontend.HAlignDefault {
+			te.Settings[frontend.SettingHAlign] = tf.halignment
 		}
 
 		switch t := itm.(type) {
 		case *frontend.Text:
-			if align, found := t.Settings[frontend.SettingHAlign]; found && align != frontend.HAlignDefault {
-				te.Settings[frontend.SettingHAlign] = align
+			if ftv, ok := t.Items[0].(frontend.FormatToVList); ok {
+				vl, err := ftv(attValues.Width, frontend.Family(ff), frontend.FontSize(fontsize), frontend.Leading(leading))
+				if err != nil {
+					return nil, err
+				}
+				te.Items = append(te.Items, vl)
+			} else {
+				if align, found := t.Settings[frontend.SettingHAlign]; found && align != frontend.HAlignDefault {
+					te.Settings[frontend.SettingHAlign] = align
+				}
+				te.Items = append(te.Items, t)
 			}
-			te.Items = append(te.Items, t)
+
 		case node.Node:
 			te.Items = append(te.Items, t)
 		default:
 			bag.Logger.DPanicf("cmdTextblock: unknown type %T", t)
 		}
 		// if no width is requested, we use the maximum available width
-		if attValues.Width == 0 {
-			var mw coord
-			if mwInt, ok := xd.store["maxwidth"].(int); ok {
-				mw = coord(mwInt)
-			} else {
-				mw = coord(xd.currentGrid.nx)
-			}
-			attValues.Width = xd.currentGrid.width(mw)
-		}
 
-		vlist, _, err := xd.document.FormatParagraph(te, attValues.Width, frontend.Leading(leading))
+		vlist, _, err := xd.document.FormatParagraph(te, attValues.Width, frontend.Leading(leading), frontend.Family(ff))
 		if err != nil {
 			return nil, err
 		}
@@ -2170,8 +2189,7 @@ func cmdU(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 			frontend.SettingTextDecorationLine: frontend.TextDecorationUnderline,
 		},
 	}
-	err = getTextvalues(te, seq, "cmdUnderline", layoutelt.Line)
-
+	err = xd.getTextvalues(te, seq, "cmdUnderline", layoutelt.Line)
 	return xpath.Sequence{te}, err
 }
 

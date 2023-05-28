@@ -22,6 +22,7 @@ func init() {
 	goxpath.RegisterFunction(&goxpath.Function{Name: "attribute", Namespace: fnNS, F: fnAttribute, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "current-page", Namespace: fnNS, F: fnCurrentPage, MinArg: 0, MaxArg: 0})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "current-row", Namespace: fnNS, F: fnCurrentRow, MinArg: 0, MaxArg: 1})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "decode-html", Namespace: fnNS, F: fnDecodeHTML, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "dummy-text", Namespace: fnNS, F: fnDummytext, MinArg: 0, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "even", Namespace: fnNS, F: fnEven, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "file-exists", Namespace: fnNS, F: fnFileExists, MinArg: 1, MaxArg: 1})
@@ -208,6 +209,18 @@ func fnCurrentRow(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequen
 		return nil, fmt.Errorf("area %s unknown", areaname)
 	}
 	return goxpath.Sequence{int(area.CurrentRow())}, nil
+}
+
+func fnDecodeHTML(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	firstArg := args[0]
+	text := firstArg.Stringvalue()
+	xd := ctx.Store["xd"].(*xtsDocument)
+	x, err := xd.decodeHTML(text)
+	if err != nil {
+		return nil, err
+	}
+
+	return goxpath.Sequence{x}, nil
 }
 
 func fnDummytext(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {

@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/speedata/bagme/document"
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/boxesandglue/backend/node"
 	"github.com/speedata/boxesandglue/csshtml"
@@ -14,34 +15,8 @@ import (
 	xpath "github.com/speedata/goxpath"
 )
 
-// A seqfunc is used to defer evaluation of SetVariable
+// A seqfunc is used to defer the execution of a function.
 type seqfunc func() (xpath.Sequence, error)
-
-// The next two functions store the contents of a SetVariable selection (either
-// with the attribute select or the body of the SetVariable element) and return
-// a function that evaluate with the context that is valid during the creation
-// time.
-func returnEvalSelectLaterWithCurrentContext(selection string, xd *xtsDocument) seqfunc {
-	ctx := xpath.CopyContext(xd.data.Ctx)
-	return func() (xpath.Sequence, error) {
-		oldContext := xpath.CopyContext(xd.data.Ctx)
-		xd.data.Ctx = ctx
-		eval, err := xd.data.Evaluate(selection)
-		xd.data.Ctx = oldContext
-		return eval, err
-	}
-}
-
-func returnEvalBodyLaterWithCurrentContext(layoutelt *goxml.Element, xd *xtsDocument) seqfunc {
-	ctx := xpath.CopyContext(xd.data.Ctx)
-	return func() (xpath.Sequence, error) {
-		oldContext := xpath.CopyContext(xd.data.Ctx)
-		xd.data.Ctx = ctx
-		eval, err := dispatch(xd, layoutelt, xd.data)
-		xd.data.Ctx = oldContext
-		return eval, err
-	}
-}
 
 func returnEvalBodyLater(layoutelt *goxml.Element, xd *xtsDocument, ctx *xpath.Context) seqfunc {
 	oldCtx := xpath.CopyContext(ctx)
@@ -90,12 +65,41 @@ func (xd *xtsDocument) applyLayoutStylesheet(classname string, id string, style 
 		return nil, err
 	}
 
-	n := a.Find(eltnames[0]).Nodes
-	if len(n) == 0 {
-		return map[string]string{}, nil
-	}
-	attrs, _ := csshtml.ResolveAttributes(a.Find(eltnames[0]).First().Nodes[0].Attr)
+	attrs, _ := csshtml.ResolveAttributes(a.Attr)
 	return attrs, nil
+}
+
+func (xd *xtsDocument) decodeHTML(input string) (frontend.FormatToVList, error) {
+	ftv := func(wd bag.ScaledPoint, opts ...frontend.TypesettingOption) (*node.VList, error) {
+		d := document.NewWithFrontend(xd.document, xd.datacss)
+		css := []string{}
+		options := &frontend.Options{}
+		for _, opt := range opts {
+			opt(options)
+		}
+		if options.Fontfamily != nil {
+			css = append(css, fmt.Sprintf(`body { font-family: %s; }`, options.Fontfamily.Name))
+		}
+		if fs := options.Fontsize; fs != 0 {
+			css = append(css, fmt.Sprintf(`body { font-size: %spt; }`, fs))
+		}
+		if fs := options.Leading; fs != 0 {
+			css = append(css, fmt.Sprintf(`body { line-height: %spt; }`, fs))
+		}
+		d.AddCSS(strings.Join(css, " "))
+		te, err := d.ParseHTML(input)
+		if err != nil {
+			return nil, err
+		}
+		vl, err := d.CreateVlist(te, wd)
+		if err != nil {
+			return nil, err
+		}
+
+		return vl, err
+	}
+
+	return ftv, nil
 }
 
 func (xd *xtsDocument) getFontSizeLeading(size string) (bag.ScaledPoint, bag.ScaledPoint, error) {
@@ -121,9 +125,22 @@ func (xd *xtsDocument) getFontSizeLeading(size string) (bag.ScaledPoint, bag.Sca
 	return fontsize, leading, nil
 }
 
+func debugFrontendText(fe *frontend.Text, level int) {
+	for i, itm := range fe.Items {
+		switch t := itm.(type) {
+		case *frontend.Text:
+			debugFrontendText(t, level+1)
+		case string:
+			fmt.Println(strings.Repeat("-", level), i, t)
+		default:
+			fmt.Printf("itm %T\n", itm)
+		}
+	}
+}
+
 // Get the values from the child elements of B, Paragraph and its ilk and fill
 // the provided Text struct to get a recursive data structure.
-func getTextvalues(te *frontend.Text, seq xpath.Sequence, cmdname string, line int) error {
+func (xd *xtsDocument) getTextvalues(te *frontend.Text, seq xpath.Sequence, cmdname string, line int) error {
 	if len(seq) == 0 {
 		te.Items = append(te.Items, "\u200B")
 		return nil
@@ -134,8 +151,15 @@ func getTextvalues(te *frontend.Text, seq xpath.Sequence, cmdname string, line i
 			if t.Name == "br" {
 				te.Items = append(te.Items, "\n")
 			} else {
-				te.Items = append(te.Items, t.Stringvalue())
+				nte, err := xd.parseHTML(t)
+				if err != nil {
+					return err
+				}
+				te.Items = []any{nte}
+				return nil
 			}
+		case frontend.FormatToVList:
+			te.Items = append(te.Items, t)
 		case *goxml.Attribute:
 			te.Items = append(te.Items, t.Stringvalue())
 		case float64:

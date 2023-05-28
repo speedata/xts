@@ -33,11 +33,19 @@ func (xd *xtsDocument) defaultfont() error {
 		}
 		xd.fontsources[font.fontname] = &fs
 	}
-
-	ff.AddMember(xd.fontsources["TeXGyreHeros-Regular"], frontend.FontWeight400, frontend.FontStyleNormal)
-	ff.AddMember(xd.fontsources["TeXGyreHeros-Italic"], frontend.FontWeight400, frontend.FontStyleItalic)
-	ff.AddMember(xd.fontsources["TeXGyreHeros-Bold"], frontend.FontWeight700, frontend.FontStyleNormal)
-	ff.AddMember(xd.fontsources["TeXGyreHeros-BoldItalic"], frontend.FontWeight700, frontend.FontStyleItalic)
+	var err error
+	if err = ff.AddMember(xd.fontsources["TeXGyreHeros-Regular"], frontend.FontWeight400, frontend.FontStyleNormal); err != nil {
+		return err
+	}
+	if err = ff.AddMember(xd.fontsources["TeXGyreHeros-Italic"], frontend.FontWeight400, frontend.FontStyleItalic); err != nil {
+		return err
+	}
+	if err = ff.AddMember(xd.fontsources["TeXGyreHeros-Bold"], frontend.FontWeight700, frontend.FontStyleNormal); err != nil {
+		return err
+	}
+	if err = ff.AddMember(xd.fontsources["TeXGyreHeros-BoldItalic"], frontend.FontWeight700, frontend.FontStyleItalic); err != nil {
+		return err
+	}
 
 	xd.fontsizes["text"] = [2]bag.ScaledPoint{tenpoint, twelvepoint}
 
