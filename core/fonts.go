@@ -11,6 +11,20 @@ var (
 )
 
 func (xd *xtsDocument) defaultfont() error {
+	xd.fontaliases = map[string]string{
+		"sans-regular":         "TeXGyreHeros-Regular",
+		"sans-italic":          "TeXGyreHeros-Italic",
+		"sans-bold":            "TeXGyreHeros-Bold",
+		"sans-bolditalic":      "TeXGyreHeros-BoldItalic",
+		"serif-regular":        "CrimsonPro-Regular",
+		"serif-bold":           "CrimsonPro-Bold",
+		"serif-bolditalic":     "CrimsonPro-BoldItalic",
+		"serif-italic":         "CrimsonPro-Italic",
+		"monospace-bold":       "CamingoCode-Bold",
+		"monospace-bolditalic": "CamingoCode-BoldItalic",
+		"monospace-italic":     "CamingoCode-Italic",
+		"monospace-regular":    "CamingoCode-Regular",
+	}
 	xd.fontsources = make(map[string]*frontend.FontSource)
 	ff := xd.document.NewFontFamily("text")
 	data := []struct {
@@ -21,6 +35,14 @@ func (xd *xtsDocument) defaultfont() error {
 		{"TeXGyreHeros-Italic", "texgyreheros-italic.otf"},
 		{"TeXGyreHeros-Bold", "texgyreheros-bold.otf"},
 		{"TeXGyreHeros-BoldItalic", "texgyreheros-bolditalic.otf"},
+		{"CrimsonPro-Regular", "CrimsonPro-Regular.ttf"},
+		{"CrimsonPro-Bold", "CrimsonPro-Bold.ttf"},
+		{"CrimsonPro-BoldItalic", "CrimsonPro-BoldItalic.ttf"},
+		{"CrimsonPro-Italic", "CrimsonPro-Italic.ttf"},
+		{"CamingoCode-Bold", "CamingoCode-Bold.ttf"},
+		{"CamingoCode-BoldItalic", "CamingoCode-BoldItalic.ttf"},
+		{"CamingoCode-Italic", "CamingoCode-Italic.ttf"},
+		{"CamingoCode-Regular", "CamingoCode-Regular.ttf"},
 	}
 	for _, font := range data {
 		fn, err := xd.cfg.FindFile(font.filename)

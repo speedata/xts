@@ -7,6 +7,7 @@
   <define name="Switchcontents">
     <optional><cmd name="Column"/></optional>
     <optional><cmd name="ClearPage"/></optional>
+    <optional><cmd name="DefineFontalias"/></optional>
     <optional><cmd name="LoadDataset"/></optional>
     <optional><cmd name="Loop"/></optional>
     <optional><cmd name="Message"/></optional>
@@ -15,13 +16,18 @@
     <optional><cmd name="Paragraph"/></optional>
     <optional><cmd name="PlaceObject"/></optional>
     <optional><cmd name="SaveDataset"/></optional>
+    <optional><cmd name="SetVariable"/></optional>
     <optional><cmd name="Switch"/></optional>
+    <optional><cmd name="Until"/></optional>
+    <optional><cmd name="Value"/></optional>
+    <optional><cmd name="While"/></optional>
   </define>
 
 
   <define name="Toplevel">
     <optional><cmd name="DefineColor"/></optional>
     <optional><cmd name="DefineFontfamily"/></optional>
+    <optional><cmd name="DefineFontalias"/></optional>
     <optional><cmd name="DefineFontsize"/></optional>
     <optional><cmd name="DefineMasterpage"/></optional>
     <optional><cmd name="DefineTextformat"/></optional>
@@ -40,6 +46,7 @@
 
   <define name="Commands">
     <optional><cmd name="ClearPage"/></optional>
+    <optional><cmd name="DefineFontalias"/></optional>
     <optional><cmd name="ForAll"/></optional>
     <optional><cmd name="Group"/></optional>
     <optional><cmd name="LoadDataset"/></optional>
@@ -52,7 +59,9 @@
     <optional><cmd name="SaveDataset"/></optional>
     <optional><cmd name="SetVariable"/></optional>
     <optional><cmd name="Switch"/></optional>
+    <optional><cmd name="Until"/></optional>
     <optional><cmd name="Value"/></optional>
+    <optional><cmd name="While"/></optional>
   </define>
 
   <define name="Textvalues">
@@ -1651,6 +1660,7 @@
   </command>
 
 
+
   <!--
       ****************************************************************************************
       * DefineColor
@@ -1836,6 +1846,64 @@
       <para>The predefined colors are: <tt>aliceblue</tt>, <tt>black</tt>, <tt>orange</tt>, <tt>rebeccapurple</tt>, <tt>antiquewhite</tt>, <tt>aqua</tt>, <tt>aquamarine</tt>, <tt>azure</tt>, <tt>beige</tt>, <tt>bisque</tt>, <tt>blanchedalmond</tt>, <tt>blue</tt>, <tt>blueviolet</tt>, <tt>brown</tt>, <tt>burlywood</tt>, <tt>cadetblue</tt>, <tt>chartreuse</tt>, <tt>chocolate</tt>, <tt>coral</tt>, <tt>cornflowerblue</tt>, <tt>cornsilk</tt>, <tt>crimson</tt>, <tt>darkblue</tt>, <tt>darkcyan</tt>, <tt>darkgoldenrod</tt>, <tt>darkgray</tt>, <tt>darkgreen</tt>, <tt>darkgrey</tt>, <tt>darkkhaki</tt>, <tt>darkmagenta</tt>, <tt>darkolivegreen</tt>, <tt>darkorange</tt>, <tt>darkorchid</tt>, <tt>darkred</tt>, <tt>darksalmon</tt>, <tt>darkseagreen</tt>, <tt>darkslateblue</tt>, <tt>darkslategray</tt>, <tt>darkslategrey</tt>, <tt>darkturquoise</tt>, <tt>darkviolet</tt>, <tt>deeppink</tt>, <tt>deepskyblue</tt>, <tt>dimgray</tt>, <tt>dimgrey</tt>, <tt>dodgerblue</tt>, <tt>firebrick</tt>, <tt>floralwhite</tt>, <tt>forestgreen</tt>, <tt>fuchsia</tt>, <tt>gainsboro</tt>, <tt>ghostwhite</tt>, <tt>gold</tt>, <tt>goldenrod</tt>, <tt>gray</tt>, <tt>green</tt>, <tt>greenyellow</tt>, <tt>grey</tt>, <tt>honeydew</tt>, <tt>hotpink</tt>, <tt>indianred</tt>, <tt>indigo</tt>, <tt>ivory</tt>, <tt>khaki</tt>, <tt>lavender</tt>, <tt>lavenderblush</tt>, <tt>lawngreen</tt>, <tt>lemonchiffon</tt>, <tt>lightblue</tt>, <tt>lightcoral</tt>, <tt>lightcyan</tt>, <tt>lightgoldenrodyellow</tt>, <tt>lightgray</tt>, <tt>lightgreen</tt>, <tt>lightgrey</tt>, <tt>lightpink</tt>, <tt>lightsalmon</tt>, <tt>lightseagreen</tt>, <tt>lightskyblue</tt>, <tt>lightslategray</tt>, <tt>lightslategrey</tt>, <tt>lightsteelblue</tt>, <tt>lightyellow</tt>, <tt>lime</tt>, <tt>limegreen</tt>, <tt>linen</tt>, <tt>maroon</tt>, <tt>mediumaquamarine</tt>, <tt>mediumblue</tt>, <tt>mediumorchid</tt>, <tt>mediumpurple</tt>, <tt>mediumseagreen</tt>, <tt>mediumslateblue</tt>, <tt>mediumspringgreen</tt>, <tt>mediumturquoise</tt>, <tt>mediumvioletred</tt>, <tt>midnightblue</tt>, <tt>mintcream</tt>, <tt>mistyrose</tt>, <tt>moccasin</tt>, <tt>navajowhite</tt>, <tt>navy</tt>, <tt>oldlace</tt>, <tt>olive</tt>, <tt>olivedrab</tt>, <tt>orangered</tt>, <tt>orchid</tt>, <tt>palegoldenrod</tt>, <tt>palegreen</tt>, <tt>paleturquoise</tt>, <tt>palevioletred</tt>, <tt>papayawhip</tt>, <tt>peachpuff</tt>, <tt>peru</tt>, <tt>pink</tt>, <tt>plum</tt>, <tt>powderblue</tt>, <tt>purple</tt>, <tt>red</tt>, <tt>rosybrown</tt>, <tt>royalblue</tt>, <tt>saddlebrown</tt>, <tt>salmon</tt>, <tt>sandybrown</tt>, <tt>seagreen</tt>, <tt>seashell</tt>, <tt>sienna</tt>, <tt>silver</tt>, <tt>skyblue</tt>, <tt>slateblue</tt>, <tt>slategray</tt>, <tt>slategrey</tt>, <tt>snow</tt>, <tt>springgreen</tt>, <tt>steelblue</tt>, <tt>tan</tt>, <tt>teal</tt>, <tt>thistle</tt>, <tt>tomato</tt>, <tt>turquoise</tt>, <tt>violet</tt>, <tt>wheat</tt>, <tt>white</tt>, <tt>whitesmoke</tt>, <tt>yellow</tt> and <tt>yellowgreen</tt></para></info>
     <info xml:lang="de"><para>Die Farben aus CSS Level 3 sind vordefinert im RGB-Farbraum. Siehe http://www.w3.org/TR/css3-color/ für die Definitionen. Damit kann man häufige Farben wie <tt>red</tt> oder <tt>goldenrod</tt> benutzen, ohne sie vorher mit <cmd name="DefineColor"/> zu definieren.</para>
       <para>Die vordefinierten Farben sind <tt>aliceblue</tt>, <tt>black</tt>, <tt>orange</tt>, <tt>rebeccapurple</tt>, <tt>antiquewhite</tt>, <tt>aqua</tt>, <tt>aquamarine</tt>, <tt>azure</tt>, <tt>beige</tt>, <tt>bisque</tt>, <tt>blanchedalmond</tt>, <tt>blue</tt>, <tt>blueviolet</tt>, <tt>brown</tt>, <tt>burlywood</tt>, <tt>cadetblue</tt>, <tt>chartreuse</tt>, <tt>chocolate</tt>, <tt>coral</tt>, <tt>cornflowerblue</tt>, <tt>cornsilk</tt>, <tt>crimson</tt>, <tt>darkblue</tt>, <tt>darkcyan</tt>, <tt>darkgoldenrod</tt>, <tt>darkgray</tt>, <tt>darkgreen</tt>, <tt>darkgrey</tt>, <tt>darkkhaki</tt>, <tt>darkmagenta</tt>, <tt>darkolivegreen</tt>, <tt>darkorange</tt>, <tt>darkorchid</tt>, <tt>darkred</tt>, <tt>darksalmon</tt>, <tt>darkseagreen</tt>, <tt>darkslateblue</tt>, <tt>darkslategray</tt>, <tt>darkslategrey</tt>, <tt>darkturquoise</tt>, <tt>darkviolet</tt>, <tt>deeppink</tt>, <tt>deepskyblue</tt>, <tt>dimgray</tt>, <tt>dimgrey</tt>, <tt>dodgerblue</tt>, <tt>firebrick</tt>, <tt>floralwhite</tt>, <tt>forestgreen</tt>, <tt>fuchsia</tt>, <tt>gainsboro</tt>, <tt>ghostwhite</tt>, <tt>gold</tt>, <tt>goldenrod</tt>, <tt>gray</tt>, <tt>green</tt>, <tt>greenyellow</tt>, <tt>grey</tt>, <tt>honeydew</tt>, <tt>hotpink</tt>, <tt>indianred</tt>, <tt>indigo</tt>, <tt>ivory</tt>, <tt>khaki</tt>, <tt>lavender</tt>, <tt>lavenderblush</tt>, <tt>lawngreen</tt>, <tt>lemonchiffon</tt>, <tt>lightblue</tt>, <tt>lightcoral</tt>, <tt>lightcyan</tt>, <tt>lightgoldenrodyellow</tt>, <tt>lightgray</tt>, <tt>lightgreen</tt>, <tt>lightgrey</tt>, <tt>lightpink</tt>, <tt>lightsalmon</tt>, <tt>lightseagreen</tt>, <tt>lightskyblue</tt>, <tt>lightslategray</tt>, <tt>lightslategrey</tt>, <tt>lightsteelblue</tt>, <tt>lightyellow</tt>, <tt>lime</tt>, <tt>limegreen</tt>, <tt>linen</tt>, <tt>maroon</tt>, <tt>mediumaquamarine</tt>, <tt>mediumblue</tt>, <tt>mediumorchid</tt>, <tt>mediumpurple</tt>, <tt>mediumseagreen</tt>, <tt>mediumslateblue</tt>, <tt>mediumspringgreen</tt>, <tt>mediumturquoise</tt>, <tt>mediumvioletred</tt>, <tt>midnightblue</tt>, <tt>mintcream</tt>, <tt>mistyrose</tt>, <tt>moccasin</tt>, <tt>navajowhite</tt>, <tt>navy</tt>, <tt>oldlace</tt>, <tt>olive</tt>, <tt>olivedrab</tt>, <tt>orangered</tt>, <tt>orchid</tt>, <tt>palegoldenrod</tt>, <tt>palegreen</tt>, <tt>paleturquoise</tt>, <tt>palevioletred</tt>, <tt>papayawhip</tt>, <tt>peachpuff</tt>, <tt>peru</tt>, <tt>pink</tt>, <tt>plum</tt>, <tt>powderblue</tt>, <tt>purple</tt>, <tt>red</tt>, <tt>rosybrown</tt>, <tt>royalblue</tt>, <tt>saddlebrown</tt>, <tt>salmon</tt>, <tt>sandybrown</tt>, <tt>seagreen</tt>, <tt>seashell</tt>, <tt>sienna</tt>, <tt>silver</tt>, <tt>skyblue</tt>, <tt>slateblue</tt>, <tt>slategray</tt>, <tt>slategrey</tt>, <tt>snow</tt>, <tt>springgreen</tt>, <tt>steelblue</tt>, <tt>tan</tt>, <tt>teal</tt>, <tt>thistle</tt>, <tt>tomato</tt>, <tt>turquoise</tt>, <tt>violet</tt>, <tt>wheat</tt>, <tt>white</tt>, <tt>whitesmoke</tt>, <tt>yellow</tt> und <tt>yellowgreen</tt>.</para></info>
+  </command>
+
+
+    <!--
+      ****************************************************************************************
+      * DefineFontalias
+      ****************************************************************************************
+  -->
+  <command en="DefineFontalias">
+    <description xml:lang="en">
+      <para>Defines a font alias. When defining a font family, you can use the an alias for the fontname. Aliases are looked up recursively.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Definiert einen Alias für die Verwendung bei <cmd name="DefineFontfamily"/>. Aliase werden rekursiv aufgelöst.</para>
+    </description>
+    <childelements/>
+    <attribute en="alias" type="text" optional="no">
+      <description xml:lang="en">
+        <para>New (equivalent) name of the font</para>
+      </description>
+      <description xml:lang="de">
+        <para>Neuer (gleichberechtigter) Name der Schriftart</para>
+      </description>
+    </attribute>
+    <attribute en="existing" type="text" optional="no">
+      <description xml:lang="en">
+        <para>The name of the existing font family.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Der Name der existierenden Schriftfamilie.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<DefineFontalias existing="DejaVuSerif" alias="serif"/>
+<DefineFontalias existing="DejaVuSerif-Bold" alias="serif-bold"/>
+<DefineFontalias existing="DejaVuSerif-Italic" alias="serif-italic"/>
+<DefineFontalias existing="DejaVuSerif-BoldItalic" alias="serif-bolditalic"/>]]></listing>
+      <para>Now you can define a font family with</para>
+      <listing><![CDATA[<DefineFontfamily name="title" fontsize="15" leading="17">
+  <Regular fontface="serif"/>
+  <Bold fontface="serif-bold"/>
+  <BoldItalic fontface="serif-bolditalic"/>
+  <Italic fontface="serif-italic"/>
+</DefineFontfamily>]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<DefineFontalias existing="DejaVuSerif" alias="serif"/>
+<DefineFontalias existing="DejaVuSerif-Bold" alias="serif-bold"/>
+<DefineFontalias existing="DejaVuSerif-Italic" alias="serif-italic"/>
+<DefineFontalias existing="DejaVuSerif-BoldItalic" alias="serif-bolditalic"/>]]></listing>
+      <para>Eine neue Schriftfamilie kann nun so definiert werden:</para>
+      <listing><![CDATA[<DefineFontfamily name="Überschrift" fontsize="15" leading="17">
+  <Regular fontface="serif"/>
+  <Bold fontface="serif-bold"/>
+  <BoldItalic fontface="serif-bolditalic"/>
+  <Italic fontface="serif-italic"/>
+</DefineFontfamily>]]></listing>
+    </example>
   </command>
 
   <!--
@@ -4351,6 +4419,8 @@
           <optional><cmd name="Value"/></optional>
           <optional><cmd name="Table"/></optional>
           <optional><cmd name="Textblock"/></optional>
+          <optional><cmd name="Until"/></optional>
+          <optional><cmd name="While"/></optional>
         </interleave>
       </oneOrMore>
     </childelements>
@@ -5847,6 +5917,66 @@
 
   <!--
       ****************************************************************************************
+      * Until
+      ****************************************************************************************
+  -->
+  <command en="Until">
+    <description xml:lang="en">
+      <para>Create a loop. All child elements are executed repeatedly until the given condition is true. The return value of Until is the concatenated return value of the child elements.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Erzeugt eine Schleife. Die Kindelemente werden so oft ausgeführt, bis die Bedingung im Attribut »wahr« ergibt. Der Rückgabewert von Until ist der aneinandergekettete Rückgabewert aller Kindelemente.</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <interleave>
+          <reference name="Switchcontents"/>
+        </interleave>
+      </oneOrMore>
+    </childelements>
+    <attribute en="test" type="xpath" optional="no">
+      <description xml:lang="en">
+        <para>Every time after the the loop is executed, the condition is evaluated. If it is true, the loop exits.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Nach jedem Schleifendurchlauf wird die Bedingung überprüft. Wenn sie »wahr« ergibt, wird die Schleife verlassen.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<Record element="data">
+  <SetVariable variable="i" select="0"/>
+  <Until test="$i = 4">
+    <Message select="concat('$i is: ', $i)"/>
+    <SetVariable variable="i" select="$i + 1"/>
+  </Until>
+</Record>
+]]></listing>
+      <para>Gives the following output (in the protocol file)</para>
+      <listing><![CDATA[Message: "$i is: 0.000000"
+Message: "$i is: 1.000000"
+Message: "$i is: 2.000000"
+Message: "$i is: 3.000000"]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Record element="data">
+  <SetVariable variable="i" select="0"/>
+  <Until test="$i = 4">
+    <Message select="concat('$i ist: ', $i)"/>
+    <SetVariable variable="i" select="$i + 1"/>
+  </Until>
+</Record>]]></listing>
+    <para>Erzeugt die folgende Ausgabe:</para>
+    <listing><![CDATA[Message: "$i is: 0.000000"
+      Message: "$i is: 1.000000"
+      Message: "$i is: 2.000000"
+      Message: "$i is: 3.000000"]]></listing>
+    </example>
+  </command>
+
+
+
+  <!--
+      ****************************************************************************************
       * Value
       ****************************************************************************************
   -->
@@ -5905,4 +6035,75 @@
 </Textblock>]]></listing>
     </example>
   </command>
+
+
+  <!--
+      ****************************************************************************************
+      * While
+      ****************************************************************************************
+  -->
+  <command en="While">
+    <description xml:lang="en">
+      <para>Create a loop. All child elements are executed as long as the condition in the test attribute evaluates to true.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Erzeugt eine Schleife, die wiederholt durchlaufen wird. Die Kindelemente werden so oft ausgeführt, solange die Bedingung im Attribut »wahr« ergibt.</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <interleave>
+          <reference name="Switchcontents"/>
+        </interleave>
+      </oneOrMore>
+    </childelements>
+    <attribute en="test" type="xpath" optional="no">
+      <description xml:lang="en">
+        <para>Every time before the the loop is executed, this condition must evaluate to true. See the command <cmd name="Until"/> for a loop with an exit test.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Für jedes Mal, das die Schleife durchlaufen werden soll, muss die Bedingung im Attribut erfüllt sein. Die Bedingung wird am Anfang der Schleife überprüft. Eine Schleife, bei der die Bedingung am Ende der Schleife geprüft wird, ist <cmd name="Until"/>.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <para>The following example creates a textblock with three times the contents 'Text Text Text '.</para>
+      <listing><![CDATA[
+<Record element="data">
+    <SetVariable variable="counter" select="1"/>
+    <SetVariable variable="text" select="''"/>
+    <While test=" $counter &lt;= 3 "> <!-- less or equal -->
+        <SetVariable variable="counter" select=" $counter + 1"/>
+        <SetVariable variable="text">
+            <Value select="$text"/>
+            <Value select="'Text '"/>
+      </SetVariable>
+    </While>
+    <PlaceObject>
+        <Textblock>
+            <Paragraph><Value select="$text"/></Paragraph>
+        </Textblock>
+    </PlaceObject>
+</Record>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <para>Folgendes Beispiel erzeugt einen Textblock mit dem Inhalt „Text Text Text“.</para>
+      <listing><![CDATA[<Record element="url">
+  <SetVariable variable="zaehler" select="1"/>
+  <SetVariable variable="text" select="''"/>
+  <While test=" $zaehler &lt;= 3 "> <!-- kleiner oder gleich -->
+    <SetVariable variable="zaehler" select=" $zaehler + 1"/>
+    <SetVariable variable="text">
+      <Value select="$text"/>
+      <Value select="'Text '"/>
+    </SetVariable>
+  </While>
+  <PlaceObject>
+    <Textblock>
+      <Paragraph><Value select="$text"></Value></Paragraph>
+    </Textblock>
+  </PlaceObject>
+</Record>]]></listing>
+    </example>
+  </command>
+
 </commands>

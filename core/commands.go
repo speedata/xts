@@ -47,6 +47,7 @@ func init() {
 		"Columns":          cmdColumns,
 		"Contents":         cmdContents,
 		"DefineColor":      cmdDefineColor,
+		"DefineFontalias":  cmdDefineFontalias,
 		"DefineFontfamily": cmdDefineFontfamily,
 		"DefineFontsize":   cmdDefineFontsize,
 		"DefineMasterpage": cmdDefineMasterpage,
@@ -84,7 +85,9 @@ func init() {
 		"Trace":            cmdTrace,
 		"Tr":               cmdTr,
 		"U":                cmdU,
+		"Until":            cmdUntil,
 		"Value":            cmdValue,
+		"While":            cmdWhile,
 	}
 }
 
@@ -490,6 +493,22 @@ func cmdContents(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, err
 	return nil, nil
 }
 
+func cmdDefineFontalias(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Existing string `sdxml:"mustexist"`
+		Alias    string `sdxml:"mustexist"`
+	}{}
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	if _, ok := xd.fontaliases[attValues.Alias]; ok {
+		bag.Logger.Warnf("DefineFontalias (line %d): font alias %s already exists", layoutelt.Line, attValues.Alias)
+	}
+	xd.fontaliases[attValues.Alias] = attValues.Existing
+	return nil, nil
+}
+
 func cmdDefineFontfamily(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
@@ -497,6 +516,17 @@ func cmdDefineFontfamily(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Seque
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
+	}
+	getFontAlias := func(name string) string {
+		// max 10 levels of indirection
+		for i := 0; i < 10; i++ {
+			if fs, ok := xd.fontaliases[name]; ok {
+				name = fs
+			} else {
+				return name
+			}
+		}
+		return name
 	}
 
 	ff := xd.document.NewFontFamily(attValues.Name)
@@ -506,9 +536,10 @@ func cmdDefineFontfamily(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Seque
 			if fontface, err = xd.getAttributeString("fontface", c, true, true, ""); err != nil {
 				return nil, err
 			}
+
 			switch c.Name {
 			case "Regular":
-				err = ff.AddMember(xd.fontsources[fontface], frontend.FontWeight400, frontend.FontStyleNormal)
+				err = ff.AddMember(xd.fontsources[getFontAlias(fontface)], frontend.FontWeight400, frontend.FontStyleNormal)
 			case "Italic":
 				err = ff.AddMember(xd.fontsources[fontface], frontend.FontWeight400, frontend.FontStyleItalic)
 			case "Bold":
@@ -1015,7 +1046,7 @@ func cmdLoop(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 	var err error
 	attValues := &struct {
 		Select   string `sdxml:"noescape,mustexist"`
-		Variable string
+		Variable string `sdxml:"default:_loopcounter"`
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -2193,6 +2224,40 @@ func cmdU(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	return xpath.Sequence{te}, err
 }
 
+func cmdUntil(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Test string `sdxml:"noescape,mustexist"`
+	}{}
+
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	var ret []goxpath.Item
+	for {
+		seq, err := dispatch(xd, layoutelt, xd.data)
+		if err != nil {
+			return nil, err
+		}
+		ret = append(ret, seq...)
+		var eval xpath.Sequence
+		eval, err = xd.data.Evaluate(attValues.Test)
+		if err != nil {
+			return nil, newTypesettingErrorFromStringf("Case (line %d): error parsing test XPath expression %s", layoutelt.Line, err)
+		}
+		var ok bool
+		if ok, err = xpath.BooleanValue(eval); err != nil {
+			return nil, err
+		}
+
+		if ok {
+			break
+		}
+	}
+
+	return ret, nil
+}
+
 func cmdValue(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
@@ -2215,4 +2280,40 @@ func cmdValue(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	}
 
 	return seq, nil
+}
+
+func cmdWhile(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Test string `sdxml:"noescape,mustexist"`
+	}{}
+
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	var ret []goxpath.Item
+	for {
+		var eval xpath.Sequence
+		eval, err = xd.data.Evaluate(attValues.Test)
+		if err != nil {
+			return nil, newTypesettingErrorFromStringf("Case (line %d): error parsing test XPath expression %s", layoutelt.Line, err)
+		}
+		var ok bool
+		if ok, err = xpath.BooleanValue(eval); err != nil {
+			return nil, err
+		}
+
+		if !ok {
+			break
+		}
+
+		seq, err := dispatch(xd, layoutelt, xd.data)
+		if err != nil {
+			return nil, err
+		}
+		ret = append(ret, seq...)
+
+	}
+
+	return ret, nil
 }

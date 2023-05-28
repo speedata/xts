@@ -429,6 +429,7 @@ func dothings() error {
 			FindFile:    core.FindFile,
 			Variables:   configuration.VariablesMap,
 			Mode:        configuration.Mode,
+			Tracing:     configuration.Trace,
 		}
 
 		if fn := dumpOutputFileName; fn != "" {

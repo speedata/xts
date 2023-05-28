@@ -54,6 +54,7 @@ type xtsDocument struct {
 	pages             []*page
 	groups            map[string]*group
 	fontsources       map[string]*frontend.FontSource
+	fontaliases       map[string]string
 	fontsizes         map[string][2]bag.ScaledPoint
 	textformats       map[string]textformat
 	defaultGridWidth  bag.ScaledPoint
@@ -189,6 +190,7 @@ type XTSConfig struct {
 	OutFilename string
 	DumpFile    io.Writer
 	Variables   map[string]any
+	Tracing     []string
 }
 
 // RunXTS is the entry point
@@ -202,6 +204,14 @@ func RunXTS(cfg *XTSConfig) error {
 	d.cfg = cfg
 	if d.document, err = frontend.New(cfg.OutFilename); err != nil {
 		return err
+	}
+	for _, tr := range cfg.Tracing {
+		switch tr {
+		case "grid":
+			d.SetVTrace(VTraceGrid)
+		case "gridallocation":
+			d.SetVTrace(VTraceAllocation)
+		}
 	}
 	d.document.Doc.CompressLevel = 9
 	if err = d.defaultfont(); err != nil {
