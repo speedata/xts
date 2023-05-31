@@ -214,12 +214,14 @@ func fnCurrentRow(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequen
 func fnDecodeHTML(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
 	firstArg := args[0]
 	text := firstArg.Stringvalue()
+
 	xd := ctx.Store["xd"].(*xtsDocument)
-	x, err := xd.decodeHTML(text)
+	x, err := xd.parseHTMLText("<dummy>" + text + "</dummy>")
 	if err != nil {
 		return nil, err
 	}
-
+	x = x.FirstChild.LastChild.FirstChild
+	x.Parent = nil
 	return goxpath.Sequence{x}, nil
 }
 

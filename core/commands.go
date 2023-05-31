@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 
+	"golang.org/x/net/html"
+
 	pdf "github.com/speedata/baseline-pdf"
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/boxesandglue/backend/color"
@@ -58,6 +60,7 @@ func init() {
 		"Group":            cmdGroup,
 		"I":                cmdI,
 		"Image":            cmdImage,
+		"Li":               cmdLi,
 		"LoadDataset":      cmdLoadDataset,
 		"LoadFontfile":     cmdLoadFontfile,
 		"Loop":             cmdLoop,
@@ -85,6 +88,7 @@ func init() {
 		"Trace":            cmdTrace,
 		"Tr":               cmdTr,
 		"U":                cmdU,
+		"Ul":               cmdUl,
 		"Until":            cmdUntil,
 		"Value":            cmdValue,
 		"While":            cmdWhile,
@@ -128,15 +132,9 @@ func cmdA(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	if err != nil {
 		return nil, err
 	}
-	hl := document.Hyperlink{URI: attValues.Href, Local: attValues.Link}
-
-	te := &frontend.Text{
-		Settings: frontend.TypesettingSettings{
-			frontend.SettingHyperlink: hl,
-		},
-	}
-	err = xd.getTextvalues(te, seq, "cmdA", layoutelt.Line)
-	return xpath.Sequence{te}, err
+	n, err := xd.getTextvalues("a", seq, "", "", "cmdA", layoutelt.Line)
+	n.Attr = append(n.Attr, html.Attribute{Key: "href", Val: attValues.Href})
+	return xpath.Sequence{n}, err
 }
 
 func cmdAction(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -199,19 +197,13 @@ func cmdB(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	if err != nil {
 		return nil, err
 	}
-	te := &frontend.Text{
-		Settings: frontend.TypesettingSettings{
-			frontend.SettingFontWeight: frontend.FontWeight700,
-		},
-	}
-	err = xd.getTextvalues(te, seq, "cmdBold", layoutelt.Line)
-	return xpath.Sequence{te}, err
+	n, err := xd.getTextvalues("b", seq, "", "", "cmdB", layoutelt.Line)
+	return xpath.Sequence{n}, err
 }
 
 func cmdBr(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
-	te := frontend.NewText()
-	te.Items = append(te.Items, "\n")
-	return xpath.Sequence{te}, nil
+	n, err := xd.getTextvalues("br", xpath.Sequence{}, "", "", "cmdBr", layoutelt.Line)
+	return xpath.Sequence{n}, err
 }
 
 func cmdBarcode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -541,11 +533,11 @@ func cmdDefineFontfamily(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Seque
 			case "Regular":
 				err = ff.AddMember(xd.fontsources[getFontAlias(fontface)], frontend.FontWeight400, frontend.FontStyleNormal)
 			case "Italic":
-				err = ff.AddMember(xd.fontsources[fontface], frontend.FontWeight400, frontend.FontStyleItalic)
+				err = ff.AddMember(xd.fontsources[getFontAlias(fontface)], frontend.FontWeight400, frontend.FontStyleItalic)
 			case "Bold":
-				err = ff.AddMember(xd.fontsources[fontface], frontend.FontWeight700, frontend.FontStyleNormal)
+				err = ff.AddMember(xd.fontsources[getFontAlias(fontface)], frontend.FontWeight700, frontend.FontStyleNormal)
 			case "BoldItalic":
-				err = ff.AddMember(xd.fontsources[fontface], frontend.FontWeight700, frontend.FontStyleItalic)
+				err = ff.AddMember(xd.fontsources[getFontAlias(fontface)], frontend.FontWeight700, frontend.FontStyleItalic)
 			}
 			if err != nil {
 				return nil, newTypesettingError(fmt.Errorf("DefineFontFamily (line %d) %s: %w", layoutelt.Line, c.Name, err))
@@ -843,13 +835,8 @@ func cmdI(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	if err != nil {
 		return nil, err
 	}
-	te := &frontend.Text{
-		Settings: frontend.TypesettingSettings{
-			frontend.SettingStyle: frontend.FontStyleItalic,
-		},
-	}
-	err = xd.getTextvalues(te, seq, "cmdBold", layoutelt.Line)
-	return xpath.Sequence{te}, err
+	n, err := xd.getTextvalues("i", seq, "", "", "cmdI", layoutelt.Line)
+	return xpath.Sequence{n}, err
 }
 
 func cmdImage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -1321,6 +1308,8 @@ func cmdPageformat(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
+		Class      string
+		ID         string
 		Color      string
 		Features   string
 		FontFamily string
@@ -1337,30 +1326,8 @@ func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	if seq == nil {
 		seq = xpath.Sequence{}
 	}
-	te := frontend.NewText()
-
-	if attValues.Color != "" {
-		te.Settings[frontend.SettingColor] = attValues.Color
-	}
-	if attValues.Features != "" {
-		te.Settings[frontend.SettingOpenTypeFeature] = attValues.Features
-	}
-	if af := attValues.FontFamily; af != "" {
-		if fontfamily := xd.document.FindFontFamily(af); fontfamily != nil {
-			te.Settings[frontend.SettingFontFamily] = fontfamily
-		}
-	}
-	if name := attValues.Textformat; name != nil {
-		if tf, ok := xd.textformats[*name]; ok {
-			if tf.halignment != frontend.HAlignDefault {
-				te.Settings[frontend.SettingHAlign] = tf.halignment
-			}
-		} else {
-			bag.Logger.Warnf("text format %q not found", *name)
-		}
-	}
-	err = xd.getTextvalues(te, seq, "cmdParagraph", layoutelt.Line)
-	return xpath.Sequence{te}, err
+	n, err := xd.getTextvalues("p", seq, attValues.Class, attValues.ID, "cmdParagraph", layoutelt.Line)
+	return xpath.Sequence{n}, err
 }
 
 func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -1668,41 +1635,20 @@ func cmdSpan(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
-
-	attrs, err := xd.applyLayoutStylesheet(attValues.Class, attValues.ID, attValues.Style, "span")
-	if err != nil {
-		return nil, err
-	}
-
 	seq, err := dispatch(xd, layoutelt, xd.data)
 	if err != nil {
 		return nil, err
 	}
 
-	te := &frontend.Text{
-		Settings: frontend.TypesettingSettings{},
-	}
+	n, err := xd.getTextvalues("span", seq, attValues.Class, attValues.ID, "cmdSpan", layoutelt.Line)
 
-	if val, ok := attrs["color"]; ok {
-		te.Settings[frontend.SettingColor] = xd.document.GetColor(val)
-	}
-	if val, ok := attrs["font-weight"]; ok {
-		te.Settings[frontend.SettingFontWeight] = frontend.ResolveFontWeight(val, frontend.FontWeight100)
-	}
-	if val, ok := attrs["font-style"]; ok {
-		te.Settings[frontend.SettingStyle] = frontend.ResolveFontStyle(val)
-	}
-
-	err = xd.getTextvalues(te, seq, "cmdSpan", layoutelt.Line)
-
-	return xpath.Sequence{te}, err
+	return xpath.Sequence{n}, err
 }
 
 func cmdStylesheet(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
-		Scope string
-		Href  string
+		Href string
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -1720,14 +1666,7 @@ func cmdStylesheet(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 		return nil, nil
 	}
 	parsedStyles := csshtml.ConsumeBlock(toks, false)
-	switch attValues.Scope {
-	case "layout":
-		xd.layoutcss.Stylesheet = append(xd.layoutcss.Stylesheet, parsedStyles)
-	case "data":
-		xd.datacss.Stylesheet = append(xd.datacss.Stylesheet, parsedStyles)
-	default:
-		bag.Logger.Errorf("unknown scope: %q in Stylesheet (line %d)", attValues.Scope, layoutelt.Line)
-	}
+	xd.layoutcss.Stylesheet = append(xd.layoutcss.Stylesheet, parsedStyles)
 
 	return xpath.Sequence{nil}, nil
 }
@@ -1887,6 +1826,48 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		}
 
 		switch t := itm.(type) {
+		case *html.Node:
+			doc := &html.Node{
+				Type: html.DocumentNode,
+			}
+			root := &html.Node{
+				Data: "html",
+				Type: html.ElementNode,
+			}
+			head := &html.Node{
+				Data: "head",
+				Type: html.ElementNode,
+			}
+			body := &html.Node{
+				Data: "body",
+				Type: html.ElementNode,
+			}
+
+			body.AppendChild(t)
+			root.AppendChild(head)
+			root.AppendChild(body)
+			doc.AppendChild(root)
+			ftv, err := xd.decodeHTMLFromHTMLNode(doc)
+			if err != nil {
+				return nil, err
+			}
+			vl, err := ftv(attValues.Width, frontend.Family(ff), frontend.FontSize(fontsize), frontend.Leading(leading))
+			if err != nil {
+				return nil, err
+			}
+			te.Items = append(te.Items, vl)
+
+		case string:
+			ftv, err := xd.decodeHTML(t)
+			if err != nil {
+				return nil, err
+			}
+			vl, err := ftv(attValues.Width, frontend.Family(ff), frontend.FontSize(fontsize), frontend.Leading(leading))
+			if err != nil {
+				return nil, err
+			}
+			te.Items = append(te.Items, vl)
+
 		case *frontend.Text:
 			if ftv, ok := t.Items[0].(frontend.FormatToVList); ok {
 				vl, err := ftv(attValues.Width, frontend.Family(ff), frontend.FontSize(fontsize), frontend.Leading(leading))
@@ -2215,13 +2196,26 @@ func cmdU(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	if err != nil {
 		return nil, err
 	}
-	te := &frontend.Text{
-		Settings: frontend.TypesettingSettings{
-			frontend.SettingTextDecorationLine: frontend.TextDecorationUnderline,
-		},
+	n, err := xd.getTextvalues("u", seq, "", "", "cmdU", layoutelt.Line)
+	return xpath.Sequence{n}, err
+}
+
+func cmdLi(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	seq, err := dispatch(xd, layoutelt, xd.data)
+	if err != nil {
+		return nil, err
 	}
-	err = xd.getTextvalues(te, seq, "cmdUnderline", layoutelt.Line)
-	return xpath.Sequence{te}, err
+	n, err := xd.getTextvalues("li", seq, "", "", "cmdLi", layoutelt.Line)
+	return xpath.Sequence{n}, err
+}
+
+func cmdUl(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	seq, err := dispatch(xd, layoutelt, xd.data)
+	if err != nil {
+		return nil, err
+	}
+	n, err := xd.getTextvalues("ul", seq, "", "", "cmdul", layoutelt.Line)
+	return xpath.Sequence{n}, err
 }
 
 func cmdUntil(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -2270,13 +2264,27 @@ func cmdValue(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	if attValues.Select != nil {
 		eval, err := evaluateXPath(xd, layoutelt.Namespaces, *attValues.Select)
 		if err != nil {
-			return nil, err
+			return nil, newTypesettingError(fmt.Errorf("Value (line %d): %w", layoutelt.Line, err))
 		}
 		return eval, nil
 	}
 	seq := xpath.Sequence{}
 	for _, cld := range layoutelt.Children() {
-		seq = append(seq, cld)
+		switch t := cld.(type) {
+		case goxml.CharData:
+			seq = append(seq, t.Contents)
+		case *goxml.Element:
+			if t.Name == "br" {
+				n := &html.Node{}
+				n.Data = "br"
+				n.Type = html.ElementNode
+				seq = append(seq, n)
+			} else {
+				seq = append(seq, cld)
+			}
+		default:
+			seq = append(seq, cld)
+		}
 	}
 
 	return seq, nil

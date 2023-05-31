@@ -26,7 +26,6 @@ func (xd *xtsDocument) defaultfont() error {
 		"monospace-regular":    "CamingoCode-Regular",
 	}
 	xd.fontsources = make(map[string]*frontend.FontSource)
-	ff := xd.document.NewFontFamily("text")
 	data := []struct {
 		fontname string
 		filename string
@@ -56,6 +55,7 @@ func (xd *xtsDocument) defaultfont() error {
 		xd.fontsources[font.fontname] = &fs
 	}
 	var err error
+	ff := xd.document.NewFontFamily("text")
 	if err = ff.AddMember(xd.fontsources["TeXGyreHeros-Regular"], frontend.FontWeight400, frontend.FontStyleNormal); err != nil {
 		return err
 	}
@@ -66,6 +66,48 @@ func (xd *xtsDocument) defaultfont() error {
 		return err
 	}
 	if err = ff.AddMember(xd.fontsources["TeXGyreHeros-BoldItalic"], frontend.FontWeight700, frontend.FontStyleItalic); err != nil {
+		return err
+	}
+
+	ff = xd.document.NewFontFamily("sans")
+	if err = ff.AddMember(xd.fontsources["TeXGyreHeros-Regular"], frontend.FontWeight400, frontend.FontStyleNormal); err != nil {
+		return err
+	}
+	if err = ff.AddMember(xd.fontsources["TeXGyreHeros-Italic"], frontend.FontWeight400, frontend.FontStyleItalic); err != nil {
+		return err
+	}
+	if err = ff.AddMember(xd.fontsources["TeXGyreHeros-Bold"], frontend.FontWeight700, frontend.FontStyleNormal); err != nil {
+		return err
+	}
+	if err = ff.AddMember(xd.fontsources["TeXGyreHeros-BoldItalic"], frontend.FontWeight700, frontend.FontStyleItalic); err != nil {
+		return err
+	}
+
+	ff = xd.document.NewFontFamily("serif")
+	if err = ff.AddMember(xd.fontsources["CrimsonPro-Regular"], frontend.FontWeight400, frontend.FontStyleNormal); err != nil {
+		return err
+	}
+	if err = ff.AddMember(xd.fontsources["CrimsonPro-Italic"], frontend.FontWeight400, frontend.FontStyleItalic); err != nil {
+		return err
+	}
+	if err = ff.AddMember(xd.fontsources["CrimsonPro-Bold"], frontend.FontWeight700, frontend.FontStyleNormal); err != nil {
+		return err
+	}
+	if err = ff.AddMember(xd.fontsources["CrimsonPro-BoldItalic"], frontend.FontWeight700, frontend.FontStyleItalic); err != nil {
+		return err
+	}
+
+	ff = xd.document.NewFontFamily("monospace")
+	if err = ff.AddMember(xd.fontsources["CamingoCode-Regular"], frontend.FontWeight400, frontend.FontStyleNormal); err != nil {
+		return err
+	}
+	if err = ff.AddMember(xd.fontsources["CamingoCode-Italic"], frontend.FontWeight400, frontend.FontStyleItalic); err != nil {
+		return err
+	}
+	if err = ff.AddMember(xd.fontsources["CamingoCode-Bold"], frontend.FontWeight700, frontend.FontStyleNormal); err != nil {
+		return err
+	}
+	if err = ff.AddMember(xd.fontsources["CamingoCode-BoldItalic"], frontend.FontWeight700, frontend.FontStyleItalic); err != nil {
 		return err
 	}
 

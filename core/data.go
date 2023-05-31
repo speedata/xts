@@ -13,6 +13,7 @@ import (
 	"github.com/speedata/boxesandglue/frontend"
 	"github.com/speedata/goxml"
 	xpath "github.com/speedata/goxpath"
+	"golang.org/x/net/html"
 )
 
 // A seqfunc is used to defer the execution of a function.
@@ -69,9 +70,42 @@ func (xd *xtsDocument) applyLayoutStylesheet(classname string, id string, style 
 	return attrs, nil
 }
 
+func (xd *xtsDocument) decodeHTMLFromHTMLNode(input *html.Node) (frontend.FormatToVList, error) {
+	ftv := func(wd bag.ScaledPoint, opts ...frontend.TypesettingOption) (*node.VList, error) {
+		d := document.NewWithFrontend(xd.document, xd.layoutcss)
+		css := []string{}
+		options := &frontend.Options{}
+		for _, opt := range opts {
+			opt(options)
+		}
+		if options.Fontfamily != nil {
+			css = append(css, fmt.Sprintf(`body { font-family: %s; }`, options.Fontfamily.Name))
+		}
+		if fs := options.Fontsize; fs != 0 {
+			css = append(css, fmt.Sprintf(`body { font-size: %spt; }`, fs))
+		}
+		if fs := options.Leading; fs != 0 {
+			css = append(css, fmt.Sprintf(`body { line-height: %spt; }`, fs))
+		}
+		d.AddCSS(strings.Join(css, " "))
+		te, err := d.ParseHTMLFromNode(input)
+		if err != nil {
+			return nil, err
+		}
+		vl, err := d.CreateVlist(te, wd)
+		if err != nil {
+			return nil, err
+		}
+
+		return vl, err
+	}
+
+	return ftv, nil
+}
+
 func (xd *xtsDocument) decodeHTML(input string) (frontend.FormatToVList, error) {
 	ftv := func(wd bag.ScaledPoint, opts ...frontend.TypesettingOption) (*node.VList, error) {
-		d := document.NewWithFrontend(xd.document, xd.datacss)
+		d := document.NewWithFrontend(xd.document, xd.layoutcss)
 		css := []string{}
 		options := &frontend.Options{}
 		for _, opt := range opts {
@@ -100,6 +134,11 @@ func (xd *xtsDocument) decodeHTML(input string) (frontend.FormatToVList, error) 
 	}
 
 	return ftv, nil
+}
+
+func (xd *xtsDocument) parseHTMLText(input string) (*html.Node, error) {
+	s := strings.NewReader(input)
+	return html.Parse(s)
 }
 
 func (xd *xtsDocument) getFontSizeLeading(size string) (bag.ScaledPoint, bag.ScaledPoint, error) {
@@ -138,49 +177,55 @@ func debugFrontendText(fe *frontend.Text, level int) {
 	}
 }
 
-// Get the values from the child elements of B, Paragraph and its ilk and fill
-// the provided Text struct to get a recursive data structure.
-func (xd *xtsDocument) getTextvalues(te *frontend.Text, seq xpath.Sequence, cmdname string, line int) error {
-	if len(seq) == 0 {
-		te.Items = append(te.Items, "\u200B")
-		return nil
+// Get the values from the child elements of B, Paragraph and its ilk and return
+// the equivalent HTML structure.
+func (xd *xtsDocument) getTextvalues(tagname string, seq xpath.Sequence, class string, id string, cmdname string, line int) (*html.Node, error) {
+	n := &html.Node{}
+	n.Data = tagname
+	n.Type = html.ElementNode
+	n.Attr = append(n.Attr, html.Attribute{Key: "class", Val: class})
+	n.Attr = append(n.Attr, html.Attribute{Key: "id", Val: id})
+
+	if len(seq) == 0 && tagname == "p" {
+		cd := &html.Node{}
+		cd.Type = html.TextNode
+		cd.Data = "\u200B"
+		n.AppendChild(cd)
+		return n, nil
 	}
+
 	for _, itm := range seq {
 		switch t := itm.(type) {
-		case *goxml.Element:
-			if t.Name == "br" {
-				te.Items = append(te.Items, "\n")
-			} else {
-				nte, err := xd.parseHTML(t)
-				if err != nil {
-					return err
-				}
-				te.Items = []any{nte}
-				return nil
-			}
-		case frontend.FormatToVList:
-			te.Items = append(te.Items, t)
-		case *goxml.Attribute:
-			te.Items = append(te.Items, t.Stringvalue())
-		case float64:
-			te.Items = append(te.Items, strconv.FormatFloat(t, 'f', -1, 64))
-		case goxml.CharData:
-			te.Items = append(te.Items, string(t.Contents))
 		case string:
-			te.Items = append(te.Items, t)
-		case int:
-			te.Items = append(te.Items, fmt.Sprintf("%d", t))
-		case *frontend.Text:
-			te.Items = append(te.Items, t)
-		case []goxml.XMLNode:
-			te.Items = append(te.Items, seq.Stringvalue())
-		case *node.StartStop:
-			te.Items = append(te.Items, t)
+			cd := &html.Node{}
+			cd.Type = html.TextNode
+			cd.Data = t
+			n.AppendChild(cd)
+		case *html.Node:
+			n.AppendChild(t)
+		case *goxml.Element:
+			xmltext, err := xd.parseHTMLText(t.ToXML())
+			if err != nil {
+				return nil, err
+			}
+			elt := xmltext.FirstChild.LastChild.FirstChild
+			elt.Parent = nil
+			n.AppendChild(elt)
+		case *goxml.Attribute:
+			cd := &html.Node{}
+			cd.Type = html.TextNode
+			cd.Data = t.Stringvalue()
+			n.AppendChild(cd)
+		case float64:
+			cd := &html.Node{}
+			cd.Type = html.TextNode
+			cd.Data = strconv.FormatFloat(t, 'f', -1, 64)
+			n.AppendChild(cd)
 		default:
 			bag.Logger.DPanicf("%s (line %d): unknown type %T (getTextvalues)", cmdname, line, t)
 		}
 	}
-	return nil
+	return n, nil
 }
 
 func getStructTag(f reflect.StructField, tagName string) string {

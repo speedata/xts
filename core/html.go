@@ -28,7 +28,7 @@ func (xd *xtsDocument) parseHTML(elt *goxml.Element) (frontend.FormatToVList, er
 		if fs := options.Leading; fs != 0 {
 			css = append(css, fmt.Sprintf(`body { line-height: %spt; }`, fs))
 		}
-		d := document.NewWithFrontend(xd.document, xd.datacss)
+		d := document.NewWithFrontend(xd.document, xd.layoutcss)
 		d.AddCSS(strings.Join(css, " "))
 		te, err := d.ParseHTML(str)
 		if err != nil {

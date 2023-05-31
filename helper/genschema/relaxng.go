@@ -65,7 +65,14 @@ func writeChildElements(commands *commandsXML, enc *xml.Encoder, children []byte
 			case "reference":
 				for _, attr := range v.Attr {
 					if attr.Name.Local == "name" {
-						writeChildElements(commands, enc, commands.getDefine(attr.Value), lang)
+						if attr.Value == "html" {
+							htmlSe := xml.StartElement{Name: xml.Name{Local: "ref"}}
+							htmlSe.Attr = append(htmlSe.Attr, xml.Attr{Name: xml.Name{Local: "name"}, Value: "html"})
+							enc.EncodeToken(htmlSe)
+							enc.EncodeToken(htmlSe.End())
+						} else {
+							writeChildElements(commands, enc, commands.getDefine(attr.Value), lang)
+						}
 					}
 				}
 			default:
@@ -289,8 +296,32 @@ func genRelaxNGSchema(commands *commandsXML, lang string, allowForeignNodes bool
 		enc.EncodeToken(elt.End())
 		enc.EncodeToken(def.End())
 	}
-	if allowForeignNodes {
+	enc.Flush()
+	fmt.Fprint(&outbuf, `
+	<!-- allow HTML in <Value> ... </Value> -->
+	<define name="html">
+		<zeroOrMore>
+		   <choice>
+			  <element name="a">
+				 <attribute name="href"/>
+				 <ref name="html"/>
+			  </element>
+			  <element name="b"><ref name="html" /></element>
+			  <element name="br"><empty /></element>
+			  <element name="i"><ref name="html" /></element>
+			  <element name="kbd"><ref name="html" /></element>
+			  <element name="li"><ref name="html" /></element>
+			  <element name="p"><ref name="html" /></element>
+			  <element name="span"><ref name="html" /></element>
+			  <element name="u"><ref name="html" /></element>
+			  <element name="ul"><ref name="html" /></element>
+			  <text></text>
+		   </choice>
+		</zeroOrMore>
+	</define>
 
+`)
+	if allowForeignNodes {
 		enc.Flush()
 		// See feature request #144
 		fmt.Fprintln(&outbuf, fmt.Sprintf(`

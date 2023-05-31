@@ -782,7 +782,7 @@ func getchildren(c *Commands, dec *xml.Decoder) []*Command {
 						refname = attribute.Value
 					}
 				}
-				{
+				if refname != "html" {
 					dec = xml.NewDecoder(bytes.NewReader(c.defines[refname].Text))
 					x := getchildren(c, dec)
 					for _, command := range x {

@@ -49,7 +49,6 @@ type xtsDocument struct {
 	document          *frontend.Document
 	jobname           string
 	layoutcss         *csshtml.CSS
-	datacss           *csshtml.CSS
 	data              *xpath.Parser
 	pages             []*page
 	groups            map[string]*group
@@ -82,8 +81,7 @@ func newXTSDocument() *xtsDocument {
 		defaultGridHeight: oneCM,
 		defaultGridGapX:   0,
 		defaultGridGapY:   0,
-		layoutcss:         csshtml.NewCSSParser(),
-		datacss:           csshtml.NewCSSParser(),
+		layoutcss:         csshtml.NewCSSParserWithDefaults(),
 		groups:            make(map[string]*group),
 		fontsizes:         make(map[string][2]bag.ScaledPoint),
 		store:             make(map[any]any),
@@ -214,11 +212,21 @@ func RunXTS(cfg *XTSConfig) error {
 		}
 	}
 	d.document.Doc.CompressLevel = 9
+	bag.Logger.Info("Setup defaults ...")
 	if err = d.defaultfont(); err != nil {
 		return err
 	}
 	d.defaultTextformats()
+	var defaultPagetype *pagetype
+	if defaultPagetype, err = d.newPagetype("default page", "true()"); err != nil {
+		return err
+	}
+	defaultPagetype.marginLeft = oneCM
+	defaultPagetype.marginRight = oneCM
+	defaultPagetype.marginTop = oneCM
+	defaultPagetype.marginBottom = oneCM
 
+	bag.Logger.Info("Setup defaults ... done")
 	if layoutxml, err = goxml.Parse(cfg.Layoutfile); err != nil {
 		return err
 	}
@@ -242,14 +250,6 @@ func RunXTS(cfg *XTSConfig) error {
 	cfg.Datafile.Close()
 
 	d.registerCallbacks()
-	var defaultPagetype *pagetype
-	if defaultPagetype, err = d.newPagetype("default page", "true()"); err != nil {
-		return err
-	}
-	defaultPagetype.marginLeft = oneCM
-	defaultPagetype.marginRight = oneCM
-	defaultPagetype.marginTop = oneCM
-	defaultPagetype.marginBottom = oneCM
 
 	layoutRoot, err := layoutxml.Root()
 	if err != nil {

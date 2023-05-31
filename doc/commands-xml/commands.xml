@@ -73,6 +73,7 @@
         <cmd name="Br"/>
         <cmd name="I"/>
         <cmd name="U"/>
+        <cmd name="Ul"/>
         <cmd name="Value"/>
         <cmd name="Span"/>
       </choice>
@@ -2853,6 +2854,48 @@
 
   <!--
       ****************************************************************************************
+      * Li
+      ****************************************************************************************
+  -->
+  <command en="Li">
+    <description xml:lang="en">
+      <para>List item in an ordered or unordered list.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Listeneintrag in einer Aufzählungsliste (mit Aufzählungspunkten oder nummerierten Punkten).</para>
+    </description>
+    <childelements>
+      <reference name="Textvalues"/>
+    </childelements>
+    <example xml:lang="en">
+      <listing><![CDATA[<PlaceObject>
+  <Textblock>
+    <Ol>
+      <Li><Value>First item</Value></Li>
+      <Li><Value>Second item</Value></Li>
+      <Li><Value>Third item</Value></Li>
+    </Ol>
+  </Textblock>
+</PlaceObject>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<PlaceObject>
+  <Textblock>
+    <Ol>
+      <Li><Value>Erster Eintrag</Value></Li>
+      <Li><Value>Zweiter Eintrag</Value></Li>
+      <Li><Value>Dritter Eintrag</Value></Li>
+    </Ol>
+  </Textblock>
+</PlaceObject>
+]]></listing>
+    </example>
+  </command>
+
+
+  <!--
+      ****************************************************************************************
       * Loop
       ****************************************************************************************
   -->
@@ -3333,6 +3376,61 @@
 
   <!--
       ****************************************************************************************
+      * Ol
+      ****************************************************************************************
+  -->
+  <command en="Ol">
+    <description xml:lang="en">
+      <para>Create an ordered list, just like in HTML</para>
+    </description>
+    <description xml:lang="de">
+      <para>Erzeugt eine nummerierte Aufzählungsliste wie in HTML</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <interleave>
+          <optional><cmd name="Li"/></optional>
+          <optional><cmd name="ForAll"/></optional>
+        </interleave>
+      </oneOrMore>
+    </childelements>
+    <attribute en="fontfamily" type="text" optional="yes" since="4.3.1">
+      <description xml:lang="en">
+        <para>The name of the font family for the paragraph. The default is »text« (lowercase t).</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name der Schriftfamilie. Voreinstellung ist »text« (mit kleinem t).</para>
+      </description>
+    </attribute>
+      <example xml:lang="en">
+      <listing><![CDATA[<PlaceObject>
+  <Textblock>
+    <Ol>
+      <Li><Value>First item</Value></Li>
+      <Li><Value>Second item</Value></Li>
+      <Li><Value>Third item</Value></Li>
+    </Ol>
+  </Textblock>
+</PlaceObject>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<PlaceObject>
+  <Textblock>
+    <Ol>
+      <Li><Value>Erster Eintrag</Value></Li>
+      <Li><Value>Zweiter Eintrag</Value></Li>
+      <Li><Value>Dritter Eintrag</Value></Li>
+    </Ol>
+  </Textblock>
+</PlaceObject>
+]]></listing>
+    </example>
+  </command>
+
+
+  <!--
+      ****************************************************************************************
       * Options
       ****************************************************************************************
   -->
@@ -3492,6 +3590,22 @@
     <childelements>
       <reference name="Textvalues"/>
     </childelements>
+    <attribute en="class" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS class for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS Klasse für dieses Element.</para>
+      </description>
+    </attribute>
+    <attribute en="id" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS id for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS id für dieses Element.</para>
+      </description>
+    </attribute>
     <attribute en="color" type="text" optional="yes">
       <description xml:lang="en">
         <para>Color of the paragraph.</para>
@@ -4744,30 +4858,6 @@
         <para>Der Dateiname der CSS Datei (inklusive Dateiendung).</para>
       </description>
     </attribute>
-    <attribute en="scope" optional="no">
-      <description xml:lang="en">
-        <para>Set the scope of the css rules. Can be <tt>layout</tt> or <tt>data</tt>.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Setze den Anwendungsbereich der CSS-Regeln. Kann <tt>layout</tt> oder <tt>data</tt> sein.</para>
-      </description>
-      <choice en="layout">
-        <description xml:lang="en">
-          <para>The CSS rules apply to the commands in the layout XML file.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Die CSS-Regeln werden auf das Layoutregelwerk angewendet.</para>
-        </description>
-      </choice>
-      <choice en="data">
-        <description xml:lang="en">
-          <para>The CSS rules apply to the elements in the data file.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Die CSS-Regeln werden auf die Elemente in der Datendatei angewendet.</para>
-        </description>
-      </choice>
-    </attribute>
     <remark xml:lang="en">
       <para>If no filename is given, the speedata Publisher expects the CSS rules as the contents of this element.</para>
     </remark>
@@ -5883,6 +5973,60 @@
 
   <!--
       ****************************************************************************************
+      * Ul
+      ****************************************************************************************
+  -->
+  <command en="Ul">
+    <description xml:lang="en">
+      <para>Create an unordered list, just like in HTML</para>
+    </description>
+    <description xml:lang="de">
+      <para>Erzeugt eine Stichpunktliste mit Aufzählungspunkten</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <interleave>
+          <optional><cmd name="Li"/></optional>
+          <optional><cmd name="ForAll"/></optional>
+        </interleave>
+      </oneOrMore>
+   </childelements>
+   <attribute en="fontfamily" type="text" optional="yes" since="4.3.1">
+    <description xml:lang="en">
+      <para>The name of the font family for the paragraph. The default is »text« (lowercase t).</para>
+    </description>
+    <description xml:lang="de">
+      <para>Name der Schriftfamilie. Voreinstellung ist »text« (mit kleinem t).</para>
+    </description>
+  </attribute>
+   <example xml:lang="en">
+      <listing><![CDATA[<PlaceObject>
+  <Textblock>
+    <Ul>
+      <Li><Value>First item</Value></Li>
+      <Li><Value>Second item</Value></Li>
+      <Li><Value>Third item</Value></Li>
+    </Ul>
+  </Textblock>
+</PlaceObject>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<PlaceObject>
+  <Textblock>
+    <Ul>
+      <Li><Value>Erster Eintrag</Value></Li>
+      <Li><Value>Zweiter Eintrag</Value></Li>
+      <Li><Value>Dritter Eintrag</Value></Li>
+    </Ul>
+  </Textblock>
+</PlaceObject>
+]]></listing>
+    </example>
+  </command>
+
+  <!--
+      ****************************************************************************************
       * U
       ****************************************************************************************
   -->
@@ -5988,16 +6132,7 @@ Message: "$i is: 3.000000"]]></listing>
       <para>Beinhaltet einen Textinhalt, der an das umgebende Element übergeben wird.</para>
     </description>
     <childelements>
-      <interleave>
-        <zeroOrMore>
-          <text/>
-        </zeroOrMore>
-        <zeroOrMore>
-          <element name="br">
-            <empty/>
-          </element>
-        </zeroOrMore>
-      </interleave>
+      <reference name="html"/>
     </childelements>
     <attribute en="select" type="xpath" optional="yes">
       <description xml:lang="en">
