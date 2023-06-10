@@ -5,9 +5,12 @@ import (
 	"crypto/sha1"
 	"crypto/sha256"
 	"crypto/sha512"
+	"encoding/base64"
 	"encoding/hex"
 	"fmt"
 	"math"
+	"os"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -22,9 +25,11 @@ func init() {
 	goxpath.RegisterFunction(&goxpath.Function{Name: "attribute", Namespace: fnNS, F: fnAttribute, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "current-page", Namespace: fnNS, F: fnCurrentPage, MinArg: 0, MaxArg: 0})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "current-row", Namespace: fnNS, F: fnCurrentRow, MinArg: 0, MaxArg: 1})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "decode-base64", Namespace: fnNS, F: fnDecodeBase64, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "decode-html", Namespace: fnNS, F: fnDecodeHTML, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "dummy-text", Namespace: fnNS, F: fnDummytext, MinArg: 0, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "even", Namespace: fnNS, F: fnEven, MinArg: 1, MaxArg: 1})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "file-contents", Namespace: fnNS, F: fnFileContents, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "file-exists", Namespace: fnNS, F: fnFileExists, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "format-number", Namespace: fnNS, F: fnFormatNumber, MinArg: 3, MaxArg: 3})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "group-height", Namespace: fnNS, F: fnGroupheight, MinArg: 1, MaxArg: 2})
@@ -46,6 +51,8 @@ func init() {
 	goxpath.RegisterFunction(&goxpath.Function{Name: "to-unit", Namespace: fnNS, F: fnToUnit, MinArg: 1, MaxArg: 3})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "total-pages", Namespace: fnNS, F: fnTotalPages, MinArg: 1, MaxArg: 1})
 }
+
+var spaceRemover = regexp.MustCompile(`(?m)\s*`)
 
 // args are the arguments from the xpath function, fnname is the function name
 // usd for error messages. The function returns one of "/MediaBox", "/CropBox",
@@ -209,6 +216,13 @@ func fnCurrentRow(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequen
 		return nil, fmt.Errorf("area %s unknown", areaname)
 	}
 	return goxpath.Sequence{int(area.CurrentRow())}, nil
+}
+
+func fnDecodeBase64(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	firstArg := args[0].Stringvalue()
+	firstArg = spaceRemover.ReplaceAllString(firstArg, "")
+	data, err := base64.StdEncoding.DecodeString(firstArg)
+	return goxpath.Sequence{data}, err
 }
 
 func fnDecodeHTML(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
@@ -478,6 +492,28 @@ func fnGroupwidth(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequen
 	}
 	return nil, fmt.Errorf("sd:group-height() group %q not found", groupname)
 
+}
+
+func fnFileContents(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	firstarg := args[0]
+	f, err := os.CreateTemp("", "xts-image")
+	if err != nil {
+		return nil, err
+	}
+	bag.Logger.Infof("Create temporary file %s", f.Name())
+	for _, itm := range firstarg {
+		switch t := itm.(type) {
+		case []uint8:
+			_, err = f.Write(t)
+			if err != nil {
+				return nil, err
+			}
+		default:
+			bag.Logger.DPanicf("Unknown data type in sd:file-contents")
+		}
+	}
+	defer f.Close()
+	return goxpath.Sequence{f.Name()}, nil
 }
 
 func fnFileExists(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {

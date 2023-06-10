@@ -179,12 +179,13 @@ func debugFrontendText(fe *frontend.Text, level int) {
 
 // Get the values from the child elements of B, Paragraph and its ilk and return
 // the equivalent HTML structure.
-func (xd *xtsDocument) getTextvalues(tagname string, seq xpath.Sequence, class string, id string, cmdname string, line int) (*html.Node, error) {
+func (xd *xtsDocument) getTextvalues(tagname string, seq xpath.Sequence, attributes map[string]string, cmdname string, line int) (*html.Node, error) {
 	n := &html.Node{}
 	n.Data = tagname
 	n.Type = html.ElementNode
-	n.Attr = append(n.Attr, html.Attribute{Key: "class", Val: class})
-	n.Attr = append(n.Attr, html.Attribute{Key: "id", Val: id})
+	for k, v := range attributes {
+		n.Attr = append(n.Attr, html.Attribute{Key: k, Val: v})
+	}
 
 	if len(seq) == 0 && tagname == "p" {
 		cd := &html.Node{}
@@ -193,7 +194,6 @@ func (xd *xtsDocument) getTextvalues(tagname string, seq xpath.Sequence, class s
 		n.AppendChild(cd)
 		return n, nil
 	}
-
 	for _, itm := range seq {
 		switch t := itm.(type) {
 		case string:

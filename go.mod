@@ -5,14 +5,14 @@ go 1.20
 require (
 	github.com/cjoudrey/gluahttp v0.0.0-20201111170219-25003d9adfa9
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/pelletier/go-toml/v2 v2.0.7
+	github.com/pelletier/go-toml/v2 v2.0.8
 	github.com/speedata/bagme v0.0.0-20230531104732-00ebf92f3969
 	github.com/speedata/barcode v0.0.0-20230307084753-486c4d51cb34
-	github.com/speedata/baseline-pdf v0.0.0-20230527120200-e17855713853
-	github.com/speedata/boxesandglue v0.0.0-20230531100803-6d64856584a1
+	github.com/speedata/baseline-pdf v0.0.0-20230609193849-56486ebf08c8
+	github.com/speedata/boxesandglue v0.0.0-20230609211217-f35e3c3d39e5
 	github.com/speedata/goxlsx v1.0.2
 	github.com/speedata/goxml v0.0.0-20230322084327-216af189a791
-	github.com/speedata/goxpath v0.0.0-20230527132009-391097602b06
+	github.com/speedata/goxpath v0.0.0-20230607131939-3c391168ab40
 	github.com/speedata/optionparser v1.0.2
 	github.com/speedata/textlayout v0.0.0-20221127101343-91e6153d36c5
 	github.com/yuin/gopher-lua v1.1.0

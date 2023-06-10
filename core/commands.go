@@ -68,6 +68,7 @@ func init() {
 		"Message":          cmdMessage,
 		"NextFrame":        cmdNextFrame,
 		"NextRow":          cmdNextRow,
+		"Ol":               cmdOl,
 		"Options":          cmdOptions,
 		"Pageformat":       cmdPageformat,
 		"Paragraph":        cmdParagraph,
@@ -132,7 +133,7 @@ func cmdA(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	if err != nil {
 		return nil, err
 	}
-	n, err := xd.getTextvalues("a", seq, "", "", "cmdA", layoutelt.Line)
+	n, err := xd.getTextvalues("a", seq, map[string]string{}, "cmdA", layoutelt.Line)
 	n.Attr = append(n.Attr, html.Attribute{Key: "href", Val: attValues.Href})
 	return xpath.Sequence{n}, err
 }
@@ -197,12 +198,12 @@ func cmdB(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	if err != nil {
 		return nil, err
 	}
-	n, err := xd.getTextvalues("b", seq, "", "", "cmdB", layoutelt.Line)
+	n, err := xd.getTextvalues("b", seq, map[string]string{}, "cmdB", layoutelt.Line)
 	return xpath.Sequence{n}, err
 }
 
 func cmdBr(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
-	n, err := xd.getTextvalues("br", xpath.Sequence{}, "", "", "cmdBr", layoutelt.Line)
+	n, err := xd.getTextvalues("br", xpath.Sequence{}, map[string]string{}, "cmdBr", layoutelt.Line)
 	return xpath.Sequence{n}, err
 }
 
@@ -835,7 +836,7 @@ func cmdI(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	if err != nil {
 		return nil, err
 	}
-	n, err := xd.getTextvalues("i", seq, "", "", "cmdI", layoutelt.Line)
+	n, err := xd.getTextvalues("i", seq, map[string]string{}, "cmdI", layoutelt.Line)
 	return xpath.Sequence{n}, err
 }
 
@@ -902,6 +903,15 @@ func cmdImage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	hl.Attributes["origin"] = "image"
 
 	return xpath.Sequence{hl}, nil
+}
+
+func cmdLi(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	seq, err := dispatch(xd, layoutelt, xd.data)
+	if err != nil {
+		return nil, err
+	}
+	n, err := xd.getTextvalues("li", seq, map[string]string{}, "cmdLi", layoutelt.Line)
+	return xpath.Sequence{n}, err
 }
 
 func cmdLoadDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -1251,6 +1261,15 @@ func cmdNextRow(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	return nil, nil
 }
 
+func cmdOl(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	seq, err := dispatch(xd, layoutelt, xd.data)
+	if err != nil {
+		return nil, err
+	}
+	n, err := xd.getTextvalues("ol", seq, map[string]string{}, "cmdol", layoutelt.Line)
+	return xpath.Sequence{n}, err
+}
+
 func cmdOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
@@ -1308,12 +1327,8 @@ func cmdPageformat(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
-		Class      string
-		ID         string
-		Color      string
-		Features   string
-		FontFamily string
-		Textformat *string
+		Class string
+		ID    string
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -1326,7 +1341,12 @@ func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	if seq == nil {
 		seq = xpath.Sequence{}
 	}
-	n, err := xd.getTextvalues("p", seq, attValues.Class, attValues.ID, "cmdParagraph", layoutelt.Line)
+	attributes := map[string]string{
+		"class": attValues.Class,
+		"id":    attValues.ID,
+	}
+
+	n, err := xd.getTextvalues("p", seq, attributes, "cmdParagraph", layoutelt.Line)
 	return xpath.Sequence{n}, err
 }
 
@@ -1639,8 +1659,11 @@ func cmdSpan(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 	if err != nil {
 		return nil, err
 	}
-
-	n, err := xd.getTextvalues("span", seq, attValues.Class, attValues.ID, "cmdSpan", layoutelt.Line)
+	attributes := map[string]string{
+		"class": attValues.Class,
+		"id":    attValues.ID,
+	}
+	n, err := xd.getTextvalues("span", seq, attributes, "cmdSpan", layoutelt.Line)
 
 	return xpath.Sequence{n}, err
 }
@@ -2196,16 +2219,7 @@ func cmdU(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	if err != nil {
 		return nil, err
 	}
-	n, err := xd.getTextvalues("u", seq, "", "", "cmdU", layoutelt.Line)
-	return xpath.Sequence{n}, err
-}
-
-func cmdLi(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
-	seq, err := dispatch(xd, layoutelt, xd.data)
-	if err != nil {
-		return nil, err
-	}
-	n, err := xd.getTextvalues("li", seq, "", "", "cmdLi", layoutelt.Line)
+	n, err := xd.getTextvalues("u", seq, map[string]string{}, "cmdU", layoutelt.Line)
 	return xpath.Sequence{n}, err
 }
 
@@ -2214,7 +2228,7 @@ func cmdUl(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	if err != nil {
 		return nil, err
 	}
-	n, err := xd.getTextvalues("ul", seq, "", "", "cmdul", layoutelt.Line)
+	n, err := xd.getTextvalues("ul", seq, map[string]string{}, "cmdul", layoutelt.Line)
 	return xpath.Sequence{n}, err
 }
 

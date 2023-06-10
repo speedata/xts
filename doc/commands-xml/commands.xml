@@ -72,6 +72,7 @@
         <cmd name="B"/>
         <cmd name="Br"/>
         <cmd name="I"/>
+        <cmd name="Ol"/>
         <cmd name="U"/>
         <cmd name="Ul"/>
         <cmd name="Value"/>
@@ -2870,11 +2871,13 @@
     <example xml:lang="en">
       <listing><![CDATA[<PlaceObject>
   <Textblock>
-    <Ol>
-      <Li><Value>First item</Value></Li>
-      <Li><Value>Second item</Value></Li>
-      <Li><Value>Third item</Value></Li>
-    </Ol>
+    <Paragraph>
+      <Ol>
+        <Li><Value>First item</Value></Li>
+        <Li><Value>Second item</Value></Li>
+        <Li><Value>Third item</Value></Li>
+      </Ol>
+    </Paragraph>
   </Textblock>
 </PlaceObject>
 ]]></listing>
@@ -2882,11 +2885,13 @@
     <example xml:lang="de">
       <listing><![CDATA[<PlaceObject>
   <Textblock>
-    <Ol>
-      <Li><Value>Erster Eintrag</Value></Li>
-      <Li><Value>Zweiter Eintrag</Value></Li>
-      <Li><Value>Dritter Eintrag</Value></Li>
-    </Ol>
+    <Paragraph>
+      <Ol>
+        <Li><Value>Erster Eintrag</Value></Li>
+        <Li><Value>Zweiter Eintrag</Value></Li>
+        <Li><Value>Dritter Eintrag</Value></Li>
+      </Ol>
+    </Paragraph>
   </Textblock>
 </PlaceObject>
 ]]></listing>
@@ -3394,7 +3399,7 @@
         </interleave>
       </oneOrMore>
     </childelements>
-    <attribute en="fontfamily" type="text" optional="yes" since="4.3.1">
+    <attribute en="fontfamily" type="text" optional="yes">
       <description xml:lang="en">
         <para>The name of the font family for the paragraph. The default is »text« (lowercase t).</para>
       </description>
@@ -3405,11 +3410,13 @@
       <example xml:lang="en">
       <listing><![CDATA[<PlaceObject>
   <Textblock>
-    <Ol>
-      <Li><Value>First item</Value></Li>
-      <Li><Value>Second item</Value></Li>
-      <Li><Value>Third item</Value></Li>
-    </Ol>
+    <Paragraph>
+      <Ol>
+        <Li><Value>First item</Value></Li>
+        <Li><Value>Second item</Value></Li>
+        <Li><Value>Third item</Value></Li>
+      </Ol>
+    </Paragraph>
   </Textblock>
 </PlaceObject>
 ]]></listing>
@@ -3417,11 +3424,13 @@
     <example xml:lang="de">
       <listing><![CDATA[<PlaceObject>
   <Textblock>
-    <Ol>
-      <Li><Value>Erster Eintrag</Value></Li>
-      <Li><Value>Zweiter Eintrag</Value></Li>
-      <Li><Value>Dritter Eintrag</Value></Li>
-    </Ol>
+    <Paragraph>
+      <Ol>
+        <Li><Value>Erster Eintrag</Value></Li>
+        <Li><Value>Zweiter Eintrag</Value></Li>
+        <Li><Value>Dritter Eintrag</Value></Li>
+      </Ol>
+    </Paragraph>
   </Textblock>
 </PlaceObject>
 ]]></listing>
@@ -3606,41 +3615,9 @@
         <para>CSS id für dieses Element.</para>
       </description>
     </attribute>
-    <attribute en="color" type="text" optional="yes">
-      <description xml:lang="en">
-        <para>Color of the paragraph.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Farbe des Absatzes.</para>
-      </description>
-    </attribute>
-    <attribute en="features" type="text" optional="yes">
-      <description xml:lang="en">
-        <para>A comma separated list of OpenType features such as +kern,-liga.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Eine kommaseparierte Liste mit OpenType Features wie +kern,-liga</para>
-      </description>
-    </attribute>
-    <attribute en="fontfamily" css="font-family" type="text" optional="yes">
-      <description xml:lang="en">
-        <para>The name of the font family for the paragraph. The default is “text” (lowercase t).</para>
-      </description>
-      <description xml:lang="de">
-        <para>Name der Schriftfamilie. Voreinstellung ist »text« (mit kleinem t).</para>
-      </description>
-    </attribute>
-    <attribute en="textformat" type="text" optional="yes">
-      <description xml:lang="en">
-        <para>Name of the textformat that is applied to the paragraph. If none is specified the textformat <tt>text</tt> is used.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Name des zu benutzenden Textformats. Wird kein Textformat angegeben, nimmt das System das Textformat <tt>text</tt>.</para>
-      </description>
-    </attribute>
     <example xml:lang="en">
       <listing><![CDATA[<Textblock>
-  <Paragraph fontfamily="Title">
+  <Paragraph>
     <Value>Hello World</Value>
   </Paragraph>
 </Textblock>
@@ -3648,7 +3625,7 @@
     </example>
     <example xml:lang="de">
       <listing><![CDATA[<Textblock>
-  <Paragraph fontfamily="Überschrift">
+  <Paragraph>
     <Value>Hallo Welt</Value>
   </Paragraph>
 </Textblock>
@@ -3656,7 +3633,7 @@
     </example>
     <example xml:lang="de">
       <listing><![CDATA[<Textblock >
-  <Paragraph fontfamily="Überschrift" language="German">
+  <Paragraph>
     <Value select="node()"/>
   </Paragraph>
   </Textblock>]]></listing>
@@ -5991,7 +5968,7 @@
         </interleave>
       </oneOrMore>
    </childelements>
-   <attribute en="fontfamily" type="text" optional="yes" since="4.3.1">
+   <attribute en="fontfamily" type="text" optional="yes">
     <description xml:lang="en">
       <para>The name of the font family for the paragraph. The default is »text« (lowercase t).</para>
     </description>
@@ -6002,11 +5979,13 @@
    <example xml:lang="en">
       <listing><![CDATA[<PlaceObject>
   <Textblock>
-    <Ul>
-      <Li><Value>First item</Value></Li>
-      <Li><Value>Second item</Value></Li>
-      <Li><Value>Third item</Value></Li>
-    </Ul>
+    <Paragraph>
+      <Ul>
+        <Li><Value>First item</Value></Li>
+        <Li><Value>Second item</Value></Li>
+        <Li><Value>Third item</Value></Li>
+      </Ul>
+    </Paragraph>
   </Textblock>
 </PlaceObject>
 ]]></listing>
@@ -6014,11 +5993,13 @@
     <example xml:lang="de">
       <listing><![CDATA[<PlaceObject>
   <Textblock>
-    <Ul>
-      <Li><Value>Erster Eintrag</Value></Li>
-      <Li><Value>Zweiter Eintrag</Value></Li>
-      <Li><Value>Dritter Eintrag</Value></Li>
-    </Ul>
+    <Paragraph>
+      <Ul>
+        <Li><Value>Erster Eintrag</Value></Li>
+        <Li><Value>Zweiter Eintrag</Value></Li>
+        <Li><Value>Dritter Eintrag</Value></Li>
+      </Ul>
+    </Paragraph>
   </Textblock>
 </PlaceObject>
 ]]></listing>
