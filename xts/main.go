@@ -10,7 +10,9 @@ import (
 	"path/filepath"
 	"runtime"
 	"sort"
+	"strconv"
 	"strings"
+	"time"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -29,6 +31,8 @@ var (
 		Jobname:      "xts",
 		Layout:       "layout.xml",
 		LogLevel:     "info",
+		Runs:         1,
+		SuppressInfo: false,
 		Systemfonts:  false,
 		Verbose:      false,
 		VariablesMap: make(map[string]any),
@@ -48,7 +52,9 @@ type config struct {
 	LogLevel     string         `mapstructure:"loglevel"`
 	Mode         []string       `mapstructure:"mode"`
 	Quiet        bool           `mapstructure:"quiet"`
+	Runs         int            `mapstructure:"runs"`
 	Systemfonts  bool           `mapstructure:"systemfonts"`
+	SuppressInfo bool           `mapstructure:"suppressinfo"`
 	Verbose      bool           `mapstructure:"verbose"`
 	Trace        []string       `mapstructure:"trace"`
 	Variables    []string       `mapstructure:"-" toml:"-"`
@@ -253,6 +259,8 @@ func dothings() error {
 	op.On("--loglevel LVL", "Set the log level for the console to one of debug, info, warn, error", cmdline)
 	op.On("--mode NAME", "Set mode. Multiple modes given in a comma separated list.", cmdline)
 	op.On("--quiet", "Run XTS in quiet mode", cmdline)
+	op.On("--runs N", "Run XTS N times", cmdline)
+	op.On("--suppressinfo", "Create a reproducible document", cmdline)
 	op.On("--systemfonts", "Use system fonts", cmdline)
 	op.On("--trace NAMES", "Set the trace to one or more of grid, allocation", cmdline)
 	op.On("--verbose", "Put more debugging information into the protocol file", cmdline)
@@ -300,6 +308,8 @@ func dothings() error {
 			configuration.Mode = strings.Split(v, ",")
 		case "quiet":
 			configuration.Quiet = (v == "true")
+		case "suppressinfo":
+			configuration.SuppressInfo = (v == "true")
 		case "systemfonts":
 			configuration.Systemfonts = (v == "true")
 		case "trace":
@@ -312,6 +322,10 @@ func dothings() error {
 				if len(v1) == 2 {
 					configuration.VariablesMap[v1[0]] = v1[1]
 				}
+			}
+		case "runs":
+			if configuration.Runs, err = strconv.Atoi(v); err != nil {
+				return err
 			}
 		default:
 			return fmt.Errorf("could not handle configuration %s", k)
@@ -376,6 +390,8 @@ func dothings() error {
 		}
 		os.Exit(0)
 	case "run":
+		starttime := time.Now()
+
 		if bag.Logger, err = newZapLogger(); err != nil {
 			return err
 		}
@@ -389,8 +405,9 @@ func dothings() error {
 				return err
 			}
 		}
+
 		var layoutpath, datapath string
-		var lr, dr io.ReadCloser
+		var lr, dr io.ReadSeeker
 		if layoutpath, err = core.FindFile(configuration.Layout); err != nil {
 			return err
 		}
@@ -399,7 +416,7 @@ func dothings() error {
 		}
 
 		if configuration.Dummy {
-			dr = io.NopCloser(strings.NewReader(`<data />`))
+			dr = strings.NewReader(`<data />`)
 		} else {
 			if datapath, err = core.FindFile(configuration.Data); err != nil {
 				return err
@@ -421,29 +438,46 @@ func dothings() error {
 			}
 			bag.Logger.Debugf("md5 checksum %s: %x", configuration.Data, md5.Sum(data))
 		}
+		for i := 0; i < int(configuration.Runs); i++ {
+			if cr := configuration.Runs; cr > 1 {
+				bag.Logger.Infof("Run %d of %d", i, cr)
+			}
+			lr.Seek(0, io.SeekStart)
+			dr.Seek(0, io.SeekStart)
+			xc := &core.XTSConfig{
+				Datafile:     dr,
+				FindFile:     core.FindFile,
+				Layoutfile:   lr,
+				Mode:         configuration.Mode,
+				OutFilename:  configuration.Jobname + ".pdf",
+				SuppressInfo: configuration.SuppressInfo,
+				Tracing:      configuration.Trace,
+				Variables:    configuration.VariablesMap,
+			}
 
-		xc := &core.XTSConfig{
-			Layoutfile:  lr,
-			Datafile:    dr,
-			OutFilename: configuration.Jobname + ".pdf",
-			FindFile:    core.FindFile,
-			Variables:   configuration.VariablesMap,
-			Mode:        configuration.Mode,
-			Tracing:     configuration.Trace,
-		}
+			if fn := dumpOutputFileName; fn != "" {
+				w, err := os.Create(fn)
+				if err != nil {
+					return err
+				}
+				xc.DumpFile = w
 
-		if fn := dumpOutputFileName; fn != "" {
-			w, err := os.Create(fn)
-			if err != nil {
+			}
+			if err = core.RunXTS(xc); err != nil {
 				return err
 			}
-			xc.DumpFile = w
-
 		}
-
-		if err = core.RunXTS(xc); err != nil {
-			return err
+		if lrc, ok := lr.(io.ReadCloser); ok {
+			if err = lrc.Close(); err != nil {
+				return err
+			}
 		}
+		if drc, ok := dr.(io.ReadCloser); ok {
+			if err = drc.Close(); err != nil {
+				return err
+			}
+		}
+		bag.Logger.Infof("Finished in %s", time.Now().Sub(starttime))
 
 	case "version":
 		fmt.Println("xts version", core.Version)

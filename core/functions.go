@@ -199,6 +199,7 @@ func fnAttribute(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequenc
 
 func fnCurrentPage(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
 	xd := ctx.Store["xd"].(*xtsDocument)
+	xd.setupPage()
 	cp := xd.currentPagenumber
 	return goxpath.Sequence{cp}, nil
 }

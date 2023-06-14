@@ -181,7 +181,7 @@ func cmdAttribute(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	}
 	var eval xpath.Sequence
 	var err error
-	eval, err = xd.data.Evaluate(attValues.Select)
+	eval, err = evaluateXPath(xd, layoutelt.Namespaces, attValues.Select)
 	if err != nil {
 		return nil, newTypesettingErrorFromStringf("Attribute (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
 	}
@@ -234,7 +234,7 @@ func cmdBarcode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	}
 
 	var eval xpath.Sequence
-	eval, err = xd.data.Evaluate(attValues.Select)
+	eval, err = evaluateXPath(xd, layoutelt.Namespaces, attValues.Select)
 	if err != nil {
 		return nil, newTypesettingErrorFromStringf("Barcode (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
 	}
@@ -269,7 +269,8 @@ func cmdBookmark(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, err
 		return nil, err
 	}
 	var eval xpath.Sequence
-	eval, err = xd.data.Evaluate(attValues.Select)
+	eval, err = evaluateXPath(xd, layoutelt.Namespaces, attValues.Select)
+
 	if err != nil {
 		return nil, newTypesettingErrorFromStringf("Bookmark (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
 	}
@@ -761,7 +762,7 @@ func cmdForall(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 			ret = append(ret, nitm)
 		}
 	}
-	xd.data.Ctx.SetContextSequence(xpath.Sequence{oldContext})
+	xd.data.Ctx.SetContextSequence(oldContext)
 	return ret, nil
 }
 
@@ -949,12 +950,18 @@ func cmdLoadDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	xd.data.Ctx.Store = map[any]any{
 		"xd": xd,
 	}
-	if dd, ok := dataDispatcher["root"]; ok {
+	rootNode, err := xd.data.Evaluate("local-name(/*)")
+	if err != nil {
+		return nil, err
+	}
+	dataroot := rootNode.Stringvalue()
+	xd.data.Evaluate("/*")
+	if dd, ok := dataDispatcher[dataroot]; ok {
 		if rec, ok := dd[""]; ok {
 			_, err = dispatch(xd, rec, xd.data)
 		}
 	}
-	xd.data.Ctx.SetContextSequence(xpath.Sequence{oldContext})
+	xd.data.Ctx.SetContextSequence(oldContext)
 	xd.data = saveData
 
 	return nil, nil
@@ -972,8 +979,7 @@ func cmdLoadFontfile(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence,
 
 	fn, err := xd.cfg.FindFile(attValues.Filename)
 	if err != nil {
-		bag.Logger.Errorf("error in line %d", layoutelt.Line)
-		return nil, err
+		return nil, newTypesettingError(fmt.Errorf("LoadFontfile line %d: %w", layoutelt.Line, err))
 	}
 	fs := frontend.FontSource{
 		Name:   attValues.Name,
@@ -1005,10 +1011,15 @@ func cmdProcessNode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 
 	oldContext := xd.data.Ctx.SetContextSequence(xpath.Sequence{})
 
+	if len(eval) == 0 {
+		bag.Logger.Debugf("Call Record select %q mode %q (no items found)", attValues.Select, attValues.Mode)
+	}
+
 	for i, itm := range eval {
 		xd.data.Ctx.Pos = i + 1
 		if elt, ok := itm.(*goxml.Element); ok {
 			xd.data.Ctx.SetContextSequence(xpath.Sequence{elt})
+			bag.Logger.Debugf("Call Record element %q mode %q (pos %d)", elt.Name, attValues.Mode, xd.data.Ctx.Pos)
 			if dd, ok := dataDispatcher[elt.Name]; ok {
 				if rec, ok := dd[attValues.Mode]; ok {
 					_, err = dispatch(xd, rec, xd.data)
@@ -1016,8 +1027,7 @@ func cmdProcessNode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 			}
 		}
 	}
-
-	xd.data.Ctx.SetContextSequence(xpath.Sequence{oldContext})
+	xd.data.Ctx.SetContextSequence(oldContext)
 	return nil, nil
 }
 
@@ -1087,17 +1097,14 @@ func cmdMark(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 	if err != nil {
 		return nil, err
 	}
-	var seq xpath.Sequence
-	for _, itm := range eval {
-		seq = append(seq, marker{
-			name:      itm.(string),
-			append:    attValues.Append,
-			pdftarget: attValues.PDFTarget,
-			shiftup:   attValues.ShiftUP,
-		})
+	m := marker{
+		append:    attValues.Append,
+		pdftarget: attValues.PDFTarget,
+		shiftup:   attValues.ShiftUP,
+		name:      eval.Stringvalue(),
 	}
 
-	return seq, nil
+	return xpath.Sequence{m}, nil
 }
 
 func cmdMessage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -1394,8 +1401,14 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 			bag.Logger.Debug(err)
 		}
 	}
-
-	xd.store["maxwidth"] = int(area.frame[area.currentFrame].width-area.CurrentCol()) + 1
+	frameWidth := area.frame[area.currentFrame].width
+	var mw coord
+	if colSet {
+		mw = frameWidth - col + 1
+	} else {
+		mw = frameWidth - area.CurrentCol() + 1
+	}
+	xd.store["maxwidth"] = int(mw)
 
 	var seq xpath.Sequence
 	if attValues.Groupname != "" {
@@ -1540,7 +1553,7 @@ func cmdSaveDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	var eval xpath.Sequence
 	var err error
 	if attValues.Select != nil {
-		eval, err = xd.data.Evaluate(*attValues.Select)
+		eval, err = evaluateXPath(xd, layoutelt.Namespaces, *attValues.Select)
 		if err != nil {
 			return nil, newTypesettingErrorFromStringf("SaveDataset (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
 		}
@@ -1627,7 +1640,7 @@ func cmdSetVariable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	var eval xpath.Sequence
 	var err error
 	if attValues.Select != nil {
-		eval, err = xd.data.Evaluate(*attValues.Select)
+		eval, err = evaluateXPath(xd, layoutelt.Namespaces, *attValues.Select)
 		if err != nil {
 			return nil, newTypesettingErrorFromStringf("SetVariable (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
 		}
@@ -1704,7 +1717,7 @@ func cmdSwitch(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 				for _, attr := range attrs {
 					if attr.Name == "test" {
 						var eval xpath.Sequence
-						eval, err = xd.data.Evaluate(attr.Value)
+						eval, err = evaluateXPath(xd, layoutelt.Namespaces, attr.Value)
 						if err != nil {
 							return nil, newTypesettingErrorFromStringf("Case (line %d): error parsing test XPath expression %s", layoutelt.Line, err)
 						}
@@ -2249,7 +2262,7 @@ func cmdUntil(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		}
 		ret = append(ret, seq...)
 		var eval xpath.Sequence
-		eval, err = xd.data.Evaluate(attValues.Test)
+		eval, err = evaluateXPath(xd, layoutelt.Namespaces, attValues.Test)
 		if err != nil {
 			return nil, newTypesettingErrorFromStringf("Case (line %d): error parsing test XPath expression %s", layoutelt.Line, err)
 		}
@@ -2316,7 +2329,7 @@ func cmdWhile(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	var ret []goxpath.Item
 	for {
 		var eval xpath.Sequence
-		eval, err = xd.data.Evaluate(attValues.Test)
+		eval, err = evaluateXPath(xd, layoutelt.Namespaces, attValues.Test)
 		if err != nil {
 			return nil, newTypesettingErrorFromStringf("Case (line %d): error parsing test XPath expression %s", layoutelt.Line, err)
 		}

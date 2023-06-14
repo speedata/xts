@@ -6,7 +6,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/boxesandglue/backend/document"
@@ -180,20 +179,20 @@ func (xd *xtsDocument) setupPage() {
 
 // XTSConfig is the configuration file for PDF generation.
 type XTSConfig struct {
-	Layoutfile  io.ReadCloser
-	Datafile    io.ReadCloser
-	FindFile    func(string) (string, error)
-	Mode        []string
-	Outfile     io.WriteCloser
-	OutFilename string
-	DumpFile    io.Writer
-	Variables   map[string]any
-	Tracing     []string
+	Layoutfile   io.Reader
+	Datafile     io.Reader
+	FindFile     func(string) (string, error)
+	Mode         []string
+	Outfile      io.WriteCloser
+	OutFilename  string
+	DumpFile     io.Writer
+	SuppressInfo bool
+	Variables    map[string]any
+	Tracing      []string
 }
 
 // RunXTS is the entry point
 func RunXTS(cfg *XTSConfig) error {
-	starttime := time.Now()
 	var err error
 	var layoutxml *goxml.XMLDocument
 	bag.Logger.Infof("XTS start version %s", Version)
@@ -202,6 +201,10 @@ func RunXTS(cfg *XTSConfig) error {
 	d.cfg = cfg
 	if d.document, err = frontend.New(cfg.OutFilename); err != nil {
 		return err
+	}
+	if cfg.SuppressInfo {
+		d.document.SetSuppressInfo(true)
+		bag.Logger.Info("Creating reproducible build")
 	}
 	for _, tr := range cfg.Tracing {
 		switch tr {
@@ -230,7 +233,6 @@ func RunXTS(cfg *XTSConfig) error {
 	if layoutxml, err = goxml.Parse(cfg.Layoutfile); err != nil {
 		return err
 	}
-	cfg.Layoutfile.Close()
 
 	if d.data, err = xpath.NewParser(cfg.Datafile); err != nil {
 		return err
@@ -247,8 +249,6 @@ func RunXTS(cfg *XTSConfig) error {
 	for k, v := range cfg.Variables {
 		d.data.SetVariable(k, xpath.Sequence{v})
 	}
-	cfg.Datafile.Close()
-
 	d.registerCallbacks()
 
 	layoutRoot, err := layoutxml.Root()
@@ -319,7 +319,6 @@ func RunXTS(cfg *XTSConfig) error {
 	if err = d.writeAuxXML(); err != nil {
 		return err
 	}
-	bag.Logger.Infof("Finished in %s", time.Now().Sub(starttime))
 	return nil
 }
 

@@ -10,6 +10,7 @@
     <optional><cmd name="DefineFontalias"/></optional>
     <optional><cmd name="LoadDataset"/></optional>
     <optional><cmd name="Loop"/></optional>
+    <optional><cmd name="Li"/></optional>
     <optional><cmd name="Message"/></optional>
     <optional><cmd name="NextFrame"/></optional>
     <optional><cmd name="NextRow"/></optional>

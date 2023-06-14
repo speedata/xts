@@ -75,6 +75,9 @@ type page struct {
 }
 
 func clearPage(xd *xtsDocument) {
+	if xd.currentPage == nil {
+		return
+	}
 	xd.currentPage.bagPage.Shipout()
 	xd.currentPage = nil
 }
