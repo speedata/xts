@@ -370,7 +370,7 @@ func dothings() error {
 					return err
 				}
 			}
-			if v == jobname+"-aux.xml" {
+			if strings.HasPrefix(v, jobname+"-") && strings.HasSuffix(v, ".xml") {
 				fmt.Printf("Remove %s\n", v)
 				if err = os.Remove(v); err != nil {
 					return err
@@ -440,7 +440,7 @@ func dothings() error {
 		}
 		for i := 0; i < int(configuration.Runs); i++ {
 			if cr := configuration.Runs; cr > 1 {
-				bag.Logger.Infof("Run %d of %d", i, cr)
+				bag.Logger.Infof("Run %d of %d", i+1, cr)
 			}
 			lr.Seek(0, io.SeekStart)
 			dr.Seek(0, io.SeekStart)

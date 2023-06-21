@@ -6,10 +6,12 @@ type VTrace int
 const (
 	// VTraceGrid shows the page grid
 	VTraceGrid VTrace = iota
-	// VTraceHyphenation shows hyphenation points
-	VTraceHyphenation
 	// VTraceAllocation shows allocated cells
 	VTraceAllocation
+	// VTraceHyphenation shows hyphenation points
+	VTraceHyphenation
+	// VTraceObjects shows objects
+	VTraceObjects
 )
 
 // SetVTrace sets the visual tracing.

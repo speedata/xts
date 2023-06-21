@@ -3616,6 +3616,14 @@
         <para>CSS id für dieses Element.</para>
       </description>
     </attribute>
+    <attribute en="style" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS style for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS Stil-Angaben für dieses Element.</para>
+      </description>
+    </attribute>
     <example xml:lang="en">
       <listing><![CDATA[<Textblock>
   <Paragraph>
@@ -3631,15 +3639,6 @@
   </Paragraph>
 </Textblock>
 ]]></listing>
-    </example>
-    <example xml:lang="de">
-      <listing><![CDATA[<Textblock >
-  <Paragraph>
-    <Value select="node()"/>
-  </Paragraph>
-  </Textblock>]]></listing>
-      <para>wobei in den Daten ein Text steht, beispielsweise falls der aktuelle Knoten das Element <cmd name="Record"/> ist:</para>
-      <listing><![CDATA[<Record>Produktbeschreibung: die Artikelnummer <i>1234</i> setzt sich aus ... </Record>]]></listing>
     </example>
   </command>
 
@@ -5823,6 +5822,30 @@
       <para>Setze Debugging-Schalter</para>
     </description>
     <childelements/>
+    <attribute en="dests" optional="yes">
+      <description xml:lang="en">
+        <para>Draw PDF destinations with a black circle.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Zeige PDF Ziele mit einem schwarzen Kreis.</para>
+      </description>
+      <choice en="yes">
+        <description xml:lang="en">
+          <para>Show dest.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Zeige Ziele.</para>
+        </description>
+      </choice>
+      <choice en="no">
+        <description xml:lang="en">
+          <para>Don't show dests (default).</para>
+        </description>
+        <description xml:lang="de">
+          <para>Ziele nicht zeigen (Voreinstellung).</para>
+        </description>
+      </choice>
+    </attribute>
     <attribute en="grid" optional="yes">
       <description xml:lang="en">
         <para>Draw the grid on the page.</para>
@@ -5868,30 +5891,6 @@
         </description>
         <description xml:lang="de">
           <para>Rasterbelegung nicht zeigen (Voreinstellung).</para>
-        </description>
-      </choice>
-    </attribute>
-    <attribute en="dests" optional="yes">
-      <description xml:lang="en">
-        <para>Draw PDF destinations with a black circle.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Zeige PDF Ziele mit einem schwarzen Kreis.</para>
-      </description>
-      <choice en="yes">
-        <description xml:lang="en">
-          <para>Show dest.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Zeige Ziele.</para>
-        </description>
-      </choice>
-      <choice en="no">
-        <description xml:lang="en">
-          <para>Don't show dests (default).</para>
-        </description>
-        <description xml:lang="de">
-          <para>Ziele nicht zeigen (Voreinstellung).</para>
         </description>
       </choice>
     </attribute>
@@ -5943,7 +5942,34 @@
         </description>
       </choice>
     </attribute>
+    <attribute en="objects" optional="yes">
+      <description xml:lang="en">
+        <para>Draw boxes around objects.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Zeichnet Kästchen um Objekte.</para>
+      </description>
+      <choice en="yes">
+        <description xml:lang="en">
+          <para>Show boxes.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Zeige Objekte.</para>
+        </description>
+      </choice>
+      <choice en="no">
+        <description xml:lang="en">
+          <para>Don't show the bounding boxes of objects.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Keine Kästchen zeigen.</para>
+        </description>
+      </choice>
+    </attribute>
     <example xml:lang="en">
+      <listing><![CDATA[<Trace grid="yes" />]]></listing>
+    </example>
+    <example xml:lang="de">
       <listing><![CDATA[<Trace grid="yes" />]]></listing>
     </example>
   </command>

@@ -1336,6 +1336,7 @@ func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	attValues := &struct {
 		Class string
 		ID    string
+		Style string
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -1351,6 +1352,7 @@ func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	attributes := map[string]string{
 		"class": attValues.Class,
 		"id":    attValues.ID,
+		"style": attValues.Style,
 	}
 
 	n, err := xd.getTextvalues("p", seq, attributes, "cmdParagraph", layoutelt.Line)
@@ -1451,6 +1453,9 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		}
 	default:
 		bag.Logger.DPanicf("PlaceObject: unknown node %T", t)
+	}
+	if xd.IsTrace(VTraceObjects) {
+		vl = node.Boxit(vl).(*node.VList)
 	}
 	if attValues.Frame {
 		r := node.NewRule()
@@ -1675,6 +1680,7 @@ func cmdSpan(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 	attributes := map[string]string{
 		"class": attValues.Class,
 		"id":    attValues.ID,
+		"style": attValues.Style,
 	}
 	n, err := xd.getTextvalues("span", seq, attributes, "cmdSpan", layoutelt.Line)
 
@@ -2175,15 +2181,24 @@ func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 func cmdTrace(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
+		Dests          *bool
 		Grid           *bool
-		Hyphenation    *bool
 		Gridallocation *bool
 		Hyperlinks     *bool
-		Dests          *bool
+		Hyphenation    *bool
+		Objects        *bool
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
+	if attValues.Dests != nil {
+		if *attValues.Dests {
+			xd.document.Doc.SetVTrace(document.VTraceDest)
+		} else {
+			xd.document.Doc.ClearVTrace(document.VTraceDest)
+		}
+	}
+
 	if attValues.Grid != nil {
 		if *attValues.Grid {
 			xd.SetVTrace(VTraceGrid)
@@ -2192,11 +2207,11 @@ func cmdTrace(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		}
 	}
 
-	if attValues.Dests != nil {
-		if *attValues.Dests {
-			xd.document.Doc.SetVTrace(document.VTraceDest)
+	if attValues.Gridallocation != nil {
+		if *attValues.Gridallocation {
+			xd.SetVTrace(VTraceAllocation)
 		} else {
-			xd.document.Doc.ClearVTrace(document.VTraceDest)
+			xd.ClearVTrace(VTraceAllocation)
 		}
 	}
 
@@ -2216,14 +2231,13 @@ func cmdTrace(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		}
 	}
 
-	if attValues.Gridallocation != nil {
-		if *attValues.Gridallocation {
-			xd.SetVTrace(VTraceAllocation)
+	if attValues.Objects != nil {
+		if *attValues.Objects {
+			xd.SetVTrace(VTraceObjects)
 		} else {
-			xd.ClearVTrace(VTraceAllocation)
+			xd.ClearVTrace(VTraceObjects)
 		}
 	}
-
 	return nil, nil
 }
 
