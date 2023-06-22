@@ -53,7 +53,6 @@ func init() {
 		"DefineFontfamily": cmdDefineFontfamily,
 		"DefineFontsize":   cmdDefineFontsize,
 		"DefineMasterpage": cmdDefineMasterpage,
-		"DefineTextformat": cmdDefineTextformat,
 		"Element":          cmdElement,
 		"ForAll":           cmdForall,
 		"Function":         cmdFunction,
@@ -327,12 +326,15 @@ func cmdBox(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		hv.BackgroundColor = xd.document.GetColor(*attValues.Backgroundcolor)
 	} else if _, ok := attrs["background-color"]; ok {
 		// already parsed
+	} else {
+		hv.BackgroundColor = xd.document.GetColor("black")
 	}
 
 	vl := node.NewVList()
 	vl.Width = attValues.Width - hv.BorderLeftWidth - hv.BorderRightWidth
 	vl.Height = attValues.Height - hv.BorderTopWidth - hv.BorderBottomWidth
 	vl = xd.document.HTMLBorder(vl, hv)
+	vl.Attributes = node.H{"origin": "box"}
 	return xpath.Sequence{vl}, err
 }
 
@@ -680,31 +682,6 @@ func cmdDefineMasterpage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Seque
 
 	pt.layoutElt = layoutelt
 	return xpath.Sequence{}, nil
-}
-
-func cmdDefineTextformat(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
-	var err error
-	attValues := &struct {
-		Alignment string
-		Name      string
-	}{}
-	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
-		return nil, err
-	}
-
-	tf := textformat{}
-	switch attValues.Alignment {
-	case "leftaligned":
-		tf.halignment = frontend.HAlignLeft
-	case "rightaligned":
-		tf.halignment = frontend.HAlignRight
-	case "centered":
-		tf.halignment = frontend.HAlignCenter
-	case "justified":
-		tf.halignment = frontend.HAlignJustified
-	}
-	xd.defineTextformat(attValues.Name, tf)
-	return nil, nil
 }
 
 func cmdElement(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -1159,6 +1136,8 @@ func cmdNextFrame(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 			area.currentFrame = 0
 			clearPage(xd)
 		}
+	} else {
+		bag.Logger.Warnf("NextFrame (line %d) area %s does not exist.", layoutelt.Line, attValues.Area)
 	}
 	return nil, nil
 }
@@ -1816,7 +1795,6 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		Width      bag.ScaledPoint
 		FontFamily string
 		Parsep     bag.ScaledPoint
-		Textformat *string `sdxml:"default:text"`
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -1842,15 +1820,6 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		attValues.Width = xd.currentGrid.width(mw)
 	}
 
-	var tf textformat
-	if tfname := attValues.Textformat; tfname != nil {
-		if tfn, ok := xd.textformats[*tfname]; ok {
-			tf = tfn
-		} else {
-			bag.Logger.Warnf("text format %q not found", *tfname)
-		}
-	}
-
 	seq, err := dispatch(xd, layoutelt, xd.data)
 	if err != nil {
 		return nil, err
@@ -1862,9 +1831,6 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 				frontend.SettingFontFamily: ff,
 				frontend.SettingSize:       fontsize,
 			},
-		}
-		if tf.halignment != frontend.HAlignDefault {
-			te.Settings[frontend.SettingHAlign] = tf.halignment
 		}
 
 		switch t := itm.(type) {

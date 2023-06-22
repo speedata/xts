@@ -133,7 +133,6 @@ func newZapLogger() (*zap.SugaredLogger, error) {
 }
 
 func listFonts() error {
-	core.InitDirs(configuration.basedir)
 	ff := core.FindFontFiles()
 	ret := make([]string, len(ff))
 	for i, fontfile := range ff {
@@ -380,6 +379,13 @@ func dothings() error {
 	case "doc":
 		return openURL("https://doc.speedata.de/xts/")
 	case "list-fonts":
+		if err = core.InitDirs(configuration.basedir); err != nil {
+			return err
+		}
+		if err = core.AddDir(currentDir); err != nil {
+			return err
+		}
+
 		if err = listFonts(); err != nil {
 			bag.Logger.Error(err)
 			return err

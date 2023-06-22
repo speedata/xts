@@ -54,7 +54,6 @@ type xtsDocument struct {
 	fontsources       map[string]*frontend.FontSource
 	fontaliases       map[string]string
 	fontsizes         map[string][2]bag.ScaledPoint
-	textformats       map[string]textformat
 	defaultGridWidth  bag.ScaledPoint
 	defaultGridHeight bag.ScaledPoint
 	defaultGridGapX   bag.ScaledPoint
@@ -84,7 +83,6 @@ func newXTSDocument() *xtsDocument {
 		groups:            make(map[string]*group),
 		fontsizes:         make(map[string][2]bag.ScaledPoint),
 		store:             make(map[any]any),
-		textformats:       make(map[string]textformat),
 		marker:            make(mapmarker),
 		jobname:           "xts",
 	}
@@ -219,7 +217,7 @@ func RunXTS(cfg *XTSConfig) error {
 	if err = d.defaultfont(); err != nil {
 		return err
 	}
-	d.defaultTextformats()
+
 	var defaultPagetype *pagetype
 	if defaultPagetype, err = d.newPagetype("default page", "true()"); err != nil {
 		return err

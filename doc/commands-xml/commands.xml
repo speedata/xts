@@ -31,7 +31,6 @@
     <optional><cmd name="DefineFontalias"/></optional>
     <optional><cmd name="DefineFontsize"/></optional>
     <optional><cmd name="DefineMasterpage"/></optional>
-    <optional><cmd name="DefineTextformat"/></optional>
     <optional><cmd name="Function"/></optional>
     <optional><cmd name="LoadFontfile"/></optional>
     <optional><cmd name="Message"/></optional>
@@ -2119,103 +2118,6 @@
     <PositioningFrame width="12" height="30" column="16" row="2"/>
   </PositioningArea>
 </Masterpage>]]></listing>
-    </example>
-  </command>
-
-
-  <!--
-      ****************************************************************************************
-      * DefineTextformat
-      ****************************************************************************************
-  -->
-  <command en="DefineTextformat">
-    <description xml:lang="en">
-      <para>Define text formatting instructions. A textformat is used to align and indent text.</para>
-    </description>
-    <description xml:lang="de">
-      <para>Definiert ein Textformat. Ein Textformat dient zur Formatierung von Absätzen (Einrückung und Ausrichtung). Auf die definierten Textformate kann im Layout (in den Elementen Paragraph und Textblock) zurückgegriffen werden.</para>
-    </description>
-    <childelements/>
-    <attribute en="alignment" optional="yes">
-      <description xml:lang="en">
-        <para>Determines the formatting of the text. It defaults to justified.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Bestimmt die Formatierung des Textes. Voreinstellung ist justified.</para>
-      </description>
-      <choice en="justified">
-        <description xml:lang="en">
-          <para>Textblock has a rectangular shape.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Der Text hat eine rechteckige Form.</para>
-        </description>
-      </choice>
-      <choice en="leftaligned">
-        <description xml:lang="en">
-          <para>The text is ragged at the right margin.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Der Text flattert am rechten Rand.</para>
-        </description>
-      </choice>
-      <choice en="rightaligned">
-        <description xml:lang="en">
-          <para>The text is ragged right at the left margin.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Der Text flattert am linken Rand</para>
-        </description>
-      </choice>
-      <choice en="centered">
-        <description xml:lang="en">
-          <para>The text is ragged at the left and the right margin.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Der Text ist im Flattersatz an beiden Rändern (rechts und links) gesetzt.</para>
-        </description>
-      </choice>
-    </attribute>
-    <attribute en="name" type="text" optional="no">
-      <description xml:lang="en">
-        <para>Name of the textformat that is used later in the layout.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Name des Textformats, unter dem es später im Layoutregelwerk angesprochen wird.</para>
-      </description>
-    </attribute>
-    <remark xml:lang="en">
-      <para>The textformats <tt>text</tt>, <tt>center</tt>, <tt>left</tt> and <tt>right</tt> are predefined. They stand for justified, centered, left aligned and right aligned text.</para>
-    </remark>
-    <remark xml:lang="de">
-      <para>Die Textformate <tt>text</tt>, <tt>center</tt>, <tt>left</tt> und <tt>right</tt> sind vordefiniert. Sie stehen für Blocksatz, zentrierten, linksbündigen und rechtsbündigen Text.</para>
-    </remark>
-    <example xml:lang="en">
-      <listing><![CDATA[<DefineTextformat name="text with indentation" alignment="justified" indentation="1cm"/>
-
-<Record element="...">
-  <PlaceObject>
-    <Textblock textformat="text with indentation">
-    <Paragraph>
-      <Value>Text ...</Value>
-    </Paragraph>
-  </Textblock>
-  </PlaceObject>
-</Record>
-]]></listing>
-    </example>
-    <example xml:lang="de">
-      <listing><![CDATA[<Layout>
-  <DefineTextformat name="Text mit Einrückung" alignment="justified" indentation="1cm" />
-  ...
-  <Record element="...">
-    <Textblock textformat="Text mit Einrückung">
-      <Paragraph>
-        <Value>Text ...</Value>
-      </Paragraph>
-    </Textblock>
-  </Record>
-</Layout>]]></listing>
     </example>
   </command>
 
@@ -5005,14 +4907,6 @@
         </description>
       </choice>
     </attribute>
-    <attribute en="textformat" optional="yes" type="text" allowxpath="yes">
-      <description xml:lang="en">
-        <para>The text format for the table. Defaults to <tt>__leftaligned</tt> if no align attribute is given.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Textformat für die Tabelle. Voreinstellung ist <tt>__leftaligned</tt>, wenn keine Ausrichtung (align) angegeben wird.</para>
-      </description>
-    </attribute>
     <attribute en="width" type="numberorlength" optional="yes">
       <description xml:lang="en">
         <para>The maximum width of the table (in grid cells or absolute values). Defaults to the available space.</para>
@@ -5481,7 +5375,6 @@
     <remark xml:lang="de">
       <para>Die Kindelemente der Tabellenzelle können Blockobjekte oder Zeilenobjekte sein. Blockobjekte erzeugen eine neue Zeile, Zeilenobjekte werden von rechts nach links
         so lange in eine Zeile geschrieben, bis die Zeilenbreite einen Zeilenumbruch erzwingt. Blockobjekte sind <cmd name="Paragraph"/>, <cmd name="Table"/> und <cmd name="Box"/>, Zeilenobjekte sind <cmd name="Barcode"/> und <cmd name="Image"/>.</para>
-      <para>Das Attribut align erzeugt implizit ein Textformat (nur in Bezug auf Ausrichtung) für alle Kindelemente Paragraph, sofern dort kein Textformat angegeben ist.</para>
     </remark>
     <example xml:lang="de">
       <listing><![CDATA[<Tr>
