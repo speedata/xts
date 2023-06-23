@@ -151,7 +151,28 @@ func listFonts() error {
 		if err != nil {
 			return nil
 		}
-		fmt.Printf("<LoadFontfile name=%q filename=%q />\n", fp.PostscriptName(), filepath.Base(fontfile))
+		l := strings.ToLower(fontfile)
+		weight := "normal"
+		style := "normal"
+		switch {
+		case strings.Contains(l, "regular"):
+			weight = "normal"
+		case strings.Contains(l, "bolditalic"):
+			style = "italic"
+			weight = "bold"
+		case strings.Contains(l, "italic"):
+			style = "italic"
+		case strings.Contains(l, "bold"):
+			weight = "bold"
+		}
+		fmt.Printf("@font-face { font-family: %q; src: url(%q);", fp.Names.SelectEntry(truetype.NameFontFamily), filepath.Base(fontfile))
+		if weight != "normal" {
+			fmt.Printf(" font-weight: %s; ", weight)
+		}
+		if style != "normal" {
+			fmt.Printf(" font-style: %s;", style)
+		}
+		fmt.Println("}")
 		if err = f.Close(); err != nil {
 			return err
 		}

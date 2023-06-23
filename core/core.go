@@ -51,9 +51,6 @@ type xtsDocument struct {
 	data              *xpath.Parser
 	pages             []*page
 	groups            map[string]*group
-	fontsources       map[string]*frontend.FontSource
-	fontaliases       map[string]string
-	fontsizes         map[string][2]bag.ScaledPoint
 	defaultGridWidth  bag.ScaledPoint
 	defaultGridHeight bag.ScaledPoint
 	defaultGridGapX   bag.ScaledPoint
@@ -81,7 +78,6 @@ func newXTSDocument() *xtsDocument {
 		defaultGridGapY:   0,
 		layoutcss:         csshtml.NewCSSParserWithDefaults(),
 		groups:            make(map[string]*group),
-		fontsizes:         make(map[string][2]bag.ScaledPoint),
 		store:             make(map[any]any),
 		marker:            make(mapmarker),
 		jobname:           "xts",
@@ -204,6 +200,7 @@ func RunXTS(cfg *XTSConfig) error {
 		d.document.SetSuppressInfo(true)
 		bag.Logger.Info("Creating reproducible build")
 	}
+	d.document.FindFile = FindFile
 	for _, tr := range cfg.Tracing {
 		switch tr {
 		case "grid":

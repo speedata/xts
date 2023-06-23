@@ -49,9 +49,6 @@ func init() {
 		"Columns":          cmdColumns,
 		"Contents":         cmdContents,
 		"DefineColor":      cmdDefineColor,
-		"DefineFontalias":  cmdDefineFontalias,
-		"DefineFontfamily": cmdDefineFontfamily,
-		"DefineFontsize":   cmdDefineFontsize,
 		"DefineMasterpage": cmdDefineMasterpage,
 		"Element":          cmdElement,
 		"ForAll":           cmdForall,
@@ -61,7 +58,6 @@ func init() {
 		"Image":            cmdImage,
 		"Li":               cmdLi,
 		"LoadDataset":      cmdLoadDataset,
-		"LoadFontfile":     cmdLoadFontfile,
 		"Loop":             cmdLoop,
 		"Mark":             cmdMark,
 		"Message":          cmdMessage,
@@ -219,8 +215,7 @@ func cmdBarcode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
-
-	ff := xd.document.FindFontFamily("text")
+	var ff *frontend.FontFamily
 	if af := attValues.FontFamily; af != nil {
 		if fontfamily := xd.document.FindFontFamily(*af); fontfamily != nil {
 			ff = fontfamily
@@ -251,7 +246,7 @@ func cmdBarcode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	}
 	var bc node.Node
 	if bc, err = createBarcode(bcType, eval.Stringvalue(), attValues.Width, attValues.Height, xd, ff, fontsize); err != nil {
-		return nil, err
+		return nil, newTypesettingError(err)
 	}
 
 	return xpath.Sequence{bc}, nil
@@ -489,68 +484,6 @@ func cmdContents(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, err
 	return nil, nil
 }
 
-func cmdDefineFontalias(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
-	var err error
-	attValues := &struct {
-		Existing string `sdxml:"mustexist"`
-		Alias    string `sdxml:"mustexist"`
-	}{}
-	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
-		return nil, err
-	}
-	if _, ok := xd.fontaliases[attValues.Alias]; ok {
-		bag.Logger.Warnf("DefineFontalias (line %d): font alias %s already exists", layoutelt.Line, attValues.Alias)
-	}
-	xd.fontaliases[attValues.Alias] = attValues.Existing
-	return nil, nil
-}
-
-func cmdDefineFontfamily(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
-	var err error
-	attValues := &struct {
-		Name string
-	}{}
-	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
-		return nil, err
-	}
-	getFontAlias := func(name string) string {
-		// max 10 levels of indirection
-		for i := 0; i < 10; i++ {
-			if fs, ok := xd.fontaliases[name]; ok {
-				name = fs
-			} else {
-				return name
-			}
-		}
-		return name
-	}
-
-	ff := xd.document.NewFontFamily(attValues.Name)
-	var fontface string
-	for _, cld := range layoutelt.Children() {
-		if c, ok := cld.(*goxml.Element); ok {
-			if fontface, err = xd.getAttributeString("fontface", c, true, true, ""); err != nil {
-				return nil, err
-			}
-
-			switch c.Name {
-			case "Regular":
-				err = ff.AddMember(xd.fontsources[getFontAlias(fontface)], frontend.FontWeight400, frontend.FontStyleNormal)
-			case "Italic":
-				err = ff.AddMember(xd.fontsources[getFontAlias(fontface)], frontend.FontWeight400, frontend.FontStyleItalic)
-			case "Bold":
-				err = ff.AddMember(xd.fontsources[getFontAlias(fontface)], frontend.FontWeight700, frontend.FontStyleNormal)
-			case "BoldItalic":
-				err = ff.AddMember(xd.fontsources[getFontAlias(fontface)], frontend.FontWeight700, frontend.FontStyleItalic)
-			}
-			if err != nil {
-				return nil, newTypesettingError(fmt.Errorf("DefineFontFamily (line %d) %s: %w", layoutelt.Line, c.Name, err))
-			}
-		}
-	}
-	return nil, nil
-}
-
 func cmdDefineColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
@@ -628,31 +561,6 @@ func cmdDefineColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		return nil, fmt.Errorf("DefineColor: model %q not recognized (line %d)", attValues.Model, layoutelt.Line)
 	}
 	xd.document.DefineColor(attValues.Name, &col)
-	return nil, nil
-}
-
-func cmdDefineFontsize(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
-	attValues := &struct {
-		Name     string
-		Fontsize bag.ScaledPoint
-		Leading  bag.ScaledPoint
-	}{}
-
-	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
-		return nil, err
-	}
-	if attValues.Fontsize == 0 || attValues.Leading == 0 {
-		if attValues.Fontsize == 0 {
-			bag.Logger.Warnf("DefineFontsize (line %d): fontsize is 0", layoutelt.Line)
-		}
-		if attValues.Leading == 0 {
-			bag.Logger.Warnf("DefineFontsize (line %d): leading is 0", layoutelt.Line)
-		}
-	}
-	if xd.fontsizes == nil {
-		xd.fontsizes = make(map[string][2]bag.ScaledPoint)
-	}
-	xd.fontsizes[attValues.Name] = [2]bag.ScaledPoint{attValues.Fontsize, attValues.Leading}
 	return nil, nil
 }
 
@@ -941,32 +849,6 @@ func cmdLoadDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	xd.data.Ctx.SetContextSequence(oldContext)
 	xd.data = saveData
 
-	return nil, nil
-}
-
-func cmdLoadFontfile(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
-	var err error
-	attValues := &struct {
-		Filename string `sdxml:"mustexist"`
-		Name     string `sdxml:"mustexist"`
-	}{}
-	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
-		return nil, err
-	}
-
-	fn, err := xd.cfg.FindFile(attValues.Filename)
-	if err != nil {
-		return nil, newTypesettingError(fmt.Errorf("LoadFontfile line %d: %w", layoutelt.Line, err))
-	}
-	fs := frontend.FontSource{
-		Name:   attValues.Name,
-		Source: fn,
-	}
-	// Not necessary when default fonts are initialized
-	if xd.fontsources == nil {
-		xd.fontsources = make(map[string]*frontend.FontSource)
-	}
-	xd.fontsources[attValues.Name] = &fs
 	return nil, nil
 }
 
@@ -1679,12 +1561,14 @@ func cmdStylesheet(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 	if attrHref := attValues.Href; attrHref == "" {
 		toks, err = xd.layoutcss.ParseCSSString(layoutelt.Stringvalue())
 	} else {
-		toks, err = xd.layoutcss.ParseCSSFile(attrHref)
-
+		loc, err := FindFile(attrHref)
+		if err != nil {
+			return nil, err
+		}
+		toks, err = xd.layoutcss.ParseCSSFile(loc, false)
 	}
 	if err != nil {
-		bag.Logger.Error(err)
-		return nil, nil
+		return nil, newTypesettingError(fmt.Errorf("Stylesheet (line %d): %w", layoutelt.Line, err))
 	}
 	parsedStyles := csshtml.ConsumeBlock(toks, false)
 	xd.layoutcss.Stylesheet = append(xd.layoutcss.Stylesheet, parsedStyles)
@@ -1791,25 +1675,12 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	xd.setupPage()
 	var err error
 	attValues := &struct {
-		Fontsize   string
-		Width      bag.ScaledPoint
-		FontFamily string
-		Parsep     bag.ScaledPoint
+		Width  bag.ScaledPoint
+		Parsep bag.ScaledPoint
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
-	ff := xd.document.FindFontFamily("text")
-	if af := attValues.FontFamily; af != "" {
-		if fontfamily := xd.document.FindFontFamily(af); fontfamily != nil {
-			ff = fontfamily
-		}
-	}
-	fontsize, leading, err := xd.getFontSizeLeading(attValues.Fontsize)
-	if err != nil {
-		return nil, err
-	}
-
 	if attValues.Width == 0 {
 		var mw coord
 		if mwInt, ok := xd.store["maxwidth"].(int); ok {
@@ -1826,13 +1697,7 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	}
 	var vlists node.Node
 	for i, itm := range seq {
-		te := &frontend.Text{
-			Settings: frontend.TypesettingSettings{
-				frontend.SettingFontFamily: ff,
-				frontend.SettingSize:       fontsize,
-			},
-		}
-
+		te := frontend.NewText()
 		switch t := itm.(type) {
 		case *html.Node:
 			doc := &html.Node{
@@ -1855,30 +1720,30 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 			root.AppendChild(head)
 			root.AppendChild(body)
 			doc.AppendChild(root)
-			ftv, err := xd.decodeHTMLFromHTMLNode(doc)
+			vlistFormatter, err := xd.decodeHTMLFromHTMLNode(doc)
 			if err != nil {
-				return nil, err
+				return nil, newTypesettingError(err)
 			}
-			vl, err := ftv(attValues.Width, frontend.Family(ff), frontend.FontSize(fontsize), frontend.Leading(leading))
+			vl, err := vlistFormatter(attValues.Width)
 			if err != nil {
-				return nil, err
+				return nil, newTypesettingError(fmt.Errorf("Textblock (line %d): %w", layoutelt.Line, err))
 			}
 			te.Items = append(te.Items, vl)
 
 		case string:
-			ftv, err := xd.decodeHTML(t)
+			vlistFormatter, err := xd.decodeHTML(t)
 			if err != nil {
 				return nil, err
 			}
-			vl, err := ftv(attValues.Width, frontend.Family(ff), frontend.FontSize(fontsize), frontend.Leading(leading))
+			vl, err := vlistFormatter(attValues.Width)
 			if err != nil {
 				return nil, err
 			}
 			te.Items = append(te.Items, vl)
 
 		case *frontend.Text:
-			if ftv, ok := t.Items[0].(frontend.FormatToVList); ok {
-				vl, err := ftv(attValues.Width, frontend.Family(ff), frontend.FontSize(fontsize), frontend.Leading(leading))
+			if vlistFormatter, ok := t.Items[0].(frontend.FormatToVList); ok {
+				vl, err := vlistFormatter(attValues.Width)
 				if err != nil {
 					return nil, err
 				}
@@ -1895,9 +1760,9 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		default:
 			bag.Logger.DPanicf("cmdTextblock: unknown type %T", t)
 		}
-		// if no width is requested, we use the maximum available width
 
-		vlist, _, err := xd.document.FormatParagraph(te, attValues.Width, frontend.Leading(leading), frontend.Family(ff))
+		// if no width is requested, we use the maximum available width
+		vlist, _, err := xd.document.FormatParagraph(te, attValues.Width)
 		if err != nil {
 			return nil, err
 		}

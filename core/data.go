@@ -70,6 +70,8 @@ func (xd *xtsDocument) applyLayoutStylesheet(classname string, id string, style 
 	return attrs, nil
 }
 
+// decodeHTMLFromHTMLNode takes a parsed HTML structure and return a function
+// that formats the the input to a VList.
 func (xd *xtsDocument) decodeHTMLFromHTMLNode(input *html.Node) (frontend.FormatToVList, error) {
 	ftv := func(wd bag.ScaledPoint, opts ...frontend.TypesettingOption) (*node.VList, error) {
 		d := document.NewWithFrontend(xd.document, xd.layoutcss)
@@ -94,15 +96,16 @@ func (xd *xtsDocument) decodeHTMLFromHTMLNode(input *html.Node) (frontend.Format
 		}
 		vl, err := d.CreateVlist(te, wd)
 		if err != nil {
-			return nil, err
+			return nil, newTypesettingError(err)
 		}
-
-		return vl, err
+		return vl, nil
 	}
 
 	return ftv, nil
 }
 
+// decodeHTML takes a simple text and return a function that formats the the
+// input to a VList.
 func (xd *xtsDocument) decodeHTML(input string) (frontend.FormatToVList, error) {
 	ftv := func(wd bag.ScaledPoint, opts ...frontend.TypesettingOption) (*node.VList, error) {
 		d := document.NewWithFrontend(xd.document, xd.layoutcss)
@@ -136,32 +139,28 @@ func (xd *xtsDocument) decodeHTML(input string) (frontend.FormatToVList, error) 
 	return ftv, nil
 }
 
+// parseHTMLText takes well formed XML input and interprets this as HTML.
 func (xd *xtsDocument) parseHTMLText(input string) (*html.Node, error) {
 	s := strings.NewReader(input)
 	return html.Parse(s)
 }
 
-func (xd *xtsDocument) getFontSizeLeading(size string) (bag.ScaledPoint, bag.ScaledPoint, error) {
-	var err error
-	fontsize := xd.fontsizes["text"][0]
-	leading := xd.fontsizes["text"][1]
+// getFontSizeLeading returns the font size and ghe leading size from a single
+// input. The input can have the format "10pt/12pt" where the first length is a
+// font size and the second length is the leading.
+func (xd *xtsDocument) getFontSizeLeading(size string) (fontsize bag.ScaledPoint, leading bag.ScaledPoint, err error) {
 	if sp := strings.Split(size, "/"); len(sp) == 2 {
 		if fontsize, err = bag.Sp(sp[0]); err != nil {
-			return fontsize, leading, err
+			return
 		}
 		if leading, err = bag.Sp(sp[1]); err != nil {
-			return fontsize, leading, err
+			return
 		}
-	} else if fs, ok := xd.fontsizes[size]; ok {
-		fontsize = fs[0]
-		leading = fs[1]
-	} else if size == "" {
-		// ok, ignore
-		bag.Logger.Debug("use default font size text")
 	} else {
-		return fontsize, leading, fmt.Errorf("unknown font size %s", size)
+		err = fmt.Errorf("unknown font size %s", size)
+		return
 	}
-	return fontsize, leading, nil
+	return
 }
 
 func debugFrontendText(fe *frontend.Text, level int) {
