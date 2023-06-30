@@ -73,23 +73,8 @@ func (xd *xtsDocument) applyLayoutStylesheet(classname string, id string, style 
 // decodeHTMLFromHTMLNode takes a parsed HTML structure and return a function
 // that formats the the input to a VList.
 func (xd *xtsDocument) decodeHTMLFromHTMLNode(input *html.Node) (frontend.FormatToVList, error) {
-	ftv := func(wd bag.ScaledPoint, opts ...frontend.TypesettingOption) (*node.VList, error) {
+	ftv := func(wd bag.ScaledPoint) (*node.VList, error) {
 		d := document.NewWithFrontend(xd.document, xd.layoutcss)
-		css := []string{}
-		options := &frontend.Options{}
-		for _, opt := range opts {
-			opt(options)
-		}
-		if options.Fontfamily != nil {
-			css = append(css, fmt.Sprintf(`body { font-family: %s; }`, options.Fontfamily.Name))
-		}
-		if fs := options.Fontsize; fs != 0 {
-			css = append(css, fmt.Sprintf(`body { font-size: %spt; }`, fs))
-		}
-		if fs := options.Leading; fs != 0 {
-			css = append(css, fmt.Sprintf(`body { line-height: %spt; }`, fs))
-		}
-		d.AddCSS(strings.Join(css, " "))
 		te, err := d.ParseHTMLFromNode(input)
 		if err != nil {
 			return nil, err
@@ -107,23 +92,8 @@ func (xd *xtsDocument) decodeHTMLFromHTMLNode(input *html.Node) (frontend.Format
 // decodeHTML takes a simple text and return a function that formats the the
 // input to a VList.
 func (xd *xtsDocument) decodeHTML(input string) (frontend.FormatToVList, error) {
-	ftv := func(wd bag.ScaledPoint, opts ...frontend.TypesettingOption) (*node.VList, error) {
+	ftv := func(wd bag.ScaledPoint) (*node.VList, error) {
 		d := document.NewWithFrontend(xd.document, xd.layoutcss)
-		css := []string{}
-		options := &frontend.Options{}
-		for _, opt := range opts {
-			opt(options)
-		}
-		if options.Fontfamily != nil {
-			css = append(css, fmt.Sprintf(`body { font-family: %s; }`, options.Fontfamily.Name))
-		}
-		if fs := options.Fontsize; fs != 0 {
-			css = append(css, fmt.Sprintf(`body { font-size: %spt; }`, fs))
-		}
-		if fs := options.Leading; fs != 0 {
-			css = append(css, fmt.Sprintf(`body { line-height: %spt; }`, fs))
-		}
-		d.AddCSS(strings.Join(css, " "))
 		te, err := d.ParseHTML(input)
 		if err != nil {
 			return nil, err

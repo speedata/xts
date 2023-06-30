@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"io"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -46,7 +47,6 @@ func genIntegerSequence(ids chan int) {
 type xtsDocument struct {
 	cfg               *XTSConfig
 	document          *frontend.Document
-	jobname           string
 	layoutcss         *csshtml.CSS
 	data              *xpath.Parser
 	pages             []*page
@@ -80,7 +80,6 @@ func newXTSDocument() *xtsDocument {
 		groups:            make(map[string]*group),
 		store:             make(map[any]any),
 		marker:            make(mapmarker),
-		jobname:           "xts",
 	}
 	return xd
 }
@@ -173,16 +172,17 @@ func (xd *xtsDocument) setupPage() {
 
 // XTSConfig is the configuration file for PDF generation.
 type XTSConfig struct {
-	Layoutfile   io.Reader
 	Datafile     io.Reader
+	DumpFile     io.Writer
 	FindFile     func(string) (string, error)
+	Jobname      string
+	Layoutfile   io.Reader
 	Mode         []string
 	Outfile      io.WriteCloser
 	OutFilename  string
-	DumpFile     io.Writer
 	SuppressInfo bool
-	Variables    map[string]any
 	Tracing      []string
+	Variables    map[string]any
 }
 
 // RunXTS is the entry point
@@ -200,7 +200,13 @@ func RunXTS(cfg *XTSConfig) error {
 		d.document.SetSuppressInfo(true)
 		bag.Logger.Info("Creating reproducible build")
 	}
-	d.document.FindFile = FindFile
+	curWD, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+	d.layoutcss.FrontendDocument = d.document
+	d.layoutcss.PushDir(curWD)
+
 	for _, tr := range cfg.Tracing {
 		switch tr {
 		case "grid":

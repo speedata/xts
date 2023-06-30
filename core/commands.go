@@ -811,7 +811,7 @@ func cmdLoadDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	}
 	var filename string
 	if attValues.Name != nil {
-		filename = xd.jobname + "-" + *attValues.Name + ".xml"
+		filename = xd.cfg.Jobname + "-" + *attValues.Name + ".xml"
 	} else if attValues.Href != nil {
 		filename = *attValues.Href
 	}
@@ -1439,7 +1439,7 @@ func cmdSaveDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 
 	var filename string
 	if attValues.Name != nil {
-		filename = xd.jobname + "-" + *attValues.Name + ".xml"
+		filename = xd.cfg.Jobname + "-" + *attValues.Name + ".xml"
 	} else if attValues.Href != nil {
 		filename = *attValues.Href
 	}
@@ -1559,13 +1559,14 @@ func cmdStylesheet(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 
 	var toks csshtml.Tokenstream
 	if attrHref := attValues.Href; attrHref == "" {
-		toks, err = xd.layoutcss.ParseCSSString(layoutelt.Stringvalue())
+		toks, err = xd.layoutcss.TokenizeCSSString(layoutelt.Stringvalue())
 	} else {
-		loc, err := FindFile(attrHref)
+		var loc string
+		loc, err = FindFile(attrHref)
 		if err != nil {
-			return nil, err
+			return nil, newTypesettingError(fmt.Errorf("Stylesheet (line %d): %w", layoutelt.Line, err))
 		}
-		toks, err = xd.layoutcss.ParseCSSFile(loc, false)
+		toks, err = xd.layoutcss.ParseCSSFile(loc)
 	}
 	if err != nil {
 		return nil, newTypesettingError(fmt.Errorf("Stylesheet (line %d): %w", layoutelt.Line, err))

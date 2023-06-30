@@ -477,6 +477,7 @@ func dothings() error {
 				Layoutfile:   lr,
 				Mode:         configuration.Mode,
 				OutFilename:  configuration.Jobname + ".pdf",
+				Jobname:      configuration.Jobname,
 				SuppressInfo: configuration.SuppressInfo,
 				Tracing:      configuration.Trace,
 				Variables:    configuration.VariablesMap,

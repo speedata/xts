@@ -102,7 +102,7 @@ func (d *xtsDocument) writeAuxXML() error {
 	var aux auxfile
 	aux.LastPage = d.currentPagenumber
 
-	f, err := os.Create(d.jobname + "-aux.xml")
+	f, err := os.Create(d.cfg.Jobname + "-aux.xml")
 	if err != nil {
 		return err
 	}
@@ -122,7 +122,7 @@ func (d *xtsDocument) writeAuxXML() error {
 }
 
 func (d *xtsDocument) readAuxFile() (*auxfile, error) {
-	data, err := os.ReadFile(d.jobname + "-aux.xml")
+	data, err := os.ReadFile(d.cfg.Jobname + "-aux.xml")
 	if err != nil {
 		// OK if file not found, just return
 		return nil, nil
