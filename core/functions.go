@@ -1,6 +1,7 @@
 package core
 
 import (
+	"bytes"
 	"crypto/md5"
 	"crypto/sha1"
 	"crypto/sha256"
@@ -14,8 +15,12 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/alecthomas/chroma/formatters/html"
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/goxpath"
+	"github.com/yuin/goldmark"
+	highlighting "github.com/yuin/goldmark-highlighting"
+	"github.com/yuin/goldmark/extension"
 )
 
 const fnNS = "urn:speedata.de/2021/xtsfunctions/en"
@@ -38,6 +43,7 @@ func init() {
 	goxpath.RegisterFunction(&goxpath.Function{Name: "image-width", Namespace: fnNS, F: fnImageWidth, MinArg: 1, MaxArg: 4})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "last-page-number", Namespace: fnNS, F: fnLastPagenumber, MinArg: 0, MaxArg: 0})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "md5", Namespace: fnNS, F: fnMdFive, MinArg: 1, MaxArg: 1})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "markdown", Namespace: fnNS, F: fnMarkdown, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "mode", Namespace: fnNS, F: fnMode, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "number-of-columns", Namespace: fnNS, F: fnNumberOfColumns, MinArg: 0, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "number-of-rows", Namespace: fnNS, F: fnNumberOfRows, MinArg: 0, MaxArg: 1})
@@ -354,6 +360,32 @@ func fnMdFive(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, 
 	str := args[0].Stringvalue()
 	sum := md5.Sum([]byte(str))
 	return goxpath.Sequence{fmt.Sprintf("%x", sum)}, nil
+}
+
+func fnMarkdown(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	src := args[0].Stringvalue()
+	var buf bytes.Buffer
+
+	gm := goldmark.New(goldmark.WithExtensions(
+		highlighting.NewHighlighting(
+			highlighting.WithStyle("pygments"),
+			highlighting.WithFormatOptions(
+				html.WithLineNumbers(true),
+			),
+		),
+		extension.Table,
+	))
+	gm.Convert([]byte(src), &buf)
+
+	xd := ctx.Store["xd"].(*xtsDocument)
+	x, err := xd.parseHTMLText("<dummy>" + buf.String() + "</dummy>")
+	if err != nil {
+		return nil, err
+	}
+	x = x.FirstChild.LastChild.FirstChild
+	x.Parent = nil
+
+	return goxpath.Sequence{x}, nil
 }
 
 func fnMode(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {

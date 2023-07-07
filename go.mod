@@ -3,6 +3,7 @@ module github.com/speedata/xts
 go 1.20
 
 require (
+	github.com/alecthomas/chroma v0.10.0
 	github.com/cjoudrey/gluahttp v0.0.0-20201111170219-25003d9adfa9
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pelletier/go-toml/v2 v2.0.8
@@ -15,6 +16,8 @@ require (
 	github.com/speedata/goxpath v0.0.0-20230607131939-3c391168ab40
 	github.com/speedata/optionparser v1.0.2
 	github.com/speedata/textlayout v0.0.0-20230613181208-b47193566b6f
+	github.com/yuin/goldmark v1.4.13
+	github.com/yuin/goldmark-highlighting v0.0.0-20220208100518-594be1970594
 	github.com/yuin/gopher-lua v1.1.0
 	go.uber.org/zap v1.24.0
 	golang.org/x/net v0.10.0
@@ -25,6 +28,7 @@ require (
 require (
 	github.com/PuerkitoBio/goquery v1.8.1 // indirect
 	github.com/andybalholm/cascadia v1.3.2 // indirect
+	github.com/dlclark/regexp2 v1.4.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/speedata/css/scanner v0.0.0-20201005071706-2ed32c3ce553 // indirect
 	github.com/speedata/gofpdi v1.0.18 // indirect
