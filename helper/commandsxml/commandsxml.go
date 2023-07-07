@@ -726,7 +726,7 @@ func (c *Command) ExampleMarkdown() string {
 						wd = fmt.Sprintf(`%s`, a.Value)
 					}
 				}
-				ret = append(ret, fmt.Sprintf("\nimage::%s[width=%s]\n", fn, wd))
+				ret = append(ret, fmt.Sprintf("\n![](../img/%s){: style=\"width=%s\"; }\n", fn, wd))
 			case "para":
 				p := &para{}
 				p.commands = c.commands

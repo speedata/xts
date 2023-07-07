@@ -18,6 +18,7 @@
     <optional><cmd name="SaveDataset"/></optional>
     <optional><cmd name="SetVariable"/></optional>
     <optional><cmd name="Switch"/></optional>
+    <optional><cmd name="Tr"/></optional>
     <optional><cmd name="Until"/></optional>
     <optional><cmd name="Value"/></optional>
     <optional><cmd name="While"/></optional>
@@ -4357,123 +4358,14 @@
       <oneOrMore>
         <interleave>
           <optional><cmd name="Columns"/></optional>
+          <optional><cmd name="ForAll"/></optional>
+          <optional><cmd name="Loop"/></optional>
+          <optional><cmd name="Tablehead"/></optional>
           <optional><cmd name="Tr"/></optional>
           <optional><cmd name="Value"/></optional>
         </interleave>
       </oneOrMore>
     </childelements>
-    <attribute en="balance" optional="yes">
-      <description xml:lang="en">
-        <para>Tries to balance the table on the last page according to the number of frames. Experimental! </para>
-      </description>
-      <description xml:lang="de">
-        <para>Versucht die letzte Seite anhand der Anzahl der Rahmen auszubalancieren. Experimentell</para>
-      </description>
-      <choice en="yes">
-        <description xml:lang="en">
-          <para>Tries to balance.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Versucht die Spalten auszugleichen.</para>
-        </description>
-      </choice>
-      <choice en="no">
-        <description xml:lang="en">
-          <para>First column will filled first, default</para>
-        </description>
-        <description xml:lang="de">
-          <para>Erste Spalte wird zuerst ausgefüllt</para>
-        </description>
-      </choice>
-    </attribute>
-    <attribute en="border-collapse" optional="yes">
-      <description xml:lang="en">
-        <para>Determine if adjacent table cells share borders. The behavior of border-collapse="collapse" is undefined when the table has columndistance or rowdistance set to a non-zero value and if the adjacent borders don't have the same width and color.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Bestimmt, ob benachbarte Zellen die Rahmen teilen. Das Verhalten von border-collapse="collapse" ist nicht definiert wenn die Tablle einen Zeilen- oder Spaltenabstand &gt; 0 haben oder wenn die benachbarten Zellen nicht dieselbe Strichstärke und -farbe haben.</para>
-      </description>
-      <choice en="separate">
-        <description xml:lang="en">
-          <para>The borders are part of the cell and not shared with its neighbors.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Die Rahmen sind Teil der Zelle und werden nicht mit den Nachbarzellen geteilt.</para>
-        </description>
-      </choice>
-      <choice en="collapse">
-        <description xml:lang="en">
-          <para>The borders of neighboring cells overlap.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Die Rahmen benachbarter Zellen überlappen sich.</para>
-        </description>
-      </choice>
-    </attribute>
-    <attribute en="columndistance" type="length" optional="yes">
-      <description xml:lang="en">
-        <para>Distance between two table columns.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Der Abstand zwischen zwei Spalten.</para>
-      </description>
-    </attribute>
-    <attribute en="eval" type="xpath" optional="yes">
-      <description xml:lang="en">
-        <para>Evaluates the given XPath expression and discards its output.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Wertet den angegebenen XPath-Ausdruck aus und ignoriert dessen Ausgabe.</para>
-      </description>
-    </attribute>
-    <attribute en="fontfamily" type="text" optional="yes">
-      <description xml:lang="en">
-        <para>Name of the font family for the table. If not given, the font face ‘text’ is used.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Name der Schriftfamilie, die benutzt werden soll. Wenn keine Schriftart angegeben ist, wird auf die Schriftart ›text‹ umgeschaltet.</para>
-      </description>
-    </attribute>
-    <attribute en="fontsize" optional="yes" allowxpath="yes" type="text">
-      <description xml:lang="en">
-        <para>Set the font size. You can use a string such as "10pt/12pt" to set the font size and the leading. Defaults to 'text'.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Setze die Schriftgröße und den Zeilenabstand. Es kann eine Zeichenkette wie "10pt/12pt", die die Schriftgröße und den Zeilenabstand bestimmt. Voreeinstellung ist 'text'.</para>
-      </description>
-    </attribute>
-    <attribute en="padding" type="length" optional="yes">
-      <description xml:lang="en">
-        <para>The distance between the table border and the table contents.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Der Innenabstand innerhalb einer Tabellenzelle.</para>
-      </description>
-    </attribute>
-    <attribute en="stretch" optional="yes">
-      <description xml:lang="en">
-        <para>If the table contents is narrow and stretch has the value no, the table only uses the minimal width. If the table contents is wider than the value width or stretch has the value max, the table's width is the size given in the width attribute.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Wenn der Tabelleninhalt schmal ist und stretch den Wert nein hat, dann nimmt die Tabelle nur den benötigten Platz ein. Wenn der Tabelleninhalt breit ist oder stretch den Wert max hat, dann nimmt die Tabelle den Wert aus dem Attribut breite ein.</para>
-      </description>
-      <choice en="yes">
-        <description xml:lang="en">
-          <para>Stretch the table to its given width.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Die Tabelle zur angegebenen Breite dehnen.</para>
-        </description>
-      </choice>
-      <choice en="no">
-        <description xml:lang="en">
-          <para>The table width is the minimum width depending on it's contents.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Die Tabelle nimmt den kleinstmöglichen Platz ein.</para>
-        </description>
-      </choice>
-    </attribute>
     <attribute en="width" type="numberorlength" optional="yes">
       <description xml:lang="en">
         <para>The maximum width of the table (in grid cells or absolute values). Defaults to the available space.</para>
@@ -4481,30 +4373,6 @@
       <description xml:lang="de">
         <para>Der Bereich, den die Tabelle (maximal) im Raster belegt. Angabe in Rasterzellen oder absoluten Längenangaben. Voreinstellung ist der verfügbare Platz.</para>
       </description>
-    </attribute>
-    <attribute en="vexcess" optional="yes" allowxpath="yes">
-      <description xml:lang="en">
-        <para>Set behaviour when cells stretch in vertical direction due to rowspans.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Setze das Verhalten wenn Zeilen vertikal vergrößert werden wegen eines Rowspans.</para>
-      </description>
-      <choice en="stretch">
-        <description xml:lang="en">
-          <para>Stretch all table cells evenly (default).</para>
-        </description>
-        <description xml:lang="de">
-          <para>Vergrößere alle Tabellenzellen gleichmäßig (Voreinstellung).</para>
-        </description>
-      </choice>
-      <choice en="bottom">
-        <description xml:lang="en">
-          <para>Only stretch the last table cell.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Nur die letzte Tabellenzelle vergrößern.</para>
-        </description>
-      </choice>
     </attribute>
     <remark xml:lang="en">
       <para>The table cells may contain Paragraphs, Images and other objects that are allowed in <cmd name="PlaceObject"/>.</para>
@@ -4514,53 +4382,61 @@
     </remark>
     <example xml:lang="en">
       <listing><![CDATA[
+<Stylesheet>
+    table {
+        font-family: serif;
+        font-size: 14pt;
+        width: 100%;
+    }
+    td {
+        border-top: 0.5 solid black;
+        border-bottom: 0.5 solid black;
+        text-align: center;
+    }
+    thead {
+        font-weight: bold ;
+    }
+    .left { text-align: left ; }
+</Stylesheet>
 <Record element="data">
-  <PlaceObject>
-    <Table stretch="yes" padding="1pt">
-      <Tablehead>
-        <Tr backgroundcolor="gray">
-          <Td colspan="3"/>
-          <Td border-left="0.2pt" border-left-color="white" colspan="6" align="center">
-            <Paragraph><B><Value>Total</Value></B></Paragraph></Td>
-          <Td border-left="0.2pt" border-left-color="white"/>
-        </Tr>
-        <Tr backgroundcolor="gray">
-          <Td/>
-          <Td><Paragraph><B><Value>Clubs</Value></B></Paragraph></Td>
-          <Td><Paragraph><B><Value>P</Value></B></Paragraph></Td>
-          <Td align="center" border-left="0.2pt" border-left-color="white">
-            <Paragraph><B><Value>W</Value></B></Paragraph>
-          </Td>
-          <Td align="center"><Paragraph><B><Value>D</Value></B></Paragraph></Td>
-          <Td align="center"><Paragraph><B><Value>L</Value></B></Paragraph></Td>
-          <Td align="center"><Paragraph><B><Value>F</Value></B></Paragraph></Td>
-          <Td align="center"><Paragraph><B><Value>A</Value></B></Paragraph></Td>
-          <Td align="center"><Paragraph><B><Value>+/-</Value></B></Paragraph></Td>
-          <Td align="center" border-left="0.2pt" border-left-color="white">
-            <Paragraph><B><Value>Pts</Value></B></Paragraph>
-          </Td>
-        </Tr>
-      </Tablehead>
-      <ForAll select="entry">
-        <Tr>
-          <Td align="left"><Paragraph><Value select="@pos"/></Paragraph></Td>
-          <Td align="left"><Paragraph><Value select="@name"/></Paragraph></Td>
-          <Td align="center"><Paragraph><Value select="@p"/></Paragraph></Td>
-          <Td align="center" border-left="0.2pt" border-left-color="gray">
-            <Paragraph><Value select="@tw"/></Paragraph>
-          </Td>
-          <Td align="center"><Paragraph><Value select="@td"/></Paragraph></Td>
-          <Td align="center"><Paragraph><Value select="@tl"/></Paragraph></Td>
-          <Td align="center"><Paragraph><Value select="@ta"/></Paragraph></Td>
-          <Td align="center"><Paragraph><Value select="@tf"/></Paragraph></Td>
-          <Td align="center"><Paragraph><Value select="@tpm"/></Paragraph></Td>
-          <Td align="center" border-left="0.2pt" border-left-color="gray">
-            <Paragraph><Value select="@pts"/></Paragraph>
-          </Td>
-        </Tr>
-      </ForAll>
-    </Table>
-  </PlaceObject>
+    <PlaceObject>
+        <Table>
+            <Tablehead>
+                <Tr>
+                    <Td colspan="2"/>
+                    <Td colspan="7">
+                      <Paragraph><Value>Total</Value></Paragraph></Td>
+                    <Td/>
+                </Tr>
+                <Tr>
+                    <Td/>
+                    <Td class="left"><Paragraph><Value>Clubs</Value></Paragraph></Td>
+                    <Td><Paragraph><Value>P</Value></Paragraph></Td>
+                    <Td><Paragraph><Value>W</Value></Paragraph></Td>
+                    <Td><Paragraph><Value>D</Value></Paragraph></Td>
+                    <Td><Paragraph><Value>L</Value></Paragraph></Td>
+                    <Td><Paragraph><Value>F</Value></Paragraph></Td>
+                    <Td><Paragraph><Value>A</Value></Paragraph></Td>
+                    <Td><Paragraph><Value>+/-</Value></Paragraph></Td>
+                    <Td><Paragraph><Value>Pts</Value></Paragraph></Td>
+                </Tr>
+            </Tablehead>
+            <ForAll select="entry">
+                <Tr>
+                    <Td><Paragraph><Value select="@pos"/></Paragraph></Td>
+                    <Td class="left"><Paragraph><Value select="@name"/></Paragraph></Td>
+                    <Td><Paragraph><Value select="@p"/></Paragraph></Td>
+                    <Td><Paragraph><Value select="@tw"/></Paragraph></Td>
+                    <Td><Paragraph><Value select="@td"/></Paragraph></Td>
+                    <Td><Paragraph><Value select="@tl"/></Paragraph></Td>
+                    <Td><Paragraph><Value select="@ta"/></Paragraph></Td>
+                    <Td><Paragraph><Value select="@tf"/></Paragraph></Td>
+                    <Td><Paragraph><Value select="@tpm"/></Paragraph></Td>
+                    <Td><Paragraph><Value select="@pts"/></Paragraph></Td>
+                </Tr>
+            </ForAll>
+        </Table>
+    </PlaceObject>
 </Record>
 ]]></listing>
       <para>Using the following data:</para>
@@ -4574,51 +4450,46 @@
   <entry pos="4" name="GNK Dinamo Zagreb" p="6"
   	  tw="0" td="1" tl="5" tf="1"  ta="14" tpm="-13" pts="1" />
 </data>]]></listing>
-      <image file="ref-table-en.png"/>
-    </example>
-    <example xml:lang="de">
-      <para>Mit den folgenden Daten</para>
-      <listing><![CDATA[<data>
-  <row pos="1" verein="FC Bayern München" punkte="56" diff="+31" bemerkung="CL" />
-  <row pos="2" verein="FC Schalke 04" punkte="54" diff="+22" bemerkung="CL" />
-  <row pos="3" verein="Bayer 04 Leverkusen" punkte="53" diff="+31" bemerkung="CL Qual." />
-  <row pos="4" verein="Borussia Dortmund" punkte="45" diff="+10" bemerkung="EL Qual." />
-</data>
-]]></listing>
-      <para>Kann man die Tabelle über folgendes Layout ausgeben:</para>
-      <listing><![CDATA[<Record element="data">
-  <PlaceObject>
-    <Table padding="1mm" stretch="yes">
-      <Tablehead>
-        <Tablerule rulewidth="1pt" />
-        <Tr align="center">
-          <Td><Paragraph><Value>Platz</Value></Paragraph></Td>
-          <Td align="left"><Paragraph><Value>Club</Value></Paragraph></Td>
-          <Td><Paragraph><Value>Punkte</Value></Paragraph></Td>
-          <Td><Paragraph><Value>Differenz</Value></Paragraph></Td>
-          <Td align="left"><Paragraph><Value>Bemerkung</Value></Paragraph></Td>
-        </Tr>
-        <Tablerule rulewidth="0.6pt" />
-      </Tablehead>
-      <ForAll select="row">
-        <Tr align="center">
-          <Td><Paragraph><Value select="@pos"/></Paragraph></Td>
-          <Td align="left"><Paragraph><Value select="@verein"/></Paragraph></Td>
-          <Td><Paragraph><Value select="@punkte"/></Paragraph></Td>
-          <Td><Paragraph><Value select="@diff"/></Paragraph></Td>
-          <Td align="left"><Paragraph><Value select="@bemerkung"/></Paragraph></Td>
-        </Tr>
-      </ForAll>
-      <Tablefoot>
-        <Tablerule rulewidth="1pt" />
-      </Tablefoot>
-    </Table>
-  </PlaceObject>
-</Record>
-]]></listing>
-      <image file="ref-table-de.png" width="100%"/>
+      <image file="ref-table.png"/>
     </example>
   </command>
+
+
+  <!--
+      ****************************************************************************************
+      * Tablehead
+      ****************************************************************************************
+  -->
+  <command en="Tablehead">
+    <description xml:lang="en">
+      <para>Create a repeating table head.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Gibt den Tabellenkopf an.</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <interleave>
+          <optional><cmd name="ForAll"/></optional>
+          <optional><cmd name="Switch"/></optional>
+          <optional><cmd name="Tr"/></optional>
+        </interleave>
+      </oneOrMore>
+    </childelements>
+    <remark xml:lang="en">
+      <para>The contents of the table head gets repeated on every page of a broken table.</para>
+    </remark>
+    <remark xml:lang="de">
+      <para>Der Inhalt von Tabellenkopf wird auf jeder Seite einer automatisch umbrochenen Tabelle wiederholt.</para>
+    </remark>
+    <example xml:lang="en">
+      <para>See the explanation of <cmd name="Table"/>.</para>
+    </example>
+    <example xml:lang="de">
+      <para>Siehe Erläuterung zu <cmd name="Table"/>.</para>
+    </example>
+  </command>
+
 
   <!--
       ****************************************************************************************
@@ -4663,228 +4534,20 @@
         <para>CSS id für diese Tabellenzelle.</para>
       </description>
     </attribute>
-    <attribute en="align" optional="yes" css="text-align" allowxpath="yes">
+    <attribute en="style" optional="yes" type="text">
       <description xml:lang="en">
-        <para>Horizontal alignment of the cell contents. Defaults to left.</para>
+        <para>CSS style for this table cell.</para>
       </description>
       <description xml:lang="de">
-        <para>Die horizontale Ausrichtung des Tabelleninhalts</para>
-      </description>
-      <choice en="left">
-        <description xml:lang="en">
-          <para>The contents is left aligned (ragged right). This is the default.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Der Inhalt der Zelle ist am linken Rand ausgerichtet. (Voreinstellung)</para>
-        </description>
-      </choice>
-      <choice en="right">
-        <description xml:lang="en">
-          <para>The contents of the cell is right aligned.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Der Inhalt der Zelle ist rechtsbündig ausgerichtet.</para>
-        </description>
-      </choice>
-      <choice en="center">
-        <description xml:lang="en">
-          <para>The contents of the cell is aligned at the center, with ragged right and left margin.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Der Inhalt der Zelle ist auf der Mittelachse ausgerichtet mit links und rechts Flatterrand.</para>
-        </description>
-      </choice>
-      <choice en="justify">
-        <description xml:lang="en">
-          <para>Justified text with straight margins.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Text im Blocksatz.</para>
-        </description>
-      </choice>
-    </attribute>
-    <attribute en="backgroundcolor" css="background-color" type="text" optional="yes">
-      <description xml:lang="en">
-        <para>The name of the background color (if the cell should get a background).</para>
-      </description>
-      <description xml:lang="de">
-        <para>Der Name der Hintergrundfarbe, wenn die Zelle eingefärbt werden soll.</para>
-      </description>
-    </attribute>
-    <attribute en="background-font-family" optional="yes" css="background-font-family" type="text">
-      <description xml:lang="en">
-        <para>Set the font family of the background text. Defaults to the table font.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Setzt die Fontfamilie für den Hintergrundtext. Voreinstellung ist die Fontfamilie für die Tabelle.</para>
-      </description>
-    </attribute>
-    <attribute en="background-textcolor" optional="yes" css="background-textcolor">
-      <description xml:lang="en">
-        <para>The color of the text in the background (if any).</para>
-      </description>
-      <description xml:lang="de">
-        <para>Die Farbe des Hintergrundtexts, falls vorhanden.</para>
-      </description>
-    </attribute>
-    <attribute en="background-size" optional="yes" css="background-size">
-      <description xml:lang="en">
-        <para>Controls the size of the background text. Currently only 'contain' and 'auto' is allowed.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Bestimmt die Größe des Hintergrundtexts. Derzeit ist nur 'contain' und 'auto' erlaubt.</para>
-      </description>
-      <choice en="contain">
-        <description xml:lang="en">
-          <para>Fill the height of the table cell.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Der Text passt sich der Zellenhöhe an.</para>
-        </description>
-      </choice>
-      <choice en="auto">
-        <description xml:lang="en">
-          <para>The background text is not scaled.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Der Hintergrundtext wird nicht skaliert.</para>
-        </description>
-      </choice>
-    </attribute>
-    <attribute en="background-transform" optional="yes" css="background-transform">
-      <description xml:lang="en">
-        <para>The transformation of the background text (if any). Currently supported: <tt>rotate(-40deg)</tt> (and other angles in the range 0 to -90).</para>
-      </description>
-      <description xml:lang="de">
-        <para>Die Transformation des Hintergrundtexts (falls vorhanden). Derzeit wird folgende Angabe unterstützt: <tt>rotate(-40deg) (und andere Winkel im Bereich 0 bis -90).</tt></para>
-      </description>
-    </attribute>
-    <attribute en="background-text" optional="yes" css="background-text">
-      <description xml:lang="en">
-        <para>A text that should be placed in the background of the table cell.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Ein Text, der in den Tabellenhintergrund gelegt wird.</para>
-      </description>
-    </attribute>
-    <attribute en="border-left" type="length" optional="yes" css="border-left-width">
-      <description xml:lang="en">
-        <para>The width (thickness) of the left border. The border is inside the cell.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Die Breite der Linie links. Die Linie liegt innerhalb der Zelle.</para>
-      </description>
-    </attribute>
-    <attribute en="border-right" type="length" optional="yes" css="border-right-width">
-      <description xml:lang="en">
-        <para>The width (thickness) of the right border. The border is inside the cell.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Die Breite der Linie rechts. Die Linie liegt innerhalb der Zelle.</para>
-      </description>
-    </attribute>
-    <attribute en="border-top" type="length" optional="yes" css="border-top-width">
-      <description xml:lang="en">
-        <para>The width (thickness) of the top border. The border is inside the cell.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Die Breite der Linie oben. Die Linie liegt innerhalb der Zelle.</para>
-      </description>
-    </attribute>
-    <attribute en="border-bottom" type="length" optional="yes" css="border-bottom-width">
-      <description xml:lang="en">
-        <para>The width (thickness) of the bottom border. The border is inside the cell.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Die Breite der Linie unten. Die Linie liegt innerhalb der Zelle.</para>
-      </description>
-    </attribute>
-    <attribute en="border-left-color" type="text" optional="yes" css="border-left-color">
-      <description xml:lang="en">
-        <para>The color of the left border.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Die Farbe der Linie links.</para>
-      </description>
-    </attribute>
-    <attribute en="border-right-color" type="text" optional="yes" css="border-right-color">
-      <description xml:lang="en">
-        <para>The color of the left border.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Die Farbe der Linie rechts.</para>
-      </description>
-    </attribute>
-    <attribute en="border-top-color" type="text" optional="yes" css="border-top-color">
-      <description xml:lang="en">
-        <para>The color of the top border.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Die Farbe der Linie oben.</para>
-      </description>
-    </attribute>
-    <attribute en="border-bottom-color" type="text" optional="yes" css="border-bottom-color">
-      <description xml:lang="en">
-        <para>The color of the bottom border.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Die Farbe der Linie unten.</para>
+        <para>CSS Stil für diese Tabellenzelle.</para>
       </description>
     </attribute>
     <attribute en="colspan" type="number" optional="yes">
       <description xml:lang="en">
-        <para>The number of columns this cell spans. Defaults to 1.</para>
+        <para>The number of columns for this cell. Defaults to 1.</para>
       </description>
       <description xml:lang="de">
         <para>Die Anzahl der Spalten, die die Zelle überdecken soll. Voreinstellung ist 1.</para>
-      </description>
-    </attribute>
-    <attribute en="graphics" type="text" optional="yes">
-      <description xml:lang="en">
-        <para>Draw the predefined MetaPost graphic around the table cell (experimental).</para>
-      </description>
-      <description xml:lang="de">
-        <para>Zeichne die vordefinierte MetaPost-Grafik um die Tabellenzelle (experimentell).</para>
-      </description>
-    </attribute>
-    <attribute en="padding" type="length" optional="yes" css="padding">
-      <description xml:lang="en">
-        <para>Shorthand for setting padding-top and the other values with this length.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Kurzform für die Bestimmung von padding-top und den anderen drei Werten mit derselben Maßangabe</para>
-      </description>
-    </attribute>
-    <attribute en="padding-top" type="length" optional="yes" css="padding-top">
-      <description xml:lang="en">
-        <para>Set the inner distance (width between contents and the border) to the top edge.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Bestimmt den Innenabstand einer Tabelle (oben)</para>
-      </description>
-    </attribute>
-    <attribute en="padding-bottom" type="length" optional="yes" css="padding-bottom">
-      <description xml:lang="en">
-        <para>Set the inner distance (width between contents and the border) to the bottom edge.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Bestimmt den Innenabstand einer Tabelle (unten)</para>
-      </description>
-    </attribute>
-    <attribute en="padding-left" type="length" optional="yes" css="padding-left">
-      <description xml:lang="en">
-        <para>Set the inner distance (width between contents and the border) to the left edge.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Bestimmt den Innenabstand einer Tabelle (links)</para>
-      </description>
-    </attribute>
-    <attribute en="padding-right" type="length" optional="yes" css="padding-right">
-      <description xml:lang="en">
-        <para>Set the inner distance (width between contents and the border) to the right edge.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Bestimmt den Innenabstand einer Tabelle (rechts)</para>
       </description>
     </attribute>
     <attribute en="rowspan" type="number" optional="yes">
@@ -4894,46 +4557,6 @@
       <description xml:lang="de">
         <para>Die Anzahl der Zeilen, die die Zelle überdecken soll. Voreinstellung ist 1.</para>
       </description>
-    </attribute>
-    <attribute en="rotate" optional="yes" type="number">
-      <description xml:lang="en">
-        <para>Rotate the contents of the table cell. Positive values return clockwise. This is experimental and currently only for text.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Drehe den Inhalt (im Uhrzeigersinn) der Tabellenzelle. Experimentell und derzeit nur für Textinhalte.</para>
-      </description>
-    </attribute>
-    <attribute en="valign" optional="yes" css="vertical-align" allowxpath="yes">
-      <description xml:lang="en">
-        <para>The vertical alignment of the cell.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Die vertikale Ausrichtung des Zelleninhalts.</para>
-      </description>
-      <choice en="top">
-        <description xml:lang="en">
-          <para>The contents is aligned at the top edge of the cell.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Der Zellinhalt ist an der oberen Kante ausgerichtet.</para>
-        </description>
-      </choice>
-      <choice en="middle">
-        <description xml:lang="en">
-          <para>The contents is vertically centered.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Der Zellinhalt vertikal zentriert.</para>
-        </description>
-      </choice>
-      <choice en="bottom">
-        <description xml:lang="en">
-          <para>The contents is aligned at the bottom edge of the cell.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Der Zellinhalt ist an der unteren Kante ausgerichtet.</para>
-        </description>
-      </choice>
     </attribute>
     <remark xml:lang="en">
       <para>The child elements of the table cells are either block objects that start a new line or inline objects that are placed horizontally next to each other (from left to right) until the width of the table cell forces a line break.
@@ -4959,12 +4582,7 @@
          <Column width="5cm"/>
        </Columns>
        <Tr>
-         <Td border-top="0.25pt" border-bottom="0.25pt"
-            background-text="hello!"
-            background-textcolor="goldenrod"
-            background-transform="rotate(-30deg)"
-            background-size="contain"
-            background-font-family="td-background">
+         <Td>
            <Paragraph><Value>A wonderful serenity has taken possession of my entire soul,
              like these sweet mornings of spring which I enjoy with my whole heart.</Value>
            </Paragraph>
@@ -5070,181 +4688,21 @@
         <optional><cmd name="Loop"/></optional>
       </oneOrMore>
     </childelements>
-    <attribute en="align" optional="yes">
-      <description xml:lang="en">
-        <para>Horizontal alignment of the table cells in this row.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Die horizontale Ausrichtung des Tabelleninhalts (gilt für die gesamte Zeile).</para>
-      </description>
-      <choice en="left">
-        <description xml:lang="en">
-          <para>The contents is left aligned (ragged right). This is the default.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Der Inhalt der Zelle ist am linken Rand ausgerichtet. (Voreinstellung)</para>
-        </description>
-      </choice>
-      <choice en="right">
-        <description xml:lang="en">
-          <para>The contents of the cell is right aligned.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Der Inhalt der Zelle ist rechtsbündig ausgerichtet.</para>
-        </description>
-      </choice>
-      <choice en="center">
-        <description xml:lang="en">
-          <para>The contents of the cell is aligned at the center, with ragged right and left margin.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Der Inhalt der Zelle ist auf der Mittelachse ausgerichtet mit links und rechts Flatterrand.</para>
-        </description>
-      </choice>
-      <choice en="justify">
-        <description xml:lang="en">
-          <para>Justified text with straight margins.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Text im Blocksatz.</para>
-        </description>
-      </choice>
-    </attribute>
-    <attribute en="backgroundcolor" type="text" optional="yes">
-      <description xml:lang="en">
-        <para>Background color of each cell in this row.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Die Farbe der Zellen in der Zeile.</para>
-      </description>
-    </attribute>
-    <attribute en="break-below" optional="yes" allowxpath="yes">
-      <description xml:lang="en">
-        <para>Allow a table break between this row and the following.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Erlaubt einen Tabellenumbruch zwischen dieser und der nächsten Zeile.</para>
-      </description>
-      <choice en="yes">
-        <description xml:lang="en">
-          <para>Allow a table break between this row and the following (default).</para>
-        </description>
-        <description xml:lang="de">
-          <para>Erlaubt einen Tabellenumbruch zwischen dieser und der nächsten Zeile (Voreinstellung).</para>
-        </description>
-      </choice>
-      <choice en="no">
-        <description xml:lang="en">
-          <para>Disable a table break between this row and the following.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Verhindert einen Tabellenumbruch zwischen dieser und der nächsten Zeile.</para>
-        </description>
-      </choice>
-    </attribute>
-    <attribute en="data" type="xpath" optional="yes">
-      <description xml:lang="en">
-        <para>Data that can be accessed via <tt>$_last_tr_data</tt> in the tablefoot and tablehead.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Auf diese Daten können im Tabellenkopf und Tabellenfuß mit <tt>$_last_tr_data</tt> zugegriffen werden.</para>
-      </description>
-    </attribute>
-    <attribute en="minheight" type="numberorlength" optional="yes">
-      <description xml:lang="en">
-        <para>Minimum row height in grid cells or length.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Die Mindesthöhe der Zeile in Rasterzellen oder als Längenangabe.</para>
-      </description>
-    </attribute>
-    <attribute en="sethead" optional="yes" allowxpath="yes">
-      <description xml:lang="en">
-        <para>Use this line for future table heads.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Diese Zeile für zukünftige Kopfzeilen benutzen.</para>
-      </description>
-      <choice en="yes">
-        <description xml:lang="en">
-          <para>Use this line for future table heads.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Diese Zeile für zukünftige Kopfzeilen benutzen.</para>
-        </description>
-      </choice>
-      <choice en="no">
-        <description xml:lang="en">
-          <para>No special treatment of this line (default).</para>
-        </description>
-        <description xml:lang="de">
-          <para>Diese Zeile wird nicht besonders behandelt (Voreinstellung).</para>
-        </description>
-      </choice>
-      <choice en="clear">
-        <description xml:lang="en">
-          <para>Delete head. Next pages will have no head until new one is set with 'yes'.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Kopf löschen. Weitere Seiten haben keine Kopfzeile bis eine neue gesetzt wird.</para>
-        </description>
-      </choice>
-    </attribute>
-    <attribute en="top-distance" optional="yes" type="numberorlength">
-      <description xml:lang="en">
-        <para>The space above this row if it is not the first line on a new page / area.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Der Leerraum über dieser Zeile, wenn sie nicht die erste Zeile auf einer Seite/Bereich ist</para>
-      </description>
-    </attribute>
-    <attribute en="valign" optional="yes" allowxpath="yes">
-      <description xml:lang="en">
-        <para>Vertical alignment of the table cells in this row.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Die vertikale Ausrichtung des Tabelleninhalts (gilt für die gesamte Zeile).</para>
-      </description>
-      <choice en="top">
-        <description xml:lang="en">
-          <para>The objects in this row are aligned at the top.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Die Objekte dieser Zeile werden oben ausgerichtet.</para>
-        </description>
-      </choice>
-      <choice en="middle">
-        <description xml:lang="en">
-          <para>The objects in this row are aligned at the middle axis.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Die Objekte dieser Zeile werden auf der Mittelachse ausgerichtet.</para>
-        </description>
-      </choice>
-      <choice en="bottom">
-        <description xml:lang="en">
-          <para>The objects in this row are aligned at the bottom.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Die Objekte dieser Zeile werden am unteren Rand ausgerichtet.</para>
-        </description>
-      </choice>
-    </attribute>
     <example xml:lang="en">
-      <listing><![CDATA[<Tr minheight="8mm" backgroundcolor="yellow">
-  <Td align="center"><Paragraph><Value>A</Value></Paragraph></Td>
+      <listing><![CDATA[<Tr>
+  <Td><Paragraph><Value>A</Value></Paragraph></Td>
   <Td><Paragraph><Value>B</Value></Paragraph></Td>
-  <Td align="center"><Paragraph><Value>C</Value></Paragraph></Td>
-  <Td align="center"><Paragraph><Value>D</Value></Paragraph></Td>
+  <Td><Paragraph><Value>C</Value></Paragraph></Td>
+  <Td><Paragraph><Value>D</Value></Paragraph></Td>
   <Td><Paragraph><Value>E</Value></Paragraph></Td>
 </Tr>]]></listing>
     </example>
     <example xml:lang="de">
-      <listing><![CDATA[<Tr minheight="8mm" backgroundcolor="yellow">
-  <Td align="center"><Paragraph><Value>4</Value></Paragraph></Td>
+      <listing><![CDATA[<Tr>
+  <Td><Paragraph><Value>4</Value></Paragraph></Td>
   <Td><Paragraph><Value>Borussia Dortmund</Value></Paragraph></Td>
-  <Td align="center"><Paragraph><Value>45</Value></Paragraph></Td>
-  <Td align="center"><Paragraph><Value>+10</Value></Paragraph></Td>
+  <Td><Paragraph><Value>45</Value></Paragraph></Td>
+  <Td><Paragraph><Value>+10</Value></Paragraph></Td>
   <Td><Paragraph><Value>EL Qual.</Value></Paragraph></Td>
 </Tr>]]></listing>
     </example>
