@@ -41,6 +41,8 @@ github.com/speedata/goxml v0.0.0-20230322084327-216af189a791 h1:TuFrswsnJYDeyR47
 github.com/speedata/goxml v0.0.0-20230322084327-216af189a791/go.mod h1:G++cv0h2rC8ltAhvQmANDgwMbKRd3MetXlF8PLob6dw=
 github.com/speedata/goxpath v0.0.0-20230607131939-3c391168ab40 h1:s7YDoiHouElOtm15yHLEmLlBI4aYCbLkTLAyLM/mXg0=
 github.com/speedata/goxpath v0.0.0-20230607131939-3c391168ab40/go.mod h1:/9JLhISqlVrHRfRhf0B6d15a3TV+q4ertfm67S/q9Us=
+github.com/speedata/goxpath v0.0.0-20230709190058-ca75de231e9c h1:UHPI8EkvpM2dSSrRrXRK6IjcC2cS6/u6ED6eHIUhUKk=
+github.com/speedata/goxpath v0.0.0-20230709190058-ca75de231e9c/go.mod h1:/9JLhISqlVrHRfRhf0B6d15a3TV+q4ertfm67S/q9Us=
 github.com/speedata/hyphenation v1.0.2 h1:2rDCtAqNfbf+E56SsqbmNApsVx9CH+4fwIh1RZuu3B8=
 github.com/speedata/hyphenation v1.0.2/go.mod h1:vwrKKvBvJWFll0sVZw99hyWS/+r4YlMI7MAYjnje0nM=
 github.com/speedata/optionparser v1.0.2 h1:AzdBomgOBVjH1KyxvoFnEHjiqLch+B1PVxEWYske+aI=

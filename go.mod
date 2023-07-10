@@ -13,7 +13,7 @@ require (
 	github.com/speedata/boxesandglue v0.0.0-20230709184652-477ef1a07098
 	github.com/speedata/goxlsx v1.0.2
 	github.com/speedata/goxml v0.0.0-20230322084327-216af189a791
-	github.com/speedata/goxpath v0.0.0-20230607131939-3c391168ab40
+	github.com/speedata/goxpath v0.0.0-20230709190058-ca75de231e9c
 	github.com/speedata/optionparser v1.0.2
 	github.com/speedata/textlayout v0.0.0-20230613181208-b47193566b6f
 	github.com/yuin/goldmark v1.4.13
