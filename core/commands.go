@@ -1094,11 +1094,27 @@ func cmdNextRow(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 }
 
 func cmdOl(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Class string
+		ID    string
+		Style string
+	}{}
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+
 	seq, err := dispatch(xd, layoutelt, xd.data)
 	if err != nil {
 		return nil, err
 	}
-	n, err := xd.getTextvalues("ol", seq, map[string]string{}, "cmdol", layoutelt.Line)
+	attributes := map[string]string{
+		"class": attValues.Class,
+		"id":    attValues.ID,
+		"style": attValues.Style,
+	}
+
+	n, err := xd.getTextvalues("ol", seq, attributes, "cmdol", layoutelt.Line)
 	return xpath.Sequence{n}, err
 }
 
@@ -1939,20 +1955,51 @@ func cmdTrace(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 }
 
 func cmdU(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Class string
+		ID    string
+		Style string
+	}{}
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+
 	seq, err := dispatch(xd, layoutelt, xd.data)
 	if err != nil {
 		return nil, err
 	}
-	n, err := xd.getTextvalues("u", seq, map[string]string{}, "cmdU", layoutelt.Line)
+	attributes := map[string]string{
+		"class": attValues.Class,
+		"id":    attValues.ID,
+		"style": attValues.Style,
+	}
+
+	n, err := xd.getTextvalues("u", seq, attributes, "cmdU", layoutelt.Line)
 	return xpath.Sequence{n}, err
 }
 
 func cmdUl(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Class string
+		ID    string
+		Style string
+	}{}
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+
 	seq, err := dispatch(xd, layoutelt, xd.data)
 	if err != nil {
 		return nil, err
 	}
-	n, err := xd.getTextvalues("ul", seq, map[string]string{}, "cmdul", layoutelt.Line)
+	attributes := map[string]string{
+		"class": attValues.Class,
+		"id":    attValues.ID,
+		"style": attValues.Style,
+	}
+	n, err := xd.getTextvalues("ul", seq, attributes, "cmdul", layoutelt.Line)
 	return xpath.Sequence{n}, err
 }
 

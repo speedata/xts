@@ -29,8 +29,8 @@ github.com/speedata/barcode v0.0.0-20230307084753-486c4d51cb34 h1:FeXq9Yh4eiH+dq
 github.com/speedata/barcode v0.0.0-20230307084753-486c4d51cb34/go.mod h1:BNwJ2io3ZgecUqunSUFAlfnnI8YTh3SLSHZgs5vaoTY=
 github.com/speedata/baseline-pdf v0.0.0-20230626115456-1e81e9807a83 h1:v+XfQInGo4k4735Ee9PN1ghRXCeSy6EgYuCNTKEd4zk=
 github.com/speedata/baseline-pdf v0.0.0-20230626115456-1e81e9807a83/go.mod h1:ptfWHTOg/v3zstZUxF9DwET4q4NOMCGyzDvtm11SIWs=
-github.com/speedata/boxesandglue v0.0.0-20230709184652-477ef1a07098 h1:wJDL5HfXLZpKxoV6x30CfHGz5SgPXi9vbojGngSweMU=
-github.com/speedata/boxesandglue v0.0.0-20230709184652-477ef1a07098/go.mod h1:Q/uqAyp+rb9rJHTIoUlKjucX/DtDsdbAhLy/AOn26lU=
+github.com/speedata/boxesandglue v0.0.0-20230711120956-e498dcb50ee4 h1:zXrG+WeF/7oTMdGTVQ0VTTgxagz6jLTi81lZTv+HnTk=
+github.com/speedata/boxesandglue v0.0.0-20230711120956-e498dcb50ee4/go.mod h1:Q/uqAyp+rb9rJHTIoUlKjucX/DtDsdbAhLy/AOn26lU=
 github.com/speedata/css/scanner v0.0.0-20201005071706-2ed32c3ce553 h1:L9Sqi5S7G4JjODI5tZZ1IzZ7Yb4s71xFOq/uZtLv1Wg=
 github.com/speedata/css/scanner v0.0.0-20201005071706-2ed32c3ce553/go.mod h1:uF4+EGySaBnGeZpXZ0boh/oR6P0vNiYfQ2MAJXCU9hE=
 github.com/speedata/gofpdi v1.0.18 h1:LEiIN62ckZcA4n8AtBu16M2P2fBK3OnwpTGDfe13v/4=
@@ -39,8 +39,6 @@ github.com/speedata/goxlsx v1.0.2 h1:hi00xy1EQhqrag4HNIc9hVEtVmTGrh3z9C1AH9ysg74
 github.com/speedata/goxlsx v1.0.2/go.mod h1:7eXkL4ZUZ2uUlnBBAmh0iwOdhOkqqstW/FmkEe2IPMY=
 github.com/speedata/goxml v0.0.0-20230322084327-216af189a791 h1:TuFrswsnJYDeyR47dXhTLzSp3GwvhPRUrRSyEXyxrGg=
 github.com/speedata/goxml v0.0.0-20230322084327-216af189a791/go.mod h1:G++cv0h2rC8ltAhvQmANDgwMbKRd3MetXlF8PLob6dw=
-github.com/speedata/goxpath v0.0.0-20230607131939-3c391168ab40 h1:s7YDoiHouElOtm15yHLEmLlBI4aYCbLkTLAyLM/mXg0=
-github.com/speedata/goxpath v0.0.0-20230607131939-3c391168ab40/go.mod h1:/9JLhISqlVrHRfRhf0B6d15a3TV+q4ertfm67S/q9Us=
 github.com/speedata/goxpath v0.0.0-20230709190058-ca75de231e9c h1:UHPI8EkvpM2dSSrRrXRK6IjcC2cS6/u6ED6eHIUhUKk=
 github.com/speedata/goxpath v0.0.0-20230709190058-ca75de231e9c/go.mod h1:/9JLhISqlVrHRfRhf0B6d15a3TV+q4ertfm67S/q9Us=
 github.com/speedata/hyphenation v1.0.2 h1:2rDCtAqNfbf+E56SsqbmNApsVx9CH+4fwIh1RZuu3B8=

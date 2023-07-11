@@ -35,8 +35,8 @@ func (xd *xtsDocument) defaultfont() error {
 			return err
 		}
 		fs := frontend.FontSource{
-			Name:   font.fontname,
-			Source: fn,
+			Name:     font.fontname,
+			Location: fn,
 		}
 		fontsources[font.fontname] = &fs
 	}
