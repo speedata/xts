@@ -25,6 +25,10 @@ import (
 
 const fnNS = "urn:speedata.de/2021/xtsfunctions/en"
 
+var (
+	onlyUnitRE = regexp.MustCompile(`^(sp|mm|cm|in|pt|px|pc|m)$`)
+)
+
 func init() {
 	goxpath.RegisterFunction(&goxpath.Function{Name: "aspect-ratio", Namespace: fnNS, F: fnAspectRatio, MinArg: 1, MaxArg: 3})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "attribute", Namespace: fnNS, F: fnAttribute, MinArg: 1, MaxArg: 1})

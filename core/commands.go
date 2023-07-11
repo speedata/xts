@@ -3,7 +3,6 @@ package core
 import (
 	"fmt"
 	"os"
-	"regexp"
 	"strconv"
 	"strings"
 
@@ -28,9 +27,6 @@ type commandFunc func(*xtsDocument, *goxml.Element) (xpath.Sequence, error)
 var (
 	dataDispatcher = make(map[string]map[string]*goxml.Element)
 	dispatchTable  map[string]commandFunc
-	onlyUnitRE     = regexp.MustCompile(`^(sp|mm|cm|in|pt|px|pc|m)$`)
-	unitRE         = regexp.MustCompile(`(.*?)(sp|mm|cm|in|pt|px|pc|m)`)
-	astRE          = regexp.MustCompile(`(\d*)\*`)
 )
 
 func init() {
@@ -422,45 +418,12 @@ func cmdColumn(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
-	g := node.NewGlue()
-	split := strings.Split(attValues.Width, "plus")
-	var unitString string
-	var stretchString string
-	if len(split) == 1 {
-		if unitRE.MatchString(split[0]) {
-			unitString = split[0]
-		} else if astRE.MatchString(split[0]) {
-			stretchString = split[0]
-		}
-	} else {
-		if unitRE.MatchString(split[0]) {
-			unitString = split[0]
-		}
-		if astRE.MatchString(split[1]) {
-			stretchString = split[1]
-		}
+	colNode := &html.Node{
+		Data: "col",
+		Type: html.ElementNode,
 	}
-
-	if unitString != "" {
-		g.Width = bag.MustSp(unitString)
-	}
-	if astRE.MatchString(stretchString) {
-		astMatch := astRE.FindAllStringSubmatch(stretchString, -1)
-		if c := astMatch[0][1]; c != "" {
-			stretch, err := strconv.Atoi(c)
-			if err != nil {
-				return nil, err
-			}
-			g.Stretch = bag.ScaledPoint(stretch) * bag.Factor
-		} else {
-			g.Stretch = bag.Factor
-		}
-		g.StretchOrder = 1
-	}
-	cs := frontend.ColSpec{
-		ColumnWidth: g,
-	}
-	return xpath.Sequence{cs}, nil
+	colNode.Attr = append(colNode.Attr, html.Attribute{Key: "width", Val: attValues.Width})
+	return xpath.Sequence{colNode}, nil
 }
 
 func cmdColumns(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -1642,6 +1605,11 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		Data: "tbody",
 		Type: html.ElementNode,
 	}
+	tableColgroupNode := &html.Node{
+		Data: "colgroup",
+		Type: html.ElementNode,
+	}
+
 	for _, itm := range seq {
 		switch t := itm.(type) {
 		case *html.Node:
@@ -1650,13 +1618,18 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 				tableBodyNode.AppendChild(t)
 			case "thead":
 				tableNode.AppendChild(t)
+			case "col":
+				tableColgroupNode.AppendChild(t)
+			default:
+				bag.Logger.DPanicf("cmdTable: unknown html node %s", t.Data)
 			}
 		default:
-			bag.Logger.DPanic("table append item, unknown type")
+			bag.Logger.DPanicf("table append item, unknown type %t", t)
 		}
-		// fixme: colspec!
 	}
-
+	if tableColgroupNode.FirstChild != nil {
+		tableNode.AppendChild(tableColgroupNode)
+	}
 	tableNode.AppendChild(tableBodyNode)
 
 	doc := &html.Node{

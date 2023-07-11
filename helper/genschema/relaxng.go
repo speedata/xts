@@ -97,7 +97,7 @@ func genRelaxNGSchema(commands *commandsXML, lang string, allowForeignNodes bool
 	var interleave, group xml.StartElement
 
 	enc := xml.NewEncoder(&outbuf)
-	enc.Indent("", "   ")
+	enc.Indent("", "    ")
 
 	grammar := xml.StartElement{Name: xml.Name{Local: "grammar", Space: RELAXNG}}
 	grammar.Attr = []xml.Attr{
@@ -299,28 +299,87 @@ func genRelaxNGSchema(commands *commandsXML, lang string, allowForeignNodes bool
 	enc.Flush()
 	fmt.Fprint(&outbuf, `
 	<!-- allow HTML in <Value> ... </Value> -->
+    <define name="htmlclassidstyle">
+        <optional><attribute name="class"/></optional>
+        <optional><attribute name="id"/></optional>
+        <optional><attribute name="style"/></optional>
+    </define>
 	<define name="html">
 		<zeroOrMore>
-		   <choice>
-			  <element name="a">
-				 <attribute name="href"/>
-				 <ref name="html"/>
-			  </element>
-			  <element name="b"><ref name="html" /></element>
-			  <element name="br"><empty /></element>
-			  <element name="code"><ref name="html" /></element>
-			  <element name="i"><ref name="html" /></element>
-			  <element name="kbd"><ref name="html" /></element>
-			  <element name="li"><ref name="html" /></element>
-			  <element name="p"><ref name="html" /></element>
-			  <element name="span"><ref name="html" /><oneOrMore><attribute><anyName/></attribute></oneOrMore></element>
-			  <element name="u"><ref name="html" /></element>
-			  <element name="ul"><ref name="html" /></element>
-			  <text></text>
-		   </choice>
+		    <choice>
+			    <element name="a">
+				    <attribute name="href"/>
+				    <ref name="html"/>
+			    </element>
+			    <element name="b"><ref name="html" /></element>
+			    <element name="br"><empty /></element>
+			    <element name="code"><ref name="html" /></element>
+			    <element name="i"><ref name="html" /></element>
+			    <element name="kbd"><ref name="html" /></element>
+			    <element name="li"><ref name="html" /></element>
+			    <element name="p"><ref name="html" /></element>
+			    <element name="span"><ref name="html" /><oneOrMore><attribute><anyName/></attribute></oneOrMore></element>
+                <element name="table"><ref name="htmltable" /></element>
+			    <element name="u"><ref name="html" /></element>
+			    <element name="ul"><ref name="html" /></element>
+			    <text></text>
+		    </choice>
 		</zeroOrMore>
 	</define>
-
+    <define name="htmltable">
+        <ref name="htmlclassidstyle"/>
+        <zeroOrMore>
+            <ref name="colgroup"/>
+        </zeroOrMore>
+        <optional>
+            <element name="thead">
+                <ref name="htmlclassidstyle" />
+                <oneOrMore>
+                    <ref name="tr"/>
+                </oneOrMore>
+            </element>
+        </optional>
+        <choice>
+            <optional>
+                <element name="tbody">
+                    <ref name="htmlclassidstyle" />
+                    <oneOrMore>
+                        <ref name="tr"/>
+                    </oneOrMore>
+                </element>
+            </optional>
+            <oneOrMore>
+                <ref name="tr"/>
+            </oneOrMore>
+        </choice>
+    </define>
+    <define name="colgroup">
+        <element name="colgroup">
+            <oneOrMore>
+                <element name="col">
+                    <attribute name="width"/>
+                    <empty />
+                </element>
+            </oneOrMore>
+        </element>
+    </define>
+    <define name="tr">
+        <element name="tr">
+            <ref name="htmlclassidstyle"/>
+            <oneOrMore>
+                <choice>
+                    <element name="td">
+                        <ref name="htmlclassidstyle"></ref>
+                        <ref name="html"/>
+                    </element>
+                    <element name="th">
+                        <ref name="htmlclassidstyle"></ref>
+                        <ref name="html"/>
+                    </element>
+                </choice>
+            </oneOrMore>
+        </element>
+    </define>
 `)
 	if allowForeignNodes {
 		enc.Flush()
