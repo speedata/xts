@@ -15,6 +15,7 @@
     <optional><cmd name="NextRow"/></optional>
     <optional><cmd name="Paragraph"/></optional>
     <optional><cmd name="PlaceObject"/></optional>
+    <optional><cmd name="ProcessNode"/></optional>
     <optional><cmd name="SaveDataset"/></optional>
     <optional><cmd name="SetVariable"/></optional>
     <optional><cmd name="Switch"/></optional>
