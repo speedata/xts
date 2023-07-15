@@ -7,14 +7,14 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/speedata/boxesandglue/backend/bag"
+	"golang.org/x/exp/slog"
 )
 
 var filelist = make(map[string]string)
 
 // AddDir recursively adds a directory to the file list
 func AddDir(dirname string) error {
-	bag.Logger.Debugf("Add directory %q to recursive file list", dirname)
+	slog.Debug("Add directory to recursive file list", "dir", dirname)
 	filepath.WalkDir(dirname, dirWalker)
 	return nil
 }
@@ -41,7 +41,7 @@ func dirWalker(path string, d fs.DirEntry, err error) error {
 // FindFile returns the full path to the file name.
 func FindFile(filename string) (string, error) {
 	if fn, ok := filelist[filename]; ok {
-		bag.Logger.Debugf("File lookup %q -> %q", filename, fn)
+		slog.Debug("File lookup", "src", filename, "found", fn)
 		return fn, nil
 	}
 	if _, err := os.Stat(filename); err == nil {
@@ -50,11 +50,10 @@ func FindFile(filename string) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		bag.Logger.Debugf("File lookup %q -> %q", filename, fn)
+		slog.Debug("File lookup", "src", filename, "found", fn)
 		return fn, nil
 	}
-
-	bag.Logger.Debugf("File lookup %q not found", filename)
+	slog.Debug("File lookup (not found)", "src", filename)
 	return "", fmt.Errorf("%w: %s", os.ErrNotExist, filename)
 }
 

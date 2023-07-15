@@ -15,6 +15,8 @@ import (
 	"strconv"
 	"strings"
 
+	"golang.org/x/exp/slog"
+
 	"github.com/alecthomas/chroma/formatters/html"
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/goxpath"
@@ -537,7 +539,7 @@ func fnFileContents(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequ
 	if err != nil {
 		return nil, err
 	}
-	bag.Logger.Infof("Create temporary file %s", f.Name())
+	slog.Info(fmt.Sprintf("Create temporary file %s", f.Name()))
 	for _, itm := range firstarg {
 		switch t := itm.(type) {
 		case []uint8:
@@ -546,7 +548,7 @@ func fnFileContents(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequ
 				return nil, err
 			}
 		default:
-			bag.Logger.DPanicf("Unknown data type in sd:file-contents")
+			slog.Error("Unknown data type in sd:file-contents")
 		}
 	}
 	defer f.Close()

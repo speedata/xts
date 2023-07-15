@@ -10,11 +10,11 @@ import (
 	"path/filepath"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/xts/core"
 	"github.com/speedata/xts/xts/luacsv"
 	"github.com/speedata/xts/xts/luaxlsx"
 	"github.com/speedata/xts/xts/luaxml"
+	"golang.org/x/exp/slog"
 
 	"github.com/cjoudrey/gluahttp"
 	lua "github.com/yuin/gopher-lua"
@@ -297,22 +297,22 @@ func indexVariables(l *lua.LState) int {
 }
 
 func debugLog(l *lua.LState) int {
-	bag.Logger.Debug(l.CheckString(1))
+	slog.Debug(l.CheckString(1))
 	return 0
 }
 
 func infoLog(l *lua.LState) int {
-	bag.Logger.Info(l.CheckString(1))
+	slog.Info(l.CheckString(1))
 	return 0
 }
 
 func warnLog(l *lua.LState) int {
-	bag.Logger.Warn(l.CheckString(1))
+	slog.Warn(l.CheckString(1))
 	return 0
 }
 
 func errorLog(l *lua.LState) int {
-	bag.Logger.Error(l.CheckString(1))
+	slog.Error(l.CheckString(1))
 	return 0
 }
 

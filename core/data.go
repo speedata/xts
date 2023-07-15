@@ -6,6 +6,9 @@ import (
 	"strconv"
 	"strings"
 
+	"golang.org/x/exp/slog"
+	"golang.org/x/net/html"
+
 	"github.com/speedata/bagme/document"
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/boxesandglue/backend/node"
@@ -13,7 +16,6 @@ import (
 	"github.com/speedata/boxesandglue/frontend"
 	"github.com/speedata/goxml"
 	xpath "github.com/speedata/goxpath"
-	"golang.org/x/net/html"
 )
 
 // A seqfunc is used to defer the execution of a function.
@@ -192,7 +194,7 @@ func (xd *xtsDocument) getTextvalues(tagname string, seq xpath.Sequence, attribu
 			cd.Data = strconv.FormatFloat(t, 'f', -1, 64)
 			n.AppendChild(cd)
 		default:
-			bag.Logger.DPanicf("%s (line %d): unknown type %T (getTextvalues)", cmdname, line, t)
+			slog.Error(fmt.Sprintf("%s (line %d): unknown type %T (getTextvalues)", cmdname, line, t))
 		}
 	}
 	return n, nil
@@ -288,7 +290,7 @@ func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 					// strip curly braces
 					seq, err := evaluateXPath(xd, layoutelt.Namespaces, a[1:len(a)-1])
 					if err != nil {
-						bag.Logger.Errorf("Layout line %d: %s", layoutelt.Line, err)
+						slog.Error(fmt.Sprintf("Layout line %d: %s", layoutelt.Line, err))
 						return ""
 					}
 					return seq.Stringvalue()
@@ -299,7 +301,7 @@ func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 			}
 		} else {
 			if mustexist {
-				bag.Logger.Errorf("Layout line %d: attribute %s on element %s not found", layoutelt.Line, fieldName, layoutelt.Name)
+				slog.Error(fmt.Sprintf("Layout line %d: attribute %s on element %s not) found", layoutelt.Line, fieldName, layoutelt.Name))
 				return fmt.Errorf("line %d: attribute %s on element %s not found", layoutelt.Line, fieldName, layoutelt.Name)
 			}
 			if dflt != "" {
@@ -379,7 +381,7 @@ func findAttribute(name string, element *goxml.Element, mustexist bool, allowXPa
 	}
 	if !found {
 		if mustexist {
-			bag.Logger.Errorf("Layout line %d: attribute %s on element %s not found", element.Line, name, element.Name)
+			slog.Error(fmt.Sprintf("Layout line %d: attribute %s on element %s not) found", element.Line, name, element.Name))
 			return "", fmt.Errorf("line %d: attribute %s on element %s not found", element.Line, name, element.Name)
 		}
 		value = dflt
@@ -389,7 +391,7 @@ func findAttribute(name string, element *goxml.Element, mustexist bool, allowXPa
 		// strip curly braces
 		seq, err := xp.Evaluate(a[1 : len(a)-1])
 		if err != nil {
-			bag.Logger.Errorf("Layout line %d: %s", element.Line, err)
+			slog.Error(fmt.Sprintf("Layout line %d: %s", element.Line, err))
 			return ""
 		}
 		return seq.Stringvalue()

@@ -3,6 +3,8 @@ package core
 import (
 	"fmt"
 
+	"golang.org/x/exp/slog"
+
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/boxesandglue/backend/document"
 	"github.com/speedata/boxesandglue/backend/node"
@@ -27,7 +29,7 @@ type pagetype struct {
 }
 
 func (xd *xtsDocument) newPagetype(name string, test string) (*pagetype, error) {
-	bag.Logger.Infof("Define new page type %q", name)
+	slog.Info(fmt.Sprintf("Define new page type %q", name))
 	pt := &pagetype{
 		name: name,
 		test: test,
@@ -57,7 +59,7 @@ func (xd *xtsDocument) detectPagetype(name string) (*pagetype, error) {
 			break
 		}
 	}
-	bag.Logger.Debugf("DetectPagetype: chose page type %q", thispagetype.name)
+	slog.Debug("DetectPagetype: chose page type", "name", thispagetype.name)
 	return thispagetype, nil
 
 }
@@ -83,7 +85,7 @@ func clearPage(xd *xtsDocument) {
 }
 
 func newPage(xd *xtsDocument) (*page, func(), error) {
-	bag.Logger.Debug("newPage")
+	slog.Debug("newPage")
 	xd.currentPagenumber++
 	g := newGrid(xd)
 	pt, err := xd.detectPagetype("")
@@ -131,7 +133,7 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 			case *goxml.Element:
 				switch t.Name {
 				case "AtPageCreation":
-					bag.Logger.Debugf("Call %s (line %d)", t.Name, t.Line)
+					slog.Debug(fmt.Sprintf("Call %s (line %d)", t.Name, t.Line))
 					f = func() { dispatch(xd, t, xd.data) }
 				case "PositioningArea":
 					attValues := &struct {
@@ -205,7 +207,7 @@ func (xd *xtsDocument) OutputAt(vl *node.VList, col coord, row coord, allocate b
 	var currentGroup *group
 	if currentGroup = xd.currentGroup; currentGroup != nil {
 		if area.name != pageAreaName {
-			bag.Logger.Errorf("Cannot use area (%s) within a group (%s)", area.name, currentGroup.name)
+			slog.Error(fmt.Sprintf("Cannot use area (%s) within a group (%s)", area.name, currentGroup.name))
 		}
 		if currentGroup.contents == nil {
 			currentGroup.contents = vl
@@ -215,7 +217,7 @@ func (xd *xtsDocument) OutputAt(vl *node.VList, col coord, row coord, allocate b
 		if area.name != pageAreaName {
 			areatext = fmt.Sprintf("%s [%d]: ", area.name, 1)
 		}
-		bag.Logger.Infof("PlaceObject: output %s at (%s%d,%d)", what, areatext, col, row)
+		slog.Info(fmt.Sprintf("PlaceObject: output %s at (%s%d,%d)", what, areatext, col, row))
 
 		shiftRight := bag.ScaledPoint(0)
 		if halign == frontend.HAlignRight {

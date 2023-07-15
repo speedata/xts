@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/speedata/boxesandglue/backend/bag"
+	"golang.org/x/exp/slog"
 )
 
 type area struct {
@@ -236,19 +237,19 @@ func (g *grid) allocate(x, y coord, area *area, wd, ht bag.ScaledPoint) {
 				g.allocatedBlocks.allocate(posX, posY)
 			} else {
 				if posX < 1 && !warningLeftRaised && !g.inGroup {
-					bag.Logger.Warn("object protrudes into the left margin")
+					slog.Warn("object protrudes into the left margin")
 					warningLeftRaised = true
 				}
 				if posY < 1 && !warningTopRaised && !g.inGroup {
-					bag.Logger.Warn("object protrudes into the top margin")
+					slog.Warn("object protrudes into the top margin")
 					warningTopRaised = true
 				}
 				if posX > coord(g.nx) && !warningRightRaised && !g.inGroup {
-					bag.Logger.Warn("object protrudes into the right margin")
+					slog.Warn("object protrudes into the right margin")
 					warningRightRaised = true
 				}
 				if posY > coord(g.ny) && !warningBottomRaised && !g.inGroup {
-					bag.Logger.Warn("object protrudes into the bottom margin")
+					slog.Warn("object protrudes into the bottom margin")
 					warningBottomRaised = true
 				}
 			}

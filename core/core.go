@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 
+	"golang.org/x/exp/slog"
+
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/boxesandglue/backend/document"
 	"github.com/speedata/boxesandglue/backend/node"
@@ -30,6 +32,8 @@ var (
 const (
 	// SDNAMESPACE is the speedata XTS layout rules namespace
 	SDNAMESPACE string = "urn:speedata.de/2021/xts/en"
+	// LevelNotice is used for messages from Message
+	LevelNotice = slog.Level(2)
 )
 
 func init() {
@@ -159,9 +163,9 @@ func (xd *xtsDocument) setupPage() {
 	inSetupPage = true
 	p, f, err := newPage(xd)
 	if err != nil {
-		bag.Logger.Error(err)
+		slog.Error(err.Error())
 	}
-	bag.Logger.Infof("Page %d type %s created wd: %d, ht: %d grid cells", p.pagenumber, p.pagetype.name, p.pagegrid.nx, p.pagegrid.ny)
+	slog.Info(fmt.Sprintf("Page %d type %s created wd: %d, ht: %d grid cells", p.pagenumber, p.pagetype.name, p.pagegrid.nx, p.pagegrid.ny))
 	xd.pages = append(xd.pages, p)
 	xd.currentPage = p
 	inSetupPage = false
@@ -189,7 +193,7 @@ type XTSConfig struct {
 func RunXTS(cfg *XTSConfig) error {
 	var err error
 	var layoutxml *goxml.XMLDocument
-	bag.Logger.Infof("XTS start version %s", Version)
+	slog.Info(fmt.Sprintf("XTS start version %s", Version))
 
 	d := newXTSDocument()
 	d.cfg = cfg
@@ -198,7 +202,7 @@ func RunXTS(cfg *XTSConfig) error {
 	}
 	if cfg.SuppressInfo {
 		d.document.SetSuppressInfo(true)
-		bag.Logger.Info("Creating reproducible build")
+		slog.Info("Creating reproducible build")
 	}
 	curWD, err := os.Getwd()
 	if err != nil {
@@ -216,7 +220,7 @@ func RunXTS(cfg *XTSConfig) error {
 		}
 	}
 	d.document.Doc.CompressLevel = 9
-	bag.Logger.Info("Setup defaults ...")
+	slog.Info("Setup defaults ...")
 	if err = d.defaultfont(); err != nil {
 		return err
 	}
@@ -230,7 +234,7 @@ func RunXTS(cfg *XTSConfig) error {
 	defaultPagetype.marginTop = oneCM
 	defaultPagetype.marginBottom = oneCM
 
-	bag.Logger.Info("Setup defaults ... done")
+	slog.Info("Setup defaults ... done")
 	if layoutxml, err = goxml.Parse(cfg.Layoutfile); err != nil {
 		return err
 	}
@@ -284,7 +288,7 @@ func RunXTS(cfg *XTSConfig) error {
 	if len(dataNameSeq) != 1 {
 		return newTypesettingErrorFromString("Could not find the root name for the data xml")
 	}
-	bag.Logger.Info("Start processing data")
+	slog.Info("Start processing data")
 
 	rootname := dataNameSeq[0].(string)
 	_, err = dispatch(d, layoutRoot, d.data)
@@ -464,7 +468,7 @@ func (te TypesettingError) Error() string {
 func newTypesettingError(err error) error {
 	if terr, ok := err.(TypesettingError); ok {
 		if !terr.Logged {
-			bag.Logger.Error(terr.Msg)
+			slog.Error(terr.Msg)
 			terr.Logged = true
 		}
 		return terr
@@ -475,7 +479,7 @@ func newTypesettingError(err error) error {
 }
 
 func newTypesettingErrorFromString(msg string) error {
-	bag.Logger.Error(msg)
+	slog.Error(msg)
 	return TypesettingError{
 		Msg:    msg,
 		Logged: true,

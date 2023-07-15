@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/md5"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -14,14 +13,12 @@ import (
 	"strings"
 	"time"
 
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
-
 	"github.com/pelletier/go-toml/v2"
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/optionparser"
 	"github.com/speedata/textlayout/fonts/truetype"
 	"github.com/speedata/xts/core"
+	"golang.org/x/exp/slog"
 )
 
 var (
@@ -40,7 +37,9 @@ var (
 	configfilename string = "xts.cfg"
 )
 
-// config holds global configuration that is not document dependant.
+// config holds global configuration that is not document dependant. The
+// mapstructure are for the Lua filter to map between these settings and the Lua
+// values.
 type config struct {
 	basedir      string
 	libdir       string
@@ -59,77 +58,6 @@ type config struct {
 	Trace        []string       `mapstructure:"trace"`
 	Variables    []string       `mapstructure:"-" toml:"-"`
 	VariablesMap map[string]any `mapstructure:"-" toml:"variables"`
-}
-
-// Create a new logger instance which logs info to stdout and perhaps more to
-// the protocol file.
-func newZapLogger() (*zap.SugaredLogger, error) {
-	protocolFile := configuration.Jobname + ".protocol"
-	w, err := os.Create(protocolFile)
-	if err != nil {
-		return nil, err
-	}
-	errorPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-		return lvl >= zapcore.ErrorLevel
-	})
-
-	warnPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-		return lvl >= zapcore.WarnLevel
-	})
-
-	infoPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-		return lvl >= zapcore.InfoLevel
-	})
-	debugPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-		return lvl >= zapcore.DebugLevel
-	})
-
-	var protocolPriority, consolePriority zap.LevelEnablerFunc
-	if configuration.Verbose {
-		protocolPriority = debugPriority
-	} else {
-		protocolPriority = infoPriority
-	}
-
-	switch configuration.LogLevel {
-	case "debug":
-		consolePriority = debugPriority
-	case "info":
-		consolePriority = infoPriority
-	case "warn":
-		consolePriority = warnPriority
-	case "error":
-		consolePriority = errorPriority
-	default:
-		return nil, fmt.Errorf("could not parse the log level %q", configuration.LogLevel)
-	}
-	colorEncoder := zapcore.EncoderConfig{
-		EncodeLevel: zapcore.LowercaseColorLevelEncoder,
-		LevelKey:    "level",
-		MessageKey:  "message",
-	}
-	simpleEncoder := zapcore.EncoderConfig{
-		EncodeLevel: zapcore.LowercaseLevelEncoder,
-		LevelKey:    "level",
-		MessageKey:  "message",
-	}
-
-	var consoleDebugging zapcore.WriteSyncer
-	if configuration.Quiet {
-		consoleDebugging = zapcore.AddSync(io.Discard)
-	} else {
-		consoleDebugging = zapcore.Lock(os.Stdout)
-	}
-	consoleEncoder := zapcore.NewConsoleEncoder(colorEncoder)
-
-	fileEncoder := zapcore.NewConsoleEncoder(simpleEncoder)
-	core := zapcore.NewTee(
-		zapcore.NewCore(consoleEncoder, consoleDebugging, consolePriority),
-		zapcore.NewCore(fileEncoder, w, protocolPriority),
-	)
-
-	logger := zap.New(core)
-	return logger.Sugar(), nil
 }
 
 func listFonts() error {
@@ -278,12 +206,12 @@ func dothings() error {
 	op.On("--layout NAME", "Name of the layout file. Defaults to 'layout.xml'", cmdline)
 	op.On("--loglevel LVL", "Set the log level for the console to one of debug, info, warn, error", cmdline)
 	op.On("--mode NAME", "Set mode. Multiple modes given in a comma separated list.", cmdline)
-	op.On("--quiet", "Run XTS in quiet mode", cmdline)
+	op.On("--quiet", "Run XTS in quiet mode (no output on STDOUT)", cmdline)
 	op.On("--runs N", "Run XTS N times", cmdline)
 	op.On("--suppressinfo", "Create a reproducible document", cmdline)
 	op.On("--systemfonts", "Use system fonts", cmdline)
 	op.On("--trace NAMES", "Set the trace to one or more of grid, allocation", cmdline)
-	op.On("--verbose", "Put more debugging information into the protocol file", cmdline)
+	op.On("--verbose", "Show log output in the terminal window (STDOUT)", cmdline)
 	op.On("-v", "--var=VALUE", "Set a variable for the publishing run", cmdline)
 	op.Command("list-fonts", "List installed fonts")
 	op.Command("clean", "Remove auxiliary and protocol files")
@@ -359,6 +287,22 @@ func dothings() error {
 		}
 	}
 
+	switch configuration.LogLevel {
+	case "debug":
+		bag.LogLevel.Set(slog.LevelDebug)
+	case "info":
+		bag.LogLevel.Set(slog.LevelInfo)
+	case "notice":
+		bag.LogLevel.Set(core.LevelNotice)
+	case "warn":
+		bag.LogLevel.Set(slog.LevelWarn)
+	case "error":
+		bag.LogLevel.Set(slog.LevelError)
+	}
+
+	if configuration.Quiet {
+		os.Stdout.Close()
+	}
 	if configuration.Systemfonts {
 		fontfolders, err := core.FontFolder()
 		if err != nil {
@@ -374,7 +318,10 @@ func dothings() error {
 	if len(op.Extra) > 0 {
 		cmd = op.Extra[0]
 	}
-
+	protocolFilename := configuration.Jobname + "-protocol.xml"
+	if err != nil {
+		return err
+	}
 	switch cmd {
 	case "clean":
 		jobname := configuration.Jobname
@@ -400,6 +347,9 @@ func dothings() error {
 	case "doc":
 		return openURL("https://doc.speedata.de/xts/")
 	case "list-fonts":
+		setupLog(protocolFilename)
+		defer teardownLog()
+
 		if err = core.InitDirs(configuration.basedir); err != nil {
 			return err
 		}
@@ -408,7 +358,7 @@ func dothings() error {
 		}
 
 		if err = listFonts(); err != nil {
-			bag.Logger.Error(err)
+			slog.Error(err.Error())
 			return err
 		}
 	case "new":
@@ -418,12 +368,11 @@ func dothings() error {
 		os.Exit(0)
 	case "run":
 		starttime := time.Now()
+		setupLog(protocolFilename)
+		defer teardownLog()
 
-		if bag.Logger, err = newZapLogger(); err != nil {
-			return err
-		}
 		for _, cfg := range configFileRead {
-			bag.Logger.Infof("Use configuration file %s", cfg)
+			slog.Info(fmt.Sprintf("Use configuration file %s", cfg))
 		}
 		core.InitDirs(configuration.basedir)
 		core.AddDir(currentDir)
@@ -446,28 +395,21 @@ func dothings() error {
 			dr = strings.NewReader(`<data />`)
 		} else {
 			if datapath, err = core.FindFile(configuration.Data); err != nil {
+				slog.Error(err.Error())
 				return err
 			}
 			if dr, err = os.Open(datapath); err != nil {
+				slog.Error(err.Error())
 				return err
 			}
 		}
 
-		if configuration.Verbose {
-			data, err := os.ReadFile(layoutpath)
-			if err != nil {
-				return err
-			}
-			bag.Logger.Debugf("md5 checksum %s: %x", configuration.Layout, md5.Sum(data))
-			data, err = os.ReadFile(datapath)
-			if err != nil {
-				return err
-			}
-			bag.Logger.Debugf("md5 checksum %s: %x", configuration.Data, md5.Sum(data))
-		}
+		slog.Debug("checksum", "filename", configuration.Layout, "md5", md5calc(configuration.Layout))
+		slog.Debug("checksum", "filename", configuration.Data, "md5", md5calc(configuration.Data))
+
 		for i := 0; i < int(configuration.Runs); i++ {
 			if cr := configuration.Runs; cr > 1 {
-				bag.Logger.Infof("Run %d of %d", i+1, cr)
+				slog.Info(fmt.Sprintf("Run %d of %d", i+1, cr))
 			}
 			lr.Seek(0, io.SeekStart)
 			dr.Seek(0, io.SeekStart)
@@ -492,7 +434,7 @@ func dothings() error {
 
 			}
 			if err = core.RunXTS(xc); err != nil {
-				return err
+				goto finished
 			}
 		}
 		if lrc, ok := lr.(io.ReadCloser); ok {
@@ -505,8 +447,13 @@ func dothings() error {
 				return err
 			}
 		}
-		bag.Logger.Infof("Finished in %s", time.Now().Sub(starttime))
-
+	finished:
+		dur := time.Now().Sub(starttime)
+		slog.Info(fmt.Sprintf("Finished in %s", dur))
+		fmt.Printf("Finished with %d error(s) and %d warning(s) in %s.\nOutput written to %s\n  and protocol file to %s.\n", errCount, warnCount, dur, configuration.Jobname+".pdf", protocolFilename)
+		if errCount > 0 {
+			return core.TypesettingError{Logged: true}
+		}
 	case "version":
 		fmt.Println("xts version", core.Version)
 	}

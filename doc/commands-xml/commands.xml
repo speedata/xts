@@ -2548,7 +2548,7 @@
           <para>Debug-Nachricht ausgeben.</para>
         </description>
       </choice>
-      <choice en="info">
+      <choice en="notice">
         <description xml:lang="en">
           <para>Report an information (default).</para>
         </description>

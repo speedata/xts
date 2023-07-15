@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"golang.org/x/exp/slog"
 	"golang.org/x/net/html"
 
 	pdf "github.com/speedata/baseline-pdf"
@@ -97,7 +98,7 @@ func dispatch(xd *xtsDocument, layoutelement *goxml.Element, data *xpath.Parser)
 	for _, cld := range layoutelement.Children() {
 		if elt, ok := cld.(*goxml.Element); ok {
 			if f, ok := dispatchTable[elt.Name]; ok {
-				bag.Logger.Debugf("Call %s (line %d)", elt.Name, elt.Line)
+				slog.Debug(fmt.Sprintf("Call %s (line %d)", elt.Name, elt.Line))
 				seq, err := f(xd, elt)
 				if err != nil {
 					return nil, err
@@ -284,7 +285,7 @@ func cmdBookmark(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, err
 		curOutlines := &xd.document.Doc.PDFWriter.Outlines
 		for i := 1; i < attValues.Level; i++ {
 			if len(*curOutlines) == 0 {
-				bag.Logger.Errorf("level %d bookmark does not exist for new bookmark (title %s)", i, title)
+				slog.Error(fmt.Sprintf("level %d bookmark does not exist for new bookmark (title %s)", i, title))
 			} else {
 				curOutlines = &(*curOutlines)[len(*curOutlines)-1].Children
 			}
@@ -577,7 +578,7 @@ func cmdElement(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 		case goxml.XMLNode:
 			elt.Append(goxml.XMLNode(t))
 		default:
-			bag.Logger.DPanicf("Element (line %d): don't know how to append %T", layoutelt.Line, t)
+			slog.Error(fmt.Sprintf("Element (line %d): don't know how to append %T", layoutelt.Line, t))
 		}
 
 	}
@@ -712,7 +713,7 @@ func cmdImage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	}
 	filename, err := xd.cfg.FindFile(attValues.Href)
 	if err != nil {
-		bag.Logger.Error(err)
+		slog.Error(err.Error())
 		return nil, err
 	}
 
@@ -781,14 +782,14 @@ func cmdLoadDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	}
 	xmlPath, err := xd.cfg.FindFile(filename)
 	if xmlPath == "" {
-		bag.Logger.Infof("LoadDataset file %s does not exist", filename)
+		slog.Info(fmt.Sprintf("LoadDataset file %s does not exist", filename))
 		return nil, nil
 	}
 	r, err := os.Open(xmlPath)
 	if err != nil {
 		return nil, err
 	}
-	bag.Logger.Infof("LoadDataset file %s loaded", filename)
+	slog.Info(fmt.Sprintf("LoadDataset file %s loaded", filename))
 	saveData := xd.data
 	defer r.Close()
 	xd.data, err = xpath.NewParser(r)
@@ -828,21 +829,21 @@ func cmdProcessNode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	var eval xpath.Sequence
 	eval, err = evaluateXPath(xd, layoutelt.Namespaces, attValues.Select)
 	if err != nil {
-		bag.Logger.Errorf("ProcessNode (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
+		slog.Error(fmt.Sprintf("ProcessNode (line %d): error parsing select XPath expression %s", layoutelt.Line, err))
 		return nil, err
 	}
 
 	oldContext := xd.data.Ctx.SetContextSequence(xpath.Sequence{})
 
 	if len(eval) == 0 {
-		bag.Logger.Debugf("Call Record select %q mode %q (no items found)", attValues.Select, attValues.Mode)
+		slog.Debug(fmt.Sprintf("Call Record select %q mode %q (no items found)", attValues.Select, attValues.Mode))
 	}
 
 	for i, itm := range eval {
 		xd.data.Ctx.Pos = i + 1
 		if elt, ok := itm.(*goxml.Element); ok {
 			xd.data.Ctx.SetContextSequence(xpath.Sequence{elt})
-			bag.Logger.Debugf("Call Record element %q mode %q (pos %d)", elt.Name, attValues.Mode, xd.data.Ctx.Pos)
+			slog.Debug(fmt.Sprintf("Call Record element %q mode %q (pos %d)", elt.Name, attValues.Mode, xd.data.Ctx.Pos))
 			if dd, ok := dataDispatcher[elt.Name]; ok {
 				if rec, ok := dd[attValues.Mode]; ok {
 					_, err = dispatch(xd, rec, xd.data)
@@ -933,7 +934,7 @@ func cmdMark(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 func cmdMessage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
-		Type   *string
+		Type   *string `sdxml:"default:notice"`
 		Select *string `sdxml:"noescape"`
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
@@ -943,7 +944,7 @@ func cmdMessage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	if attValues.Select != nil {
 		eval, err = evaluateXPath(xd, layoutelt.Namespaces, *attValues.Select)
 		if err != nil {
-			bag.Logger.Errorf("Message (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
+			slog.Error(fmt.Sprintf("Message (line %d): error parsing select XPath expression %s", layoutelt.Line, err))
 			return nil, err
 		}
 	} else {
@@ -952,18 +953,20 @@ func cmdMessage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 			return nil, err
 		}
 	}
-	f := bag.Logger.Infof
+	f := slog.Info
 	if t := attValues.Type; t != nil {
 		switch *t {
+		case "notice":
+			slog.Log(nil, LevelNotice, eval.Stringvalue(), "line", layoutelt.Line)
 		case "debug":
-			f = bag.Logger.Debugf
+			f = slog.Debug
 		case "warning":
-			f = bag.Logger.Warnf
+			f = slog.Warn
 		case "error":
-			f = bag.Logger.Errorf
+			f = slog.Error
 		}
 	}
-	f("Message (line %d): %s", layoutelt.Line, eval.Stringvalue())
+	f(fmt.Sprintf("Message (line %d): %s", layoutelt.Line, eval.Stringvalue()))
 	return nil, nil
 }
 
@@ -983,7 +986,7 @@ func cmdNextFrame(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 			clearPage(xd)
 		}
 	} else {
-		bag.Logger.Warnf("NextFrame (line %d) area %s does not exist.", layoutelt.Line, attValues.Area)
+		slog.Warn(fmt.Sprintf("NextFrame (line %d) area %s does not exist.", layoutelt.Line, attValues.Area))
 	}
 	return nil, nil
 }
@@ -1134,7 +1137,7 @@ func cmdOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 		if err != nil {
 			return nil, err
 		}
-		bag.Logger.Infof("Setting default language to %q", l.Name)
+		slog.Info(fmt.Sprintf("Setting default language to %q", l.Name))
 		xd.document.Doc.DefaultLanguage = l
 	}
 
@@ -1148,7 +1151,7 @@ func cmdOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 		for _, str := range strings.Split(*features, ",") {
 			f, err := harfbuzz.ParseFeature(str)
 			if err != nil {
-				bag.Logger.Errorf("cannot parse OpenType feature tag %q.", str)
+				slog.Error(fmt.Sprintf("cannot parse OpenType feature tag %q.", str))
 			}
 			xd.document.DefaultFeatures = append(xd.document.DefaultFeatures, f)
 		}
@@ -1241,7 +1244,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 			columnInt = int(colF)
 			col = coord(columnInt)
 		} else {
-			bag.Logger.Debug(err)
+			slog.Debug(err.Error())
 		}
 	}
 	frameWidth := area.frame[area.currentFrame].width
@@ -1264,7 +1267,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	}
 
 	if len(seq) == 0 {
-		bag.Logger.Warnf("line %d: no objects in PlaceObject", layoutelt.Line)
+		slog.Warn(fmt.Sprintf("line %d: no objects in PlaceObject", layoutelt.Line))
 		return nil, nil
 	}
 	var origin string
@@ -1293,7 +1296,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 			origin = t.Attributes["origin"].(string)
 		}
 	default:
-		bag.Logger.DPanicf("PlaceObject: unknown node %T", t)
+		slog.Error(fmt.Sprintf("PlaceObject: unknown node %T", t))
 	}
 	if xd.IsTrace(VTraceObjects) {
 		vl = node.Boxit(vl).(*node.VList)
@@ -1346,7 +1349,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		wdCols := xd.currentGrid.widthToColumns(vl.Width)
 		htCols := xd.currentGrid.heightToRows(vl.Height + vl.Depth)
 		row = xd.currentGrid.findSuitableRow(wdCols, htCols, startCol, area)
-		bag.Logger.Debugf("looking for free space for %s", origin)
+		slog.Debug(fmt.Sprintf("looking for free space for %s", origin))
 		col = startCol
 
 	}
@@ -1433,7 +1436,7 @@ func cmdSaveDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		return nil, err
 	}
 	defer w.Close()
-	bag.Logger.Infof("Write XML file %s", filename)
+	slog.Info(fmt.Sprintf("Write XML file %s", filename))
 	_, err = w.Write([]byte(root.ToXML()))
 
 	return nil, err
@@ -1499,7 +1502,7 @@ func cmdSetVariable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	}
 	xd.data.SetVariable(attValues.Variable, eval)
 	if attValues.Trace {
-		bag.Logger.Infof("SetVariable (line %d): %s to %s", layoutelt.Line, attValues.Variable, eval)
+		slog.Info(fmt.Sprintf("SetVariable (line %d): %s to %s", layoutelt.Line, attValues.Variable, eval))
 	}
 	return nil, nil
 }
@@ -1637,10 +1640,10 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 			case "col":
 				tableColgroupNode.AppendChild(t)
 			default:
-				bag.Logger.DPanicf("cmdTable: unknown html node %s", t.Data)
+				slog.Error(fmt.Sprintf("cmdTable: unknown html node %s", t.Data))
 			}
 		default:
-			bag.Logger.DPanicf("table append item, unknown type %t", t)
+			slog.Error(fmt.Sprintf("table append item, unknown type %t", t))
 		}
 	}
 	if tableColgroupNode.FirstChild != nil {
@@ -1788,7 +1791,7 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		case node.Node:
 			te.Items = append(te.Items, t)
 		default:
-			bag.Logger.DPanicf("cmdTextblock: unknown type %T", t)
+			slog.Error(fmt.Sprintf("cmdTextblock: unknown type %T", t))
 		}
 
 		// if no width is requested, we use the maximum available width
@@ -1885,7 +1888,7 @@ func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		case *html.Node:
 			td.AppendChild(t)
 		default:
-			bag.Logger.DPanic("Unknown item type", t)
+			slog.Error(fmt.Sprintf("Unknown item type", t))
 		}
 	}
 	return xpath.Sequence{td}, nil
