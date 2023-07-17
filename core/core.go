@@ -200,6 +200,7 @@ func RunXTS(cfg *XTSConfig) error {
 	if d.document, err = frontend.New(cfg.OutFilename); err != nil {
 		return err
 	}
+	bag.SetLogger(slog.Default())
 	if cfg.SuppressInfo {
 		d.document.SetSuppressInfo(true)
 		slog.Info("Creating reproducible build")

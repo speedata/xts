@@ -33,6 +33,7 @@ task :build do
 	sh "go build -ldflags \"-X github.com/speedata/xts/core.Version=#{@xts_version}\" -o bin/xts github.com/speedata/xts/xts"
 end
 
+desc "Update markdown documentation"
 task "doc" => [:xtshelper] do
 	sh "#{installdir}/bin/xtshelper doc"
 	puts "done"

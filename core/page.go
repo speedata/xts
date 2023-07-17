@@ -3,13 +3,12 @@ package core
 import (
 	"fmt"
 
-	"golang.org/x/exp/slog"
-
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/boxesandglue/backend/document"
 	"github.com/speedata/boxesandglue/backend/node"
 	"github.com/speedata/boxesandglue/frontend"
 	"github.com/speedata/goxml"
+	"golang.org/x/exp/slog"
 )
 
 const (
@@ -29,7 +28,7 @@ type pagetype struct {
 }
 
 func (xd *xtsDocument) newPagetype(name string, test string) (*pagetype, error) {
-	slog.Info(fmt.Sprintf("Define new page type %q", name))
+	slog.Info("Define new page type", "type", name)
 	pt := &pagetype{
 		name: name,
 		test: test,

@@ -1888,7 +1888,7 @@ func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		case *html.Node:
 			td.AppendChild(t)
 		default:
-			slog.Error(fmt.Sprintf("Unknown item type", t))
+			slog.Error(fmt.Sprintf("Unknown item type %T", t))
 		}
 	}
 	return xpath.Sequence{td}, nil

@@ -15,14 +15,13 @@ import (
 	"strconv"
 	"strings"
 
-	"golang.org/x/exp/slog"
-
 	"github.com/alecthomas/chroma/formatters/html"
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/goxpath"
 	"github.com/yuin/goldmark"
 	highlighting "github.com/yuin/goldmark-highlighting"
 	"github.com/yuin/goldmark/extension"
+	"golang.org/x/exp/slog"
 )
 
 const fnNS = "urn:speedata.de/2021/xtsfunctions/en"

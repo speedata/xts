@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/pelletier/go-toml/v2"
-	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/optionparser"
 	"github.com/speedata/textlayout/fonts/truetype"
 	"github.com/speedata/xts/core"
@@ -289,15 +288,15 @@ func dothings() error {
 
 	switch configuration.LogLevel {
 	case "debug":
-		bag.LogLevel.Set(slog.LevelDebug)
+		loglevel.Set(slog.LevelDebug)
 	case "info":
-		bag.LogLevel.Set(slog.LevelInfo)
+		loglevel.Set(slog.LevelInfo)
 	case "notice":
-		bag.LogLevel.Set(core.LevelNotice)
+		loglevel.Set(core.LevelNotice)
 	case "warn":
-		bag.LogLevel.Set(slog.LevelWarn)
+		loglevel.Set(slog.LevelWarn)
 	case "error":
-		bag.LogLevel.Set(slog.LevelError)
+		loglevel.Set(slog.LevelError)
 	}
 
 	if configuration.Quiet {

@@ -9,7 +9,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/xts/core"
 	"golang.org/x/exp/slog"
 )
@@ -23,6 +22,7 @@ var (
 	protocolFile io.Writer
 	errCount     = 0
 	warnCount    = 0
+	loglevel     slog.LevelVar
 )
 
 type logHandler struct {
@@ -34,7 +34,7 @@ func (lh *logHandler) Enabled(_ context.Context, level slog.Level) bool {
 	} else if level == slog.LevelWarn {
 		warnCount++
 	}
-	return level >= bag.LogLevel.Level()
+	return level >= loglevel.Level()
 }
 
 func (lh *logHandler) Handle(_ context.Context, r slog.Record) error {
