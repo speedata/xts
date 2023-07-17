@@ -19,7 +19,7 @@ task :default do
 	puts
 	puts "Run 'rake -T' for a list of tasks."
 	puts
-	puts "1: Use 'rake build' to build the 'xtss' binary. That should be\n   the starting point."
+	puts "1: Use 'rake build' to build the 'xts' binary. That should be\n   the starting point."
 	puts
 end
 
@@ -31,19 +31,6 @@ end
 desc "Compile and install necessary software"
 task :build do
 	sh "go build -ldflags \"-X github.com/speedata/xts/core.Version=#{@xts_version}\" -o bin/xts github.com/speedata/xts/xts"
-end
-
-desc "Update markdown documentation"
-task "doc" => [:xtshelper] do
-	sh "#{installdir}/bin/xtshelper doc"
-	puts "done"
-end
-
-desc "Create a GitHub release (needs a git tag)"
-task "release" do
-	sh "goreleaser release --clean"
-	sh "xcrun notarytool submit -p notary dist/xts_macos_intel.zip --wait"
-	sh "xcrun notarytool submit -p notary dist/xts_macos_arm64.zip --wait"
 end
 
 desc "Create the schema files"
