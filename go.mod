@@ -7,10 +7,10 @@ require (
 	github.com/cjoudrey/gluahttp v0.0.0-20201111170219-25003d9adfa9
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pelletier/go-toml/v2 v2.0.8
-	github.com/speedata/bagme v0.0.0-20230717123802-85d3038669b2
+	github.com/speedata/bagme v0.0.0-20230730144654-dbcee5ad9d2b
 	github.com/speedata/barcode v0.0.0-20230307084753-486c4d51cb34
-	github.com/speedata/baseline-pdf v0.0.0-20230717121810-fcb08a486045
-	github.com/speedata/boxesandglue v0.0.0-20230717123135-dd440b2c55c7
+	github.com/speedata/baseline-pdf v0.0.0-20230730102707-4a7247b84eda
+	github.com/speedata/boxesandglue v0.0.0-20230730144447-3c54aaa6933c
 	github.com/speedata/goxlsx v1.0.2
 	github.com/speedata/goxml v0.0.0-20230322084327-216af189a791
 	github.com/speedata/goxpath v0.0.0-20230709190058-ca75de231e9c

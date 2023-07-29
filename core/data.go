@@ -69,7 +69,7 @@ func (xd *xtsDocument) applyLayoutStylesheet(classname string, id string, style 
 	eltname := eltnames[0]
 	sel := doc.Find(eltname)
 	a := sel.Nodes[0]
-	attrs, _ := csshtml.ResolveAttributes(a.Attr)
+	attrs, _, _ := csshtml.ResolveAttributes(a.Attr)
 	return attrs, nil
 }
 
@@ -97,7 +97,7 @@ func (xd *xtsDocument) decodeHTMLFromHTMLNode(input *html.Node) (frontend.Format
 func (xd *xtsDocument) decodeHTML(input string) (frontend.FormatToVList, error) {
 	ftv := func(wd bag.ScaledPoint) (*node.VList, error) {
 		d := document.NewWithFrontend(xd.document, xd.layoutcss)
-		te, err := d.ParseHTML(input)
+		te, err := d.HTMLToText(input)
 		if err != nil {
 			return nil, err
 		}

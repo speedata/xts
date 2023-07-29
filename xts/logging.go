@@ -41,6 +41,8 @@ func (lh *logHandler) Handle(_ context.Context, r slog.Record) error {
 	lvlAttr.Value = r.Level.String()
 	if r.Level == core.LevelNotice {
 		lvlAttr.Value = "NOTICE"
+	} else if r.Level == -8 {
+		lvlAttr.Value = "TRACE"
 	}
 	msgAttr.Value = r.Message
 	values := []string{}

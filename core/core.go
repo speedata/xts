@@ -222,8 +222,9 @@ func RunXTS(cfg *XTSConfig) error {
 	}
 	d.document.Doc.CompressLevel = 9
 	slog.Info("Setup defaults ...")
-	if err = d.defaultfont(); err != nil {
-		return err
+
+	if err = d.document.LoadIncludedFonts(); err != nil {
+		return nil
 	}
 
 	var defaultPagetype *pagetype

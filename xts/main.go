@@ -287,6 +287,8 @@ func dothings() error {
 	}
 
 	switch configuration.LogLevel {
+	case "trace":
+		loglevel.Set(slog.Level(-8))
 	case "debug":
 		loglevel.Set(slog.LevelDebug)
 	case "info":

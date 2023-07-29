@@ -14,7 +14,6 @@ import (
 	"github.com/speedata/boxesandglue/backend/color"
 	"github.com/speedata/boxesandglue/backend/document"
 	"github.com/speedata/boxesandglue/backend/node"
-	"github.com/speedata/boxesandglue/csshtml"
 	"github.com/speedata/boxesandglue/frontend"
 	"github.com/speedata/boxesandglue/frontend/pdfdraw"
 	"github.com/speedata/goxml"
@@ -1540,22 +1539,27 @@ func cmdStylesheet(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 		return nil, err
 	}
 
-	var toks csshtml.Tokenstream
 	if attrHref := attValues.Href; attrHref == "" {
-		toks, err = xd.layoutcss.TokenizeCSSString(layoutelt.Stringvalue())
+		if err = xd.layoutcss.AddCSSText(layoutelt.Stringvalue()); err != nil {
+			return nil, newTypesettingError(err)
+		}
 	} else {
 		var loc string
 		loc, err = FindFile(attrHref)
 		if err != nil {
 			return nil, newTypesettingError(fmt.Errorf("Stylesheet (line %d): %w", layoutelt.Line, err))
 		}
-		toks, err = xd.layoutcss.ParseCSSFile(loc)
+		data, err := os.ReadFile(loc)
+		if err != nil {
+			return nil, newTypesettingError(err)
+		}
+		if err = xd.layoutcss.AddCSSText(string(data)); err != nil {
+			return nil, newTypesettingError(err)
+		}
 	}
 	if err != nil {
 		return nil, newTypesettingError(fmt.Errorf("Stylesheet (line %d): %w", layoutelt.Line, err))
 	}
-	parsedStyles := csshtml.ConsumeBlock(toks, false)
-	xd.layoutcss.Stylesheet = append(xd.layoutcss.Stylesheet, parsedStyles)
 
 	return xpath.Sequence{nil}, nil
 }

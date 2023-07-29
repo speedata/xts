@@ -12,7 +12,7 @@ func (xd *xtsDocument) parseHTML(elt *goxml.Element) (frontend.FormatToVList, er
 	ftv := func(wd bag.ScaledPoint) (*node.VList, error) {
 		str := elt.ToXML()
 		d := document.NewWithFrontend(xd.document, xd.layoutcss)
-		te, err := d.ParseHTML(str)
+		te, err := d.HTMLToText(str)
 		if err != nil {
 			return nil, err
 		}
