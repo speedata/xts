@@ -3,7 +3,7 @@ package genschema
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"os/exec"
 	"path/filepath"
 
@@ -36,7 +36,7 @@ func DoThings(cfg *config.Config) error {
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(rngSchemaENPath, buf, 0644)
+	err = os.WriteFile(rngSchemaENPath, buf, 0644)
 	if err != nil {
 		return err
 	}
@@ -45,7 +45,7 @@ func DoThings(cfg *config.Config) error {
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(rngSchemaDEPath, buf, 0644)
+	err = os.WriteFile(rngSchemaDEPath, buf, 0644)
 	if err != nil {
 		return err
 	}
@@ -68,7 +68,7 @@ func DoThings(cfg *config.Config) error {
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(rngSchemaENPath, buf, 0644)
+	err = os.WriteFile(rngSchemaENPath, buf, 0644)
 	if err != nil {
 		return err
 	}
@@ -76,7 +76,7 @@ func DoThings(cfg *config.Config) error {
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(rngSchemaDEPath, buf, 0644)
+	err = os.WriteFile(rngSchemaDEPath, buf, 0644)
 	if err != nil {
 		return err
 	}

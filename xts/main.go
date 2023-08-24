@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log/slog"
 	"os"
 	"os/exec"
@@ -150,12 +149,12 @@ func scaffold(extra ...string) error {
 </Layout>
 `
 
-	err = ioutil.WriteFile("data.xml", []byte(dataTxt), 0644)
+	err = os.WriteFile("data.xml", []byte(dataTxt), 0644)
 	if err != nil {
 		return err
 	}
 
-	err = ioutil.WriteFile("layout.xml", []byte(layoutTxt), 0644)
+	err = os.WriteFile("layout.xml", []byte(layoutTxt), 0644)
 	if err != nil {
 		return err
 	}
