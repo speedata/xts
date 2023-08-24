@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/exec"
@@ -14,7 +15,6 @@ import (
 	"github.com/speedata/xts/xts/luacsv"
 	"github.com/speedata/xts/xts/luaxlsx"
 	"github.com/speedata/xts/xts/luaxml"
-	"golang.org/x/exp/slog"
 
 	"github.com/cjoudrey/gluahttp"
 	lua "github.com/yuin/gopher-lua"

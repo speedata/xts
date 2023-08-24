@@ -9,6 +9,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
+	"log/slog"
 	"math"
 	"os"
 	"regexp"
@@ -21,7 +22,6 @@ import (
 	"github.com/yuin/goldmark"
 	highlighting "github.com/yuin/goldmark-highlighting"
 	"github.com/yuin/goldmark/extension"
-	"golang.org/x/exp/slog"
 )
 
 const fnNS = "urn:speedata.de/2021/xtsfunctions/en"

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log/slog"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -17,7 +18,6 @@ import (
 	"github.com/speedata/optionparser"
 	"github.com/speedata/textlayout/fonts/truetype"
 	"github.com/speedata/xts/core"
-	"golang.org/x/exp/slog"
 )
 
 var (

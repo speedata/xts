@@ -2,13 +2,13 @@ package core
 
 import (
 	"fmt"
+	"log/slog"
 
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/boxesandglue/backend/document"
 	"github.com/speedata/boxesandglue/backend/node"
 	"github.com/speedata/boxesandglue/frontend"
 	"github.com/speedata/goxml"
-	"golang.org/x/exp/slog"
 )
 
 const (

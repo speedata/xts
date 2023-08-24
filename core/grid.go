@@ -2,11 +2,11 @@ package core
 
 import (
 	"fmt"
+	"log/slog"
 	"math"
 	"strings"
 
 	"github.com/speedata/boxesandglue/backend/bag"
-	"golang.org/x/exp/slog"
 )
 
 type area struct {

@@ -2,11 +2,11 @@ package core
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"strconv"
 	"strings"
 
-	"golang.org/x/exp/slog"
 	"golang.org/x/net/html"
 
 	pdf "github.com/speedata/baseline-pdf"

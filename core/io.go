@@ -3,11 +3,10 @@ package core
 import (
 	"fmt"
 	"io/fs"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
-
-	"golang.org/x/exp/slog"
 )
 
 var filelist = make(map[string]string)

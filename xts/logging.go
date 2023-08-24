@@ -6,11 +6,11 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
+	"log/slog"
 	"os"
 	"strings"
 
 	"github.com/speedata/xts/core"
-	"golang.org/x/exp/slog"
 )
 
 var (

@@ -2,11 +2,11 @@ package core
 
 import (
 	"fmt"
+	"log/slog"
 	"reflect"
 	"strconv"
 	"strings"
 
-	"golang.org/x/exp/slog"
 	"golang.org/x/net/html"
 
 	"github.com/speedata/bagme/document"

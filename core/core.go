@@ -3,12 +3,11 @@ package core
 import (
 	"fmt"
 	"io"
+	"log/slog"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
-
-	"golang.org/x/exp/slog"
 
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/boxesandglue/backend/document"
