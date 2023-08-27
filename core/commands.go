@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -1549,6 +1550,7 @@ func cmdStylesheet(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 		if err != nil {
 			return nil, newTypesettingError(fmt.Errorf("Stylesheet (line %d): %w", layoutelt.Line, err))
 		}
+		xd.layoutcss.PushDir(filepath.Dir(loc))
 		data, err := os.ReadFile(loc)
 		if err != nil {
 			return nil, newTypesettingError(err)

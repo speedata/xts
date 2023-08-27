@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
-	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -84,6 +83,7 @@ func newXTSDocument() *xtsDocument {
 		store:             make(map[any]any),
 		marker:            make(mapmarker),
 	}
+	xd.layoutcss.FileFinder = FindFile
 	return xd
 }
 
@@ -204,12 +204,7 @@ func RunXTS(cfg *XTSConfig) error {
 		d.document.SetSuppressInfo(true)
 		slog.Info("Creating reproducible build")
 	}
-	curWD, err := os.Getwd()
-	if err != nil {
-		return err
-	}
 	d.layoutcss.FrontendDocument = d.document
-	d.layoutcss.PushDir(curWD)
 
 	for _, tr := range cfg.Tracing {
 		switch tr {

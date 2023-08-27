@@ -43,6 +43,7 @@ type config struct {
 	libdir       string
 	Data         string         `mapstructure:"data"`
 	Dummy        bool           `mapstructure:"dummy"`
+	ExtraDir     []string       `mapstructure:"extradir"`
 	Filter       string         `mapstructure:"filter"`
 	Jobname      string         `mapstructure:"jobname"`
 	Layout       string         `mapstructure:"layout"`
@@ -187,18 +188,16 @@ func dothings() error {
 	}
 	configuration.basedir = filepath.Join(filepath.Dir(pathToXTS), "..")
 	configuration.libdir = filepath.Join(configuration.basedir, "lib")
-	currentDir, err := os.Getwd()
-	if err != nil {
-		return err
-	}
 	var dumpOutputFileName string
 	cmdline := make(map[string]string)
+	extraDir := make([]string, 0)
 
 	op := optionparser.NewOptionParser()
 	op.On("-c NAME", "--config", "Read the config file with the given NAME. Default: 'xts.cfg'", &configfilename)
 	op.On("--data NAME", "Name of the data file. Defaults to 'data.xml'", cmdline)
 	op.On("--dummy", "Don't read a data file, use '<data />' as input", cmdline)
 	op.On("--dumpoutput FILENAME", "Complete XML dump of generated PDF file", &dumpOutputFileName)
+	op.On("--extradir DIR", "Additional directory for file search", &extraDir)
 	op.On("--filter NAME", "Run Lua process before the publishing run", cmdline)
 	op.On("--jobname NAME", "The name of the resulting PDF file (without extension), default is 'xts'", cmdline)
 	op.On("--layout NAME", "Name of the layout file. Defaults to 'layout.xml'", cmdline)
@@ -223,6 +222,7 @@ func dothings() error {
 		fmt.Println()
 		return err
 	}
+
 	var configFileRead []string
 	if data, err := os.ReadFile(configfilename); err == nil {
 		if err = toml.Unmarshal(data, configuration); err != nil {
@@ -236,6 +236,11 @@ func dothings() error {
 		}
 		configFileRead = append(configFileRead, configfilename)
 	}
+
+	for _, d := range extraDir {
+		configuration.ExtraDir = append(configuration.ExtraDir, d)
+	}
+
 	for k, v := range cmdline {
 		switch k {
 		case "data":
@@ -300,6 +305,12 @@ func dothings() error {
 		loglevel.Set(slog.LevelError)
 	}
 
+	for _, d := range configuration.ExtraDir {
+		if err = core.AddDir(d); err != nil {
+			return err
+		}
+	}
+
 	if configuration.Quiet {
 		os.Stdout.Close()
 	}
@@ -353,9 +364,6 @@ func dothings() error {
 		if err = core.InitDirs(configuration.basedir); err != nil {
 			return err
 		}
-		if err = core.AddDir(currentDir); err != nil {
-			return err
-		}
 
 		if err = listFonts(); err != nil {
 			slog.Error(err.Error())
@@ -374,8 +382,7 @@ func dothings() error {
 		for _, cfg := range configFileRead {
 			slog.Info(fmt.Sprintf("Use configuration file %s", cfg))
 		}
-		core.InitDirs(configuration.basedir)
-		core.AddDir(currentDir)
+
 		if luafile := configuration.Filter; luafile != "" {
 			if err = runLuaScript(luafile); err != nil {
 				return err
