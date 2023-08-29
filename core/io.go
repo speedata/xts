@@ -55,7 +55,6 @@ func urldownloader(uri string) (string, error) {
 	}
 
 	hashedFilename := fmt.Sprintf("%x", md5.Sum([]byte(destfile)))
-	fmt.Printf("~~> u %#v\n", hashedFilename)
 	tmpdir, err := os.MkdirTemp("", "xtsimages")
 	if err != nil {
 		return "", err

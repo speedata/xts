@@ -28,8 +28,8 @@ github.com/speedata/barcode v0.0.0-20230307084753-486c4d51cb34 h1:FeXq9Yh4eiH+dq
 github.com/speedata/barcode v0.0.0-20230307084753-486c4d51cb34/go.mod h1:BNwJ2io3ZgecUqunSUFAlfnnI8YTh3SLSHZgs5vaoTY=
 github.com/speedata/baseline-pdf v0.0.0-20230827180125-d544ccdb007e h1:XIEoLaRh898J2N+7mfu8xhyixsqtFL8bh96VulZ5wlc=
 github.com/speedata/baseline-pdf v0.0.0-20230827180125-d544ccdb007e/go.mod h1:ptfWHTOg/v3zstZUxF9DwET4q4NOMCGyzDvtm11SIWs=
-github.com/speedata/boxesandglue v0.0.0-20230827180359-92d93f6edd1e h1:DQnqU2zImhPKCWGWNbq/dFvCwf79K7oOKooIeqyDyW8=
-github.com/speedata/boxesandglue v0.0.0-20230827180359-92d93f6edd1e/go.mod h1:H4T7F4XOCtpRVaaXCbgA+ei7/LoHEpVUHix9LZ2BnQU=
+github.com/speedata/boxesandglue v0.0.0-20230829080538-e582a5aa9c49 h1:VjWkTtU5wEeeM4NZZeOiJkhw9SkTTnMMJ45AtcstyRU=
+github.com/speedata/boxesandglue v0.0.0-20230829080538-e582a5aa9c49/go.mod h1:FPXR+nB9q9UO1aDc14i+/DbMiRii2HjedhHewCs0o/w=
 github.com/speedata/css/scanner v0.0.0-20201005071706-2ed32c3ce553 h1:L9Sqi5S7G4JjODI5tZZ1IzZ7Yb4s71xFOq/uZtLv1Wg=
 github.com/speedata/css/scanner v0.0.0-20201005071706-2ed32c3ce553/go.mod h1:uF4+EGySaBnGeZpXZ0boh/oR6P0vNiYfQ2MAJXCU9hE=
 github.com/speedata/gofpdi v1.0.18 h1:LEiIN62ckZcA4n8AtBu16M2P2fBK3OnwpTGDfe13v/4=
@@ -44,8 +44,8 @@ github.com/speedata/hyphenation v1.0.2 h1:2rDCtAqNfbf+E56SsqbmNApsVx9CH+4fwIh1RZ
 github.com/speedata/hyphenation v1.0.2/go.mod h1:vwrKKvBvJWFll0sVZw99hyWS/+r4YlMI7MAYjnje0nM=
 github.com/speedata/optionparser v1.0.2 h1:AzdBomgOBVjH1KyxvoFnEHjiqLch+B1PVxEWYske+aI=
 github.com/speedata/optionparser v1.0.2/go.mod h1:JzOMd1kGlM5gtPBy7reOayfHsTXCvd6P4JU8BW0LicE=
-github.com/speedata/textlayout v0.0.0-20230613181208-b47193566b6f h1:Lna2+w5BhgD2sttOyli8bs/fYOsTz/kIYvqKCWlavD4=
-github.com/speedata/textlayout v0.0.0-20230613181208-b47193566b6f/go.mod h1:5yI24VPA1OjAI56+oF5XzsbIgu2elJhwIDb5SWdniN8=
+github.com/speedata/textlayout v0.0.0-20230827181055-b7ff752e85ae h1:WREBj80Ov1CmfmpLHyValOTcb2YhiHFBrdD2drUlfZM=
+github.com/speedata/textlayout v0.0.0-20230827181055-b7ff752e85ae/go.mod h1:5yI24VPA1OjAI56+oF5XzsbIgu2elJhwIDb5SWdniN8=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
 github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=

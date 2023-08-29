@@ -10,12 +10,12 @@ require (
 	github.com/speedata/bagme v0.0.0-20230827180720-c8e48954767c
 	github.com/speedata/barcode v0.0.0-20230307084753-486c4d51cb34
 	github.com/speedata/baseline-pdf v0.0.0-20230827180125-d544ccdb007e
-	github.com/speedata/boxesandglue v0.0.0-20230827180359-92d93f6edd1e
+	github.com/speedata/boxesandglue v0.0.0-20230829080538-e582a5aa9c49
 	github.com/speedata/goxlsx v1.0.2
 	github.com/speedata/goxml v0.0.0-20230322084327-216af189a791
 	github.com/speedata/goxpath v0.0.0-20230709190058-ca75de231e9c
 	github.com/speedata/optionparser v1.0.2
-	github.com/speedata/textlayout v0.0.0-20230613181208-b47193566b6f
+	github.com/speedata/textlayout v0.0.0-20230827181055-b7ff752e85ae
 	github.com/yuin/goldmark v1.4.13
 	github.com/yuin/goldmark-highlighting v0.0.0-20220208100518-594be1970594
 	github.com/yuin/gopher-lua v1.1.0

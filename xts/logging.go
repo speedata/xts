@@ -23,6 +23,7 @@ var (
 	errCount     = 0
 	warnCount    = 0
 	loglevel     slog.LevelVar
+	repl         = strings.NewReplacer(" ", "-") // for XML attribute names
 )
 
 type logHandler struct {
@@ -60,7 +61,7 @@ func (lh *logHandler) Handle(_ context.Context, r slog.Record) error {
 				val = a.Value.String()
 				values = append(values, fmt.Sprintf("%s=%s", a.Key, a.Value))
 			}
-			le.Attr = append(le.Attr, xml.Attr{Name: xml.Name{Local: a.Key}, Value: val})
+			le.Attr = append(le.Attr, xml.Attr{Name: xml.Name{Local: repl.Replace(a.Key)}, Value: val})
 			return true
 		})
 	enc.EncodeToken(xml.CharData([]byte("  ")))
