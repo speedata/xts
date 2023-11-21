@@ -128,6 +128,7 @@ func cmdA(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	}
 	n, err := xd.getTextvalues("a", seq, map[string]string{}, "cmdA", layoutelt.Line)
 	n.Attr = append(n.Attr, html.Attribute{Key: "href", Val: attValues.Href})
+	n.Attr = append(n.Attr, html.Attribute{Key: "link", Val: attValues.Link})
 	return xpath.Sequence{n}, err
 }
 
