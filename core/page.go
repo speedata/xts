@@ -64,20 +64,25 @@ func (xd *xtsDocument) detectPagetype(name string) (*pagetype, error) {
 }
 
 type page struct {
-	pagenumber int
-	bagPage    *document.Page
-	xd         *xtsDocument
-	pagetype   *pagetype
-	pageWidth  bag.ScaledPoint // total width of the (PDF) page
-	pageHeight bag.ScaledPoint // total height of the (PDF) page
-	pagegrid   *grid
-	markerid   int
-	markerids  chan int
+	pagenumber    int
+	bagPage       *document.Page
+	xd            *xtsDocument
+	pagetype      *pagetype
+	pageWidth     bag.ScaledPoint // total width of the (PDF) page
+	pageHeight    bag.ScaledPoint // total height of the (PDF) page
+	pagegrid      *grid
+	markerid      int
+	markerids     chan int
+	atPageShipout func()
 }
 
 func clearPage(xd *xtsDocument) {
 	if xd.currentPage == nil {
 		return
+	}
+	cp := xd.currentPage
+	if cp.atPageShipout != nil {
+		cp.atPageShipout()
 	}
 	xd.currentPage.bagPage.Shipout()
 	xd.currentPage = nil
@@ -134,6 +139,8 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 				case "AtPageCreation":
 					slog.Debug(fmt.Sprintf("Call %s (line %d)", t.Name, t.Line))
 					f = func() { dispatch(xd, t, xd.data) }
+				case "AtPageShipout":
+					pg.atPageShipout = func() { dispatch(xd, t, xd.data) }
 				case "PositioningArea":
 					attValues := &struct {
 						Name string `sdxml:"mustexist"`
