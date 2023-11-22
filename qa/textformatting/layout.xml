@@ -1,0 +1,114 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+
+    <SetGrid height="14pt" width="1cm"></SetGrid>
+    <Stylesheet>
+    @font-face {
+        font-family: code;
+        src: local("CamingoCode Regular");
+        size-adjust: 80%;
+    }
+    .title {
+        font-weight: bold;
+        font-size: 16pt;
+        line-height: 18pt;
+    }
+    p {
+        font-size: 14pt;
+    }
+    code {
+        font-family: code;
+    }
+    body {
+        font-family: serif;
+    }
+    </Stylesheet>
+
+    <Record element="data">
+        <PlaceObject>
+            <Textblock width="8">
+                <Paragraph>
+                    <Value>There are various ways to put HTML like formatting in your PDF document. See the contents of the <code>layout.xml</code> and <code>data.xml</code>.</Value>
+                </Paragraph>
+            </Textblock>
+        </PlaceObject>
+        <NextRow rows="2"></NextRow>
+        <PlaceObject>
+            <Textblock>
+                <Paragraph class="title">
+                    <Value>Text and markup from the CDATA section (with sd:decode-html()):</Value>
+                </Paragraph>
+                <Paragraph>
+                    <Value select="sd:decode-html(html)" />
+                </Paragraph>
+            </Textblock>
+        </PlaceObject>
+        <PlaceObject>
+            <Textblock>
+                <Paragraph class="title">
+                    <Value>Text and markup from the data file:</Value>
+                </Paragraph>
+                <ForAll select="text">
+                    <Paragraph>
+                        <Value select="." />
+                    </Paragraph>
+                </ForAll>
+            </Textblock>
+        </PlaceObject>
+        <PlaceObject>
+            <Textblock>
+                <Paragraph class="title">
+                    <Value>Text and markup from the layout file:</Value>
+                </Paragraph>
+                <Paragraph>
+                    <Value>A </Value>
+                    <I>
+                        <Value>wonderful</Value>
+                    </I>
+                    <Value> serenity has </Value>
+                    <B>
+                        <Value>taken possession</Value>
+                    </B>
+                    <Value> of my entire soul,</Value>
+                </Paragraph>
+                <Paragraph>
+                    <Ul>
+                        <Li>
+                            <Value>like these</Value>
+                        </Li>
+                        <Li>
+                            <Value>sweet mornings</Value>
+                        </Li>
+                        <Li>
+                            <Value>of spring</Value>
+                        </Li>
+                        <Li>
+                            <Value>which I enjoy</Value>
+                        </Li>
+                    </Ul>
+                </Paragraph>
+                <Paragraph>
+                    <Value>&amp; # \ { } %</Value>
+                </Paragraph>
+            </Textblock>
+        </PlaceObject>
+        <PlaceObject>
+            <Textblock>
+                <Paragraph class="title">
+                    <Value>Text and markup as HTML in the layout file:</Value>
+                </Paragraph>
+                <Paragraph>
+                    <Value>A <i>wonderful</i> serenity has <b>taken possession</b> of my entire soul,
+                        <ul>
+                            <li>like these</li>
+                            <li>sweet mornings</li>
+                            <li>of spring</li>
+                            <li>which I enjoy</li>
+                        </ul>
+                        &amp; # \ { } %
+                    </Value>
+                </Paragraph>
+            </Textblock>
+        </PlaceObject>
+    </Record>
+</Layout>

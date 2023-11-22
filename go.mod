@@ -5,6 +5,7 @@ go 1.21
 require (
 	github.com/alecthomas/chroma v0.10.0
 	github.com/cjoudrey/gluahttp v0.0.0-20201111170219-25003d9adfa9
+	github.com/gammazero/workerpool v1.1.3
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pelletier/go-toml/v2 v2.0.8
 	github.com/speedata/bagme v0.0.0-20230827180720-c8e48954767c
@@ -28,6 +29,7 @@ require (
 	github.com/PuerkitoBio/goquery v1.8.1 // indirect
 	github.com/andybalholm/cascadia v1.3.2 // indirect
 	github.com/dlclark/regexp2 v1.4.0 // indirect
+	github.com/gammazero/deque v0.2.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/speedata/css/scanner v0.0.0-20201005071706-2ed32c3ce553 // indirect
 	github.com/speedata/gofpdi v1.0.18 // indirect

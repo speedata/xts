@@ -4,6 +4,7 @@ bin/
 build
 bundler
 dist/
+compare-report.html
 img/
 playground/
 publisher.pdf

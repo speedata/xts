@@ -42,3 +42,19 @@ desc "Update the version information from the latest git tag"
 task :updateversion do
 	sh "git describe| sed s,v,xts_version=, > version"
 end
+
+
+desc "Run quality assurance"
+task :qa do
+	sh "#{installdir}/bin/xts compare #{installdir}/qa"
+end
+
+desc "Clean QA intermediate files"
+task :cleanqa do
+	FileUtils.rm Dir.glob("qa/**/pagediff-*.png")
+	FileUtils.rm Dir.glob("qa/**/reference-*.png")
+	FileUtils.rm Dir.glob("qa/**/source-*.png")
+	FileUtils.rm Dir.glob("qa/**/xts-aux.xml")
+	FileUtils.rm Dir.glob("qa/**/xts-protocol.xml")
+	FileUtils.rm Dir.glob("qa/**/xts.pdf")
+end

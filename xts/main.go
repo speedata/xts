@@ -212,6 +212,7 @@ func dothings() error {
 	op.On("-v", "--var=VALUE", "Set a variable for the publishing run", cmdline)
 	op.Command("list-fonts", "List installed fonts")
 	op.Command("clean", "Remove auxiliary and protocol files")
+	op.Command("compare", "Compare files for quality assurance")
 	op.Command("doc", "Open the documentation (web page)")
 	op.Command("new", "Create simple layout and data file to start. Provide optional directory.")
 	op.Command("run", "Load layout and data files and create PDF (default)")
@@ -355,6 +356,28 @@ func dothings() error {
 				}
 			}
 		}
+	case "compare":
+		starttime := time.Now()
+		if len(op.Extra) > 1 {
+			dir := op.Extra[1]
+			fi, err := os.Stat(dir)
+			if err != nil {
+				return err
+			}
+			if !fi.IsDir() {
+				return fmt.Errorf("%q must be a directory", dir)
+			}
+			absDir, err := filepath.Abs(dir)
+			if err != nil {
+				return err
+			}
+			// true = write HTML file to $TEMPDIR
+			doCompare(absDir, true, "reference")
+		} else {
+			slog.Error("Please give one directory")
+		}
+		dur := time.Now().Sub(starttime)
+		fmt.Printf("Finished in %s\n", dur)
 	case "doc":
 		return openURL("https://doc.speedata.de/xts/")
 	case "list-fonts":
