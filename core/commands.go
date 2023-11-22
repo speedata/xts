@@ -98,7 +98,7 @@ func dispatch(xd *xtsDocument, layoutelement *goxml.Element, data *xpath.Parser)
 	for _, cld := range layoutelement.Children() {
 		if elt, ok := cld.(*goxml.Element); ok {
 			if f, ok := dispatchTable[elt.Name]; ok {
-				slog.Debug(fmt.Sprintf("Call %s (line %d)", elt.Name, elt.Line))
+				slog.Debug("Command", "cmd", elt.Name, "line", elt.Line)
 				seq, err := f(xd, elt)
 				if err != nil {
 					return nil, err

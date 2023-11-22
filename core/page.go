@@ -82,7 +82,6 @@ func clearPage(xd *xtsDocument) {
 	}
 	cp := xd.currentPage
 	if cp.atPageShipout != nil {
-		slog.Debug("Call AtPageShipout")
 		cp.atPageShipout()
 	}
 	xd.currentPage.bagPage.Shipout()
@@ -90,7 +89,7 @@ func clearPage(xd *xtsDocument) {
 }
 
 func newPage(xd *xtsDocument) (*page, func(), error) {
-	slog.Debug("newPage")
+	slog.Debug("New page")
 	xd.currentPagenumber++
 	g := newGrid(xd)
 	pt, err := xd.detectPagetype("")
@@ -141,7 +140,10 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 					slog.Debug(fmt.Sprintf("Call %s (line %d)", t.Name, t.Line))
 					f = func() { dispatch(xd, t, xd.data) }
 				case "AtPageShipout":
-					pg.atPageShipout = func() { dispatch(xd, t, xd.data) }
+					pg.atPageShipout = func() {
+						slog.Debug(fmt.Sprintf("Call %s (line %d)", t.Name, t.Line))
+						dispatch(xd, t, xd.data)
+					}
 				case "PositioningArea":
 					attValues := &struct {
 						Name string `sdxml:"mustexist"`
@@ -209,8 +211,6 @@ func (p *page) String() string {
 }
 
 func (xd *xtsDocument) OutputAt(vl *node.VList, col coord, row coord, allocate bool, area *area, what string, halign frontend.HorizontalAlignment) error {
-	areatext := ""
-
 	var currentGroup *group
 	if currentGroup = xd.currentGroup; currentGroup != nil {
 		if area.name != pageAreaName {
@@ -220,11 +220,7 @@ func (xd *xtsDocument) OutputAt(vl *node.VList, col coord, row coord, allocate b
 			currentGroup.contents = vl
 		}
 	} else {
-		// for debugging
-		if area.name != pageAreaName {
-			areatext = fmt.Sprintf("%s [%d]: ", area.name, 1)
-		}
-		slog.Info(fmt.Sprintf("PlaceObject: output %s at (%s%d,%d)", what, areatext, col, row))
+		slog.Info("PlaceObject", "obj", what, "col", col, "row", row, "area", area.name)
 
 		shiftRight := bag.ScaledPoint(0)
 		if halign == frontend.HAlignRight {
