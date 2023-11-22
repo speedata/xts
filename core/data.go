@@ -193,6 +193,11 @@ func (xd *xtsDocument) getTextvalues(tagname string, seq xpath.Sequence, attribu
 			cd.Type = html.TextNode
 			cd.Data = strconv.FormatFloat(t, 'f', -1, 64)
 			n.AppendChild(cd)
+		case int:
+			cd := &html.Node{}
+			cd.Type = html.TextNode
+			cd.Data = fmt.Sprintf("%d", t)
+			n.AppendChild(cd)
 		default:
 			slog.Error(fmt.Sprintf("%s (line %d): unknown type %T (getTextvalues)", cmdname, line, t))
 		}
@@ -312,9 +317,9 @@ func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 		if hasAttribute {
 			switch field.Type() {
 			case intType:
-				attInt, err := strconv.Atoi(attValue)
-				if err != nil {
-					return err
+				attInt, ok := getInt(attValue)
+				if !ok {
+					return fmt.Errorf("Could not get int from %s", attValue)
 				}
 				field.SetInt(int64(attInt))
 			case intPtrType:
@@ -483,6 +488,14 @@ func evaluateXPath(xd *xtsDocument, namespaces map[string]string, xpath string) 
 
 	xd.data.Ctx.SetContextSequence(oldContext)
 	return seq, err
+}
+
+func getInt(in string) (int, bool) {
+	f, err := strconv.ParseFloat(in, 64)
+	if err != nil {
+		return 0, false
+	}
+	return int(f), true
 }
 
 func getFourValues(str string) map[string]string {

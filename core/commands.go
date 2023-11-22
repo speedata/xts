@@ -1316,8 +1316,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		vl.List = node.InsertBefore(vl.List, vl.List, r)
 	}
 
-	if rowFloat, err := strconv.ParseFloat(attValues.Row, 32); err == nil {
-		rowInt = int(rowFloat)
+	if rowInt, ok = getInt(attValues.Row); ok {
 		rowSet = true
 		pos = positioningGrid
 		row = coord(rowInt)

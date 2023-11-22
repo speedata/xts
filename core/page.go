@@ -82,6 +82,7 @@ func clearPage(xd *xtsDocument) {
 	}
 	cp := xd.currentPage
 	if cp.atPageShipout != nil {
+		slog.Debug("Call AtPageShipout")
 		cp.atPageShipout()
 	}
 	xd.currentPage.bagPage.Shipout()

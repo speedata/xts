@@ -102,6 +102,7 @@ func setupLog(protocol string) error {
 	enc = xml.NewEncoder(protocolFile)
 	if err = enc.EncodeToken(xml.StartElement{
 		Name: xml.Name{Local: "log"},
+		Attr: []xml.Attr{{Name: xml.Name{Local: "loglevel"}, Value: loglevel.Level().String()}},
 	}); err != nil {
 		return err
 	}
