@@ -283,7 +283,7 @@ func (g *grid) findSuitableRow(wdCols coord, htRows coord, startColumn coord, ar
 			return row
 		}
 	}
-	return 1
+	return -1
 }
 
 func (g *grid) nextRow(area *area) {
@@ -293,6 +293,10 @@ func (g *grid) nextRow(area *area) {
 		area.SetCurrentRow(area.CurrentRow() + 1)
 	}
 	r := g.findSuitableRow(wd, 1, 1, area)
+	if r == -1 {
+		g.nextArea(area)
+		r = 1
+	}
 	area.SetCurrentRow(r)
 }
 
@@ -306,4 +310,15 @@ func (g *grid) fitsInRow(col coord, row coord, wdCols coord, area *area) bool {
 		}
 	}
 	return true
+}
+
+// Go to the next area
+func (g *grid) nextArea(area *area) {
+	currentFrameNumber := area.currentFrame
+	if currentFrameNumber+1 >= len(area.frame) {
+		clearPage(g.page.xd)
+		g.page.xd.setupPage()
+		return
+	}
+	area.currentFrame++
 }

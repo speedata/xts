@@ -176,11 +176,12 @@ func (xd *xtsDocument) getTextvalues(tagname string, seq xpath.Sequence, attribu
 		case *html.Node:
 			n.AppendChild(t)
 		case *goxml.Element:
-			xmltext, err := xd.parseHTMLText(t.ToXML())
+			xmltext, err := xd.parseHTMLText("<body>" + t.ToXML() + "</body>")
 			if err != nil {
 				return nil, err
 			}
 			elt := xmltext.FirstChild.LastChild.FirstChild
+			//             ^ HTML     ^ BODY    ^ our element
 			elt.Parent = nil
 			n.AppendChild(elt)
 		case *goxml.Attribute:

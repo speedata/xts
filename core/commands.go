@@ -1330,6 +1330,10 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 			wdCols := xd.currentGrid.widthToColumns(vl.Width)
 			htCols := xd.currentGrid.heightToRows(vl.Height + vl.Depth)
 			row = xd.currentGrid.findSuitableRow(wdCols, htCols, col, area)
+			if row == -1 {
+				xd.currentGrid.nextArea(area)
+				row = 1
+			}
 			rowInt = int(row)
 		}
 	} else if pos == positioningUnknown {
@@ -1350,6 +1354,10 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		wdCols := xd.currentGrid.widthToColumns(vl.Width)
 		htCols := xd.currentGrid.heightToRows(vl.Height + vl.Depth)
 		row = xd.currentGrid.findSuitableRow(wdCols, htCols, startCol, area)
+		if row == -1 {
+			xd.currentGrid.nextArea(area)
+			row = 1
+		}
 		slog.Debug(fmt.Sprintf("looking for free space for %s", origin))
 		col = startCol
 
