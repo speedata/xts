@@ -173,6 +173,12 @@ func (xd *xtsDocument) setupPage() {
 	}
 }
 
+// PublishingInfo contains information about a previous publishing run.
+type PublishingInfo struct {
+	Pages    int
+	FileSize int64
+}
+
 // XTSConfig is the configuration file for PDF generation.
 type XTSConfig struct {
 	Datafile     io.Reader
@@ -186,6 +192,7 @@ type XTSConfig struct {
 	SuppressInfo bool
 	Tracing      []string
 	Variables    map[string]any
+	Info         PublishingInfo
 }
 
 // RunXTS is the entry point
@@ -320,6 +327,9 @@ func RunXTS(cfg *XTSConfig) error {
 	if err = d.writeAuxXML(); err != nil {
 		return err
 	}
+	d.cfg.Info.Pages = d.currentPagenumber
+	d.cfg.Info.FileSize = d.document.Doc.PDFWriter.Size()
+
 	return nil
 }
 

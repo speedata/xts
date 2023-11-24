@@ -59,6 +59,14 @@ type config struct {
 	VariablesMap map[string]any `mapstructure:"-" toml:"variables"`
 }
 
+// pluralize returns n and the text and "s" if n != 1
+func pluralize(n int, text string) string {
+	if n == 1 {
+		return "1 " + text
+	}
+	return fmt.Sprintf("%d %ss", n, text)
+}
+
 func listFonts() error {
 	ff := core.FindFontFiles()
 	ret := make([]string, len(ff))
@@ -334,6 +342,7 @@ func dothings() error {
 	if err != nil {
 		return err
 	}
+	var info core.PublishingInfo
 	switch cmd {
 	case "clean":
 		jobname := configuration.Jobname
@@ -463,7 +472,9 @@ func dothings() error {
 				xc.DumpFile = w
 
 			}
-			if err = core.RunXTS(xc); err != nil {
+			err = core.RunXTS(xc)
+			info = xc.Info
+			if err != nil {
 				goto finished
 			}
 		}
@@ -480,7 +491,7 @@ func dothings() error {
 	finished:
 		dur := time.Now().Sub(starttime)
 		slog.Info(fmt.Sprintf("Finished in %s", dur))
-		fmt.Printf("Finished with %d error(s) and %d warning(s) in %s.\nOutput written to %s\n  and protocol file to %s.\n", errCount, warnCount, dur, configuration.Jobname+".pdf", protocolFilename)
+		fmt.Printf("Finished with %s and %s in %s.\nOutput written to %s (%s, %d bytes)\n  and protocol file to %s.\n", pluralize(errCount, "error"), pluralize(warnCount, "warning"), dur, configuration.Jobname+".pdf", pluralize(info.Pages, "page"), info.FileSize, protocolFilename)
 		if errCount > 0 {
 			return core.TypesettingError{Logged: true}
 		}

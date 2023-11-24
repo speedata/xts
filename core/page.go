@@ -88,6 +88,7 @@ func clearPage(xd *xtsDocument) {
 	xd.currentPage = nil
 }
 
+// newPage returns the new page object, the AtPageCreation function and an error.
 func newPage(xd *xtsDocument) (*page, func(), error) {
 	slog.Debug("New page")
 	xd.currentPagenumber++
