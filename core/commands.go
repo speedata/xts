@@ -1747,6 +1747,21 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	for i, itm := range seq {
 		te := frontend.NewText()
 		switch t := itm.(type) {
+		case *goxml.Element:
+			n, err := xd.parseHTMLText(t.ToXML())
+			if err != nil {
+				return nil, err
+			}
+			vlistFormatter, err := xd.decodeHTMLFromHTMLNode(n)
+			if err != nil {
+				return nil, newTypesettingError(err)
+			}
+			vl, err := vlistFormatter(attValues.Width)
+			if err != nil {
+				return nil, newTypesettingError(fmt.Errorf("Textblock (line %d): %w", layoutelt.Line, err))
+			}
+			te.Items = append(te.Items, vl)
+
 		case *html.Node:
 			doc := &html.Node{
 				Type: html.DocumentNode,
