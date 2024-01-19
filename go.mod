@@ -11,7 +11,7 @@ require (
 	github.com/speedata/bagme v0.0.0-20231122103953-256f1f9cad43
 	github.com/speedata/barcode v0.0.0-20230307084753-486c4d51cb34
 	github.com/speedata/baseline-pdf v0.0.0-20231122102911-d3b0bd534820
-	github.com/speedata/boxesandglue v0.0.0-20231122103605-3435f2a32a56
+	github.com/speedata/boxesandglue v0.0.0-20240119151805-b77b46eaf674
 	github.com/speedata/goxlsx v1.0.2
 	github.com/speedata/goxml v0.0.0-20230322084327-216af189a791
 	github.com/speedata/goxpath v0.0.0-20230709190058-ca75de231e9c

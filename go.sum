@@ -32,8 +32,8 @@ github.com/speedata/barcode v0.0.0-20230307084753-486c4d51cb34 h1:FeXq9Yh4eiH+dq
 github.com/speedata/barcode v0.0.0-20230307084753-486c4d51cb34/go.mod h1:BNwJ2io3ZgecUqunSUFAlfnnI8YTh3SLSHZgs5vaoTY=
 github.com/speedata/baseline-pdf v0.0.0-20231122102911-d3b0bd534820 h1:7oxf+dMF062+vl2NXMOa9AEG2eQw5jo+UPh2QtbEeKE=
 github.com/speedata/baseline-pdf v0.0.0-20231122102911-d3b0bd534820/go.mod h1:ptfWHTOg/v3zstZUxF9DwET4q4NOMCGyzDvtm11SIWs=
-github.com/speedata/boxesandglue v0.0.0-20231122103605-3435f2a32a56 h1:+amh8JA0yCZmRvnQpHfJrX7yd4IAe5i6hLC3eWvncJg=
-github.com/speedata/boxesandglue v0.0.0-20231122103605-3435f2a32a56/go.mod h1:aY9s4r8n11js7y/rUvPH9IZKjhENTbwp8TjhFigP/XE=
+github.com/speedata/boxesandglue v0.0.0-20240119151805-b77b46eaf674 h1:va8GWTsCvJqfpBc1NJHMTNNbiimTA+3910Pn1ivwl6A=
+github.com/speedata/boxesandglue v0.0.0-20240119151805-b77b46eaf674/go.mod h1:aY9s4r8n11js7y/rUvPH9IZKjhENTbwp8TjhFigP/XE=
 github.com/speedata/css/scanner v0.0.0-20201005071706-2ed32c3ce553 h1:L9Sqi5S7G4JjODI5tZZ1IzZ7Yb4s71xFOq/uZtLv1Wg=
 github.com/speedata/css/scanner v0.0.0-20201005071706-2ed32c3ce553/go.mod h1:uF4+EGySaBnGeZpXZ0boh/oR6P0vNiYfQ2MAJXCU9hE=
 github.com/speedata/gofpdi v1.0.18 h1:LEiIN62ckZcA4n8AtBu16M2P2fBK3OnwpTGDfe13v/4=
