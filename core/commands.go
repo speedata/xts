@@ -93,7 +93,7 @@ func ignoreFunction(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	return nil, nil
 }
 
-func dispatch(xd *xtsDocument, layoutelement *goxml.Element, data *xpath.Parser) (xpath.Sequence, error) {
+func dispatch(xd *xtsDocument, layoutelement *goxml.Element) (xpath.Sequence, error) {
 	var retSequence xpath.Sequence
 	for _, cld := range layoutelement.Children() {
 		if elt, ok := cld.(*goxml.Element); ok {
@@ -122,7 +122,7 @@ func cmdA(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		return nil, err
 	}
 
-	seq, err := dispatch(xd, layoutelt, xd.data)
+	seq, err := dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +133,7 @@ func cmdA(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 }
 
 func cmdAction(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
-	seq, err := dispatch(xd, layoutelt, xd.data)
+	seq, err := dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
@@ -188,7 +188,7 @@ func cmdAttribute(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 }
 
 func cmdB(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
-	seq, err := dispatch(xd, layoutelt, xd.data)
+	seq, err := dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
@@ -208,8 +208,9 @@ func cmdBarcode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 		Type       string
 		FontFamily *string
 		FontSize   string
-		Height     bag.ScaledPoint `sdxml:"mustexist"`
+		Height     bag.ScaledPoint
 		Width      bag.ScaledPoint `sdxml:"mustexist"`
+		ShowText   bool
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -220,10 +221,12 @@ func cmdBarcode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 			ff = fontfamily
 		}
 	}
-
-	fontsize, _, err := xd.getFontSizeLeading(attValues.FontSize)
-	if err != nil {
-		return nil, err
+	var fontsize bag.ScaledPoint
+	if attValues.FontSize != "" {
+		fontsize, _, err = xd.getFontSizeLeading(attValues.FontSize)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	var eval xpath.Sequence
@@ -244,7 +247,7 @@ func cmdBarcode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 		return nil, fmt.Errorf("Unknown barcode type %q", attValues.Type)
 	}
 	var bc node.Node
-	if bc, err = createBarcode(bcType, eval.Stringvalue(), attValues.Width, attValues.Height, xd, ff, fontsize); err != nil {
+	if bc, err = createBarcode(bcType, eval.Stringvalue(), attValues.Width, attValues.Height, xd, ff, fontsize, attValues.ShowText); err != nil {
 		return nil, newTypesettingError(err)
 	}
 
@@ -315,7 +318,7 @@ func cmdBox(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		return nil, err
 	}
 
-	hv := xd.document.CSSPropertiesToValues(attrs)
+	hv := xd.cssbuilder.CSSPropertiesToValues(attrs)
 	if attValues.Backgroundcolor != nil {
 		hv.BackgroundColor = xd.document.GetColor(*attValues.Backgroundcolor)
 	} else if _, ok := attrs["background-color"]; ok {
@@ -327,9 +330,12 @@ func cmdBox(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	vl := node.NewVList()
 	vl.Width = attValues.Width - hv.BorderLeftWidth - hv.BorderRightWidth
 	vl.Height = attValues.Height - hv.BorderTopWidth - hv.BorderBottomWidth
-	vl = xd.document.HTMLBorder(vl, hv)
+	vl = xd.cssbuilder.HTMLBorder(vl, hv)
+	vl.Width = attValues.Width
+	vl.Height = attValues.Height
+	vl = xd.cssbuilder.HTMLBorder(vl, hv)
 	vl.Attributes = node.H{"origin": "box"}
-	return xpath.Sequence{vl}, err
+	return xpath.Sequence{vl}, nil
 }
 
 func cmdCircle(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -345,7 +351,8 @@ func cmdCircle(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 		OriginX         int `sdxml:"default:50"`
 		OriginY         int `sdxml:"default:50"`
 	}{}
-	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
+	var err error
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 
@@ -381,7 +388,6 @@ func cmdCircle(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 	} else {
 		borderwidth = *attValues.Borderwidth
 	}
-
 	circ := pdfdraw.New().Save().Circle(rx, ry*-1, rx, ry)
 	if bgcolor != nil && bgcolor.Space != color.ColorNone && bordercolor != nil && bordercolor.Space != color.ColorNone {
 		circ.ColorNonstroking(*bgcolor)
@@ -429,7 +435,7 @@ func cmdColumn(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 }
 
 func cmdColumns(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
-	seq, err := dispatch(xd, layoutelt, xd.data)
+	seq, err := dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
@@ -442,7 +448,7 @@ func cmdClearpage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 }
 
 func cmdContents(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
-	_, err := dispatch(xd, layoutelt, xd.data)
+	_, err := dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
@@ -570,7 +576,7 @@ func cmdElement(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	elt := goxml.Element{}
 	elt.Name = attValues.Name
 
-	seq, err := dispatch(xd, layoutelt, xd.data)
+	seq, err := dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
@@ -605,7 +611,7 @@ func cmdForall(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 	for i, itm := range eval {
 		xd.data.Ctx.SetContextSequence(xpath.Sequence{itm})
 		xd.data.Ctx.Pos = i + 1
-		neval, err := dispatch(xd, layoutelt, xd.data)
+		neval, err := dispatch(xd, layoutelt)
 		if err != nil {
 			return nil, err
 		}
@@ -674,7 +680,7 @@ func cmdGroup(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	saveGrid := xd.currentGrid
 	xd.currentGroup = xd.newGroup(attValues.Name)
 	xd.currentGrid = xd.currentGroup.grid
-	_, err = dispatch(xd, layoutelt, xd.data)
+	_, err = dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
@@ -684,7 +690,7 @@ func cmdGroup(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 }
 
 func cmdI(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
-	seq, err := dispatch(xd, layoutelt, xd.data)
+	seq, err := dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
@@ -758,7 +764,7 @@ func cmdImage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 }
 
 func cmdLi(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
-	seq, err := dispatch(xd, layoutelt, xd.data)
+	seq, err := dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
@@ -809,7 +815,7 @@ func cmdLoadDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	xd.data.Evaluate("/*")
 	if dd, ok := dataDispatcher[dataroot]; ok {
 		if rec, ok := dd[""]; ok {
-			_, err = dispatch(xd, rec, xd.data)
+			_, err = dispatch(xd, rec)
 		}
 	}
 	xd.data.Ctx.SetContextSequence(oldContext)
@@ -847,7 +853,7 @@ func cmdProcessNode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 			slog.Debug(fmt.Sprintf("Call Record element %q mode %q (pos %d)", elt.Name, attValues.Mode, xd.data.Ctx.Pos))
 			if dd, ok := dataDispatcher[elt.Name]; ok {
 				if rec, ok := dd[attValues.Mode]; ok {
-					_, err = dispatch(xd, rec, xd.data)
+					_, err = dispatch(xd, rec)
 				}
 			}
 		}
@@ -897,7 +903,7 @@ func cmdLoop(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 
 	for i := 1; i < int(f)+1; i++ {
 		xd.data.SetVariable(attValues.Variable, xpath.Sequence{i})
-		eval, err = dispatch(xd, layoutelt, xd.data)
+		eval, err = dispatch(xd, layoutelt)
 		if err != nil {
 			return nil, err
 		}
@@ -949,7 +955,7 @@ func cmdMessage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 			return nil, err
 		}
 	} else {
-		eval, err = dispatch(xd, layoutelt, xd.data)
+		eval, err = dispatch(xd, layoutelt)
 		if err != nil {
 			return nil, err
 		}
@@ -1108,7 +1114,7 @@ func cmdOl(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		return nil, err
 	}
 
-	seq, err := dispatch(xd, layoutelt, xd.data)
+	seq, err := dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
@@ -1187,7 +1193,7 @@ func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		return nil, err
 	}
 
-	seq, err := dispatch(xd, layoutelt, xd.data)
+	seq, err := dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
@@ -1261,7 +1267,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	if attValues.Groupname != "" {
 		seq = xpath.Sequence{xd.groups[attValues.Groupname].contents}
 	} else {
-		seq, err = dispatch(xd, layoutelt, xd.data)
+		seq, err = dispatch(xd, layoutelt)
 		if err != nil {
 			return nil, err
 		}
@@ -1416,7 +1422,7 @@ func cmdSaveDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 			return nil, newTypesettingErrorFromStringf("SaveDataset (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
 		}
 	} else {
-		eval, err = dispatch(xd, layoutelt, xd.data)
+		eval, err = dispatch(xd, layoutelt)
 		if err != nil {
 			return nil, err
 		}
@@ -1504,7 +1510,7 @@ func cmdSetVariable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		}
 		xd.data.SetVariable(attValues.Variable, eval)
 	} else {
-		eval, err = dispatch(xd, layoutelt, xd.data)
+		eval, err = dispatch(xd, layoutelt)
 		if err != nil {
 			return nil, err
 		}
@@ -1526,7 +1532,7 @@ func cmdSpan(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
-	seq, err := dispatch(xd, layoutelt, xd.data)
+	seq, err := dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
@@ -1571,7 +1577,21 @@ func cmdStylesheet(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 	if err != nil {
 		return nil, newTypesettingError(fmt.Errorf("Stylesheet (line %d): %w", layoutelt.Line, err))
 	}
-
+	for _, v := range xd.layoutcss.FontFaces {
+		var fontfamily *frontend.FontFamily
+		if ff := xd.document.FindFontFamily(v.Family); ff == nil {
+			fontfamily = xd.document.NewFontFamily(v.Family)
+		} else {
+			fontfamily = ff
+		}
+		fs := &frontend.FontSource{}
+		for _, src := range v.Source {
+			if src.URI != "" {
+				fs.Location = src.URI
+			}
+		}
+		fontfamily.AddMember(fs, frontend.FontWeight(v.Weight), frontend.ResolveFontStyle(v.Style))
+	}
 	return xpath.Sequence{nil}, nil
 }
 
@@ -1594,13 +1614,13 @@ func cmdSwitch(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 							return nil, err
 						}
 						if ok {
-							return dispatch(xd, c, xd.data)
+							return dispatch(xd, c)
 						}
 
 					}
 				}
 			} else if c.Name == "Otherwise" {
-				return dispatch(xd, c, xd.data)
+				return dispatch(xd, c)
 			}
 		}
 	}
@@ -1626,7 +1646,7 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		attValues.Width = xd.currentGrid.width(mw)
 	}
 
-	seq, err := dispatch(xd, layoutelt, xd.data)
+	seq, err := dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
@@ -1700,7 +1720,7 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 func cmdTableHead(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 
-	seq, err := dispatch(xd, layoutelt, xd.data)
+	seq, err := dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
@@ -1739,103 +1759,57 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		attValues.Width = xd.currentGrid.width(mw)
 	}
 
-	seq, err := dispatch(xd, layoutelt, xd.data)
+	seq, err := dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
 	var vlists node.Node
-	for i, itm := range seq {
-		te := frontend.NewText()
+	doc := &html.Node{
+		Type: html.DocumentNode,
+	}
+	root := &html.Node{
+		Data: "html",
+		Type: html.ElementNode,
+	}
+	head := &html.Node{
+		Data: "head",
+		Type: html.ElementNode,
+	}
+	body := &html.Node{
+		Data: "body",
+		Type: html.ElementNode,
+	}
+
+	for _, itm := range seq {
 		switch t := itm.(type) {
-		case *goxml.Element:
-			n, err := xd.parseHTMLText(t.ToXML())
-			if err != nil {
-				return nil, err
-			}
-			vlistFormatter, err := xd.decodeHTMLFromHTMLNode(n)
-			if err != nil {
-				return nil, newTypesettingError(err)
-			}
-			vl, err := vlistFormatter(attValues.Width)
-			if err != nil {
-				return nil, newTypesettingError(fmt.Errorf("Textblock (line %d): %w", layoutelt.Line, err))
-			}
-			te.Items = append(te.Items, vl)
-
 		case *html.Node:
-			doc := &html.Node{
-				Type: html.DocumentNode,
-			}
-			root := &html.Node{
-				Data: "html",
-				Type: html.ElementNode,
-			}
-			head := &html.Node{
-				Data: "head",
-				Type: html.ElementNode,
-			}
-			body := &html.Node{
-				Data: "body",
-				Type: html.ElementNode,
-			}
-
 			body.AppendChild(t)
-			root.AppendChild(head)
-			root.AppendChild(body)
-			doc.AppendChild(root)
-			vlistFormatter, err := xd.decodeHTMLFromHTMLNode(doc)
-			if err != nil {
-				return nil, newTypesettingError(err)
-			}
-			vl, err := vlistFormatter(attValues.Width)
-			if err != nil {
-				return nil, newTypesettingError(fmt.Errorf("Textblock (line %d): %w", layoutelt.Line, err))
-			}
-			te.Items = append(te.Items, vl)
-
-		case string:
-			vlistFormatter, err := xd.decodeHTML(t)
-			if err != nil {
-				return nil, err
-			}
-			vl, err := vlistFormatter(attValues.Width)
-			if err != nil {
-				return nil, err
-			}
-			te.Items = append(te.Items, vl)
-
-		case *frontend.Text:
-			if vlistFormatter, ok := t.Items[0].(frontend.FormatToVList); ok {
-				vl, err := vlistFormatter(attValues.Width)
-				if err != nil {
-					return nil, err
-				}
-				te.Items = append(te.Items, vl)
-			} else {
-				if align, found := t.Settings[frontend.SettingHAlign]; found && align != frontend.HAlignDefault {
-					te.Settings[frontend.SettingHAlign] = align
-				}
-				te.Items = append(te.Items, t)
-			}
-
-		case node.Node:
-			te.Items = append(te.Items, t)
 		default:
 			slog.Error(fmt.Sprintf("cmdTextblock: unknown type %T", t))
 		}
-
-		// if no width is requested, we use the maximum available width
-		vlist, _, err := xd.document.FormatParagraph(te, attValues.Width)
-		if err != nil {
-			return nil, err
-		}
-		vlists = node.InsertAfter(vlists, node.Tail(vlists), vlist)
-		if i < len(seq) && attValues.Parsep != 0 {
-			g := node.NewGlue()
-			g.Width = attValues.Parsep
-			vlists = node.InsertAfter(vlists, vlist, g)
-		}
 	}
+
+	root.AppendChild(head)
+	root.AppendChild(body)
+	doc.AppendChild(root)
+	vlistFormatter, err := xd.decodeHTMLFromHTMLNode(doc)
+	if err != nil {
+		return nil, newTypesettingError(err)
+	}
+	vl, err := vlistFormatter(attValues.Width)
+	if err != nil {
+		return nil, newTypesettingError(fmt.Errorf("Textblock (line %d): %w", layoutelt.Line, err))
+	}
+	te := frontend.NewText()
+
+	te.Items = append(te.Items, vl)
+
+	// if no width is requested, we use the maximum available width
+	vlist, _, err := xd.document.FormatParagraph(te, attValues.Width)
+	if err != nil {
+		return nil, err
+	}
+	vlists = node.InsertAfter(vlists, node.Tail(vlists), vlist)
 
 	if vlists == nil {
 		return nil, nil
@@ -1859,7 +1833,7 @@ func cmdTr(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		return nil, err
 	}
 
-	seq, err := dispatch(xd, layoutelt, xd.data)
+	seq, err := dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
@@ -1893,7 +1867,7 @@ func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
-	seq, err := dispatch(xd, layoutelt, xd.data)
+	seq, err := dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
@@ -1998,7 +1972,7 @@ func cmdU(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		return nil, err
 	}
 
-	seq, err := dispatch(xd, layoutelt, xd.data)
+	seq, err := dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
@@ -2023,7 +1997,7 @@ func cmdUl(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		return nil, err
 	}
 
-	seq, err := dispatch(xd, layoutelt, xd.data)
+	seq, err := dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
@@ -2047,7 +2021,7 @@ func cmdUntil(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	}
 	var ret []goxpath.Item
 	for {
-		seq, err := dispatch(xd, layoutelt, xd.data)
+		seq, err := dispatch(xd, layoutelt)
 		if err != nil {
 			return nil, err
 		}
@@ -2133,7 +2107,7 @@ func cmdWhile(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 			break
 		}
 
-		seq, err := dispatch(xd, layoutelt, xd.data)
+		seq, err := dispatch(xd, layoutelt)
 		if err != nil {
 			return nil, err
 		}

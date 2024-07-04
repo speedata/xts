@@ -171,6 +171,25 @@ func scaffold(extra ...string) error {
 	return nil
 }
 
+func formatDuration(d time.Duration) string {
+	dStart := d
+	var sb strings.Builder
+	if d > time.Minute {
+		wholeMinutes := d.Truncate(time.Minute) / time.Minute
+		fmt.Fprintf(&sb, "%dm", wholeMinutes)
+		d -= d.Truncate(time.Minute)
+	}
+	if d > time.Second {
+		wholeSeconds := d.Truncate(time.Second) / time.Second
+		fmt.Fprintf(&sb, "%ds", wholeSeconds)
+		d -= d.Truncate(time.Second)
+	}
+	if dStart < time.Second {
+		fmt.Fprintf(&sb, "%dms", d.Truncate(time.Millisecond)/time.Millisecond)
+	}
+	return sb.String()
+}
+
 func openURL(url string) error {
 	cmd := []string{}
 	switch runtime.GOOS {
@@ -386,7 +405,7 @@ func dothings() error {
 			slog.Error("Please give one directory")
 		}
 		dur := time.Now().Sub(starttime)
-		fmt.Printf("Finished in %s\n", dur)
+		fmt.Printf("Finished in %s\n", formatDuration(dur))
 	case "doc":
 		return openURL("https://doc.speedata.de/xts/")
 	case "list-fonts":
@@ -490,8 +509,8 @@ func dothings() error {
 		}
 	finished:
 		dur := time.Now().Sub(starttime)
-		slog.Info(fmt.Sprintf("Finished in %s", dur))
-		fmt.Printf("Finished with %s and %s in %s.\nOutput written to %s (%s, %d bytes)\n  and protocol file to %s.\n", pluralize(errCount, "error"), pluralize(warnCount, "warning"), dur, configuration.Jobname+".pdf", pluralize(info.Pages, "page"), info.FileSize, protocolFilename)
+		slog.Info(fmt.Sprintf("Finished in %s", formatDuration(dur)))
+		fmt.Printf("Finished with %s and %s in %s.\nOutput written to %s (%s, %d bytes)\n  and protocol file to %s.\n", pluralize(errCount, "error"), pluralize(warnCount, "warning"), formatDuration(dur), configuration.Jobname+".pdf", pluralize(info.Pages, "page"), info.FileSize, protocolFilename)
 		if errCount > 0 {
 			return core.TypesettingError{Logged: true}
 		}

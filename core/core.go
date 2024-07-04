@@ -11,11 +11,12 @@ import (
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/boxesandglue/backend/document"
 	"github.com/speedata/boxesandglue/backend/node"
-	"github.com/speedata/boxesandglue/csshtml"
 	"github.com/speedata/boxesandglue/frontend"
 	"github.com/speedata/boxesandglue/frontend/pdfdraw"
+	"github.com/speedata/csshtml"
 	"github.com/speedata/goxml"
 	xpath "github.com/speedata/goxpath"
+	"github.com/speedata/htmlbag"
 )
 
 var (
@@ -50,6 +51,7 @@ type xtsDocument struct {
 	cfg               *XTSConfig
 	document          *frontend.Document
 	layoutcss         *csshtml.CSS
+	cssbuilder        *htmlbag.CSSBuilder
 	data              *xpath.Parser
 	pages             []*page
 	groups            map[string]*group
@@ -207,11 +209,12 @@ func RunXTS(cfg *XTSConfig) error {
 		return err
 	}
 	bag.SetLogger(slog.Default())
+	d.cssbuilder = htmlbag.New(d.document, d.layoutcss)
+
 	if cfg.SuppressInfo {
 		d.document.SetSuppressInfo(true)
 		slog.Info("Creating reproducible build")
 	}
-	d.layoutcss.FrontendDocument = d.document
 
 	for _, tr := range cfg.Tracing {
 		switch tr {
@@ -224,7 +227,7 @@ func RunXTS(cfg *XTSConfig) error {
 	d.document.Doc.CompressLevel = 9
 	slog.Info("Setup defaults ...")
 
-	if err = d.document.LoadIncludedFonts(); err != nil {
+	if err = htmlbag.LoadIncludedFonts(d.document); err != nil {
 		return nil
 	}
 
@@ -294,7 +297,7 @@ func RunXTS(cfg *XTSConfig) error {
 	slog.Info("Start processing data")
 
 	rootname := dataNameSeq[0].(string)
-	_, err = dispatch(d, layoutRoot, d.data)
+	_, err = dispatch(d, layoutRoot)
 	if err != nil {
 		return newTypesettingError(err)
 	}
@@ -305,7 +308,7 @@ func RunXTS(cfg *XTSConfig) error {
 	if startDispatcher, ok = dataDispatcher[rootname][""]; !ok {
 		return newTypesettingErrorFromString(fmt.Sprintf("Cannot find <Record> for root element %s", rootname))
 	}
-	_, err = dispatch(d, startDispatcher, d.data)
+	_, err = dispatch(d, startDispatcher)
 	if err != nil {
 		return newTypesettingError(err)
 	}

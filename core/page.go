@@ -38,7 +38,7 @@ func (xd *xtsDocument) newPagetype(name string, test string) (*pagetype, error) 
 	return pt, nil
 }
 
-func (xd *xtsDocument) detectPagetype(name string) (*pagetype, error) {
+func (xd *xtsDocument) detectPagetype() (*pagetype, error) {
 	var thispagetype *pagetype
 	for i := len(xd.masterpages) - 1; i >= 0; i-- {
 		thispagetype = xd.masterpages[i]
@@ -93,7 +93,7 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 	slog.Debug("New page")
 	xd.currentPagenumber++
 	g := newGrid(xd)
-	pt, err := xd.detectPagetype("")
+	pt, err := xd.detectPagetype()
 	if err != nil {
 		return nil, nil, err
 	}
@@ -139,11 +139,11 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 				switch t.Name {
 				case "AtPageCreation":
 					slog.Debug(fmt.Sprintf("Call %s (line %d)", t.Name, t.Line))
-					f = func() { dispatch(xd, t, xd.data) }
+					f = func() { dispatch(xd, t) }
 				case "AtPageShipout":
 					pg.atPageShipout = func() {
 						slog.Debug(fmt.Sprintf("Call %s (line %d)", t.Name, t.Line))
-						dispatch(xd, t, xd.data)
+						dispatch(xd, t)
 					}
 				case "PositioningArea":
 					attValues := &struct {

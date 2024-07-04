@@ -9,11 +9,10 @@ import (
 
 	"golang.org/x/net/html"
 
-	"github.com/speedata/bagme/document"
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/boxesandglue/backend/node"
-	"github.com/speedata/boxesandglue/csshtml"
 	"github.com/speedata/boxesandglue/frontend"
+	"github.com/speedata/csshtml"
 	"github.com/speedata/goxml"
 	xpath "github.com/speedata/goxpath"
 )
@@ -24,7 +23,7 @@ type seqfunc func() (xpath.Sequence, error)
 func returnEvalBodyLater(layoutelt *goxml.Element, xd *xtsDocument, ctx *xpath.Context) seqfunc {
 	oldCtx := xpath.CopyContext(ctx)
 	return func() (xpath.Sequence, error) {
-		eval, err := dispatch(xd, layoutelt, xd.data)
+		eval, err := dispatch(xd, layoutelt)
 		xd.data.Ctx = oldCtx
 		return eval, err
 	}
@@ -69,44 +68,22 @@ func (xd *xtsDocument) applyLayoutStylesheet(classname string, id string, style 
 	eltname := eltnames[0]
 	sel := doc.Find(eltname)
 	a := sel.Nodes[0]
-	attrs, _, _ := csshtml.ResolveAttributes(a.Attr)
-	return attrs, nil
+	return csshtml.GetAttributes(a.Attr), nil
 }
 
 // decodeHTMLFromHTMLNode takes a parsed HTML structure and return a function
 // that formats the the input to a VList.
 func (xd *xtsDocument) decodeHTMLFromHTMLNode(input *html.Node) (frontend.FormatToVList, error) {
 	ftv := func(wd bag.ScaledPoint) (*node.VList, error) {
-		d := document.NewWithFrontend(xd.document, xd.layoutcss)
-		te, err := d.ParseHTMLFromNode(input)
+		te, err := xd.cssbuilder.ParseHTMLFromNode(input)
 		if err != nil {
 			return nil, err
 		}
-		vl, err := d.CreateVlist(te, wd)
+		vl, err := xd.cssbuilder.CreateVlist(te, wd)
 		if err != nil {
 			return nil, newTypesettingError(err)
 		}
 		return vl, nil
-	}
-
-	return ftv, nil
-}
-
-// decodeHTML takes a simple text and return a function that formats the the
-// input to a VList.
-func (xd *xtsDocument) decodeHTML(input string) (frontend.FormatToVList, error) {
-	ftv := func(wd bag.ScaledPoint) (*node.VList, error) {
-		d := document.NewWithFrontend(xd.document, xd.layoutcss)
-		te, err := d.HTMLToText(input)
-		if err != nil {
-			return nil, err
-		}
-		vl, err := d.CreateVlist(te, wd)
-		if err != nil {
-			return nil, err
-		}
-
-		return vl, err
 	}
 
 	return ftv, nil
@@ -373,104 +350,6 @@ func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 		}
 	}
 	return nil
-}
-
-func findAttribute(name string, element *goxml.Element, mustexist bool, allowXPath bool, dflt string, xp *xpath.Parser) (string, error) {
-	var value string
-	var found bool
-	for _, attrib := range element.Attributes() {
-		if attrib.Name == name {
-			found = true
-			value = attrib.Value
-			break
-		}
-	}
-	if !found {
-		if mustexist {
-			slog.Error(fmt.Sprintf("Layout line %d: attribute %s on element %s not) found", element.Line, name, element.Name))
-			return "", fmt.Errorf("line %d: attribute %s on element %s not found", element.Line, name, element.Name)
-		}
-		value = dflt
-	}
-
-	value = attributeValueRE.ReplaceAllStringFunc(value, func(a string) string {
-		// strip curly braces
-		seq, err := xp.Evaluate(a[1 : len(a)-1])
-		if err != nil {
-			slog.Error(fmt.Sprintf("Layout line %d: %s", element.Line, err))
-			return ""
-		}
-		return seq.Stringvalue()
-	})
-	return value, nil
-}
-
-func (xd *xtsDocument) getAttributeBool(name string, element *goxml.Element, mustexist bool, allowXPath bool, dflt string) (bool, error) {
-	attr, err := findAttribute(name, element, mustexist, allowXPath, dflt, xd.data)
-	if attr == "yes" {
-		return true, err
-	}
-
-	return false, err
-}
-
-func (xd *xtsDocument) getAttributeString(name string, element *goxml.Element, mustexist bool, allowXPath bool, dflt string) (string, error) {
-	return findAttribute(name, element, mustexist, allowXPath, dflt, xd.data)
-}
-
-func (xd *xtsDocument) getAttributeInt(name string, element *goxml.Element, mustexist bool, allowXPath bool, dflt string) (int, error) {
-	val, err := findAttribute(name, element, mustexist, allowXPath, dflt, xd.data)
-	if err != nil {
-		return 0, err
-	}
-	if val == "" {
-		return 0, nil
-	}
-	return strconv.Atoi(val)
-}
-
-// getAttributeSize returns the provided width in scaled points.
-func (xd *xtsDocument) getAttributeSize(name string, element *goxml.Element, mustexist bool, allowXPath bool, dflt string) (bag.ScaledPoint, error) {
-	val, err := findAttribute(name, element, mustexist, allowXPath, dflt, xd.data)
-	if err != nil {
-		return 0, err
-	}
-	if val == "" {
-		return 0, nil
-	}
-	return bag.Sp(val)
-}
-
-// getAttributeWidth returns the width which ich provided either by grid cells or a length value.
-func (xd *xtsDocument) getAttributeWidth(name string, element *goxml.Element, mustexist bool, allowXPath bool, dflt string) (bag.ScaledPoint, error) {
-	val, err := findAttribute(name, element, mustexist, allowXPath, dflt, xd.data)
-	if err != nil {
-		return 0, err
-	}
-	if val == "" {
-		return 0, nil
-	}
-	if cols, err := strconv.Atoi(val); err == nil {
-		return xd.currentGrid.width(coord(cols)), nil
-
-	}
-	return bag.Sp(val)
-}
-
-// getAttributeHeight returns the width which ich provided either by grid cells or a length value.
-func (xd *xtsDocument) getAttributeHeight(name string, element *goxml.Element, mustexist bool, allowXPath bool, dflt string) (bag.ScaledPoint, error) {
-	val, err := findAttribute(name, element, mustexist, allowXPath, dflt, xd.data)
-	if err != nil {
-		return 0, err
-	}
-	if val == "" {
-		return 0, nil
-	}
-	if cols, err := strconv.Atoi(val); err == nil {
-		return xd.currentGrid.height(coord(cols)), nil
-
-	}
-	return bag.Sp(val)
 }
 
 // evaluateXPath runs an XPath expression. It saves and restores the current

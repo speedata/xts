@@ -19,15 +19,17 @@ const (
 	barcodeQR
 )
 
-func createBarcode(typ int, value string, width bag.ScaledPoint, height bag.ScaledPoint, xd *xtsDocument, ff *frontend.FontFamily, fontsize bag.ScaledPoint) (node.Node, error) {
+func createBarcode(typ int, value string, width bag.ScaledPoint, height bag.ScaledPoint, xd *xtsDocument, ff *frontend.FontFamily, fontsize bag.ScaledPoint, useText bool) (node.Node, error) {
 	var n node.Node
-	useText := true
 	switch typ {
 	case barcodeQR:
 		useText = false
 	}
 	var vl *node.VList
 	var err error
+	if height == 0 {
+		height = width
+	}
 	if useText {
 		txt := frontend.NewText()
 		txt.Settings[frontend.SettingSize] = fontsize
@@ -46,7 +48,7 @@ func createBarcode(typ int, value string, width bag.ScaledPoint, height bag.Scal
 		if err != nil {
 			return nil, err
 		}
-		if n, err = barcodeCreate(bc, value, width, height, xd); err != nil {
+		if n, err = barcodeCreate(bc, width, height, xd); err != nil {
 			return nil, err
 		}
 	case barcodeCode128:
@@ -54,7 +56,7 @@ func createBarcode(typ int, value string, width bag.ScaledPoint, height bag.Scal
 		if err != nil {
 			return nil, err
 		}
-		if n, err = barcodeCreate(bc, value, width, height, xd); err != nil {
+		if n, err = barcodeCreate(bc, width, height, xd); err != nil {
 			return nil, err
 		}
 	case barcodeQR:
@@ -62,18 +64,20 @@ func createBarcode(typ int, value string, width bag.ScaledPoint, height bag.Scal
 		if err != nil {
 			return nil, err
 		}
-		return barcodeCreate3d(bc, value, width, height, xd)
+		return barcodeCreate3d(bc, width, xd)
 	}
-
-	n = node.InsertAfter(n, n, vl)
+	if useText {
+		n = node.InsertAfter(n, n, vl)
+	}
 	vl = node.Vpack(n)
 	vl.Attributes = node.H{
 		"origin": "barcode",
 	}
+
 	return vl, nil
 }
 
-func barcodeCreate(bc barcode.Barcode, value string, width bag.ScaledPoint, height bag.ScaledPoint, xd *xtsDocument) (node.Node, error) {
+func barcodeCreate(bc barcode.Barcode, width bag.ScaledPoint, height bag.ScaledPoint, xd *xtsDocument) (node.Node, error) {
 	dx := bc.Bounds().Dx()
 	wdBar := width / bag.ScaledPoint(dx)
 	bgcolor := xd.document.GetColor("black")
@@ -106,7 +110,7 @@ func barcodeCreate(bc barcode.Barcode, value string, width bag.ScaledPoint, heig
 	return rule, nil
 }
 
-func barcodeCreate3d(bc barcode.Barcode, value string, width bag.ScaledPoint, height bag.ScaledPoint, xd *xtsDocument) (node.Node, error) {
+func barcodeCreate3d(bc barcode.Barcode, width bag.ScaledPoint, xd *xtsDocument) (node.Node, error) {
 	dx := bc.Bounds().Dx()
 	dy := bc.Bounds().Dy()
 
