@@ -9,9 +9,9 @@ import (
 
 	"golang.org/x/net/html"
 
-	"github.com/speedata/boxesandglue/backend/bag"
-	"github.com/speedata/boxesandglue/backend/node"
-	"github.com/speedata/boxesandglue/frontend"
+	"github.com/boxesandglue/boxesandglue/backend/bag"
+	"github.com/boxesandglue/boxesandglue/backend/node"
+	"github.com/boxesandglue/boxesandglue/frontend"
 	"github.com/speedata/csshtml"
 	"github.com/speedata/goxml"
 	xpath "github.com/speedata/goxpath"

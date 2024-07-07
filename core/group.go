@@ -1,6 +1,6 @@
 package core
 
-import "github.com/speedata/boxesandglue/backend/node"
+import "github.com/boxesandglue/boxesandglue/backend/node"
 
 type group struct {
 	name     string

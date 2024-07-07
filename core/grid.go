@@ -6,7 +6,7 @@ import (
 	"math"
 	"strings"
 
-	"github.com/speedata/boxesandglue/backend/bag"
+	"github.com/boxesandglue/boxesandglue/backend/bag"
 )
 
 type area struct {

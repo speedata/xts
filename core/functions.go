@@ -17,7 +17,7 @@ import (
 	"strings"
 
 	"github.com/alecthomas/chroma/formatters/html"
-	"github.com/speedata/boxesandglue/backend/bag"
+	"github.com/boxesandglue/boxesandglue/backend/bag"
 	"github.com/speedata/goxpath"
 	"github.com/yuin/goldmark"
 	highlighting "github.com/yuin/goldmark-highlighting"

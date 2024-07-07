@@ -1,8 +1,8 @@
 package core
 
 import (
-	"github.com/speedata/boxesandglue/backend/lang"
-	"github.com/speedata/boxesandglue/frontend"
+	"github.com/boxesandglue/boxesandglue/backend/lang"
+	"github.com/boxesandglue/boxesandglue/frontend"
 )
 
 var languageMapping = map[string]string{

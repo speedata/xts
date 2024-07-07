@@ -3,8 +3,8 @@ package core
 import (
 	"testing"
 
-	"github.com/speedata/boxesandglue/backend/bag"
-	bagimage "github.com/speedata/boxesandglue/backend/image"
+	"github.com/boxesandglue/boxesandglue/backend/bag"
+	bagimage "github.com/boxesandglue/boxesandglue/backend/image"
 )
 
 func TestImageSize(t *testing.T) {

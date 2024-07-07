@@ -3,14 +3,14 @@ package core
 import (
 	"image/color"
 
+	"github.com/boxesandglue/boxesandglue/backend/bag"
+	"github.com/boxesandglue/boxesandglue/backend/node"
+	"github.com/boxesandglue/boxesandglue/frontend"
+	"github.com/boxesandglue/boxesandglue/frontend/pdfdraw"
 	"github.com/speedata/barcode"
 	"github.com/speedata/barcode/code128"
 	"github.com/speedata/barcode/ean"
 	"github.com/speedata/barcode/qr"
-	"github.com/speedata/boxesandglue/backend/bag"
-	"github.com/speedata/boxesandglue/backend/node"
-	"github.com/speedata/boxesandglue/frontend"
-	"github.com/speedata/boxesandglue/frontend/pdfdraw"
 )
 
 const (
