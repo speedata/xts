@@ -13,9 +13,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/boxesandglue/textlayout/fonts/truetype"
 	"github.com/pelletier/go-toml/v2"
 	"github.com/speedata/optionparser"
-	"github.com/speedata/textlayout/fonts/truetype"
 	"github.com/speedata/xts/core"
 )
 

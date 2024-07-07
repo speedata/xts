@@ -17,10 +17,10 @@ import (
 	"github.com/boxesandglue/boxesandglue/backend/node"
 	"github.com/boxesandglue/boxesandglue/frontend"
 	"github.com/boxesandglue/boxesandglue/frontend/pdfdraw"
+	"github.com/boxesandglue/textlayout/harfbuzz"
 	"github.com/speedata/goxml"
 	"github.com/speedata/goxpath"
 	xpath "github.com/speedata/goxpath"
-	"github.com/speedata/textlayout/harfbuzz"
 )
 
 type commandFunc func(*xtsDocument, *goxml.Element) (xpath.Sequence, error)

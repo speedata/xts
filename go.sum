@@ -26,12 +26,12 @@ github.com/pelletier/go-toml/v2 v2.0.8 h1:0ctb6s9mE31h0/lhu+J6OPmVeDxJn+kYnJc2jZ
 github.com/pelletier/go-toml/v2 v2.0.8/go.mod h1:vuYfssBdrU2XDZ9bYydBu6t+6a6PYNcZljzZR9VXg+4=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/speedata/bagme v0.0.0-20231122103953-256f1f9cad43 h1:eTjHeSrkU95qLt8IHwsDXxnPqcfn0IWV4ZS/9eAAthE=
-github.com/speedata/bagme v0.0.0-20231122103953-256f1f9cad43/go.mod h1:8K2cip1jpc+tSubAc4C3ZB9btTHy/5mysZiXIPs5NYw=
+github.com/boxesandglue/bagme v0.0.0-20231122103953-256f1f9cad43 h1:eTjHeSrkU95qLt8IHwsDXxnPqcfn0IWV4ZS/9eAAthE=
+github.com/boxesandglue/bagme v0.0.0-20231122103953-256f1f9cad43/go.mod h1:8K2cip1jpc+tSubAc4C3ZB9btTHy/5mysZiXIPs5NYw=
 github.com/speedata/barcode v0.0.0-20230307084753-486c4d51cb34 h1:FeXq9Yh4eiH+dqkWW/HVzXhLghaNoXxzLG+tjdlduYw=
 github.com/speedata/barcode v0.0.0-20230307084753-486c4d51cb34/go.mod h1:BNwJ2io3ZgecUqunSUFAlfnnI8YTh3SLSHZgs5vaoTY=
-github.com/speedata/baseline-pdf v0.0.0-20231122102911-d3b0bd534820 h1:7oxf+dMF062+vl2NXMOa9AEG2eQw5jo+UPh2QtbEeKE=
-github.com/speedata/baseline-pdf v0.0.0-20231122102911-d3b0bd534820/go.mod h1:ptfWHTOg/v3zstZUxF9DwET4q4NOMCGyzDvtm11SIWs=
+github.com/boxesandglue/baseline-pdf v0.0.0-20231122102911-d3b0bd534820 h1:7oxf+dMF062+vl2NXMOa9AEG2eQw5jo+UPh2QtbEeKE=
+github.com/boxesandglue/baseline-pdf v0.0.0-20231122102911-d3b0bd534820/go.mod h1:ptfWHTOg/v3zstZUxF9DwET4q4NOMCGyzDvtm11SIWs=
 github.com/speedata/boxesandglue v0.0.0-20240119151805-b77b46eaf674 h1:va8GWTsCvJqfpBc1NJHMTNNbiimTA+3910Pn1ivwl6A=
 github.com/speedata/boxesandglue v0.0.0-20240119151805-b77b46eaf674/go.mod h1:aY9s4r8n11js7y/rUvPH9IZKjhENTbwp8TjhFigP/XE=
 github.com/speedata/css/scanner v0.0.0-20201005071706-2ed32c3ce553 h1:L9Sqi5S7G4JjODI5tZZ1IzZ7Yb4s71xFOq/uZtLv1Wg=
@@ -48,8 +48,8 @@ github.com/speedata/hyphenation v1.0.2 h1:2rDCtAqNfbf+E56SsqbmNApsVx9CH+4fwIh1RZ
 github.com/speedata/hyphenation v1.0.2/go.mod h1:vwrKKvBvJWFll0sVZw99hyWS/+r4YlMI7MAYjnje0nM=
 github.com/speedata/optionparser v1.0.2 h1:AzdBomgOBVjH1KyxvoFnEHjiqLch+B1PVxEWYske+aI=
 github.com/speedata/optionparser v1.0.2/go.mod h1:JzOMd1kGlM5gtPBy7reOayfHsTXCvd6P4JU8BW0LicE=
-github.com/speedata/textlayout v0.0.0-20230827181055-b7ff752e85ae h1:WREBj80Ov1CmfmpLHyValOTcb2YhiHFBrdD2drUlfZM=
-github.com/speedata/textlayout v0.0.0-20230827181055-b7ff752e85ae/go.mod h1:5yI24VPA1OjAI56+oF5XzsbIgu2elJhwIDb5SWdniN8=
+github.com/boxesandglue/textlayout v0.0.0-20230827181055-b7ff752e85ae h1:WREBj80Ov1CmfmpLHyValOTcb2YhiHFBrdD2drUlfZM=
+github.com/boxesandglue/textlayout v0.0.0-20230827181055-b7ff752e85ae/go.mod h1:5yI24VPA1OjAI56+oF5XzsbIgu2elJhwIDb5SWdniN8=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
 github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=

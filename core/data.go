@@ -12,7 +12,7 @@ import (
 	"github.com/boxesandglue/boxesandglue/backend/bag"
 	"github.com/boxesandglue/boxesandglue/backend/node"
 	"github.com/boxesandglue/boxesandglue/frontend"
-	"github.com/speedata/csshtml"
+	"github.com/boxesandglue/csshtml"
 	"github.com/speedata/goxml"
 	xpath "github.com/speedata/goxpath"
 )

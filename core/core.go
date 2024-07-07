@@ -13,10 +13,10 @@ import (
 	"github.com/boxesandglue/boxesandglue/backend/node"
 	"github.com/boxesandglue/boxesandglue/frontend"
 	"github.com/boxesandglue/boxesandglue/frontend/pdfdraw"
-	"github.com/speedata/csshtml"
+	"github.com/boxesandglue/csshtml"
+	"github.com/boxesandglue/htmlbag"
 	"github.com/speedata/goxml"
 	xpath "github.com/speedata/goxpath"
-	"github.com/speedata/htmlbag"
 )
 
 var (
