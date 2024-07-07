@@ -36,8 +36,8 @@ github.com/speedata/boxesandglue v0.0.0-20240119151805-b77b46eaf674 h1:va8GWTsCv
 github.com/speedata/boxesandglue v0.0.0-20240119151805-b77b46eaf674/go.mod h1:aY9s4r8n11js7y/rUvPH9IZKjhENTbwp8TjhFigP/XE=
 github.com/speedata/css/scanner v0.0.0-20201005071706-2ed32c3ce553 h1:L9Sqi5S7G4JjODI5tZZ1IzZ7Yb4s71xFOq/uZtLv1Wg=
 github.com/speedata/css/scanner v0.0.0-20201005071706-2ed32c3ce553/go.mod h1:uF4+EGySaBnGeZpXZ0boh/oR6P0vNiYfQ2MAJXCU9hE=
-github.com/speedata/gofpdi v1.0.18 h1:LEiIN62ckZcA4n8AtBu16M2P2fBK3OnwpTGDfe13v/4=
-github.com/speedata/gofpdi v1.0.18/go.mod h1:aRZ6VjhFbzJWwCoHeKOdbUjImuf4GMVCJpwS9+bCYuM=
+github.com/boxesandglue/gofpdi v1.0.18 h1:LEiIN62ckZcA4n8AtBu16M2P2fBK3OnwpTGDfe13v/4=
+github.com/boxesandglue/gofpdi v1.0.18/go.mod h1:aRZ6VjhFbzJWwCoHeKOdbUjImuf4GMVCJpwS9+bCYuM=
 github.com/speedata/goxlsx v1.0.2 h1:hi00xy1EQhqrag4HNIc9hVEtVmTGrh3z9C1AH9ysg74=
 github.com/speedata/goxlsx v1.0.2/go.mod h1:7eXkL4ZUZ2uUlnBBAmh0iwOdhOkqqstW/FmkEe2IPMY=
 github.com/speedata/goxml v0.0.0-20230322084327-216af189a791 h1:TuFrswsnJYDeyR47dXhTLzSp3GwvhPRUrRSyEXyxrGg=

@@ -32,7 +32,7 @@ require (
 	github.com/gammazero/deque v0.2.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/speedata/css/scanner v0.0.0-20201005071706-2ed32c3ce553 // indirect
-	github.com/speedata/gofpdi v1.0.18 // indirect
+	github.com/boxesandglue/gofpdi v1.0.18 // indirect
 	github.com/speedata/hyphenation v1.0.2 // indirect
 	golang.org/x/image v0.7.0 // indirect
 )
