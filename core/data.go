@@ -61,7 +61,7 @@ func (xd *xtsDocument) applyLayoutStylesheet(classname string, id string, style 
 	}
 
 	htmlstring := strings.Join(htmlstrings, "")
-	doc, err := xd.layoutcss.ParseHTMLFragment(htmlstring)
+	doc, err := xd.layoutcss.ProcessHTMLChunk(htmlstring)
 	if err != nil {
 		return nil, err
 	}

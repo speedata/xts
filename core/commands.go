@@ -17,6 +17,7 @@ import (
 	"github.com/boxesandglue/boxesandglue/backend/node"
 	"github.com/boxesandglue/boxesandglue/frontend"
 	"github.com/boxesandglue/boxesandglue/frontend/pdfdraw"
+	"github.com/boxesandglue/htmlbag"
 	"github.com/boxesandglue/textlayout/harfbuzz"
 	"github.com/speedata/goxml"
 	"github.com/speedata/goxpath"
@@ -1577,21 +1578,10 @@ func cmdStylesheet(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 	if err != nil {
 		return nil, newTypesettingError(fmt.Errorf("Stylesheet (line %d): %w", layoutelt.Line, err))
 	}
-	for _, v := range xd.layoutcss.FontFaces {
-		var fontfamily *frontend.FontFamily
-		if ff := xd.document.FindFontFamily(v.Family); ff == nil {
-			fontfamily = xd.document.NewFontFamily(v.Family)
-		} else {
-			fontfamily = ff
-		}
-		fs := &frontend.FontSource{}
-		for _, src := range v.Source {
-			if src.URI != "" {
-				fs.Location = src.URI
-			}
-		}
-		fontfamily.AddMember(fs, frontend.FontWeight(v.Weight), frontend.ResolveFontStyle(v.Style))
+	if err = htmlbag.AddFontFamiliesFromCSS(xd.layoutcss, xd.document); err != nil {
+		return nil, newTypesettingError(fmt.Errorf("Stylesheet (line %d): %w", layoutelt.Line, err))
 	}
+
 	return xpath.Sequence{nil}, nil
 }
 
