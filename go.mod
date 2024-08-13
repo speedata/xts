@@ -4,11 +4,11 @@ go 1.21
 
 require (
 	github.com/alecthomas/chroma v0.10.0
-	github.com/boxesandglue/baseline-pdf v0.0.0-20240707171747-eb4f68a9505a
-	github.com/boxesandglue/boxesandglue v0.0.0-20240707172207-734d018812d1
-	github.com/boxesandglue/csshtml v0.0.0-20240707131722-d3420db0de12
-	github.com/boxesandglue/htmlbag v0.0.0-20240707183312-24acd0563901
-	github.com/boxesandglue/textlayout v0.0.0-20240707172207-9947ec86c599
+	github.com/boxesandglue/baseline-pdf v0.0.0-20240805104743-f940543238d5
+	github.com/boxesandglue/boxesandglue v0.0.0-20240805104743-8b6877b08561
+	github.com/boxesandglue/csshtml v0.0.0-20240813134317-f214983f48f8
+	github.com/boxesandglue/htmlbag v0.0.0-20240813191957-a1a46993bb22
+	github.com/boxesandglue/textlayout v0.0.0-20240805104743-4ef76f4729dd
 	github.com/cjoudrey/gluahttp v0.0.0-20201111170219-25003d9adfa9
 	github.com/gammazero/workerpool v1.1.3
 	github.com/mitchellh/mapstructure v1.5.0
@@ -21,9 +21,9 @@ require (
 	github.com/yuin/goldmark v1.4.13
 	github.com/yuin/goldmark-highlighting v0.0.0-20220208100518-594be1970594
 	github.com/yuin/gopher-lua v1.1.0
-	golang.org/x/net v0.27.0
-	golang.org/x/sys v0.22.0
-	golang.org/x/text v0.16.0
+	golang.org/x/net v0.28.0
+	golang.org/x/sys v0.23.0
+	golang.org/x/text v0.17.0
 )
 
 require (
@@ -35,5 +35,5 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/speedata/css/scanner v0.0.0-20240704081300-00e8c453c7d5 // indirect
 	github.com/speedata/hyphenation v1.0.2 // indirect
-	golang.org/x/image v0.18.0 // indirect
+	golang.org/x/image v0.19.0 // indirect
 )
