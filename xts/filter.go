@@ -62,7 +62,7 @@ func validateRelaxNG(l *lua.LState) int {
 func runSaxon(l *lua.LState) int {
 	numberArguments := l.GetTop()
 	var command []string
-	command = []string{"-jar", filepath.Join(configuration.libdir, "saxon-he-12.1.jar")}
+	command = []string{"-jar", filepath.Join(configuration.libdir, "saxon-he-12.9.jar")}
 	if numberArguments == 1 {
 		// hopefully a table
 		lv := l.Get(-1)
@@ -145,6 +145,7 @@ func findFile(l *lua.LState) int {
 	l.Push(lua.LString(abspath))
 	return 1
 }
+
 func execute(l *lua.LState) int {
 	cmdline := l.CheckTable(1)
 	var cmd string
@@ -181,7 +182,6 @@ func runtimeLoader(l *lua.LState) int {
 	fillRuntimeModule(mod)
 	l.Push(mod)
 	return 1
-
 }
 
 // set projectdir and variables table
