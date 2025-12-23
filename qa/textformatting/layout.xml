@@ -14,6 +14,9 @@
         line-height: 18pt;
     }
     p {
+        margin: 0;
+    }
+    body {
         font-size: 14pt;
     }
     code {
@@ -22,13 +25,18 @@
     body {
         font-family: serif;
     }
+        ul, ol {
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-left: 1.5em;
+        }
     </Stylesheet>
 
     <Record element="data">
         <PlaceObject>
             <Textblock width="8">
                 <Paragraph>
-                    <Value>There are various ways to put HTML like formatting in your PDF document. See the contents of the <code>layout.xml</code> and <code>data.xml</code>.</Value>
+                    <Value>There are various ways to put HTML like formatting in your PDF document. See the contents of the layout.xml and data.xml.</Value>
                 </Paragraph>
             </Textblock>
         </PlaceObject>
@@ -38,9 +46,7 @@
                 <Paragraph class="title">
                     <Value>Text and markup from the CDATA section (with sd:decode-html()):</Value>
                 </Paragraph>
-                <Paragraph>
-                    <Value select="sd:decode-html(html)" />
-                </Paragraph>
+                <HTML select="sd:decode-html(html)" />
             </Textblock>
         </PlaceObject>
         <PlaceObject>
@@ -49,9 +55,7 @@
                     <Value>Text and markup from the data file:</Value>
                 </Paragraph>
                 <ForAll select="text">
-                    <Paragraph>
-                        <Value select="." />
-                    </Paragraph>
+                    <HTML select="."/>
                 </ForAll>
             </Textblock>
         </PlaceObject>
@@ -97,17 +101,12 @@
                 <Paragraph class="title">
                     <Value>Text and markup as HTML in the layout file:</Value>
                 </Paragraph>
-                <Paragraph>
-                    <Value>A <i>wonderful</i> serenity has <b>taken possession</b> of my entire soul,
-                        <ul>
-                            <li>like these</li>
+                <HTML> A <i>wonderful</i> serenity has <b>taken possession</b> of my entire soul, <ul>
+                        <li>like these</li>
                             <li>sweet mornings</li>
                             <li>of spring</li>
                             <li>which I enjoy</li>
-                        </ul>
-                        &amp; # \ { } %
-                    </Value>
-                </Paragraph>
+                    </ul> &amp; # \ { } % </HTML>
             </Textblock>
         </PlaceObject>
     </Record>

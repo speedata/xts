@@ -5,19 +5,24 @@ import (
 
 	pdf "github.com/boxesandglue/baseline-pdf"
 	"github.com/boxesandglue/boxesandglue/backend/bag"
-	bagimage "github.com/boxesandglue/boxesandglue/backend/image"
+	"github.com/boxesandglue/boxesandglue/backend/document"
 	"github.com/boxesandglue/boxesandglue/backend/node"
 )
 
-func createImageHlist(xd *xtsDocument, width, height, minwidth, maxwidth, minheight, maxheight *bag.ScaledPoint, stretch bool, imgfile *pdf.Imagefile, pagenumer int) *node.HList {
-	if pagenumer == 0 {
-		pagenumer = 1
+func createImageHlist(xd *xtsDocument, width, height, minwidth, maxwidth, minheight, maxheight *bag.ScaledPoint, stretch bool, imgfile *pdf.Imagefile, pagenumber int) *node.HList {
+	if pagenumber == 0 {
+		pagenumber = 1
 	}
-	ii := xd.document.Doc.CreateImage(imgfile, pagenumer, imgfile.Box)
 
-	wd, ht := calculateImageSize(ii, width, height, minwidth, maxwidth, minheight, maxheight, stretch)
-	imgNode := node.NewImage()
-	imgNode.Img = ii
+	naturalWidth, naturalHeight, err := document.GetDimensions(imgfile, pagenumber, "/MediaBox")
+	if err != nil {
+		return nil
+	}
+
+	wd, ht := calculateImageSize(naturalWidth, naturalHeight, width, height, minwidth, maxwidth, minheight, maxheight, stretch)
+
+	imgNode := xd.document.Doc.CreateImageNodeFromImagefile(imgfile, pagenumber, imgfile.Box)
+
 	imgNode.Width = wd
 	imgNode.Height = ht
 	hlist := node.Hpack(imgNode)
@@ -29,7 +34,7 @@ var posInf = math.Inf(1)
 // calculateImageSize calculates the width and the height from the given
 // parameters. Unset parameters should be nil or 0 for min.. and MaxSP for
 // max... See https://www.w3.org/TR/CSS2/visudet.html#min-max-widths for rules.
-func calculateImageSize(img *bagimage.Image, requestedWidth, requestedHeight, minWidth, maxWidth, minHeight, maxHeight *bag.ScaledPoint, stretch bool) (bag.ScaledPoint, bag.ScaledPoint) {
+func calculateImageSize(naturalWidth, naturalHeight bag.ScaledPoint, requestedWidth, requestedHeight, minWidth, maxWidth, minHeight, maxHeight *bag.ScaledPoint, stretch bool) (bag.ScaledPoint, bag.ScaledPoint) {
 	// Constraint Violation                                                           Resolved Width                      Resolved Height
 	// ===================================================================================================================================================
 	//  1 none                                                                        w                                   h
@@ -46,17 +51,17 @@ func calculateImageSize(img *bagimage.Image, requestedWidth, requestedHeight, mi
 
 	var imgwd, imght, wd, ht, minwd, maxwd, minht, maxht float64
 
-	imgwd = img.Width.ToPT()
-	imght = img.Height.ToPT()
+	imgwd = naturalWidth.ToPT()
+	imght = naturalHeight.ToPT()
 
 	if requestedWidth == nil {
-		wd = img.Width.ToPT()
+		wd = imgwd
 	} else {
 		wd = requestedWidth.ToPT()
 	}
 
 	if requestedHeight == nil {
-		ht = img.Height.ToPT()
+		ht = imght
 	} else {
 		ht = requestedHeight.ToPT()
 	}

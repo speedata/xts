@@ -61,6 +61,7 @@ func (xd *xtsDocument) applyLayoutStylesheet(classname string, id string, style 
 	}
 
 	htmlstring := strings.Join(htmlstrings, "")
+	slog.Info("layout fragment", "html", htmlstring, "class", classname, "id", id)
 	doc, err := xd.layoutcss.ProcessHTMLChunk(htmlstring)
 	if err != nil {
 		return nil, err
@@ -100,10 +101,10 @@ func (xd *xtsDocument) parseHTMLText(input string) (*html.Node, error) {
 // font size and the second length is the leading.
 func (xd *xtsDocument) getFontSizeLeading(size string) (fontsize bag.ScaledPoint, leading bag.ScaledPoint, err error) {
 	if sp := strings.Split(size, "/"); len(sp) == 2 {
-		if fontsize, err = bag.Sp(sp[0]); err != nil {
+		if fontsize, err = bag.SP(sp[0]); err != nil {
 			return
 		}
-		if leading, err = bag.Sp(sp[1]); err != nil {
+		if leading, err = bag.SP(sp[1]); err != nil {
 			return
 		}
 	} else {
@@ -126,10 +127,17 @@ func debugFrontendText(fe *frontend.Text, level int) {
 	}
 }
 
+func nodeToString(n *html.Node) string {
+	var b strings.Builder
+	_ = html.Render(&b, n)
+	return b.String()
+}
+
 // Get the values from the child elements of B, Paragraph and its ilk and return
 // the equivalent HTML structure.
-func (xd *xtsDocument) getTextvalues(tagname string, seq xpath.Sequence, attributes map[string]string, cmdname string, line int) (*html.Node, error) {
+func (xd *xtsDocument) textValuesToHTMLNode(tagname string, seq xpath.Sequence, attributes map[string]string, cmdname string, line int) (*html.Node, error) {
 	n := &html.Node{}
+
 	n.Data = tagname
 	n.Type = html.ElementNode
 	for k, v := range attributes {
@@ -139,11 +147,12 @@ func (xd *xtsDocument) getTextvalues(tagname string, seq xpath.Sequence, attribu
 	if len(seq) == 0 && tagname == "p" {
 		cd := &html.Node{}
 		cd.Type = html.TextNode
+		// zero-width space to ensure that empty paragraphs get rendered
 		cd.Data = "\u200B"
 		n.AppendChild(cd)
 		return n, nil
 	}
-	for _, itm := range seq {
+	for i, itm := range seq {
 		switch t := itm.(type) {
 		case string:
 			cd := &html.Node{}
@@ -177,6 +186,7 @@ func (xd *xtsDocument) getTextvalues(tagname string, seq xpath.Sequence, attribu
 			cd.Data = fmt.Sprintf("%d", t)
 			n.AppendChild(cd)
 		default:
+			slog.Debug("seq item", "i", i, "type", fmt.Sprintf("%T", t))
 			slog.Error(fmt.Sprintf("%s (line %d): unknown type %T (getTextvalues)", cmdname, line, t))
 		}
 	}
@@ -201,6 +211,49 @@ var (
 	scaledPointsType    = reflect.TypeOf(dummySP)
 	scaledPointsPtrType = reflect.TypeOf(&dummySP)
 )
+
+var voidElements = map[string]bool{
+	"area": true, "base": true, "br": true, "col": true, "hr": true, "img": true, "input": true,
+	"link": true, "meta": true, "param": true, "command": true, "keygen": true, "source": true,
+}
+
+// reconstructHTMLText turns a goxml.Element tree into an *html.Node tree.
+func reconstructHTMLText(elt *goxml.Element) *html.Node {
+	if elt == nil {
+		return nil
+	}
+
+	eltname := strings.ToLower(elt.Name)
+	n := &html.Node{
+		Type: html.ElementNode,
+		Data: eltname,
+	}
+	for _, attr := range elt.Attributes() {
+		key := attr.Name
+		if attr.Prefix != "" {
+			key = attr.Prefix + ":" + key
+		}
+		n.Attr = append(n.Attr, html.Attribute{Key: key, Val: attr.Value})
+	}
+
+	children := elt.Children()
+	if len(children) == 0 && voidElements[eltname] {
+		return n
+	}
+
+	for _, cld := range children {
+		switch t := cld.(type) {
+		case goxml.CharData:
+			n.AppendChild(&html.Node{Type: html.TextNode, Data: string(t.Contents)})
+		case *goxml.Element:
+			if cn := reconstructHTMLText(t); cn != nil {
+				n.AppendChild(cn)
+			}
+		}
+	}
+
+	return n
+}
 
 // getXMLAttributes fills the struct at v with the attribute values of the
 // current element.
@@ -246,7 +299,7 @@ func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 	var allowXPath bool
 	var attValue string
 
-	for i := 0; i < valNumFields; i++ {
+	for i := range valNumFields {
 		mustexist = false
 		allowXPath = true
 		dflt = ""
@@ -325,7 +378,7 @@ func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 						wd = xd.currentGrid.height(coord(cols))
 					}
 				} else {
-					wd, err = bag.Sp(attValue)
+					wd, err = bag.SP(attValue)
 					if err != nil {
 						return err
 					}
@@ -340,7 +393,7 @@ func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 						wd = xd.currentGrid.height(coord(cols))
 					}
 				} else {
-					wd, err = bag.Sp(attValue)
+					wd, err = bag.SP(attValue)
 					if err != nil {
 						return err
 					}
@@ -412,7 +465,7 @@ func getFourValuesSP(str string) (map[string]bag.ScaledPoint, error) {
 	fields := strings.Fields(str)
 	fieldsSP := make([]bag.ScaledPoint, len(fields))
 	for i, f := range fields {
-		if fieldsSP[i], err = bag.Sp(f); err != nil {
+		if fieldsSP[i], err = bag.SP(f); err != nil {
 			return nil, err
 		}
 	}

@@ -19,7 +19,7 @@ var (
 
 // DoThings creates the markdown documentation
 func DoThings(cfg *config.Config) error {
-	refdir = filepath.Join(cfg.Basedir(), "..", "xts-docs", "docs", "reference", "cmdreference", ".ref")
+	refdir = filepath.Join(cfg.Basedir(), "..", "xts-docs", "ref")
 	srcpath = filepath.Join(cfg.Basedir(), "doc")
 
 	r, err := os.Open(filepath.Join(cfg.Basedir(), "doc", "commands-xml", "commands.xml"))
@@ -87,7 +87,7 @@ func childelements(children []*commandsxml.Command) string {
 func atttypeinfo(att *commandsxml.Attribute) string {
 	atttypesEn := map[string]string{
 		"boolean":                "yes or no",
-		"xpath":                  `[XPath expressions](../../../manual/xpath.md)`,
+		"xpath":                  `[XPath expressions](/manual/xpath.md)`,
 		"numberorlength":         "number or length",
 		"numberlengthorstar":     "Number, length or *-numbers",
 		"yesnolength":            "yes, no or length",

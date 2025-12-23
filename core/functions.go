@@ -426,7 +426,7 @@ func fnToUnit(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, 
 	}
 	fn := args[0].Stringvalue()
 	unit := args[1].Stringvalue()
-	val, err := bag.Sp(fn)
+	val, err := bag.SP(fn)
 	if err != nil {
 		return nil, err
 	}

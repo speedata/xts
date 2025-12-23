@@ -22,7 +22,7 @@ import (
 var (
 	// XPath escape sequence for attributes
 	attributeValueRE   = regexp.MustCompile(`\{(.*?)\}`)
-	oneCM              = bag.MustSp("1cm")
+	oneCM              = bag.MustSP("1cm")
 	destinationNumbers = make(chan int)
 	// Version is a semantic version
 	Version string
@@ -162,16 +162,16 @@ func (xd *xtsDocument) setupPage() {
 		return
 	}
 	inSetupPage = true
-	p, f, err := newPage(xd)
+	p, atPageCreation, err := newPage(xd)
 	if err != nil {
 		slog.Error(err.Error())
 	}
-	slog.Info(fmt.Sprintf("Page %d type %s created wd: %d, ht: %d grid cells", p.pagenumber, p.pagetype.name, p.pagegrid.nx, p.pagegrid.ny))
+	slog.Info("Page created", "wd", p.pagegrid.nx, "ht", p.pagegrid.ny, "Page", p.pagenumber, "type", p.pagetype.name)
 	xd.pages = append(xd.pages, p)
 	xd.currentPage = p
 	inSetupPage = false
-	if f != nil {
-		f()
+	if atPageCreation != nil {
+		atPageCreation()
 	}
 }
 
@@ -209,7 +209,10 @@ func RunXTS(cfg *XTSConfig) error {
 		return err
 	}
 	bag.SetLogger(slog.Default())
-	d.cssbuilder = htmlbag.New(d.document, d.layoutcss)
+	d.cssbuilder, err = htmlbag.New(d.document, d.layoutcss)
+	if err != nil {
+		return err
+	}
 
 	if cfg.SuppressInfo {
 		d.document.SetSuppressInfo(true)
@@ -224,6 +227,11 @@ func RunXTS(cfg *XTSConfig) error {
 			d.SetVTrace(VTraceAllocation)
 		}
 	}
+	if d.cfg.DumpFile != nil {
+		slog.Info("XML dump will be written to output file")
+		d.document.Doc.DumpOutput = true
+	}
+
 	d.document.Doc.CompressLevel = 9
 	slog.Info("Setup defaults ...")
 

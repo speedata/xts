@@ -508,7 +508,7 @@ func dothings() error {
 			}
 		}
 	finished:
-		dur := time.Now().Sub(starttime)
+		dur := time.Since(starttime)
 		slog.Info(fmt.Sprintf("Finished in %s", formatDuration(dur)))
 		fmt.Printf("Finished with %s and %s in %s.\nOutput written to %s (%s, %d bytes)\n  and protocol file to %s.\n", pluralize(errCount, "error"), pluralize(warnCount, "warning"), formatDuration(dur), configuration.Jobname+".pdf", pluralize(info.Pages, "page"), info.FileSize, protocolFilename)
 		if errCount > 0 {

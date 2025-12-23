@@ -7,6 +7,7 @@
   <define name="Switchcontents">
     <optional><cmd name="Column"/></optional>
     <optional><cmd name="ClearPage"/></optional>
+    <optional><cmd name="HTML"/></optional>
     <optional><cmd name="LoadDataset"/></optional>
     <optional><cmd name="Loop"/></optional>
     <optional><cmd name="Li"/></optional>
@@ -67,6 +68,7 @@
         <cmd name="Action"/>
         <cmd name="B"/>
         <cmd name="Br"/>
+        <cmd name="HTML"/>
         <cmd name="I"/>
         <cmd name="Ol"/>
         <cmd name="U"/>
@@ -2392,16 +2394,38 @@
     <childelements>
       <reference name="Textvalues"/>
     </childelements>
+    <attribute en="class" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS class for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS Klasse für dieses Element.</para>
+      </description>
+    </attribute>
+    <attribute en="id" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS id for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS id für dieses Element.</para>
+      </description>
+    </attribute>
+    <attribute en="style" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS style for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS Stil für dieses Element.</para>
+      </description>
+    </attribute>
     <example xml:lang="en">
       <listing><![CDATA[<PlaceObject>
   <Textblock>
-    <Paragraph>
-      <Ol>
-        <Li><Value>First item</Value></Li>
-        <Li><Value>Second item</Value></Li>
-        <Li><Value>Third item</Value></Li>
-      </Ol>
-    </Paragraph>
+    <Ol>
+      <Li><Value>First item</Value></Li>
+      <Li><Value>Second item</Value></Li>
+      <Li><Value>Third item</Value></Li>
+    </Ol>
   </Textblock>
 </PlaceObject>
 ]]></listing>
@@ -2409,13 +2433,11 @@
     <example xml:lang="de">
       <listing><![CDATA[<PlaceObject>
   <Textblock>
-    <Paragraph>
-      <Ol>
-        <Li><Value>Erster Eintrag</Value></Li>
-        <Li><Value>Zweiter Eintrag</Value></Li>
-        <Li><Value>Dritter Eintrag</Value></Li>
-      </Ol>
-    </Paragraph>
+    <Ol>
+      <Li><Value>Erster Eintrag</Value></Li>
+      <Li><Value>Zweiter Eintrag</Value></Li>
+      <Li><Value>Dritter Eintrag</Value></Li>
+    </Ol>
   </Textblock>
 </PlaceObject>
 ]]></listing>
@@ -2814,7 +2836,6 @@
   </command>
 
 
-
   <!--
       ****************************************************************************************
       * NextFRame
@@ -2923,24 +2944,38 @@
         </interleave>
       </oneOrMore>
     </childelements>
-    <attribute en="fontfamily" type="text" optional="yes">
+    <attribute en="class" optional="yes" type="text">
       <description xml:lang="en">
-        <para>The name of the font family for the paragraph. The default is »text« (lowercase t).</para>
+        <para>CSS class for this element.</para>
       </description>
       <description xml:lang="de">
-        <para>Name der Schriftfamilie. Voreinstellung ist »text« (mit kleinem t).</para>
+        <para>CSS Klasse für dieses Element.</para>
       </description>
     </attribute>
-      <example xml:lang="en">
+    <attribute en="id" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS id for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS id für dieses Element.</para>
+      </description>
+    </attribute>
+    <attribute en="style" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS style for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS Stil für dieses Element.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
       <listing><![CDATA[<PlaceObject>
   <Textblock>
-    <Paragraph>
-      <Ol>
-        <Li><Value>First item</Value></Li>
-        <Li><Value>Second item</Value></Li>
-        <Li><Value>Third item</Value></Li>
-      </Ol>
-    </Paragraph>
+    <Ol>
+      <Li><Value>First item</Value></Li>
+      <Li><Value>Second item</Value></Li>
+      <Li><Value>Third item</Value></Li>
+    </Ol>
   </Textblock>
 </PlaceObject>
 ]]></listing>
@@ -2948,13 +2983,11 @@
     <example xml:lang="de">
       <listing><![CDATA[<PlaceObject>
   <Textblock>
-    <Paragraph>
-      <Ol>
-        <Li><Value>Erster Eintrag</Value></Li>
-        <Li><Value>Zweiter Eintrag</Value></Li>
-        <Li><Value>Dritter Eintrag</Value></Li>
-      </Ol>
-    </Paragraph>
+    <Ol>
+      <Li><Value>Erster Eintrag</Value></Li>
+      <Li><Value>Zweiter Eintrag</Value></Li>
+      <Li><Value>Dritter Eintrag</Value></Li>
+    </Ol>
   </Textblock>
 </PlaceObject>
 ]]></listing>
@@ -4375,6 +4408,30 @@
         <para>Der Bereich, den die Tabelle (maximal) im Raster belegt. Angabe in Rasterzellen oder absoluten Längenangaben. Voreinstellung ist der verfügbare Platz.</para>
       </description>
     </attribute>
+    <attribute en="class" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS class for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS Klasse für dieses Element.</para>
+      </description>
+    </attribute>
+    <attribute en="id" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS id for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS id für dieses Element.</para>
+      </description>
+    </attribute>
+    <attribute en="style" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS style for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS Stil für dieses Element.</para>
+      </description>
+    </attribute>
     <remark xml:lang="en">
       <para>The table cells may contain Paragraphs, Images and other objects that are allowed in <cmd name="PlaceObject"/>.</para>
     </remark>
@@ -4512,9 +4569,11 @@
           <cmd name="ForAll"/>
           <cmd name="Image"/>
           <cmd name="Loop"/>
+          <cmd name="Ol"/>
           <cmd name="Paragraph"/>
           <cmd name="Switch"/>
           <cmd name="Table"/>
+          <cmd name="Ul"/>
           <cmd name="Value"/>
         </choice>
       </zeroOrMore>
@@ -4615,7 +4674,10 @@
           <cmd name="Action"/>
           <cmd name="ForAll"/>
           <cmd name="Bookmark"/>
+          <cmd name="HTML"/>
+          <cmd name="Ol"/>
           <cmd name="Paragraph"/>
+          <cmd name="Ul"/>
           <cmd name="Value"/>
         </choice>
       </oneOrMore>
@@ -4895,14 +4957,30 @@
         </interleave>
       </oneOrMore>
    </childelements>
-   <attribute en="fontfamily" type="text" optional="yes">
-    <description xml:lang="en">
-      <para>The name of the font family for the paragraph. The default is »text« (lowercase t).</para>
-    </description>
-    <description xml:lang="de">
-      <para>Name der Schriftfamilie. Voreinstellung ist »text« (mit kleinem t).</para>
-    </description>
-  </attribute>
+   <attribute en="class" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS class for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS Klasse für dieses Element.</para>
+      </description>
+    </attribute>
+    <attribute en="id" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS id for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS id für dieses Element.</para>
+      </description>
+    </attribute>
+    <attribute en="style" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS style for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS Stil für dieses Element.</para>
+      </description>
+   </attribute>
    <example xml:lang="en">
       <listing><![CDATA[<PlaceObject>
   <Textblock>
@@ -5026,6 +5104,50 @@ Message: "$i is: 3.000000"]]></listing>
   </command>
 
 
+  <!--
+      ****************************************************************************************
+      * HTML
+      ****************************************************************************************
+  -->
+  <command en="HTML">
+    <description xml:lang="en">
+      <para>Insert HTML retrieved via an XPath expression.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Fügt HTML ein, das per XPath-Ausdruck ermittelt wurde.</para>
+    </description>
+    <childelements>
+      <reference name="html" />
+    </childelements>
+    <attribute en="select" type="xpath" optional="yes">
+      <description xml:lang="en">
+        <para>XPath expression that yields an XML/HTML fragment.</para>
+      </description>
+      <description xml:lang="de">
+        <para>XPath-Ausdruck, der ein XML/HTML-Fragment liefert.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<Record element="data">
+  <PlaceObject>
+    <Textblock>
+      <HTML select="/data/htmlcontent"/>
+    </Textblock>
+  </PlaceObject>
+</Record>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Record element="data">
+  <PlaceObject>
+    <Textblock>
+      <HTML select="/data/htmlcontent"/>
+    </Textblock>
+  </PlaceObject>
+</Record>
+]]></listing>
+    </example>
+  </command>
 
   <!--
       ****************************************************************************************
@@ -5034,13 +5156,13 @@ Message: "$i is: 3.000000"]]></listing>
   -->
   <command en="Value">
     <description xml:lang="en">
-      <para>Contains a text value that is passed to the surrounding element.</para>
+      <para>Contains a text value that is passed to the surrounding element (always as plain text).</para>
     </description>
     <description xml:lang="de">
-      <para>Beinhaltet einen Textinhalt, der an das umgebende Element übergeben wird.</para>
+      <para>Beinhaltet einen Textinhalt, der an das umgebende Element übergeben wird (immer als reiner Text).</para>
     </description>
     <childelements>
-      <reference name="html"/>
+      <text></text>
     </childelements>
     <attribute en="select" type="xpath" optional="yes">
       <description xml:lang="en">
@@ -5052,18 +5174,31 @@ Message: "$i is: 3.000000"]]></listing>
     </attribute>
     <remark xml:lang="en">
       <para>The value can be passed to the outer element either as an XPath expression or as the contents of this element.</para>
-      <para>Containing Br-tags will be interpreted as newlines.</para>
+      <para>The result is always treated as text (markup is not preserved).</para>
     </remark>
     <remark xml:lang="de">
       <para>Der Inhalt kann entweder als XPath-Ausdruck im Attribut select oder als Elementinhalt angegeben werden.</para>
-      <para>Innenliegende Br-Tags werden als Zeilenumbruch interpretiert.</para>
+      <para>Das Ergebnis wird stets als Text interpretiert (Markup bleibt nicht erhalten).</para>
     </remark>
     <example xml:lang="en">
       <listing><![CDATA[<Record element="data">
   <PlaceObject>
    <Textblock>
      <Paragraph>
-       <Value select="@name"/><Value>, symbol=</Value><Value select="@symbol"/>
+       <Value select="@name"/>
+       <Value>, symbol=</Value>
+       <Value select="@symbol"/>
+     </Paragraph>
+   </Textblock>
+  </PlaceObject>
+</Record>
+]]></listing>
+      <para>hich is the same as</para>
+      <listing><![CDATA[<Record element="data">
+  <PlaceObject>
+   <Textblock>
+     <Paragraph>
+       <Value select="concat(@name, ', symbol=', @symbol)"/>
      </Paragraph>
    </Textblock>
   </PlaceObject>
@@ -5071,11 +5206,29 @@ Message: "$i is: 3.000000"]]></listing>
 ]]></listing>
     </example>
     <example xml:lang="de">
-      <listing><![CDATA[<Textblock>
-  <Paragraph>
-    <Value select="@name"/><Value>, Symbol=</Value><Value select="@symbol" />
-  </Paragraph>
-</Textblock>]]></listing>
+      <listing><![CDATA[<Record element="data">
+  <PlaceObject>
+   <Textblock>
+     <Paragraph>
+       <Value select="@name"/>
+       <Value>, symbol=</Value>
+       <Value select="@symbol"/>
+     </Paragraph>
+   </Textblock>
+  </PlaceObject>
+</Record>
+]]></listing>
+      <para>das dasselbe ist wie</para>
+      <listing><![CDATA[<Record element="data">
+  <PlaceObject>
+   <Textblock>
+     <Paragraph>
+       <Value select="concat(@name, ', symbol=', @symbol)"/>
+     </Paragraph>
+   </Textblock>
+  </PlaceObject>
+</Record>
+]]></listing>
     </example>
   </command>
 

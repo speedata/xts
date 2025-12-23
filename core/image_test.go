@@ -4,17 +4,16 @@ import (
 	"testing"
 
 	"github.com/boxesandglue/boxesandglue/backend/bag"
-	bagimage "github.com/boxesandglue/boxesandglue/backend/image"
 )
 
 func TestImageSize(t *testing.T) {
-	img := &bagimage.Image{}
+
 	fiftypt := 50 * bag.Factor
 	seventypt := 70 * bag.Factor
 	hundretpt := 100 * bag.Factor
 	twohundretpt := 200 * bag.Factor
-	img.Width = hundretpt
-	img.Height = seventypt
+	naturalWidth := hundretpt
+	naturalHeight := seventypt
 
 	testdata := []struct {
 		wdWant  bag.ScaledPoint
@@ -36,7 +35,7 @@ func TestImageSize(t *testing.T) {
 	}
 	for _, tc := range testdata {
 
-		wd, ht := calculateImageSize(img, tc.wd, tc.ht, tc.minwd, tc.maxwd, tc.minht, tc.maxht, tc.stretch)
+		wd, ht := calculateImageSize(naturalWidth, naturalHeight, tc.wd, tc.ht, tc.minwd, tc.maxwd, tc.minht, tc.maxht, tc.stretch)
 		if wd != tc.wdWant || ht != tc.htWant {
 			t.Errorf("calculateImageSize: got (%s,%s), want (%s,%s)", wd, ht, tc.wdWant, tc.htWant)
 		}

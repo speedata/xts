@@ -10,7 +10,7 @@ else
 	@versions["xts_version"]="1.0.0"
 end
 
-installdir = Pathname.new(__FILE__).join("..")
+INSTALDIR = Pathname.new(__dir__).freeze
 
 @xts_version = @versions['xts_version']
 
@@ -24,7 +24,7 @@ task :default do
 end
 
 task :xtshelper  do
-	sh "go build -ldflags \"-X main.version=#{@xts_version} -X main.basedir=#{installdir} \" -o bin/xtshelper github.com/speedata/xts/helper"
+	sh "go build -ldflags \"-X main.version=#{@xts_version} -X main.basedir=#{INSTALDIR} \" -o bin/xtshelper github.com/speedata/xts/helper"
 end
 
 
@@ -46,7 +46,7 @@ end
 
 desc "Run quality assurance"
 task :qa do
-	sh "#{installdir}/bin/xts compare #{installdir}/qa"
+	sh "#{INSTALDIR}/bin/xts compare #{INSTALDIR}/qa"
 end
 
 desc "Clean QA intermediate files"

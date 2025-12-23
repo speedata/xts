@@ -522,7 +522,7 @@ func (c *Command) CmdLink() string {
 	tmp := url.URL{Path: strings.ToLower(c.Name)}
 	filenameSansExtension := tmp.String()
 	filenameSansExtension = strings.Replace(filenameSansExtension, "-", "_", -1)
-	return "../" + filenameSansExtension + ".md"
+	return "../" + filenameSansExtension
 }
 
 // DescriptionMarkdown returns the description of the command as a asciidoctor

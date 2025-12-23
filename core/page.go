@@ -130,7 +130,7 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 	}
 	g.setPage(pg)
 
-	var f func()
+	var atPageCreation func()
 	xd.currentGrid = pg.pagegrid
 	if pt.layoutElt != nil {
 		for _, node := range pt.layoutElt.Children() {
@@ -139,7 +139,7 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 				switch t.Name {
 				case "AtPageCreation":
 					slog.Debug(fmt.Sprintf("Call %s (line %d)", t.Name, t.Line))
-					f = func() { dispatch(xd, t) }
+					atPageCreation = func() { dispatch(xd, t) }
 				case "AtPageShipout":
 					pg.atPageShipout = func() {
 						slog.Debug(fmt.Sprintf("Call %s (line %d)", t.Name, t.Line))
@@ -192,7 +192,7 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 	docPage := pg.bagPage
 	docPage.Userdata = make(map[any]any)
 	docPage.Userdata["xtspage"] = pg
-	return pg, f, nil
+	return pg, atPageCreation, nil
 }
 
 func (p *page) genMarkerIDs(ids chan int) {

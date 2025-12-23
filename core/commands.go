@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"os"
@@ -52,6 +53,7 @@ func init() {
 		"ForAll":           cmdForall,
 		"Function":         cmdFunction,
 		"Group":            cmdGroup,
+		"HTML":             cmdHTML,
 		"I":                cmdI,
 		"Image":            cmdImage,
 		"Li":               cmdLi,
@@ -127,7 +129,7 @@ func cmdA(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	if err != nil {
 		return nil, err
 	}
-	n, err := xd.getTextvalues("a", seq, map[string]string{}, "cmdA", layoutelt.Line)
+	n, err := xd.textValuesToHTMLNode("a", seq, map[string]string{}, "cmdA", layoutelt.Line)
 	n.Attr = append(n.Attr, html.Attribute{Key: "href", Val: attValues.Href})
 	n.Attr = append(n.Attr, html.Attribute{Key: "link", Val: attValues.Link})
 	return xpath.Sequence{n}, err
@@ -193,12 +195,12 @@ func cmdB(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	if err != nil {
 		return nil, err
 	}
-	n, err := xd.getTextvalues("b", seq, map[string]string{}, "cmdB", layoutelt.Line)
+	n, err := xd.textValuesToHTMLNode("b", seq, map[string]string{}, "cmdB", layoutelt.Line)
 	return xpath.Sequence{n}, err
 }
 
 func cmdBr(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
-	n, err := xd.getTextvalues("br", xpath.Sequence{}, map[string]string{}, "cmdBr", layoutelt.Line)
+	n, err := xd.textValuesToHTMLNode("br", xpath.Sequence{}, map[string]string{}, "cmdBr", layoutelt.Line)
 	return xpath.Sequence{n}, err
 }
 
@@ -384,7 +386,7 @@ func cmdCircle(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 
 	if attValues.Borderwidth == nil {
 		if bgc, ok := attrs["border-width"]; ok {
-			borderwidth = bag.MustSp(bgc)
+			borderwidth = bag.MustSP(bgc)
 		}
 	} else {
 		borderwidth = *attValues.Borderwidth
@@ -690,12 +692,56 @@ func cmdGroup(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	return nil, nil
 }
 
+func cmdHTML(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Select *string
+	}{}
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	var eval xpath.Sequence
+	if attValues.Select == nil {
+		str := layoutelt.InnerXML()
+		// parse html in str
+		n, err := html.Parse(strings.NewReader(str))
+		if err != nil {
+			slog.Error(fmt.Sprintf("ProcessNode (line %d): error parsing inner HTML %s", layoutelt.Line, err))
+			return nil, err
+		}
+		eval = xpath.Sequence{n}
+	} else {
+
+		eval, err = evaluateXPath(xd, layoutelt.Namespaces, *attValues.Select)
+		if err != nil {
+			slog.Error(fmt.Sprintf("ProcessNode (line %d): error parsing select XPath expression %s", layoutelt.Line, err))
+			return nil, err
+		}
+	}
+	for _, itm := range eval {
+		switch t := itm.(type) {
+		case *goxml.Element:
+			n := reconstructHTMLText(t)
+			if n == nil {
+				return nil, fmt.Errorf("HTML (line %d): empty element", layoutelt.Line)
+			}
+			return xpath.Sequence{n}, nil
+		case *html.Node:
+			return xpath.Sequence{t}, nil
+		default:
+			slog.Error(fmt.Sprintf("HTML (line %d): don't know how to process %T", layoutelt.Line, t))
+		}
+	}
+
+	return nil, nil
+}
+
 func cmdI(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	seq, err := dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
-	n, err := xd.getTextvalues("i", seq, map[string]string{}, "cmdI", layoutelt.Line)
+	n, err := xd.textValuesToHTMLNode("i", seq, map[string]string{}, "cmdI", layoutelt.Line)
 	return xpath.Sequence{n}, err
 }
 
@@ -765,11 +811,28 @@ func cmdImage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 }
 
 func cmdLi(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Class string
+		ID    string
+		Style string
+	}{}
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+
 	seq, err := dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
-	n, err := xd.getTextvalues("li", seq, map[string]string{}, "cmdLi", layoutelt.Line)
+
+	attributes := map[string]string{
+		"class": attValues.Class,
+		"id":    attValues.ID,
+		"style": attValues.Style,
+	}
+
+	n, err := xd.textValuesToHTMLNode("li", seq, attributes, "cmdLi", layoutelt.Line)
 	return xpath.Sequence{n}, err
 }
 
@@ -965,7 +1028,7 @@ func cmdMessage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	if t := attValues.Type; t != nil {
 		switch *t {
 		case "notice":
-			slog.Log(nil, LevelNotice, eval.Stringvalue(), "line", layoutelt.Line)
+			slog.Log(context.Background(), LevelNotice, eval.Stringvalue(), "line", layoutelt.Line)
 		case "debug":
 			f = slog.Debug
 		case "warning":
@@ -1125,7 +1188,7 @@ func cmdOl(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		"style": attValues.Style,
 	}
 
-	n, err := xd.getTextvalues("ol", seq, attributes, "cmdol", layoutelt.Line)
+	n, err := xd.textValuesToHTMLNode("ol", seq, attributes, "cmdol", layoutelt.Line)
 	return xpath.Sequence{n}, err
 }
 
@@ -1183,6 +1246,7 @@ func cmdPageformat(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 	return xpath.Sequence{}, nil
 }
 
+// cmdParagraph creates an HTML structure for a paragraph
 func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
@@ -1207,7 +1271,7 @@ func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		"style": attValues.Style,
 	}
 
-	n, err := xd.getTextvalues("p", seq, attributes, "cmdParagraph", layoutelt.Line)
+	n, err := xd.textValuesToHTMLNode("p", seq, attributes, "cmdParagraph", layoutelt.Line)
 	return xpath.Sequence{n}, err
 }
 
@@ -1235,7 +1299,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	var area *area
 	var ok bool
 	if area, ok = xd.currentGrid.areas[attValues.Area]; !ok {
-		return nil, newTypesettingErrorFromStringf(fmt.Sprintf("area %s not found", attValues.Area))
+		return nil, newTypesettingErrorFromStringf("area %s not found", attValues.Area)
 	}
 
 	pos := positioningUnknown
@@ -1344,10 +1408,10 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 			rowInt = int(row)
 		}
 	} else if pos == positioningUnknown {
-		if columnLength, err = bag.Sp(attValues.Column); err == nil {
+		if columnLength, err = bag.SP(attValues.Column); err == nil {
 			pos = positioningAbsolute
 		}
-		if rowLength, err = bag.Sp(attValues.Row); err == nil {
+		if rowLength, err = bag.SP(attValues.Row); err == nil {
 			pos = positioningAbsolute
 		}
 	}
@@ -1432,7 +1496,7 @@ func cmdSaveDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	root.Name = attValues.Elementname
 	for _, itm := range eval {
 		if elt, ok := itm.(goxml.Element); ok {
-			root.Append(elt)
+			root.Append(&elt)
 		}
 	}
 
@@ -1542,7 +1606,7 @@ func cmdSpan(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 		"id":    attValues.ID,
 		"style": attValues.Style,
 	}
-	n, err := xd.getTextvalues("span", seq, attributes, "cmdSpan", layoutelt.Line)
+	n, err := xd.textValuesToHTMLNode("span", seq, attributes, "cmdSpan", layoutelt.Line)
 
 	return xpath.Sequence{n}, err
 }
@@ -1621,6 +1685,9 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	xd.setupPage()
 	var err error
 	attValues := &struct {
+		Class string
+		ID    string
+		Style string
 		Width bag.ScaledPoint
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
@@ -1644,6 +1711,11 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	tableNode := &html.Node{
 		Data: "table",
 		Type: html.ElementNode,
+	}
+	tableNode.Attr = []html.Attribute{
+		{Key: "class", Val: attValues.Class},
+		{Key: "id", Val: attValues.ID},
+		{Key: "style", Val: attValues.Style},
 	}
 	tableBodyNode := &html.Node{
 		Data: "tbody",
@@ -1782,6 +1854,7 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	root.AppendChild(head)
 	root.AppendChild(body)
 	doc.AppendChild(root)
+
 	vlistFormatter, err := xd.decodeHTMLFromHTMLNode(doc)
 	if err != nil {
 		return nil, newTypesettingError(err)
@@ -1972,7 +2045,7 @@ func cmdU(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		"style": attValues.Style,
 	}
 
-	n, err := xd.getTextvalues("u", seq, attributes, "cmdU", layoutelt.Line)
+	n, err := xd.textValuesToHTMLNode("u", seq, attributes, "cmdU", layoutelt.Line)
 	return xpath.Sequence{n}, err
 }
 
@@ -1996,7 +2069,7 @@ func cmdUl(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		"id":    attValues.ID,
 		"style": attValues.Style,
 	}
-	n, err := xd.getTextvalues("ul", seq, attributes, "cmdul", layoutelt.Line)
+	n, err := xd.textValuesToHTMLNode("ul", seq, attributes, "cmdul", layoutelt.Line)
 	return xpath.Sequence{n}, err
 }
 
@@ -2034,6 +2107,7 @@ func cmdUntil(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	return ret, nil
 }
 
+// cmdValue gets the text value of its contents of the text value of the XPath expression
 func cmdValue(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
@@ -2048,7 +2122,7 @@ func cmdValue(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		if err != nil {
 			return nil, newTypesettingError(fmt.Errorf("Value (line %d): %w", layoutelt.Line, err))
 		}
-		return eval, nil
+		return xpath.Sequence{eval.Stringvalue()}, nil
 	}
 	seq := xpath.Sequence{}
 	for _, cld := range layoutelt.Children() {
@@ -2068,8 +2142,8 @@ func cmdValue(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 			seq = append(seq, cld)
 		}
 	}
-
-	return seq, nil
+	txt := seq.Stringvalue()
+	return xpath.Sequence{txt}, nil
 }
 
 func cmdWhile(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
