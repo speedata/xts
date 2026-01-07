@@ -5,9 +5,9 @@ go 1.24.0
 require (
 	github.com/alecthomas/chroma v0.10.0
 	github.com/boxesandglue/baseline-pdf v1.0.11
-	github.com/boxesandglue/boxesandglue v0.1.13
+	github.com/boxesandglue/boxesandglue v0.1.14
 	github.com/boxesandglue/csshtml v0.0.1
-	github.com/boxesandglue/htmlbag v0.0.2
+	github.com/boxesandglue/htmlbag v0.0.3
 	github.com/boxesandglue/textlayout v1.0.5
 	github.com/cjoudrey/gluahttp v0.0.0-20201111170219-25003d9adfa9
 	github.com/gammazero/workerpool v1.1.3

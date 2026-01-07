@@ -269,7 +269,6 @@ func cmdBookmark(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, err
 	}
 	var eval xpath.Sequence
 	eval, err = evaluateXPath(xd, layoutelt.Namespaces, attValues.Select)
-
 	if err != nil {
 		return nil, newTypesettingErrorFromStringf("Bookmark (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
 	}
@@ -433,7 +432,9 @@ func cmdColumn(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 		Data: "col",
 		Type: html.ElementNode,
 	}
-	colNode.Attr = append(colNode.Attr, html.Attribute{Key: "width", Val: attValues.Width})
+	// Store width in data-width attribute for processing by htmlbag
+	// This handles both fixed widths (e.g., "3cm") and flexible widths (e.g., "*", "2*")
+	colNode.Attr = append(colNode.Attr, html.Attribute{Key: "data-width", Val: attValues.Width})
 	return xpath.Sequence{colNode}, nil
 }
 
@@ -590,7 +591,6 @@ func cmdElement(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 		default:
 			slog.Error(fmt.Sprintf("Element (line %d): don't know how to append %T", layoutelt.Line, t))
 		}
-
 	}
 	return xpath.Sequence{elt}, nil
 }
@@ -692,10 +692,41 @@ func cmdGroup(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	return nil, nil
 }
 
+// expandTextValueTemplates evaluates {expr} expressions in text content (XSLT 3.0 style).
+// Escaped braces {{ and }} are converted to literal { and }.
+func expandTextValueTemplates(xd *xtsDocument, layoutelt *goxml.Element, str string) string {
+	// First, replace escaped braces with placeholders
+	const leftPlaceholder = "\x00LEFT_BRACE\x00"
+	const rightPlaceholder = "\x00RIGHT_BRACE\x00"
+
+	str = strings.ReplaceAll(str, "{{", leftPlaceholder)
+	str = strings.ReplaceAll(str, "}}", rightPlaceholder)
+
+	// Evaluate {expr} expressions
+	str = attributeValueRE.ReplaceAllStringFunc(str, func(match string) string {
+		// Strip curly braces to get the expression
+		expr := match[1 : len(match)-1]
+		fmt.Println(`~~> expr`, expr)
+		seq, err := evaluateXPath(xd, layoutelt.Namespaces, expr)
+		if err != nil {
+			slog.Error(fmt.Sprintf("HTML expand-text (line %d): error evaluating expression {%s}: %s", layoutelt.Line, expr, err))
+			return ""
+		}
+		return seq.Stringvalue()
+	})
+
+	// Replace placeholders with literal braces
+	str = strings.ReplaceAll(str, leftPlaceholder, "{")
+	str = strings.ReplaceAll(str, rightPlaceholder, "}")
+
+	return str
+}
+
 func cmdHTML(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
-		Select *string
+		Select     *string
+		ExpandText string `sdxml:"default:no"`
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -703,13 +734,49 @@ func cmdHTML(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 	var eval xpath.Sequence
 	if attValues.Select == nil {
 		str := layoutelt.InnerXML()
+
+		// If expand-text is enabled, evaluate {expr} expressions
+		if attValues.ExpandText == "yes" {
+			str = expandTextValueTemplates(xd, layoutelt, str)
+		}
+
 		// parse html in str
 		n, err := html.Parse(strings.NewReader(str))
 		if err != nil {
 			slog.Error(fmt.Sprintf("ProcessNode (line %d): error parsing inner HTML %s", layoutelt.Line, err))
 			return nil, err
 		}
-		eval = xpath.Sequence{n}
+		// html.Parse creates a full document structure: Document -> html -> head + body
+		// We need to extract the children of body to get the actual content
+		var bodyNode *html.Node
+		var findBody func(*html.Node)
+		findBody = func(node *html.Node) {
+			if node.Type == html.ElementNode && node.Data == "body" {
+				bodyNode = node
+				return
+			}
+			for c := node.FirstChild; c != nil; c = c.NextSibling {
+				findBody(c)
+				if bodyNode != nil {
+					return
+				}
+			}
+		}
+		findBody(n)
+		if bodyNode != nil {
+			// Collect children first, then remove them from parent
+			var children []*html.Node
+			for c := bodyNode.FirstChild; c != nil; c = c.NextSibling {
+				children = append(children, c)
+			}
+			// Remove children from parent so they can be appended elsewhere
+			for _, c := range children {
+				bodyNode.RemoveChild(c)
+				eval = append(eval, c)
+			}
+		} else {
+			eval = xpath.Sequence{n}
+		}
 	} else {
 
 		eval, err = evaluateXPath(xd, layoutelt.Namespaces, *attValues.Select)
@@ -718,6 +785,7 @@ func cmdHTML(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 			return nil, err
 		}
 	}
+	var result xpath.Sequence
 	for _, itm := range eval {
 		switch t := itm.(type) {
 		case *goxml.Element:
@@ -725,15 +793,15 @@ func cmdHTML(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 			if n == nil {
 				return nil, fmt.Errorf("HTML (line %d): empty element", layoutelt.Line)
 			}
-			return xpath.Sequence{n}, nil
+			result = append(result, n)
 		case *html.Node:
-			return xpath.Sequence{t}, nil
+			result = append(result, t)
 		default:
 			slog.Error(fmt.Sprintf("HTML (line %d): don't know how to process %T", layoutelt.Line, t))
 		}
 	}
 
-	return nil, nil
+	return result, nil
 }
 
 func cmdI(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {

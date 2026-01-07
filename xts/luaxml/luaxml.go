@@ -57,30 +57,31 @@ func encodeElement(tbl *lua.LTable, enc *xml.Encoder) error {
 			}
 		}
 	})
-	err := enc.EncodeToken(start)
-	if err != nil {
-		fmt.Println(err)
+	if err := enc.EncodeToken(start); err != nil {
 		return err
 	}
 	// children
+	var encodeErr error
 	tbl.ForEach(func(key lua.LValue, value lua.LValue) {
+		if encodeErr != nil {
+			return
+		}
 		if _, ok := key.(lua.LNumber); ok {
 			switch val := value.Type(); val {
 			case lua.LTTable:
-				err := encodeItem(value.(*lua.LTable), enc)
-				if err != nil {
-					fmt.Println(err)
-				}
+				encodeErr = encodeItem(value.(*lua.LTable), enc)
 			case lua.LTString:
-				enc.EncodeToken(xml.CharData([]byte(value.String())))
+				encodeErr = enc.EncodeToken(xml.CharData([]byte(value.String())))
 			default:
-				fmt.Println("unknown type")
+				encodeErr = fmt.Errorf("unknown type: %s", val)
 			}
 		}
 	})
+	if encodeErr != nil {
+		return encodeErr
+	}
 
-	enc.EncodeToken(start.End())
-	return nil
+	return enc.EncodeToken(start.End())
 }
 
 func encodeItem(tbl *lua.LTable, enc *xml.Encoder) error {
@@ -111,16 +112,16 @@ func encodeTable(l *lua.LState) int {
 	var b bytes.Buffer
 	enc := xml.NewEncoder(&b)
 	if tbl := l.CheckTable(1); tbl.Type() == lua.LTTable {
-		err := encodeItem(tbl, enc)
-		if err != nil {
-			fmt.Println(err)
+		if err := encodeItem(tbl, enc); err != nil {
 			return lerr(l, err.Error())
 		}
 	}
+	enc.Flush()
+	if err := os.WriteFile(filename, b.Bytes(), 0644); err != nil {
+		return lerr(l, err.Error())
+	}
 	l.SetTop(0)
 	l.Push(lua.LTrue)
-	enc.Flush()
-	os.WriteFile(filename, b.Bytes(), 0644)
 	return 1
 }
 

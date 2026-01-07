@@ -682,76 +682,78 @@ func (c *Command) Attributes() []*Attribute {
 // ExampleMarkdown returns the examples section as an markdown blob.
 func (c *Command) ExampleMarkdown() string {
 	lang := "en"
-	var r *bytes.Reader
+	var examples []*example
 	switch lang {
 	case "en":
-		if x := c.examplesEn; len(x) != 0 {
-			r = bytes.NewReader(x[0].Text)
-		} else {
-			return ""
-		}
+		examples = c.examplesEn
 	case "de":
-		if x := c.examplesDe; len(x) != 0 {
-			r = bytes.NewReader(x[0].Text)
-		} else {
-			return ""
-		}
+		examples = c.examplesDe
 	default:
 		return ""
 	}
-	var ret []string
-	dec := xml.NewDecoder(r)
 
-	inListing := false
-	for {
-		tok, err := dec.Token()
-		if err != nil && err == io.EOF {
-			break
-		}
-		if err != nil {
-			panic(err)
-		}
-		switch v := tok.(type) {
-		case xml.StartElement:
-			switch v.Name.Local {
-			case "listing":
-				inListing = true
-			case "image":
-				var fn, wd string
-				for _, a := range v.Attr {
-					wd = "auto"
-					if a.Name.Local == "file" {
-						fn = a.Value
-					} else if a.Name.Local == "width" {
-						wd = fmt.Sprintf(`%s`, a.Value)
-					}
-				}
-				ret = append(ret, fmt.Sprintf("\n![](../img/%s){: style=\"width=%s\"; }\n", fn, wd))
-			case "para":
-				p := &para{}
-				p.commands = c.commands
-				err = dec.DecodeElement(p, &v)
-				if err != nil {
-					panic(err)
-				}
-				ret = append(ret, "\n")
-				ret = append(ret, p.Markdown())
-				ret = append(ret, "\n")
-			}
-		case xml.CharData:
-			if inListing {
-				ret = append(ret, "```xml\n")
-				ret = append(ret, string(v))
-				ret = append(ret, "\n```\n")
-			}
-		case xml.EndElement:
-			switch v.Name.Local {
-			case "listing":
-				inListing = false
-			}
-		}
+	if len(examples) == 0 {
+		return ""
 	}
-	return strings.Join(ret, "")
+
+	var allRet []string
+	for _, ex := range examples {
+		r := bytes.NewReader(ex.Text)
+		var ret []string
+		dec := xml.NewDecoder(r)
+
+		inListing := false
+		for {
+			tok, err := dec.Token()
+			if err != nil && err == io.EOF {
+				break
+			}
+			if err != nil {
+				panic(err)
+			}
+			switch v := tok.(type) {
+			case xml.StartElement:
+				switch v.Name.Local {
+				case "listing":
+					inListing = true
+				case "image":
+					var fn, wd string
+					for _, a := range v.Attr {
+						wd = "auto"
+						if a.Name.Local == "file" {
+							fn = a.Value
+						} else if a.Name.Local == "width" {
+							wd = fmt.Sprintf(`%s`, a.Value)
+						}
+					}
+					ret = append(ret, fmt.Sprintf("\n![](../img/%s){: style=\"width=%s\"; }\n", fn, wd))
+				case "para":
+					p := &para{}
+					p.commands = c.commands
+					err = dec.DecodeElement(p, &v)
+					if err != nil {
+						panic(err)
+					}
+					ret = append(ret, "\n")
+					ret = append(ret, p.Markdown())
+					ret = append(ret, "\n")
+				}
+			case xml.CharData:
+				if inListing {
+					ret = append(ret, "```xml\n")
+					ret = append(ret, string(v))
+					ret = append(ret, "\n```\n")
+				}
+			case xml.EndElement:
+				switch v.Name.Local {
+				case "listing":
+					inListing = false
+				}
+			}
+		}
+		allRet = append(allRet, strings.Join(ret, ""))
+	}
+	return strings.Join(allRet, "\n")
 }
 
 func getchildren(c *Commands, dec *xml.Decoder) []*Command {

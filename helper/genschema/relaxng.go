@@ -317,7 +317,9 @@ func genRelaxNGSchema(commands *commandsXML, lang string, allowForeignNodes bool
 			    <element name="i"><ref name="html" /></element>
 			    <element name="kbd"><ref name="html" /></element>
 			    <element name="li"><ref name="html" /></element>
-			    <element name="p"><ref name="html" /></element>
+			    <element name="p">
+					<ref name="htmlclassidstyle"/>
+				<ref name="html" /></element>
 			    <element name="span"><ref name="html" /><oneOrMore><attribute><anyName/></attribute></oneOrMore></element>
                 <element name="table"><ref name="htmltable" /></element>
 			    <element name="u"><ref name="html" /></element>

@@ -10,3 +10,4 @@ build
 bundler
 dist/
 compare-report.html
+.claude/

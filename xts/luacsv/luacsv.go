@@ -12,6 +12,8 @@ import (
 	"golang.org/x/text/encoding/charmap"
 )
 
+var reCarriageReturn = regexp.MustCompile(`\r`)
+
 func lerr(l *lua.LState, errormessage string) int {
 	l.SetTop(0)
 	l.Push(lua.LFalse)
@@ -69,8 +71,7 @@ func decode(l *lua.LState) int {
 		return lerr(l, err.Error())
 	}
 
-	re := regexp.MustCompile(`\r`)
-	data = re.ReplaceAll(data, []byte{10})
+	data = reCarriageReturn.ReplaceAll(data, []byte{10})
 	br := bytes.NewReader(data)
 	reader := csv.NewReader(br)
 	if separator != "" {

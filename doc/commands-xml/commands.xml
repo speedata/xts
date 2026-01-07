@@ -4447,8 +4447,8 @@
         width: 100%;
     }
     td {
-        border-top: 0.5 solid black;
-        border-bottom: 0.5 solid black;
+        border-top: 0.5pt solid black;
+        border-bottom: 0.5pt solid black;
         text-align: center;
     }
     thead {
@@ -4751,6 +4751,14 @@
         <optional><cmd name="Loop"/></optional>
       </oneOrMore>
     </childelements>
+    <attribute en="class" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS class for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS Klasse für dieses Element.</para>
+      </description>
+    </attribute>
     <example xml:lang="en">
       <listing><![CDATA[<Tr>
   <Td><Paragraph><Value>A</Value></Paragraph></Td>
@@ -5111,10 +5119,10 @@ Message: "$i is: 3.000000"]]></listing>
   -->
   <command en="HTML">
     <description xml:lang="en">
-      <para>Insert HTML retrieved via an XPath expression.</para>
+      <para>Insert HTML content, either inline or retrieved via an XPath expression.</para>
     </description>
     <description xml:lang="de">
-      <para>Fügt HTML ein, das per XPath-Ausdruck ermittelt wurde.</para>
+      <para>Fügt HTML-Inhalt ein, entweder inline oder per XPath-Ausdruck ermittelt.</para>
     </description>
     <childelements>
       <reference name="html" />
@@ -5127,6 +5135,14 @@ Message: "$i is: 3.000000"]]></listing>
         <para>XPath-Ausdruck, der ein XML/HTML-Fragment liefert.</para>
       </description>
     </attribute>
+    <attribute en="expand-text" type="boolean" optional="yes">
+      <description xml:lang="en">
+        <para>If set to "yes", expressions in curly braces {expr} within the HTML content are evaluated as XPath expressions (similar to XSLT 3.0 text value templates). Use {{ and }} for literal curly braces. Default is "no".</para>
+      </description>
+      <description xml:lang="de">
+        <para>Bei "yes" werden Ausdrücke in geschweiften Klammern {expr} im HTML-Inhalt als XPath-Ausdrücke ausgewertet (ähnlich wie XSLT 3.0 Text Value Templates). Für literale geschweifte Klammern {{ und }} verwenden. Standard ist "no".</para>
+      </description>
+    </attribute>
     <example xml:lang="en">
       <listing><![CDATA[<Record element="data">
   <PlaceObject>
@@ -5137,6 +5153,18 @@ Message: "$i is: 3.000000"]]></listing>
 </Record>
 ]]></listing>
     </example>
+    <example xml:lang="en">
+      <listing><![CDATA[<SetVariable variable="product" select="'Widget'"/>
+<PlaceObject>
+  <Textblock>
+    <HTML expand-text="yes">
+      <p>Product: {$product}</p>
+      <p>Literal braces: {{ and }}</p>
+    </HTML>
+  </Textblock>
+</PlaceObject>
+]]></listing>
+    </example>
     <example xml:lang="de">
       <listing><![CDATA[<Record element="data">
   <PlaceObject>
@@ -5145,6 +5173,18 @@ Message: "$i is: 3.000000"]]></listing>
     </Textblock>
   </PlaceObject>
 </Record>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<SetVariable variable="produkt" select="'Artikel'"/>
+<PlaceObject>
+  <Textblock>
+    <HTML expand-text="yes">
+      <p>Produkt: {$produkt}</p>
+      <p>Literale Klammern: {{ und }}</p>
+    </HTML>
+  </Textblock>
+</PlaceObject>
 ]]></listing>
     </example>
   </command>

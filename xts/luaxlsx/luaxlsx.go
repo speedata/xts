@@ -22,7 +22,7 @@ func indexSpreadSheet(l *lua.LState) int {
 	n := l.ToInt(-1)
 	ws, err := sh.GetWorksheet(n - 1)
 	if err != nil {
-		l.RaiseError(err.Error())
+		l.RaiseError("%s", err.Error())
 	}
 
 	mt := l.NewTypeMetatable(luaWorksheetTypeName)
