@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/boxesandglue/textlayout/fonts/truetype"
+	"github.com/boxesandglue/textshape/ot"
 	"github.com/pelletier/go-toml/v2"
 	"github.com/speedata/optionparser"
 	"github.com/speedata/xts/core"
@@ -77,14 +77,18 @@ func listFonts() error {
 		return filepath.Base(strings.ToLower(ff[i])) < filepath.Base(strings.ToLower(ff[j]))
 	})
 	for _, fontfile := range ff {
-		f, err := os.Open(fontfile)
+		data, err := os.ReadFile(fontfile)
 		if err != nil {
 			return err
 		}
 
-		fp, err := truetype.Parse(f)
+		font, err := ot.ParseFont(data, 0)
 		if err != nil {
-			return nil
+			continue
+		}
+		face, err := ot.NewFace(font)
+		if err != nil {
+			continue
 		}
 		l := strings.ToLower(fontfile)
 		weight := "normal"
@@ -100,7 +104,7 @@ func listFonts() error {
 		case strings.Contains(l, "bold"):
 			weight = "bold"
 		}
-		fmt.Printf("@font-face { font-family: %q; src: url(%q);", fp.Names.SelectEntry(truetype.NameFontFamily), filepath.Base(fontfile))
+		fmt.Printf("@font-face { font-family: %q; src: url(%q);", face.FamilyName(), filepath.Base(fontfile))
 		if weight != "normal" {
 			fmt.Printf(" font-weight: %s; ", weight)
 		}
@@ -108,9 +112,6 @@ func listFonts() error {
 			fmt.Printf(" font-style: %s;", style)
 		}
 		fmt.Println("}")
-		if err = f.Close(); err != nil {
-			return err
-		}
 	}
 	return nil
 }

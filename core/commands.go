@@ -19,7 +19,7 @@ import (
 	"github.com/boxesandglue/boxesandglue/frontend"
 	"github.com/boxesandglue/boxesandglue/frontend/pdfdraw"
 	"github.com/boxesandglue/htmlbag"
-	"github.com/boxesandglue/textlayout/harfbuzz"
+	"github.com/boxesandglue/textshape/ot"
 	"github.com/speedata/goxml"
 	"github.com/speedata/goxpath"
 	xpath "github.com/speedata/goxpath"
@@ -1288,11 +1288,11 @@ func cmdOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	}
 	if features := attValues.Features; features != nil {
 		for _, str := range strings.Split(*features, ",") {
-			f, err := harfbuzz.ParseFeature(str)
-			if err != nil {
+			if f, ok := ot.FeatureFromString(str); ok {
+				xd.document.DefaultFeatures = append(xd.document.DefaultFeatures, f)
+			} else {
 				slog.Error(fmt.Sprintf("cannot parse OpenType feature tag %q.", str))
 			}
-			xd.document.DefaultFeatures = append(xd.document.DefaultFeatures, f)
 		}
 	}
 

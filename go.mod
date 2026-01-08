@@ -4,11 +4,11 @@ go 1.24.0
 
 require (
 	github.com/alecthomas/chroma v0.10.0
-	github.com/boxesandglue/baseline-pdf v1.0.11
-	github.com/boxesandglue/boxesandglue v0.1.14
-	github.com/boxesandglue/csshtml v0.0.1
-	github.com/boxesandglue/htmlbag v0.0.3
-	github.com/boxesandglue/textlayout v1.0.5
+	github.com/boxesandglue/baseline-pdf v1.1.0
+	github.com/boxesandglue/boxesandglue v0.2.0
+	github.com/boxesandglue/csshtml v0.0.2
+	github.com/boxesandglue/htmlbag v0.0.4
+	github.com/boxesandglue/textshape v0.0.3
 	github.com/cjoudrey/gluahttp v0.0.0-20201111170219-25003d9adfa9
 	github.com/gammazero/workerpool v1.1.3
 	github.com/mitchellh/mapstructure v1.5.0
@@ -16,7 +16,7 @@ require (
 	github.com/speedata/barcode v0.0.0-20230307084753-486c4d51cb34
 	github.com/speedata/goxlsx v1.0.2
 	github.com/speedata/goxml v1.0.5
-	github.com/speedata/goxpath v0.0.0-20230709190058-ca75de231e9c
+	github.com/speedata/goxpath v1.0.4
 	github.com/speedata/optionparser v1.1.1
 	github.com/yuin/goldmark v1.4.13
 	github.com/yuin/goldmark-highlighting v0.0.0-20220208100518-594be1970594
@@ -36,5 +36,4 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/speedata/css/scanner v0.0.0-20250825095519-68d469dc62c4 // indirect
 	github.com/speedata/hyphenation v1.0.2 // indirect
-	golang.org/x/image v0.27.0 // indirect
 )
