@@ -219,6 +219,9 @@ func (xd *xtsDocument) OutputAt(vl *node.VList, col coord, row coord, allocate b
 		}
 		if currentGroup.contents == nil {
 			currentGroup.contents = vl
+		} else {
+			currentGroup.contents.List = node.InsertAfter(currentGroup.contents.List, node.Tail(currentGroup.contents.List), vl)
+			currentGroup.contents.Height += vl.Height + vl.Depth
 		}
 	} else {
 		slog.Info("PlaceObject", "obj", what, "col", col, "row", row, "area", area.name)

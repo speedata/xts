@@ -115,6 +115,7 @@ func listFonts() error {
 	}
 	return nil
 }
+
 func scaffold(extra ...string) error {
 	var err error
 	fmt.Print("Creating layout.xml and data.xml in ")
@@ -405,7 +406,7 @@ func dothings() error {
 		} else {
 			slog.Error("Please give one directory")
 		}
-		dur := time.Now().Sub(starttime)
+		dur := time.Since(starttime)
 		fmt.Printf("Finished in %s\n", formatDuration(dur))
 	case "doc":
 		return openURL("https://doc.speedata.de/xts/")
@@ -415,6 +416,9 @@ func dothings() error {
 
 		if err = core.InitDirs(configuration.basedir); err != nil {
 			return err
+		}
+		if wd, wdErr := os.Getwd(); wdErr == nil {
+			core.AddDir(wd)
 		}
 
 		if err = listFonts(); err != nil {
@@ -509,6 +513,15 @@ func dothings() error {
 			}
 		}
 	finished:
+		if err != nil {
+			if terr, ok := err.(core.TypesettingError); ok {
+				if !terr.Logged {
+					slog.Error(terr.Msg)
+				}
+			} else {
+				slog.Error(err.Error())
+			}
+		}
 		dur := time.Since(starttime)
 		slog.Info(fmt.Sprintf("Finished in %s", formatDuration(dur)))
 		fmt.Printf("Finished with %s and %s in %s.\nOutput written to %s (%s, %d bytes)\n  and protocol file to %s.\n", pluralize(errCount, "error"), pluralize(warnCount, "warning"), formatDuration(dur), configuration.Jobname+".pdf", pluralize(info.Pages, "page"), info.FileSize, protocolFilename)

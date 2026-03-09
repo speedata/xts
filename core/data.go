@@ -49,7 +49,6 @@ func (xd *xtsDocument) applyLayoutStylesheet(classname string, id string, style 
 			htmlstrings = append(htmlstrings, ">")
 		} else {
 			htmlstrings = append(htmlstrings, "<"+eltname+">")
-
 		}
 	}
 	for i, j := 0, len(eltnames)-1; i < j; i, j = i+1, j-1 {
@@ -61,7 +60,6 @@ func (xd *xtsDocument) applyLayoutStylesheet(classname string, id string, style 
 	}
 
 	htmlstring := strings.Join(htmlstrings, "")
-	slog.Info("layout fragment", "html", htmlstring, "class", classname, "id", id)
 	doc, err := xd.layoutcss.ProcessHTMLChunk(htmlstring)
 	if err != nil {
 		return nil, err
@@ -82,7 +80,7 @@ func (xd *xtsDocument) decodeHTMLFromHTMLNode(input *html.Node) (frontend.Format
 		}
 		vl, err := xd.cssbuilder.CreateVlist(te, wd)
 		if err != nil {
-			return nil, newTypesettingError(err)
+			return nil, err
 		}
 		return vl, nil
 	}
@@ -292,7 +290,7 @@ func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 		return fmt.Errorf("s must be a struct")
 	}
 
-	var valNumFields = val.NumField()
+	valNumFields := val.NumField()
 
 	var mustexist bool
 	var dflt string
@@ -331,7 +329,6 @@ func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 					}
 					return seq.Stringvalue()
 				})
-
 			} else {
 				attValue = a
 			}

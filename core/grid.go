@@ -316,6 +316,11 @@ func (g *grid) fitsInRow(col coord, row coord, wdCols coord, area *area) bool {
 func (g *grid) nextArea(area *area) {
 	currentFrameNumber := area.currentFrame
 	if currentFrameNumber+1 >= len(area.frame) {
+		if g.inGroup {
+			// Groups don't have pages, so we can't create a new page.
+			// The content simply overflows.
+			return
+		}
 		clearPage(g.page.xd)
 		g.page.xd.setupPage()
 		return

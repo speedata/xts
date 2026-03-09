@@ -19,6 +19,7 @@ import (
 	"github.com/boxesandglue/boxesandglue/frontend"
 	"github.com/boxesandglue/boxesandglue/frontend/pdfdraw"
 	"github.com/boxesandglue/htmlbag"
+	"github.com/boxesandglue/svgreader"
 	"github.com/boxesandglue/textshape/ot"
 	"github.com/speedata/goxml"
 	"github.com/speedata/goxpath"
@@ -47,12 +48,14 @@ func init() {
 		"Column":           cmdColumn,
 		"Columns":          cmdColumns,
 		"Contents":         cmdContents,
+		"CopyOf":           cmdCopyOf,
 		"DefineColor":      cmdDefineColor,
 		"DefineMasterpage": cmdDefineMasterpage,
 		"Element":          cmdElement,
 		"ForAll":           cmdForall,
 		"Function":         cmdFunction,
 		"Group":            cmdGroup,
+		"Groupcontents":    cmdGroupcontents,
 		"HTML":             cmdHTML,
 		"I":                cmdI,
 		"Image":            cmdImage,
@@ -73,12 +76,14 @@ func init() {
 		"ProcessNode":      cmdProcessNode,
 		"Record":           cmdRecord,
 		"SaveDataset":      cmdSaveDataset,
+		"Section":          cmdSection,
 		"SetGrid":          cmdSetGrid,
 		"SetVariable":      cmdSetVariable,
 		"Span":             cmdSpan,
 		"Stylesheet":       cmdStylesheet,
 		"Switch":           cmdSwitch,
 		"Tablehead":        cmdTableHead,
+		"Tablerule":        cmdTablerule,
 		"Table":            cmdTable,
 		"Textblock":        cmdTextblock,
 		"Td":               cmdTd,
@@ -108,7 +113,7 @@ func dispatch(xd *xtsDocument, layoutelement *goxml.Element) (xpath.Sequence, er
 				}
 				retSequence = append(retSequence, seq...)
 			} else {
-				return nil, newTypesettingErrorFromString(fmt.Sprintf("layout: element %q unknown", elt.Name))
+				return nil, newTypesettingErrorf(elt.Name, elt.Line, "unknown element %q", elt.Name)
 			}
 		}
 	}
@@ -180,7 +185,7 @@ func cmdAttribute(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	var err error
 	eval, err = evaluateXPath(xd, layoutelt.Namespaces, attValues.Select)
 	if err != nil {
-		return nil, newTypesettingErrorFromStringf("Attribute (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
+		return nil, newTypesettingErrorf("Attribute", layoutelt.Line, "error parsing select XPath expression %s", err)
 	}
 
 	attr := goxml.Attribute{
@@ -235,7 +240,7 @@ func cmdBarcode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	var eval xpath.Sequence
 	eval, err = evaluateXPath(xd, layoutelt.Namespaces, attValues.Select)
 	if err != nil {
-		return nil, newTypesettingErrorFromStringf("Barcode (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
+		return nil, newTypesettingErrorf("Barcode", layoutelt.Line, "error parsing select XPath expression %s", err)
 	}
 
 	var bcType int
@@ -251,7 +256,7 @@ func cmdBarcode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	}
 	var bc node.Node
 	if bc, err = createBarcode(bcType, eval.Stringvalue(), attValues.Width, attValues.Height, xd, ff, fontsize, attValues.ShowText); err != nil {
-		return nil, newTypesettingError(err)
+		return nil, newTypesettingError("Barcode", layoutelt.Line, err.Error())
 	}
 
 	return xpath.Sequence{bc}, nil
@@ -270,7 +275,7 @@ func cmdBookmark(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, err
 	var eval xpath.Sequence
 	eval, err = evaluateXPath(xd, layoutelt.Namespaces, attValues.Select)
 	if err != nil {
-		return nil, newTypesettingErrorFromStringf("Bookmark (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
+		return nil, newTypesettingErrorf("Bookmark", layoutelt.Line, "error parsing select XPath expression %s", err)
 	}
 
 	dest := getNumDest()
@@ -460,6 +465,22 @@ func cmdContents(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, err
 	return nil, nil
 }
 
+// cmdCopyOf evaluates an XPath expression and returns the result as-is,
+// preserving node structure. Analogous to xsl:copy-of in XSLT.
+func cmdCopyOf(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	attValues := &struct {
+		Select string `sdxml:"mustexist"`
+	}{}
+	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	eval, err := evaluateXPath(xd, layoutelt.Namespaces, attValues.Select)
+	if err != nil {
+		return nil, newTypesettingError("CopyOf", layoutelt.Line, err.Error())
+	}
+	return eval, nil
+}
+
 func cmdDefineColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
@@ -525,6 +546,22 @@ func cmdDefineColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		col.R = float64(r) / 255.0
 		col.G = float64(g) / 255.0
 		col.B = float64(b) / 255.0
+	case "gray":
+		// 0-100
+		col.Space = color.ColorGray
+		var g int
+		if g, err = strconv.Atoi(attValues.G); err != nil {
+			return nil, fmt.Errorf("DefineColor: cannot parse value for g (line %d)", layoutelt.Line)
+		}
+		col.G = float64(g) / 100.0
+	case "GRAY":
+		// 0-255
+		col.Space = color.ColorGray
+		var g int
+		if g, err = strconv.Atoi(attValues.G); err != nil {
+			return nil, fmt.Errorf("DefineColor: cannot parse value for g (line %d)", layoutelt.Line)
+		}
+		col.G = float64(g) / 255.0
 	case "spotcolor":
 		col.Space = color.ColorSpotcolor
 	case "":
@@ -534,7 +571,7 @@ func cmdDefineColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		}
 		col = *xd.document.GetColor(attValues.Value)
 	default:
-		return nil, fmt.Errorf("DefineColor: model %q not recognized (line %d)", attValues.Model, layoutelt.Line)
+		return nil, newTypesettingErrorf("DefineColor", layoutelt.Line, "model %q not recognized", attValues.Model)
 	}
 	xd.document.DefineColor(attValues.Name, &col)
 	return nil, nil
@@ -604,13 +641,14 @@ func cmdForall(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 		return nil, err
 	}
 	var eval xpath.Sequence
+	oldContext := xd.data.Ctx.GetContextSequence()
 	eval, err = xd.data.Evaluate(attValues.Select)
 	if err != nil {
-		return nil, newTypesettingErrorFromStringf("ForAll (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
+		return nil, newTypesettingErrorf("ForAll", layoutelt.Line, "error parsing select XPath expression %s", err)
 	}
 	var ret xpath.Sequence
 
-	oldContext := xd.data.Ctx.SetContextSequence(xpath.Sequence{})
+	xd.data.Ctx.SetContextSequence(xpath.Sequence{})
 	for i, itm := range eval {
 		xd.data.Ctx.SetContextSequence(xpath.Sequence{itm})
 		xd.data.Ctx.Pos = i + 1
@@ -650,14 +688,14 @@ func cmdFunction(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, err
 
 	prefixName := strings.Split(attValues.Name, ":")
 	if len(prefixName) != 2 {
-		return nil, newTypesettingErrorFromStringf("Function (line %d): function name needs a namespace prefix", layoutelt.Line)
+		return nil, newTypesettingError("Function", layoutelt.Line, "function name needs a namespace prefix")
 	}
 	var ns string
 	var ok bool
 	prefix := prefixName[0]
 	name := prefixName[1]
 	if ns, ok = layoutelt.Namespaces[prefix]; !ok {
-		return nil, newTypesettingErrorFromStringf("Function (line %d): unknown name space prefix %s", layoutelt.Line, prefix)
+		return nil, newTypesettingErrorf("Function", layoutelt.Line, "unknown name space prefix %s", prefix)
 	}
 	a := func(ctx *xpath.Context, args []xpath.Sequence) (xpath.Sequence, error) {
 		sf := returnEvalBodyLater(layoutelt, xd, ctx)
@@ -692,6 +730,23 @@ func cmdGroup(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	return nil, nil
 }
 
+func cmdGroupcontents(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	attValues := &struct {
+		Name string `sdxml:"mustexist"`
+	}{}
+	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	grp, ok := xd.groups[attValues.Name]
+	if !ok {
+		return nil, newTypesettingErrorf("Groupcontents", layoutelt.Line, "group %q not found", attValues.Name)
+	}
+	if grp.contents == nil {
+		return nil, nil
+	}
+	return xpath.Sequence{grp.contents}, nil
+}
+
 // expandTextValueTemplates evaluates {expr} expressions in text content (XSLT 3.0 style).
 // Escaped braces {{ and }} are converted to literal { and }.
 func expandTextValueTemplates(xd *xtsDocument, layoutelt *goxml.Element, str string) string {
@@ -706,7 +761,6 @@ func expandTextValueTemplates(xd *xtsDocument, layoutelt *goxml.Element, str str
 	str = attributeValueRE.ReplaceAllStringFunc(str, func(match string) string {
 		// Strip curly braces to get the expression
 		expr := match[1 : len(match)-1]
-		fmt.Println(`~~> expr`, expr)
 		seq, err := evaluateXPath(xd, layoutelt.Namespaces, expr)
 		if err != nil {
 			slog.Error(fmt.Sprintf("HTML expand-text (line %d): error evaluating expression {%s}: %s", layoutelt.Line, expr, err))
@@ -722,6 +776,104 @@ func expandTextValueTemplates(xd *xtsDocument, layoutelt *goxml.Element, str str
 	return str
 }
 
+// hasMixedXHTMLContent checks if any child element uses the XHTML namespace.
+func hasMixedXHTMLContent(elt *goxml.Element) bool {
+	for _, cld := range elt.Children() {
+		if child, ok := cld.(*goxml.Element); ok {
+			if ns := child.Namespaces[child.Prefix]; ns == XHTMLNAMESPACE {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// convertXHTMLElement recursively converts a goxml Element in the XHTML
+// namespace to an *html.Node tree. XTS-namespace children are dispatched
+// and their results inserted into the tree.
+func (xd *xtsDocument) convertXHTMLElement(elt *goxml.Element) (*html.Node, error) {
+	n := &html.Node{
+		Type: html.ElementNode,
+		Data: strings.ToLower(elt.Name),
+	}
+	for _, attr := range elt.Attributes() {
+		if strings.HasPrefix(attr.Name, "xmlns") {
+			continue
+		}
+		n.Attr = append(n.Attr, html.Attribute{Key: attr.Name, Val: attr.Value})
+	}
+	for _, cld := range elt.Children() {
+		switch t := cld.(type) {
+		case goxml.CharData:
+			n.AppendChild(&html.Node{Type: html.TextNode, Data: t.Contents})
+		case *goxml.Element:
+			if ns := t.Namespaces[t.Prefix]; ns == XHTMLNAMESPACE {
+				child, err := xd.convertXHTMLElement(t)
+				if err != nil {
+					return nil, err
+				}
+				n.AppendChild(child)
+			} else {
+				// XTS command: dispatch and insert results
+				if f, ok := dispatchTable[t.Name]; ok {
+					seq, err := f(xd, t)
+					if err != nil {
+						return nil, err
+					}
+					for _, itm := range seq {
+						switch v := itm.(type) {
+						case *html.Node:
+							n.AppendChild(v)
+						case *goxml.Element:
+							n.AppendChild(&html.Node{Type: html.TextNode, Data: v.Stringvalue()})
+						case string:
+							n.AppendChild(&html.Node{Type: html.TextNode, Data: v})
+						}
+					}
+				} else {
+					return nil, fmt.Errorf("HTML (line %d): unknown element %q", t.Line, t.Name)
+				}
+			}
+		}
+	}
+	return n, nil
+}
+
+// buildHTMLFromMixedContent processes <HTML> with mixed XHTML literals
+// and XTS commands, returning a sequence of *html.Node.
+func (xd *xtsDocument) buildHTMLFromMixedContent(layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var result xpath.Sequence
+	for _, cld := range layoutelt.Children() {
+		switch t := cld.(type) {
+		case goxml.CharData:
+			s := strings.TrimSpace(t.Contents)
+			if s != "" {
+				result = append(result, &html.Node{Type: html.TextNode, Data: t.Contents})
+			}
+		case *goxml.Element:
+			if ns := t.Namespaces[t.Prefix]; ns == XHTMLNAMESPACE {
+				n, err := xd.convertXHTMLElement(t)
+				if err != nil {
+					return nil, err
+				}
+				result = append(result, n)
+			} else {
+				// XTS command
+				if f, ok := dispatchTable[t.Name]; ok {
+					seq, err := f(xd, t)
+					if err != nil {
+						return nil, err
+					}
+					result = append(result, seq...)
+				} else {
+					return nil, fmt.Errorf("HTML (line %d): unknown element %q", t.Line, t.Name)
+				}
+			}
+		}
+	}
+	return result, nil
+}
+
 func cmdHTML(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
@@ -733,6 +885,11 @@ func cmdHTML(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 	}
 	var eval xpath.Sequence
 	if attValues.Select == nil {
+		// Mixed XHTML/XTS content mode
+		if hasMixedXHTMLContent(layoutelt) {
+			return xd.buildHTMLFromMixedContent(layoutelt)
+		}
+
 		str := layoutelt.InnerXML()
 
 		// If expand-text is enabled, evaluate {expr} expressions
@@ -788,12 +945,83 @@ func cmdHTML(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 	var result xpath.Sequence
 	for _, itm := range eval {
 		switch t := itm.(type) {
-		case *goxml.Element:
-			n := reconstructHTMLText(t)
-			if n == nil {
-				return nil, fmt.Errorf("HTML (line %d): empty element", layoutelt.Line)
+		case string:
+			n, err := html.Parse(strings.NewReader(t))
+			if err != nil {
+				return nil, fmt.Errorf("HTML (line %d): error parsing HTML string: %w", layoutelt.Line, err)
 			}
-			result = append(result, n)
+			var bodyNode *html.Node
+			var findBody func(*html.Node)
+			findBody = func(node *html.Node) {
+				if node.Type == html.ElementNode && node.Data == "body" {
+					bodyNode = node
+					return
+				}
+				for c := node.FirstChild; c != nil; c = c.NextSibling {
+					findBody(c)
+					if bodyNode != nil {
+						return
+					}
+				}
+			}
+			findBody(n)
+			if bodyNode != nil {
+				var children []*html.Node
+				for c := bodyNode.FirstChild; c != nil; c = c.NextSibling {
+					children = append(children, c)
+				}
+				for _, c := range children {
+					bodyNode.RemoveChild(c)
+					result = append(result, c)
+				}
+			}
+		case *goxml.Element:
+			hasElementChildren := false
+			for _, cld := range t.Children() {
+				if _, ok := cld.(*goxml.Element); ok {
+					hasElementChildren = true
+					break
+				}
+			}
+			if hasElementChildren {
+				n := reconstructHTMLText(t)
+				if n == nil {
+					return nil, fmt.Errorf("HTML (line %d): empty element", layoutelt.Line)
+				}
+				result = append(result, n)
+			} else {
+				// Text-only content: likely escaped HTML (e.g. &lt;p&gt;...&lt;/p&gt;).
+				sv := t.Stringvalue()
+				n, err := html.Parse(strings.NewReader(sv))
+				if err != nil {
+					return nil, fmt.Errorf("HTML (line %d): error parsing HTML from element: %w", layoutelt.Line, err)
+				}
+				var bodyNode2 *html.Node
+				var findBody2 func(*html.Node)
+				findBody2 = func(nd *html.Node) {
+					if nd.Type == html.ElementNode && nd.Data == "body" {
+						bodyNode2 = nd
+						return
+					}
+					for c := nd.FirstChild; c != nil; c = c.NextSibling {
+						findBody2(c)
+						if bodyNode2 != nil {
+							return
+						}
+					}
+				}
+				findBody2(n)
+				if bodyNode2 != nil {
+					var children []*html.Node
+					for c := bodyNode2.FirstChild; c != nil; c = c.NextSibling {
+						children = append(children, c)
+					}
+					for _, c := range children {
+						bodyNode2.RemoveChild(c)
+						result = append(result, c)
+					}
+				}
+			}
 		case *html.Node:
 			result = append(result, t)
 		default:
@@ -851,6 +1079,32 @@ func cmdImage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		box = "/TrimBox"
 	case "artbox":
 		box = "/ArtBox"
+	}
+
+	if strings.ToLower(filepath.Ext(filename)) == ".svg" {
+		f, err := os.Open(filename)
+		if err != nil {
+			return nil, fmt.Errorf("cmdImage: opening SVG %s: %w", filename, err)
+		}
+		svgDoc, err := svgreader.Parse(f)
+		f.Close()
+		if err != nil {
+			return nil, fmt.Errorf("cmdImage: parsing SVG %s: %w", filename, err)
+		}
+		var wd, ht bag.ScaledPoint
+		if attValues.Width != nil {
+			wd = *attValues.Width
+		}
+		if attValues.Height != nil {
+			ht = *attValues.Height
+		}
+		textRenderer := frontend.NewSVGTextRenderer(xd.document)
+		svgNode := xd.document.Doc.CreateSVGNodeFromDocument(svgDoc, wd, ht, textRenderer)
+		svgVL := node.Vpack(svgNode)
+		svgVL.Attributes = node.H{"origin": "svg"}
+		hl := node.Hpack(svgVL)
+		hl.Attributes = node.H{"origin": "image"}
+		return xpath.Sequence{hl}, nil
 	}
 
 	var imgObj *pdf.Imagefile
@@ -1176,7 +1430,7 @@ func cmdPDFOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 		case "duplexfliplongedge":
 			xd.document.Doc.ViewerPreferences["Duplex"] = "/DuplexFlipLongEdge"
 		default:
-			return nil, newTypesettingErrorFromStringf("Unknown PDFOptions setting %s", *dplx)
+			return nil, newTypesettingErrorf("PDFOptions", layoutelt.Line, "unknown setting %s", *dplx)
 		}
 	}
 	if attValues.PickTrayByPDFSize != nil {
@@ -1357,6 +1611,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		Groupname       string
 		HAlign          string
 		HReference      string
+		VReference      string
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -1367,7 +1622,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	var area *area
 	var ok bool
 	if area, ok = xd.currentGrid.areas[attValues.Area]; !ok {
-		return nil, newTypesettingErrorFromStringf("area %s not found", attValues.Area)
+		return nil, newTypesettingErrorf("PlaceObject", layoutelt.Line, "area %s not found", attValues.Area)
 	}
 
 	pos := positioningUnknown
@@ -1383,8 +1638,6 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 			pos = positioningGrid
 			columnInt = int(colF)
 			col = coord(columnInt)
-		} else {
-			slog.Debug(err.Error())
 		}
 	}
 	frameWidth := area.frame[area.currentFrame].width
@@ -1435,6 +1688,38 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		if t.Attributes != nil {
 			origin = t.Attributes["origin"].(string)
 		}
+	case *html.Node:
+		// HTML node (e.g. from <HTML> command): build a complete HTML document
+		// and render it to a VList, similar to cmdTextblock.
+		doc := &html.Node{Type: html.DocumentNode}
+		root := &html.Node{Data: "html", Type: html.ElementNode}
+		head := &html.Node{Data: "head", Type: html.ElementNode}
+		body := &html.Node{Data: "body", Type: html.ElementNode}
+		for _, itm := range seq {
+			if hn, ok := itm.(*html.Node); ok {
+				body.AppendChild(hn)
+			}
+		}
+		root.AppendChild(head)
+		root.AppendChild(body)
+		doc.AppendChild(root)
+		wd := xd.currentGrid.width(mw)
+		vlistFormatter, fmtErr := xd.decodeHTMLFromHTMLNode(doc)
+		if fmtErr != nil {
+			return nil, newTypesettingError("PlaceObject", layoutelt.Line, fmtErr.Error())
+		}
+		htmlVL, fmtErr := vlistFormatter(wd)
+		if fmtErr != nil {
+			return nil, newTypesettingError("PlaceObject", layoutelt.Line, fmtErr.Error())
+		}
+		te := frontend.NewText()
+		te.Items = append(te.Items, htmlVL)
+		fmtVL, _, fmtErr := xd.document.FormatParagraph(te, htmlVL.Width)
+		if fmtErr != nil {
+			return nil, fmtErr
+		}
+		vl = node.Vpack(fmtVL)
+		origin = "html in PlaceObject"
 	default:
 		slog.Error(fmt.Sprintf("PlaceObject: unknown node %T", t))
 	}
@@ -1508,16 +1793,37 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 
 	switch pos {
 	case positioningAbsolute:
-		if attValues.HReference == "right" {
+		switch attValues.HReference {
+		case "right":
 			columnLength -= vl.Width
+		case "center":
+			columnLength -= vl.Width / 2
+		}
+		switch attValues.VReference {
+		case "bottom":
+			rowLength -= vl.Height + vl.Depth
+		case "middle":
+			rowLength -= (vl.Height + vl.Depth) / 2
 		}
 		columnLength += shiftX
 		rowLength += shiftY
 		xd.currentPage.outputAbsolute(columnLength, rowLength, vl)
 	case positioningGrid:
-		if attValues.HReference == "right" {
+		switch attValues.HReference {
+		case "right":
 			wd := xd.currentGrid.widthToColumns(vl.Width)
 			col = col - wd + 1
+		case "center":
+			wd := xd.currentGrid.widthToColumns(vl.Width)
+			col = col - wd/2
+		}
+		switch attValues.VReference {
+		case "bottom":
+			ht := xd.currentGrid.heightToRows(vl.Height + vl.Depth)
+			row = row - ht + 1
+		case "middle":
+			ht := xd.currentGrid.heightToRows(vl.Height + vl.Depth)
+			row = row - ht/2
 		}
 		if shiftX != 0 {
 			col = col + xd.currentGrid.widthToColumns(shiftX)
@@ -1534,7 +1840,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 			area.SetCurrentCol(1)
 		}
 	}
-	return seq, nil
+	return nil, nil
 }
 
 func cmdSaveDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -1552,7 +1858,7 @@ func cmdSaveDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	if attValues.Select != nil {
 		eval, err = evaluateXPath(xd, layoutelt.Namespaces, *attValues.Select)
 		if err != nil {
-			return nil, newTypesettingErrorFromStringf("SaveDataset (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
+			return nil, newTypesettingErrorf("SaveDataset", layoutelt.Line, "error parsing select XPath expression %s", err)
 		}
 	} else {
 		eval, err = dispatch(xd, layoutelt)
@@ -1588,6 +1894,11 @@ func cmdSaveDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	_, err = w.Write([]byte(root.ToXML()))
 
 	return nil, err
+}
+
+// cmdSection is a structural grouping element that simply dispatches its children.
+func cmdSection(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	return dispatch(xd, layoutelt)
 }
 
 func cmdSetGrid(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -1639,7 +1950,7 @@ func cmdSetVariable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	if attValues.Select != nil {
 		eval, err = evaluateXPath(xd, layoutelt.Namespaces, *attValues.Select)
 		if err != nil {
-			return nil, newTypesettingErrorFromStringf("SetVariable (line %d): error parsing select XPath expression %s", layoutelt.Line, err)
+			return nil, newTypesettingErrorf("SetVariable", layoutelt.Line, "error parsing select XPath expression %s", err)
 		}
 		xd.data.SetVariable(attValues.Variable, eval)
 	} else {
@@ -1690,28 +2001,28 @@ func cmdStylesheet(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 
 	if attrHref := attValues.Href; attrHref == "" {
 		if err = xd.layoutcss.AddCSSText(layoutelt.Stringvalue()); err != nil {
-			return nil, newTypesettingError(err)
+			return nil, newTypesettingError("Stylesheet", layoutelt.Line, err.Error())
 		}
 	} else {
 		var loc string
 		loc, err = FindFile(attrHref)
 		if err != nil {
-			return nil, newTypesettingError(fmt.Errorf("Stylesheet (line %d): %w", layoutelt.Line, err))
+			return nil, newTypesettingError("Stylesheet", layoutelt.Line, err.Error())
 		}
 		xd.layoutcss.PushDir(filepath.Dir(loc))
 		data, err := os.ReadFile(loc)
 		if err != nil {
-			return nil, newTypesettingError(err)
+			return nil, newTypesettingError("Stylesheet", layoutelt.Line, err.Error())
 		}
 		if err = xd.layoutcss.AddCSSText(string(data)); err != nil {
-			return nil, newTypesettingError(err)
+			return nil, newTypesettingError("Stylesheet", layoutelt.Line, err.Error())
 		}
 	}
 	if err != nil {
-		return nil, newTypesettingError(fmt.Errorf("Stylesheet (line %d): %w", layoutelt.Line, err))
+		return nil, newTypesettingError("Stylesheet", layoutelt.Line, err.Error())
 	}
 	if err = htmlbag.AddFontFamiliesFromCSS(xd.layoutcss, xd.document); err != nil {
-		return nil, newTypesettingError(fmt.Errorf("Stylesheet (line %d): %w", layoutelt.Line, err))
+		return nil, newTypesettingError("Stylesheet", layoutelt.Line, err.Error())
 	}
 
 	return xpath.Sequence{nil}, nil
@@ -1722,14 +2033,15 @@ func cmdSwitch(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 
 	for _, cld := range layoutelt.Children() {
 		if c, ok := cld.(*goxml.Element); ok {
-			if c.Name == "Case" {
+			switch c.Name {
+			case "Case":
 				attrs := c.Attributes()
 				for _, attr := range attrs {
 					if attr.Name == "test" {
 						var eval xpath.Sequence
 						eval, err = evaluateXPath(xd, layoutelt.Namespaces, attr.Value)
 						if err != nil {
-							return nil, newTypesettingErrorFromStringf("Case (line %d): error parsing test XPath expression %s", layoutelt.Line, err)
+							return nil, newTypesettingErrorf("Case", layoutelt.Line, "error parsing test XPath expression %s", err)
 						}
 						var ok bool
 						if ok, err = xpath.BooleanValue(eval); err != nil {
@@ -1741,7 +2053,7 @@ func cmdSwitch(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 
 					}
 				}
-			} else if c.Name == "Otherwise" {
+			case "Otherwise":
 				return dispatch(xd, c)
 			}
 		}
@@ -1753,10 +2065,11 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	xd.setupPage()
 	var err error
 	attValues := &struct {
-		Class string
-		ID    string
-		Style string
-		Width bag.ScaledPoint
+		Class   string
+		ID      string
+		Stretch string
+		Style   string
+		Width   bag.ScaledPoint
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -1776,6 +2089,11 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		return nil, err
 	}
 
+	tableStyle := attValues.Style
+	if attValues.Stretch == "max" {
+		tableStyle = "width: 100%; " + tableStyle
+	}
+
 	tableNode := &html.Node{
 		Data: "table",
 		Type: html.ElementNode,
@@ -1783,7 +2101,7 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	tableNode.Attr = []html.Attribute{
 		{Key: "class", Val: attValues.Class},
 		{Key: "id", Val: attValues.ID},
-		{Key: "style", Val: attValues.Style},
+		{Key: "style", Val: tableStyle},
 	}
 	tableBodyNode := &html.Node{
 		Data: "tbody",
@@ -1811,6 +2129,7 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 			slog.Error(fmt.Sprintf("table append item, unknown type %t", t))
 		}
 	}
+
 	if tableColgroupNode.FirstChild != nil {
 		tableNode.AppendChild(tableColgroupNode)
 	}
@@ -1838,11 +2157,11 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	doc.AppendChild(root)
 	vlistFormatter, err := xd.decodeHTMLFromHTMLNode(doc)
 	if err != nil {
-		return nil, newTypesettingError(err)
+		return nil, newTypesettingError("Table", layoutelt.Line, err.Error())
 	}
 	vl, err := vlistFormatter(attValues.Width)
 	if err != nil {
-		return nil, newTypesettingError(fmt.Errorf("Textblock (line %d): %w", layoutelt.Line, err))
+		return nil, newTypesettingError("Table", layoutelt.Line, err.Error())
 	}
 	return xpath.Sequence{vl}, nil
 }
@@ -1867,6 +2186,51 @@ func cmdTableHead(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	}
 
 	return xpath.Sequence{th}, nil
+}
+
+func cmdTablerule(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	attValues := &struct {
+		Class     string
+		Color     string
+		ID        string
+		Rulewidth string
+		Style     string
+	}{}
+	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	rulewidth := "0.4pt"
+	if attValues.Rulewidth != "" {
+		rulewidth = attValues.Rulewidth
+	}
+	rulecolor := "black"
+	if attValues.Color != "" {
+		if attValues.Color == "-" {
+			rulecolor = "transparent"
+		} else {
+			rulecolor = attValues.Color
+		}
+	}
+	ruleStyle := fmt.Sprintf("border-bottom: %s solid %s;", rulewidth, rulecolor)
+	if attValues.Style != "" {
+		ruleStyle = attValues.Style
+	}
+	tr := &html.Node{
+		Data: "tr",
+		Type: html.ElementNode,
+	}
+	td := &html.Node{
+		Data: "td",
+		Type: html.ElementNode,
+	}
+	td.Attr = []html.Attribute{
+		{Key: "colspan", Val: "9999"},
+		{Key: "style", Val: ruleStyle},
+		{Key: "class", Val: attValues.Class},
+		{Key: "id", Val: attValues.ID},
+	}
+	tr.AppendChild(td)
+	return xpath.Sequence{tr}, nil
 }
 
 func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -1925,11 +2289,11 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 
 	vlistFormatter, err := xd.decodeHTMLFromHTMLNode(doc)
 	if err != nil {
-		return nil, newTypesettingError(err)
+		return nil, newTypesettingError("Textblock", layoutelt.Line, err.Error())
 	}
 	vl, err := vlistFormatter(attValues.Width)
 	if err != nil {
-		return nil, newTypesettingError(fmt.Errorf("Textblock (line %d): %w", layoutelt.Line, err))
+		return nil, newTypesettingError("Textblock", layoutelt.Line, err.Error())
 	}
 	te := frontend.NewText()
 
@@ -2022,6 +2386,15 @@ func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 			td.AppendChild(TextNode)
 		case *html.Node:
 			td.AppendChild(t)
+		case *node.HList:
+			vl := node.Vpack(t)
+			vlid := fmt.Sprintf("vl-%p", vl)
+			xd.cssbuilder.PendingVLists[vlid] = vl
+			td.Attr = append(td.Attr, html.Attribute{Key: "data-vlist-id", Val: vlid})
+		case *node.VList:
+			vlid := fmt.Sprintf("vl-%p", t)
+			xd.cssbuilder.PendingVLists[vlid] = t
+			td.Attr = append(td.Attr, html.Attribute{Key: "data-vlist-id", Val: vlid})
 		default:
 			slog.Error(fmt.Sprintf("Unknown item type %T", t))
 		}
@@ -2160,7 +2533,7 @@ func cmdUntil(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		var eval xpath.Sequence
 		eval, err = evaluateXPath(xd, layoutelt.Namespaces, attValues.Test)
 		if err != nil {
-			return nil, newTypesettingErrorFromStringf("Case (line %d): error parsing test XPath expression %s", layoutelt.Line, err)
+			return nil, newTypesettingErrorf("Case", layoutelt.Line, "error parsing test XPath expression %s", err)
 		}
 		var ok bool
 		if ok, err = xpath.BooleanValue(eval); err != nil {
@@ -2185,33 +2558,20 @@ func cmdValue(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		return nil, err
 	}
 
-	if attValues.Select != nil {
-		eval, err := evaluateXPath(xd, layoutelt.Namespaces, *attValues.Select)
-		if err != nil {
-			return nil, newTypesettingError(fmt.Errorf("Value (line %d): %w", layoutelt.Line, err))
-		}
-		return xpath.Sequence{eval.Stringvalue()}, nil
+	if attValues.Select == nil {
+		return xpath.Sequence{layoutelt.Stringvalue()}, nil
 	}
-	seq := xpath.Sequence{}
-	for _, cld := range layoutelt.Children() {
-		switch t := cld.(type) {
-		case goxml.CharData:
-			seq = append(seq, t.Contents)
-		case *goxml.Element:
-			if t.Name == "br" {
-				n := &html.Node{}
-				n.Data = "br"
-				n.Type = html.ElementNode
-				seq = append(seq, n)
-			} else {
-				seq = append(seq, cld)
-			}
-		default:
-			seq = append(seq, cld)
-		}
+
+	eval, err := evaluateXPath(xd, layoutelt.Namespaces, *attValues.Select)
+	if err != nil {
+		return nil, newTypesettingError("Value", layoutelt.Line, err.Error())
 	}
-	txt := seq.Stringvalue()
-	return xpath.Sequence{txt}, nil
+	// Always convert to strings (use CopyOf to preserve node structure).
+	var result xpath.Sequence
+	for _, itm := range eval {
+		result = append(result, xpath.ItemStringvalue(itm))
+	}
+	return result, nil
 }
 
 func cmdWhile(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -2228,7 +2588,7 @@ func cmdWhile(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		var eval xpath.Sequence
 		eval, err = evaluateXPath(xd, layoutelt.Namespaces, attValues.Test)
 		if err != nil {
-			return nil, newTypesettingErrorFromStringf("Case (line %d): error parsing test XPath expression %s", layoutelt.Line, err)
+			return nil, newTypesettingErrorf("Case", layoutelt.Line, "error parsing test XPath expression %s", err)
 		}
 		var ok bool
 		if ok, err = xpath.BooleanValue(eval); err != nil {

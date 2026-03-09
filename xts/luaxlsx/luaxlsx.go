@@ -1,147 +1,149 @@
 package luaxlsx
 
 import (
+	lua "github.com/speedata/go-lua"
 	"github.com/speedata/goxlsx"
-	lua "github.com/yuin/gopher-lua"
 )
-
-func lerr(l *lua.LState, errormessage string) int {
-	l.SetTop(0)
-	l.Push(lua.LFalse)
-	l.Push(lua.LString(errormessage))
-	return 2
-}
 
 const luaSpreadsheetTypeName = "spreadsheet"
 const luaWorksheetTypeName = "worksheet"
 
+func lerr(l *lua.State, errormessage string) int {
+	l.SetTop(0)
+	l.PushBoolean(false)
+	l.PushString(errormessage)
+	return 2
+}
+
 // ----------------------- spreadsheet
 
-func indexSpreadSheet(l *lua.LState) int {
+func indexSpreadSheet(l *lua.State) int {
 	sh := checkSpreadsheet(l)
-	n := l.ToInt(-1)
+	n, _ := l.ToInteger(-1)
 	ws, err := sh.GetWorksheet(n - 1)
 	if err != nil {
-		l.RaiseError("%s", err.Error())
+		lua.Errorf(l, "%s", err.Error())
 	}
 
-	mt := l.NewTypeMetatable(luaWorksheetTypeName)
-	l.SetField(mt, "__call", l.NewFunction(callWorksheet))
-	l.SetField(mt, "__index", l.NewFunction(indexWorksheet))
+	if lua.NewMetaTable(l, luaWorksheetTypeName) {
+		l.PushGoFunction(callWorksheet)
+		l.SetField(-2, "__call")
+		l.PushGoFunction(indexWorksheet)
+		l.SetField(-2, "__index")
+	}
 
-	ud := l.NewUserData()
-	ud.Value = ws
-	l.SetMetatable(ud, mt)
+	l.PushUserData(ws)
+	lua.SetMetaTableNamed(l, luaWorksheetTypeName)
 
-	l.Push(ud)
 	return 1
 }
 
-func lenSpreadSheet(l *lua.LState) int {
+func lenSpreadSheet(l *lua.State) int {
 	sh := checkSpreadsheet(l)
-	l.Push(lua.LNumber(sh.NumWorksheets()))
+	l.PushInteger(sh.NumWorksheets())
 	return 1
 }
 
-func checkSpreadsheet(l *lua.LState) *goxlsx.Spreadsheet {
-	ud := l.CheckUserData(1)
-	if v, ok := ud.Value.(*goxlsx.Spreadsheet); ok {
+func checkSpreadsheet(l *lua.State) *goxlsx.Spreadsheet {
+	ud := lua.CheckUserData(l, 1, luaSpreadsheetTypeName)
+	if v, ok := ud.(*goxlsx.Spreadsheet); ok {
 		return v
 	}
-	l.ArgError(1, "spreadsheet expected")
+	lua.ArgumentError(l, 1, "spreadsheet expected")
 	return nil
 }
 
 // ----------------------- worksheet
 
-func checkWorksheet(l *lua.LState) *goxlsx.Worksheet {
-	ud := l.CheckUserData(1)
-	if v, ok := ud.Value.(*goxlsx.Worksheet); ok {
+func checkWorksheet(l *lua.State) *goxlsx.Worksheet {
+	ud := lua.CheckUserData(l, 1, luaWorksheetTypeName)
+	if v, ok := ud.(*goxlsx.Worksheet); ok {
 		return v
 	}
-	l.ArgError(1, "worksheet expected")
+	lua.ArgumentError(l, 1, "worksheet expected")
 	return nil
 }
 
-func indexWorksheet(l *lua.LState) int {
+func indexWorksheet(l *lua.State) int {
 	ws := checkWorksheet(l)
-	arg := l.ToString(2)
+	arg, _ := l.ToString(2)
 	switch arg {
 	case "minrow":
-		l.Push(lua.LNumber(ws.MinRow))
+		l.PushInteger(ws.MinRow)
 		return 1
 	case "maxrow":
-		l.Push(lua.LNumber(ws.MaxRow))
+		l.PushInteger(ws.MaxRow)
 		return 1
 	case "mincol":
-		l.Push(lua.LNumber(ws.MinColumn))
+		l.PushInteger(ws.MinColumn)
 		return 1
 	case "maxcol":
-		l.Push(lua.LNumber(ws.MaxColumn))
+		l.PushInteger(ws.MaxColumn)
 		return 1
 	case "name":
-		l.Push(lua.LString(ws.Name))
+		l.PushString(ws.Name)
 		return 1
 	}
 	return 0
 }
 
-func callWorksheet(l *lua.LState) int {
+func callWorksheet(l *lua.State) int {
 	ws := checkWorksheet(l)
-	y := l.ToInt(-1)
-	x := l.ToInt(-2)
+	y, _ := l.ToInteger(-1)
+	x, _ := l.ToInteger(-2)
 	str := ws.Cell(x, y)
-	l.Push(lua.LString(str))
+	l.PushString(str)
 	return 1
 }
 
-// Return a table with keys day,month,year,hour,minute and second
-func stringToDate(l *lua.LState) int {
-	n := l.CheckString(1)
+func stringToDate(l *lua.State) int {
+	n := lua.CheckString(l, 1)
 	t := goxlsx.DateFromString(n)
-	date := l.NewTable()
-	date.RawSetString("day", lua.LNumber(t.Day()))
-	date.RawSetString("month", lua.LNumber(t.Month()))
-	date.RawSetString("year", lua.LNumber(t.Year()))
-	date.RawSetString("hour", lua.LNumber(t.Hour()))
-	date.RawSetString("minute", lua.LNumber(t.Minute()))
-	date.RawSetString("second", lua.LNumber(t.Second()))
-	l.Push(date)
+	l.NewTable()
+	l.PushInteger(t.Day())
+	l.SetField(-2, "day")
+	l.PushInteger(int(t.Month()))
+	l.SetField(-2, "month")
+	l.PushInteger(t.Year())
+	l.SetField(-2, "year")
+	l.PushInteger(t.Hour())
+	l.SetField(-2, "hour")
+	l.PushInteger(t.Minute())
+	l.SetField(-2, "minute")
+	l.PushInteger(t.Second())
+	l.SetField(-2, "second")
 	return 1
 }
 
-func openfile(l *lua.LState) int {
-	if l.GetTop() < 1 {
+func openfile(l *lua.State) int {
+	if l.Top() < 1 {
 		return lerr(l, "The first argument of open must be the filename of the Excel file.")
 	}
-	var filename string
-	filename = l.CheckString(1)
+	filename := lua.CheckString(l, 1)
 
 	sh, err := goxlsx.OpenFile(filename)
 	if err != nil {
 		return lerr(l, err.Error())
 	}
 
-	mt := l.NewTypeMetatable(luaSpreadsheetTypeName)
-	l.SetField(mt, "__index", l.NewFunction(indexSpreadSheet))
-	l.SetField(mt, "__len", l.NewFunction(lenSpreadSheet))
+	if lua.NewMetaTable(l, luaSpreadsheetTypeName) {
+		l.PushGoFunction(indexSpreadSheet)
+		l.SetField(-2, "__index")
+		l.PushGoFunction(lenSpreadSheet)
+		l.SetField(-2, "__len")
+	}
 
-	ud := l.NewUserData()
-	ud.Value = sh
-	l.SetMetatable(ud, mt)
+	l.PushUserData(sh)
+	lua.SetMetaTableNamed(l, luaSpreadsheetTypeName)
 
-	l.Push(ud)
 	return 1
 }
 
-var exports = map[string]lua.LGFunction{
-	"open":           openfile,
-	"string_to_date": stringToDate,
-}
-
-// Open sets up the XSLX Lua module.
-func Open(l *lua.LState) int {
-	mod := l.SetFuncs(l.NewTable(), exports)
-	l.Push(mod)
+// Open sets up the XLSX Lua module.
+func Open(l *lua.State) int {
+	lua.NewLibrary(l, []lua.RegistryFunction{
+		{"open", openfile},
+		{"string_to_date", stringToDate},
+	})
 	return 1
 }

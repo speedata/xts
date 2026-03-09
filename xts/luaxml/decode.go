@@ -5,11 +5,11 @@ import (
 	"io"
 	"os"
 
-	lua "github.com/yuin/gopher-lua"
+	lua "github.com/speedata/go-lua"
 )
 
-func decodeXML(l *lua.LState) int {
-	filename := l.CheckString(1)
+func decodeXML(l *lua.State) int {
+	filename := lua.CheckString(l, 1)
 	f, err := os.Open(filename)
 	if err != nil {
 		return lerr(l, err.Error())
@@ -19,7 +19,13 @@ func decodeXML(l *lua.LState) int {
 
 	dec := xml.NewDecoder(f)
 
-	var curtbl, root *lua.LTable
+	// We track parent tables via a stack of absolute indices.
+	// The root table will be left on the Lua stack at the end.
+	type stackEntry struct {
+		absIdx int
+	}
+	var parentStack []stackEntry
+
 done:
 	for {
 		tok, err := dec.Token()
@@ -31,37 +37,53 @@ done:
 		}
 		switch t := tok.(type) {
 		case xml.StartElement:
-			elttbl := &lua.LTable{}
-			elttbl.RawSetString("_type", lua.LString("element"))
-			elttbl.RawSetString("_name", lua.LString(t.Name.Local))
+			l.NewTable()
+			curIdx := l.AbsIndex(-1)
+
+			l.PushString("element")
+			l.SetField(curIdx, "_type")
+			l.PushString(t.Name.Local)
+			l.SetField(curIdx, "_name")
 
 			for _, attr := range t.Attr {
-				elttbl.RawSetString(attr.Name.Local, lua.LString(attr.Value))
+				l.PushString(attr.Value)
+				l.SetField(curIdx, attr.Name.Local)
 			}
 
-			if root == nil {
-				root = elttbl
+			if len(parentStack) > 0 {
+				parentIdx := parentStack[len(parentStack)-1].absIdx
+				// append to parent: parent[#parent+1] = cur
+				n := l.RawLength(parentIdx)
+				l.PushValue(curIdx)
+				l.RawSetInt(parentIdx, n+1)
 			}
 
-			if curtbl != nil {
-				elttbl.RawSetString(".__parent", curtbl)
-				curtbl.Append(elttbl)
-			}
-			curtbl = elttbl
+			parentStack = append(parentStack, stackEntry{curIdx})
+
 		case xml.CharData:
-			if curtbl != nil {
-				curtbl.Append(lua.LString(t.Copy()))
-			}
-		case xml.EndElement:
-			entry := curtbl.RawGetString(".__parent")
-			if tbl, ok := entry.(*lua.LTable); ok {
-				// lv is LTable
-				curtbl = tbl
+			if len(parentStack) > 0 {
+				parentIdx := parentStack[len(parentStack)-1].absIdx
+				n := l.RawLength(parentIdx)
+				l.PushString(string(t.Copy()))
+				l.RawSetInt(parentIdx, n+1)
 			}
 
+		case xml.EndElement:
+			if len(parentStack) > 1 {
+				// Pop current element from the Lua stack (parent still references it)
+				// but keep it if it was appended
+				parentStack = parentStack[:len(parentStack)-1]
+				// The table is still on the Lua stack; remove it since
+				// the parent already holds a reference via RawSetInt.
+				l.Remove(-1)
+			} else if len(parentStack) == 1 {
+				// Root element — leave it on the stack
+				parentStack = parentStack[:0]
+			}
 		}
 	}
-	l.Push(lua.LTrue)
-	l.Push(root)
+	// stack should have the root table on top
+	l.PushBoolean(true)
+	l.Insert(-2) // put true before the root table
 	return 2
 }

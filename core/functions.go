@@ -16,12 +16,13 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/alecthomas/chroma/formatters/html"
+	chromahtml "github.com/alecthomas/chroma/formatters/html"
 	"github.com/boxesandglue/boxesandglue/backend/bag"
 	"github.com/speedata/goxpath"
 	"github.com/yuin/goldmark"
 	highlighting "github.com/yuin/goldmark-highlighting"
 	"github.com/yuin/goldmark/extension"
+	"golang.org/x/net/html"
 )
 
 const fnNS = "urn:speedata.de/2021/xtsfunctions/en"
@@ -70,14 +71,14 @@ var spaceRemover = regexp.MustCompile(`(?m)\s*`)
 // "/TrimBox", "/BleedBox" or "/ArtBox".
 func getImageFnArguments(args []goxpath.Sequence, fnname string) (filename string, pagenumber int, pdfbox string, unit string, err error) {
 	if len(args) == 0 {
-		err = newTypesettingErrorFromStringf("%s: no filename given", fnname)
+		err = fmt.Errorf("%s: no filename given", fnname)
 		return
 	}
 	pdfbox = "/MediaBox"
 	pagenumber = 1
 	for i, arg := range args {
 		if len(arg) > 1 {
-			err = newTypesettingErrorFromStringf("%s argument %d: sequence not expected", fnname, i)
+			err = fmt.Errorf("%s argument %d: sequence not expected", fnname, i)
 			return
 		}
 		if len(arg) == 0 {
@@ -116,15 +117,15 @@ func getImageFnArguments(args []goxpath.Sequence, fnname string) (filename strin
 				pdfbox = "/ArtBox"
 				continue
 			}
-			err = newTypesettingErrorFromStringf("%s argument %d: could not parse string %q", fnname, i, t)
+			err = fmt.Errorf("%s argument %d: could not parse string %q", fnname, i, t)
 			return
 		default:
-			err = newTypesettingErrorFromStringf("%s argument %d: could not parse %v", fnname, i, t)
+			err = fmt.Errorf("%s argument %d: could not parse %v", fnname, i, t)
 			return
 		}
 	}
 	if filename == "" {
-		err = newTypesettingErrorFromStringf("%s: no filename given", fnname)
+		err = fmt.Errorf("%s: no filename given", fnname)
 		return
 	}
 	return
@@ -173,7 +174,7 @@ func fnAspectRatio(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Seque
 
 	fn, pagenumber, pdfbox, unit, err := getImageFnArguments(args, "aspect-ratio")
 	if unit != "" {
-		return nil, newTypesettingErrorFromString("You cannot use unit in sd:aspect-ratio()")
+		return nil, fmt.Errorf("You cannot use unit in sd:aspect-ratio()")
 	}
 	var p string
 	if p, err = FindFile(fn); err != nil {
@@ -196,7 +197,7 @@ func fnAspectRatio(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Seque
 		wd = bag.ScaledPoint(imgf.W) * bag.Factor
 		ht = bag.ScaledPoint(imgf.H) * bag.Factor
 	default:
-		return nil, newTypesettingErrorFromStringf("sd:aspect-ratio() unknown format for file %s", fn)
+		return nil, fmt.Errorf("sd:aspect-ratio() unknown format for file %s", fn)
 	}
 	return goxpath.Sequence{wd.ToPT() / ht.ToPT()}, nil
 }
@@ -246,9 +247,19 @@ func fnDecodeHTML(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequen
 	if err != nil {
 		return nil, err
 	}
-	x = x.FirstChild.LastChild.FirstChild
-	x.Parent = nil
-	return goxpath.Sequence{x}, nil
+	// Navigate to the <dummy> element: Document → html → body → dummy
+	dummy := x.FirstChild.LastChild.FirstChild
+	// Collect children first, then detach them from the dummy parent
+	var children []*html.Node
+	for c := dummy.FirstChild; c != nil; c = c.NextSibling {
+		children = append(children, c)
+	}
+	var seq goxpath.Sequence
+	for _, c := range children {
+		dummy.RemoveChild(c)
+		seq = append(seq, c)
+	}
+	return seq, nil
 }
 
 func fnDummytext(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
@@ -297,7 +308,7 @@ func fnImageHeight(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Seque
 	case "png", "jpeg":
 		ht = bag.ScaledPoint(imgf.H/96*72) * bag.Factor
 	default:
-		return nil, newTypesettingErrorFromStringf("sd:image-height() unknown format for file %s", fn)
+		return nil, fmt.Errorf("sd:image-height() unknown format for file %s", fn)
 	}
 
 	switch unit {
@@ -338,7 +349,7 @@ func fnImageWidth(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequen
 	case "png", "jpeg":
 		wd = bag.ScaledPoint(imgf.W/96*72) * bag.Factor
 	default:
-		return nil, newTypesettingErrorFromStringf("sd:image-width() unknown format for file %s", fn)
+		return nil, fmt.Errorf("sd:image-width() unknown format for file %s", fn)
 	}
 
 	switch unit {
@@ -375,7 +386,7 @@ func fnMarkdown(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence
 		highlighting.NewHighlighting(
 			highlighting.WithStyle("pygments"),
 			highlighting.WithFormatOptions(
-				html.WithLineNumbers(true),
+				chromahtml.WithLineNumbers(true),
 			),
 		),
 		extension.Table,

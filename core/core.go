@@ -31,6 +31,8 @@ var (
 const (
 	// SDNAMESPACE is the speedata XTS layout rules namespace
 	SDNAMESPACE string = "urn:speedata.de/2021/xts/en"
+	// XHTMLNAMESPACE is used for literal HTML elements inside <HTML>
+	XHTMLNAMESPACE string = "urn:speedata.de/2021/xhtml"
 	// LevelNotice is used for messages from Message
 	LevelNotice = slog.Level(2)
 )
@@ -233,11 +235,6 @@ func RunXTS(cfg *XTSConfig) error {
 	}
 
 	d.document.Doc.CompressLevel = 9
-	slog.Info("Setup defaults ...")
-
-	if err = htmlbag.LoadIncludedFonts(d.document); err != nil {
-		return nil
-	}
 
 	var defaultPagetype *pagetype
 	if defaultPagetype, err = d.newPagetype("default page", "true()"); err != nil {
@@ -248,7 +245,6 @@ func RunXTS(cfg *XTSConfig) error {
 	defaultPagetype.marginTop = oneCM
 	defaultPagetype.marginBottom = oneCM
 
-	slog.Info("Setup defaults ... done")
 	if layoutxml, err = goxml.Parse(cfg.Layoutfile); err != nil {
 		return err
 	}
@@ -279,7 +275,7 @@ func RunXTS(cfg *XTSConfig) error {
 		if ns == "" {
 			ns = "none"
 		}
-		return newTypesettingErrorFromStringf("the layout file must be in the name space %s, found %s", SDNAMESPACE, ns)
+		return fmt.Errorf("the layout file must be in the name space %s, found %s", SDNAMESPACE, ns)
 	}
 	for _, attr := range layoutRoot.Attributes() {
 		if attr.Name == "version" {
@@ -300,28 +296,28 @@ func RunXTS(cfg *XTSConfig) error {
 		return err
 	}
 	if len(dataNameSeq) != 1 {
-		return newTypesettingErrorFromString("Could not find the root name for the data xml")
+		return fmt.Errorf("could not find the root name for the data xml")
 	}
 	slog.Info("Start processing data")
 
 	rootname := dataNameSeq[0].(string)
 	_, err = dispatch(d, layoutRoot)
 	if err != nil {
-		return newTypesettingError(err)
+		return err
 	}
 
 	d.data.Ctx.Root()
 	var startDispatcher *goxml.Element
 	var ok bool
 	if startDispatcher, ok = dataDispatcher[rootname][""]; !ok {
-		return newTypesettingErrorFromString(fmt.Sprintf("Cannot find <Record> for root element %s", rootname))
+		return fmt.Errorf("cannot find <Record> for root element %s", rootname)
 	}
 	_, err = dispatch(d, startDispatcher)
 	if err != nil {
-		return newTypesettingError(err)
+		return err
 	}
 	if d.currentPage != nil {
-		d.currentPage.bagPage.Shipout()
+		clearPage(d)
 	}
 	if err = d.document.Finish(); err != nil {
 		return err
@@ -471,38 +467,37 @@ func showDiscNodes(n node.Node) {
 	}
 }
 
-// A TypesettingError contains the information if it has been logged, so it does
-// not appear more than once in the output.
+// A TypesettingError is an error with optional layout position information.
 type TypesettingError struct {
-	Logged bool
-	Msg    string
+	Logged  bool
+	Msg     string
+	Command string // layout command name, e.g. "DefineColor"
+	Line    int    // line in the layout file, 0 if unknown
 }
 
 func (te TypesettingError) Error() string {
+	if te.Command != "" && te.Line > 0 {
+		return fmt.Sprintf("%s (line %d): %s", te.Command, te.Line, te.Msg)
+	}
+	if te.Line > 0 {
+		return fmt.Sprintf("line %d: %s", te.Line, te.Msg)
+	}
 	return te.Msg
 }
 
-func newTypesettingError(err error) error {
-	if terr, ok := err.(TypesettingError); ok {
-		if !terr.Logged {
-			slog.Error(terr.Msg)
-			terr.Logged = true
-		}
-		return terr
+// newTypesettingError creates a TypesettingError with layout position from a
+// layout element. Use this in cmd* functions where layoutelt is available.
+func newTypesettingError(command string, line int, msg string) error {
+	te := TypesettingError{
+		Msg:     msg,
+		Command: command,
+		Line:    line,
 	}
-	return TypesettingError{
-		Msg: err.Error(),
-	}
+	slog.Error(te.Error())
+	te.Logged = true
+	return te
 }
 
-func newTypesettingErrorFromString(msg string) error {
-	slog.Error(msg)
-	return TypesettingError{
-		Msg:    msg,
-		Logged: true,
-	}
-}
-
-func newTypesettingErrorFromStringf(format string, a ...any) error {
-	return newTypesettingErrorFromString(fmt.Sprintf(format, a...))
+func newTypesettingErrorf(command string, line int, format string, a ...any) error {
+	return newTypesettingError(command, line, fmt.Sprintf(format, a...))
 }

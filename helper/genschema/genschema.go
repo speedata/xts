@@ -15,6 +15,8 @@ const (
 	SDNAMESPACE string = "urn:speedata.de/2021/xts/en"
 	// FNNAMESPACE is the speedata XTS function namespace
 	FNNAMESPACE string = "urn:speedata.de/2021/xtsfunctions/en"
+	// XHTMLNAMESPACE is the XHTML namespace for literal HTML elements in XTS layouts
+	XHTMLNAMESPACE string = "urn:speedata.de/2021/xhtml"
 )
 
 // DoThings creates two schema files for »en« and »de«

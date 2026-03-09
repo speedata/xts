@@ -8,47 +8,54 @@ import (
 	"os"
 	"regexp"
 
-	lua "github.com/yuin/gopher-lua"
+	lua "github.com/speedata/go-lua"
 	"golang.org/x/text/encoding/charmap"
 )
 
 var reCarriageReturn = regexp.MustCompile(`\r`)
 
-func lerr(l *lua.LState, errormessage string) int {
+func lerr(l *lua.State, errormessage string) int {
 	l.SetTop(0)
-	l.Push(lua.LFalse)
-	l.Push(lua.LString(errormessage))
+	l.PushBoolean(false)
+	l.PushString(errormessage)
 	return 2
 }
 
-func decode(l *lua.LState) int {
-	if l.GetTop() < 1 {
+func decode(l *lua.State) int {
+	if l.Top() < 1 {
 		return lerr(l, "The first argument of decode must be the filename of the CSV.")
 	}
-	filename := l.CheckString(1)
+	filename := lua.CheckString(l, 1)
 
 	columns := []int{}
 	var charset, separator string
 
-	if l.GetTop() > 1 {
-		if tbl := l.CheckTable(-1); tbl.Type() == lua.LTTable {
-			val := tbl.RawGetString("charset")
-			if val.Type() == lua.LTString {
-				charset = val.String()
+	if l.Top() > 1 {
+		if l.IsTable(-1) {
+			l.Field(-1, "charset")
+			if l.IsString(-1) {
+				charset, _ = l.ToString(-1)
 			}
-			val = tbl.RawGetString("separator")
-			if val.Type() == lua.LTString {
-				separator = val.String()
+			l.Pop(1)
+
+			l.Field(-1, "separator")
+			if l.IsString(-1) {
+				separator, _ = l.ToString(-1)
 			}
-			val = tbl.RawGetString("columns")
-			if cols, ok := val.(*lua.LTable); ok {
-				for i := 1; i <= cols.Len(); i++ {
-					val = cols.RawGetInt(i)
-					if f, ok := val.(lua.LNumber); ok {
-						columns = append(columns, int(f))
+			l.Pop(1)
+
+			l.Field(-1, "columns")
+			if l.IsTable(-1) {
+				length := l.RawLength(-1)
+				for i := 1; i <= length; i++ {
+					l.RawGetInt(-1, i)
+					if n, ok := l.ToNumber(-1); ok {
+						columns = append(columns, int(n))
 					}
+					l.Pop(1)
 				}
 			}
+			l.Pop(1)
 		}
 	}
 
@@ -60,7 +67,6 @@ func decode(l *lua.LState) int {
 		return lerr(l, err.Error())
 	}
 
-	// Currently only latin-1 is supported
 	switch charset {
 	case "ISO-8859-1":
 		rd = charmap.ISO8859_1.NewDecoder().Reader(rd)
@@ -84,33 +90,32 @@ func decode(l *lua.LState) int {
 	if err != nil {
 		return lerr(l, err.Error())
 	}
-	rows := l.NewTable()
+
+	l.NewTable() // rows
 	for i, row := range records {
 		if i == 0 && len(columns) == 0 {
 			for z := 1; z <= len(row); z++ {
 				columns = append(columns, z)
 			}
 		}
-		col := l.NewTable()
+		l.NewTable() // col
 		for j, entry := range columns {
 			if entry-1 < 0 || entry > len(row) {
 				return lerr(l, fmt.Sprintf("Column %d out of range. Must be between 1 and %d (# of columns)", entry, len(row)))
 			}
-			col.RawSetInt(j+1, lua.LString(row[entry-1]))
+			l.PushString(row[entry-1])
+			l.RawSetInt(-2, j+1)
 		}
-		rows.RawSetInt(i+1, col)
+		l.RawSetInt(-2, i+1)
 	}
 
-	l.Push(rows)
 	return 1
 }
 
-var exports = map[string]lua.LGFunction{
-	"decode": decode,
-}
-
-func Open(l *lua.LState) int {
-	mod := l.SetFuncs(l.NewTable(), exports)
-	l.Push(mod)
+// Open starts this lua module
+func Open(l *lua.State) int {
+	lua.NewLibrary(l, []lua.RegistryFunction{
+		{Name: "decode", Function: decode},
+	})
 	return 1
 }

@@ -68,7 +68,7 @@ func doCompare(absdir string, withHTML bool, referencefn string) {
 	}
 	wp = workerpool.New(runtime.NumCPU())
 	referencefilename = referencefn
-	statuschan := make(chan []compareStatus, 0)
+	statuschan := make(chan []compareStatus)
 	compareFunc := mkCompare(statuschan)
 	filepath.Walk(absdir, compareFunc)
 	go getCompareStatus(statuschan)

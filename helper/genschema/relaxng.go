@@ -62,6 +62,11 @@ func writeChildElements(commands *commandsXML, enc *xml.Encoder, children []byte
 						enc.EncodeToken(valueElement.End())
 					}
 				}
+			case "anycontent":
+				ref := refElement.Copy()
+				ref.Attr = []xml.Attr{{Name: xml.Name{Local: "name"}, Value: "anycontent"}}
+				enc.EncodeToken(ref)
+				enc.EncodeToken(ref.End())
 			case "reference":
 				for _, attr := range v.Attr {
 					if attr.Name.Local == "name" {
@@ -85,6 +90,8 @@ func writeChildElements(commands *commandsXML, enc *xml.Encoder, children []byte
 				enc.EncodeToken(refElement.End())
 			case "choice":
 				enc.EncodeToken(choiceElement.End())
+			case "anycontent", "description":
+				// empty elements, end tag already handled or not needed
 			default:
 				enc.EncodeToken(v)
 			}
@@ -158,8 +165,10 @@ func genRelaxNGSchema(commands *commandsXML, lang string, allowForeignNodes bool
 		enc.EncodeToken(xml.CharData(cmd.getCommandDescription(lang)))
 		enc.EncodeToken(doc.End())
 
+		hasAnycontent := bytes.Contains(cmd.Childelements.Text, []byte("<anycontent"))
+
 		// if the child elements contents is "empty", there is no need for allowing foreign nodes (1/2)
-		if cmd.Name != "Include" && len(cmd.Childelements.Text) > 0 {
+		if cmd.Name != "Include" && len(cmd.Childelements.Text) > 0 && !hasAnycontent {
 			interleave = xml.StartElement{Name: xml.Name{Local: "interleave"}}
 			enc.EncodeToken(interleave)
 
@@ -283,7 +292,7 @@ func genRelaxNGSchema(commands *commandsXML, lang string, allowForeignNodes bool
 		writeChildElements(commands, enc, cmd.Childelements.Text, lang)
 
 		// if the child elements contents is "empty", there is no need for allowing foreign nodes (2/2)
-		if cmd.Name != "Include" && len(cmd.Childelements.Text) > 0 {
+		if cmd.Name != "Include" && len(cmd.Childelements.Text) > 0 && !hasAnycontent {
 			enc.EncodeToken(group.End())
 			if allowForeignNodes {
 				ref := xml.StartElement{Name: xml.Name{Local: "ref"}}
@@ -324,6 +333,34 @@ func genRelaxNGSchema(commands *commandsXML, lang string, allowForeignNodes bool
                 <element name="table"><ref name="htmltable" /></element>
 			    <element name="u"><ref name="html" /></element>
 			    <element name="ul"><ref name="html" /></element>
+			    <element>
+				    <nsName ns="`+XHTMLNAMESPACE+`"/>
+				    <zeroOrMore>
+					    <attribute><anyName/></attribute>
+				    </zeroOrMore>
+				    <ref name="xhtmlcontent"/>
+			    </element>
+			    <text></text>
+		    </choice>
+		</zeroOrMore>
+	</define>
+	<define name="xhtmlcontent">
+		<zeroOrMore>
+		    <choice>
+			    <element>
+				    <nsName ns="`+XHTMLNAMESPACE+`"/>
+				    <zeroOrMore>
+					    <attribute><anyName/></attribute>
+				    </zeroOrMore>
+				    <ref name="xhtmlcontent"/>
+			    </element>
+			    <element>
+				    <nsName ns="`+SDNAMESPACE+`"/>
+				    <zeroOrMore>
+					    <attribute><anyName/></attribute>
+				    </zeroOrMore>
+				    <ref name="xhtmlcontent"/>
+			    </element>
 			    <text></text>
 		    </choice>
 		</zeroOrMore>
@@ -382,11 +419,6 @@ func genRelaxNGSchema(commands *commandsXML, lang string, allowForeignNodes bool
             </oneOrMore>
         </element>
     </define>
-`)
-	if allowForeignNodes {
-		enc.Flush()
-		// See feature request #144
-		fmt.Fprintln(&outbuf, fmt.Sprintf(`
 	<!-- This pattern allows any element from any namespace -->
 	<define name="anything">
       <zeroOrMore>
@@ -402,6 +434,23 @@ func genRelaxNGSchema(commands *commandsXML, lang string, allowForeignNodes bool
          </choice>
       </zeroOrMore>
    </define>
+   <!-- Like anything but without top-level attributes (for use alongside explicit attributes) -->
+   <define name="anycontent">
+      <zeroOrMore>
+         <choice>
+            <element>
+               <anyName/>
+               <ref name="anything"/>
+            </element>
+            <text/>
+         </choice>
+      </zeroOrMore>
+   </define>
+`)
+	if allowForeignNodes {
+		enc.Flush()
+		// See feature request #144
+		fmt.Fprintln(&outbuf, fmt.Sprintf(`
    <define name="foreign-elements">
       <zeroOrMore>
          <element>
@@ -410,6 +459,7 @@ func genRelaxNGSchema(commands *commandsXML, lang string, allowForeignNodes bool
                   <nsName ns=""/>
                   <nsName ns="%s"/>
                   <nsName ns="%s"/>
+                  <nsName ns="`+XHTMLNAMESPACE+`"/>
                </except>
             </anyName>
             <ref name="anything"/>
@@ -424,6 +474,7 @@ func genRelaxNGSchema(commands *commandsXML, lang string, allowForeignNodes bool
                   <nsName ns=""/>
                   <nsName ns="%s"/>
                   <nsName ns="%s"/>
+                  <nsName ns="`+XHTMLNAMESPACE+`"/>
                </except>
             </anyName>
          </attribute>

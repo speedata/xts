@@ -7,6 +7,7 @@
   <define name="Switchcontents">
     <optional><cmd name="Column"/></optional>
     <optional><cmd name="ClearPage"/></optional>
+    <optional><cmd name="ForAll" /></optional>
     <optional><cmd name="HTML"/></optional>
     <optional><cmd name="LoadDataset"/></optional>
     <optional><cmd name="Loop"/></optional>
@@ -20,6 +21,7 @@
     <optional><cmd name="SaveDataset"/></optional>
     <optional><cmd name="SetVariable"/></optional>
     <optional><cmd name="Switch"/></optional>
+    <optional><cmd name="Td"/></optional>
     <optional><cmd name="Tr"/></optional>
     <optional><cmd name="Until"/></optional>
     <optional><cmd name="Value"/></optional>
@@ -36,6 +38,7 @@
     <optional><cmd name="PDFOptions"/></optional>
     <optional><cmd name="Pageformat"/></optional>
     <optional><cmd name="Record"/></optional>
+    <optional><cmd name="Section"/></optional>
     <optional><cmd name="SetGrid"/></optional>
     <optional><cmd name="SetVariable"/></optional>
     <optional><cmd name="Stylesheet"/></optional>
@@ -74,6 +77,7 @@
         <cmd name="U"/>
         <cmd name="Ul"/>
         <cmd name="Value"/>
+        <cmd name="CopyOf"/>
         <cmd name="Span"/>
       </choice>
     </zeroOrMore>
@@ -1117,6 +1121,14 @@
         <para>CSS id für dieses Element.</para>
       </description>
     </attribute>
+    <attribute en="style" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS style for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS Stil für dieses Element.</para>
+      </description>
+    </attribute>
     <attribute en="backgroundcolor" type="text" optional="yes" css="background-color">
       <description xml:lang="en">
         <para>Color of the box. If the color name is a dash (<tt>-</tt>), a transparent background is used.</para>
@@ -1237,6 +1249,14 @@
       </description>
       <description xml:lang="de">
         <para>CSS id für diesen Kreis.</para>
+      </description>
+    </attribute>
+    <attribute en="style" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS style for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS Stil für dieses Element.</para>
       </description>
     </attribute>
     <attribute en="origin-x" type="zerotohundred" optional="yes">
@@ -1528,6 +1548,47 @@
     <Column width="5mm" backgroundcolor="grau" />
   </Columns>
 </Table>]]></listing>
+    </example>
+  </command>
+
+  <!--
+      ****************************************************************************************
+      * CopyOf
+      ****************************************************************************************
+  -->
+  <command en="CopyOf">
+    <description xml:lang="en">
+      <para>Copies the result of an XPath expression as-is, preserving node structure. Analogous to xsl:copy-of in XSLT.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Kopiert das Ergebnis eines XPath-Ausdrucks unverändert, einschließlich der Knotenstruktur. Analog zu xsl:copy-of in XSLT.</para>
+    </description>
+    <childelements/>
+    <attribute en="select" type="xpath" optional="no">
+      <description xml:lang="en">
+        <para>XPath expression whose result is passed through unchanged.</para>
+      </description>
+      <description xml:lang="de">
+        <para>XPath-Ausdruck, dessen Ergebnis unverändert weitergegeben wird.</para>
+      </description>
+    </attribute>
+    <remark xml:lang="en">
+      <para>Unlike Value, which always converts to text, CopyOf preserves the original node type (HTML nodes, XML elements, etc.).</para>
+      <para>Use this command to pass structured content from sd:decode-html() or XML data into Paragraph, HTML, or other elements.</para>
+    </remark>
+    <remark xml:lang="de">
+      <para>Im Unterschied zu Value, das immer in Text umwandelt, behält CopyOf den ursprünglichen Knotentyp bei (HTML-Knoten, XML-Elemente usw.).</para>
+      <para>Verwenden Sie dieses Kommando, um strukturierte Inhalte aus sd:decode-html() oder XML-Daten in Paragraph, HTML oder andere Elemente einzufügen.</para>
+    </remark>
+    <example xml:lang="en">
+      <listing><![CDATA[<Paragraph>
+  <CopyOf select="sd:decode-html(.)" />
+</Paragraph>]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Paragraph>
+  <CopyOf select="sd:decode-html(.)" />
+</Paragraph>]]></listing>
     </example>
   </command>
 
@@ -2082,10 +2143,12 @@
       <para>Erzeugt einen virtuellen Bereich, in dem Elemente platziert werden können. Ausgegeben werden die Gruppen anschließend mit <cmd name="PlaceObject"/>.</para>
     </description>
     <childelements>
-      <interleave>
         <cmd name="Contents"/>
-        <!-- <optional><cmd name="Grid"/></optional> -->
+        <!--
+      <interleave>
+        <optional><cmd name="Grid"/></optional>
       </interleave>
+        -->
     </childelements>
     <attribute en="name" type="text" optional="no">
       <description xml:lang="en">
@@ -2142,6 +2205,28 @@
     </example>
   </command>
 
+
+  <!--
+      ****************************************************************************************
+      * Groupcontents
+      ****************************************************************************************
+  -->
+  <command en="Groupcontents">
+    <description xml:lang="en">
+      <para>Insert the contents of a previously created group.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Fügt den Inhalt einer zuvor erstellten Gruppe ein.</para>
+    </description>
+    <attribute en="name" type="text" optional="no">
+      <description xml:lang="en">
+        <para>Name of the group whose contents should be inserted.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name der Gruppe, deren Inhalt eingefügt werden soll.</para>
+      </description>
+    </attribute>
+  </command>
 
 
   <!--
@@ -3435,6 +3520,7 @@
           <optional><cmd name="Barcode"/></optional>
           <optional><cmd name="Box"/></optional>
           <optional><cmd name="Circle"/></optional>
+          <optional><cmd name="HTML"/></optional>
           <optional><cmd name="Image"/></optional>
           <optional><cmd name="Table"/></optional>
           <optional><cmd name="Textblock"/></optional>
@@ -3553,6 +3639,14 @@
           <para>Das Objekt wird in der angegebenen Spalte platziert.</para>
         </description>
       </choice>
+      <choice en="center">
+        <description xml:lang="en">
+          <para>The given column determines the horizontal center of the object.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Die angegebene Spalte bestimmt die horizontale Mitte des Objekts.</para>
+        </description>
+      </choice>
       <choice en="right">
         <description xml:lang="en">
           <para>The given columns determines the right edge of the border.</para>
@@ -3569,6 +3663,38 @@
       <description xml:lang="de">
         <para>Zahl: Die Zeile im Raster, in der das Objekt ausgegeben wird. Wird die Zeile nicht angegeben, so sucht sich das System selbständig eine passende freie Zeile für das Objekt. Maßangabe: die Position von der oberen Blattkante.</para>
       </description>
+    </attribute>
+    <attribute en="vreference" optional="yes" allowxpath="yes">
+      <description xml:lang="en">
+        <para>Determines the placement of the object relative to the given row. If 'top' (default), the row specifies the top edge. If 'bottom', the row specifies the bottom edge. If 'middle', the row specifies the vertical center.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Bestimmt, ob die angegebene Zeile die obere, untere oder mittlere Kante des Objekts bezeichnet.</para>
+      </description>
+      <choice en="top">
+        <description xml:lang="en">
+          <para>The given row determines the top edge of the object (default).</para>
+        </description>
+        <description xml:lang="de">
+          <para>Die angegebene Zeile bestimmt die obere Kante des Objekts (Voreinstellung).</para>
+        </description>
+      </choice>
+      <choice en="middle">
+        <description xml:lang="en">
+          <para>The given row determines the vertical center of the object.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Die angegebene Zeile bestimmt die vertikale Mitte des Objekts.</para>
+        </description>
+      </choice>
+      <choice en="bottom">
+        <description xml:lang="en">
+          <para>The given row determines the bottom edge of the object.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Die angegebene Zeile bestimmt die untere Kante des Objekts.</para>
+        </description>
+      </choice>
     </attribute>
     <example xml:lang="en">
       <para>Positioning inside the grid:</para>
@@ -3925,6 +4051,32 @@
     </example>
   </command>
 
+  <!--
+      ****************************************************************************************
+      * Section
+      ****************************************************************************************
+  -->
+  <command en="Section">
+    <description xml:lang="en">
+      <para>A structural grouping element for organizing the layout. Has no effect on the output.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Ein Gliederungselement zur Organisation des Layouts. Hat keinen Einfluss auf die Ausgabe.</para>
+    </description>
+    <childelements>
+      <oneOrMore>
+        <reference name="Toplevel"/>
+      </oneOrMore>
+    </childelements>
+    <attribute en="name" type="text" optional="no">
+      <description xml:lang="en">
+        <para>Name of this section (for documentation purposes only).</para>
+      </description>
+      <description xml:lang="de">
+        <para>Name dieses Abschnitts (nur zur Dokumentation).</para>
+      </description>
+    </attribute>
+  </command>
   <!--
       ****************************************************************************************
       * SetGrid
@@ -4395,6 +4547,7 @@
           <optional><cmd name="ForAll"/></optional>
           <optional><cmd name="Loop"/></optional>
           <optional><cmd name="Tablehead"/></optional>
+          <optional><cmd name="Tablerule"/></optional>
           <optional><cmd name="Tr"/></optional>
           <optional><cmd name="Value"/></optional>
         </interleave>
@@ -4431,6 +4584,18 @@
       <description xml:lang="de">
         <para>CSS Stil für dieses Element.</para>
       </description>
+    </attribute>
+    <attribute en="stretch" optional="yes">
+      <description xml:lang="en">
+        <para>If set to "max", the table stretches to its full width (equivalent to CSS width: 100%).</para>
+      </description>
+      <description xml:lang="de">
+        <para>Wenn auf "max" gesetzt, wird die Tabelle auf die volle Breite gedehnt (entspricht CSS width: 100%).</para>
+      </description>
+      <choice en="max">
+        <description xml:lang="en"><para>Stretch the table to its maximum width.</para></description>
+        <description xml:lang="de"><para>Tabelle auf die maximale Breite dehnen.</para></description>
+      </choice>
     </attribute>
     <remark xml:lang="en">
       <para>The table cells may contain Paragraphs, Images and other objects that are allowed in <cmd name="PlaceObject"/>.</para>
@@ -4530,6 +4695,7 @@
         <interleave>
           <optional><cmd name="ForAll"/></optional>
           <optional><cmd name="Switch"/></optional>
+          <optional><cmd name="Tablerule"/></optional>
           <optional><cmd name="Tr"/></optional>
         </interleave>
       </oneOrMore>
@@ -4551,6 +4717,61 @@
 
   <!--
       ****************************************************************************************
+      * Tablerule
+      ****************************************************************************************
+  -->
+  <command en="Tablerule">
+    <description xml:lang="en">
+      <para>Draw a horizontal rule spanning the full table width. Default thickness is 0.4pt.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Zeichnet eine horizontale Linie über die gesamte Tabellenbreite. Standarddicke ist 0,4 Punkt.</para>
+    </description>
+    <attribute en="rulewidth" optional="yes" type="numberorlength">
+      <description xml:lang="en">
+        <para>Thickness of the rule. Defaults to 0.4pt.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Dicke der Linie. Voreinstellung ist 0,4 Punkt.</para>
+      </description>
+    </attribute>
+    <attribute en="color" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>Color of the rule. Use "transparent" for an invisible spacer. Defaults to black.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Farbe der Linie. Mit »transparent« wird nur Platz reserviert. Voreinstellung ist schwarz.</para>
+      </description>
+    </attribute>
+    <attribute en="class" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS class for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS-Klasse für dieses Element.</para>
+      </description>
+    </attribute>
+    <attribute en="id" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS id for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS-ID für dieses Element.</para>
+      </description>
+    </attribute>
+    <attribute en="style" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS style for this element. Overrides rulewidth and color attributes.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS-Style für dieses Element. Überschreibt die Attribute rulewidth und color.</para>
+      </description>
+    </attribute>
+  </command>
+
+
+  <!--
+      ****************************************************************************************
       * Td
       ****************************************************************************************
   -->
@@ -4567,6 +4788,8 @@
           <cmd name="Bookmark"/>
           <cmd name="Box"/>
           <cmd name="ForAll"/>
+          <cmd name="Groupcontents"/>
+          <cmd name="HTML" />
           <cmd name="Image"/>
           <cmd name="Loop"/>
           <cmd name="Ol"/>
@@ -4757,6 +4980,22 @@
       </description>
       <description xml:lang="de">
         <para>CSS Klasse für dieses Element.</para>
+      </description>
+    </attribute>
+    <attribute en="id" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS id for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS id für dieses Element.</para>
+      </description>
+    </attribute>
+    <attribute en="style" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS style for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS Stil für dieses Element.</para>
       </description>
     </attribute>
     <example xml:lang="en">
@@ -5034,6 +5273,30 @@
     <childelements>
       <reference name="Textvalues"/>
     </childelements>
+    <attribute en="class" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS class for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS Klasse für dieses Element.</para>
+      </description>
+    </attribute>
+    <attribute en="id" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS id for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS id für dieses Element.</para>
+      </description>
+    </attribute>
+    <attribute en="style" optional="yes" type="text">
+      <description xml:lang="en">
+        <para>CSS style for this element.</para>
+      </description>
+      <description xml:lang="de">
+        <para>CSS Stil für dieses Element.</para>
+      </description>
+    </attribute>
     <example xml:lang="en">
       <listing><![CDATA[<Textblock>
   <Paragraph>
@@ -5202,7 +5465,7 @@ Message: "$i is: 3.000000"]]></listing>
       <para>Beinhaltet einen Textinhalt, der an das umgebende Element übergeben wird (immer als reiner Text).</para>
     </description>
     <childelements>
-      <text></text>
+      <anycontent/>
     </childelements>
     <attribute en="select" type="xpath" optional="yes">
       <description xml:lang="en">

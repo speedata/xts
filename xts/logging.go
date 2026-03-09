@@ -26,8 +26,7 @@ var (
 	repl         = strings.NewReplacer(" ", "-") // for XML attribute names
 )
 
-type logHandler struct {
-}
+type logHandler struct{}
 
 func (lh *logHandler) Enabled(_ context.Context, level slog.Level) bool {
 	if level == slog.LevelError {
@@ -75,7 +74,16 @@ func (lh *logHandler) Handle(_ context.Context, r slog.Record) error {
 			lparen = "("
 			rparen = ")"
 		}
-		fmt.Println(r.Message, lparen+strings.Join(values, ",")+rparen)
+		var prefix string
+		switch {
+		case r.Level >= slog.LevelError:
+			prefix = "E: "
+		case r.Level >= slog.LevelWarn:
+			prefix = "W: "
+		default:
+			prefix = ".  "
+		}
+		fmt.Println(prefix, r.Message, lparen+strings.Join(values, ",")+rparen)
 	}
 	return nil
 }
