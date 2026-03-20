@@ -16,13 +16,12 @@
     p {
         margin: 0;
     }
-    body {
-        font-size: 14pt;
-    }
+
     code {
         font-family: code;
     }
     body {
+        font-size: 14pt;
         font-family: serif;
     }
         ul, ol {
@@ -44,9 +43,9 @@
         <PlaceObject>
             <Textblock>
                 <Paragraph class="title">
-                    <Value>Text and markup from the CDATA section (with sd:decode-html()):</Value>
+                    <Value>Text and markup from the CDATA section (with HTML):</Value>
                 </Paragraph>
-                <HTML select="sd:decode-html(html)" />
+                <HTML select="html" />
             </Textblock>
         </PlaceObject>
         <PlaceObject>
@@ -54,9 +53,9 @@
                 <Paragraph class="title">
                     <Value>Text and markup from the data file:</Value>
                 </Paragraph>
-                <ForAll select="text">
-                    <HTML select="."/>
-                </ForAll>
+                <Paragraph>
+                    <CopyOf select="text"  />
+                </Paragraph>
             </Textblock>
         </PlaceObject>
         <PlaceObject>

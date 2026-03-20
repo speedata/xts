@@ -4,12 +4,12 @@ go 1.24.0
 
 require (
 	github.com/alecthomas/chroma v0.10.0
-	github.com/boxesandglue/baseline-pdf v1.1.5
-	github.com/boxesandglue/boxesandglue v0.2.7
-	github.com/boxesandglue/csshtml v0.0.4
-	github.com/boxesandglue/htmlbag v0.0.7
-	github.com/boxesandglue/svgreader v0.0.1
-	github.com/boxesandglue/textshape v0.0.7
+	github.com/boxesandglue/baseline-pdf v1.1.7
+	github.com/boxesandglue/boxesandglue v0.2.9
+	github.com/boxesandglue/csshtml v0.0.6
+	github.com/boxesandglue/htmlbag v0.0.9
+	github.com/boxesandglue/svgreader v0.0.2
+	github.com/boxesandglue/textshape v0.0.9
 	github.com/gammazero/workerpool v1.1.3
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pelletier/go-toml/v2 v2.0.8

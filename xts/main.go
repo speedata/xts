@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"runtime/pprof"
 	"sort"
 	"strconv"
 	"strings"
@@ -122,7 +123,7 @@ func scaffold(extra ...string) error {
 	if len(extra) > 0 {
 		dir := extra[0]
 		fmt.Println("a new directory", dir)
-		err = os.MkdirAll(dir, 0755)
+		err = os.MkdirAll(dir, 0o755)
 		if err != nil {
 			return err
 		}
@@ -160,12 +161,12 @@ func scaffold(extra ...string) error {
 </Layout>
 `
 
-	err = os.WriteFile("data.xml", []byte(dataTxt), 0644)
+	err = os.WriteFile("data.xml", []byte(dataTxt), 0o644)
 	if err != nil {
 		return err
 	}
 
-	err = os.WriteFile("layout.xml", []byte(layoutTxt), 0644)
+	err = os.WriteFile("layout.xml", []byte(layoutTxt), 0o644)
 	if err != nil {
 		return err
 	}
@@ -535,6 +536,27 @@ func dothings() error {
 }
 
 func main() {
+	if cpuprofile := os.Getenv("CPUPROFILE"); cpuprofile != "" {
+		f, err := os.Create(cpuprofile)
+		if err != nil {
+			fmt.Println("Error creating CPU profile:", err)
+			os.Exit(1)
+		}
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+	}
+	if memprofile := os.Getenv("MEMPROFILE"); memprofile != "" {
+		defer func() {
+			f, err := os.Create(memprofile)
+			if err != nil {
+				fmt.Println("Error creating memory profile:", err)
+				return
+			}
+			runtime.GC()
+			pprof.WriteHeapProfile(f)
+			f.Close()
+		}()
+	}
 	if err := dothings(); err != nil {
 		if terr, ok := err.(core.TypesettingError); ok {
 			if !terr.Logged {

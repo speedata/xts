@@ -109,43 +109,43 @@ func calculateImageSize(naturalWidth, naturalHeight bag.ScaledPoint, requestedWi
 		}
 	}
 	if wd < minwd && ht > maxht {
-		// fmt.Println("10")
+		// 10
 		wd = minwd
 		ht = maxht
 	} else if wd > maxwd && ht < minht {
-		// fmt.Println("11")
+		// 11
 		wd = maxwd
 		ht = minht
 	} else if wd > maxwd && ht > maxht && maxwd/wd <= maxht/ht {
-		// fmt.Println("6")
+		// 6
 		ht = math.Max(minht, maxwd*ht/wd)
 		wd = maxwd
 	} else if wd > maxwd && ht > maxht && maxwd/wd > maxht/ht {
-		// fmt.Println("7")
+		// 7
 		wd = math.Max(minwd, maxht*wd/ht)
 		ht = maxht
 	} else if wd < minwd && ht < minht && minwd/wd <= minht/ht {
-		// fmt.Println("8")
+		// 8
 		wd = math.Min(maxwd, minht*wd/ht)
 		ht = minht
 	} else if wd < minwd && ht < minht && minwd/wd > minht/ht {
-		// fmt.Println("9")
+		// 9
 		wd = minwd
 		ht = math.Min(maxht, minwd*ht/wd)
 	} else if wd > maxwd {
-		// fmt.Println("2")
+		// 2
 		ht = math.Max(maxwd*ht/wd, minht)
 		wd = maxwd
 	} else if wd < minwd {
-		// fmt.Println("3")
+		// 3
 		ht = math.Min(minwd*ht/wd, maxht)
 		wd = minwd
 	} else if ht > maxht {
-		// fmt.Println("4")
+		// 4
 		wd = math.Max(maxht*wd/ht, minwd)
 		ht = maxht
 	} else if ht < minht {
-		// fmt.Println("5")
+		// 5
 		wd = math.Min(minht*wd/ht, maxwd)
 	}
 

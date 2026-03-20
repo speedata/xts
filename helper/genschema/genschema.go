@@ -16,7 +16,7 @@ const (
 	// FNNAMESPACE is the speedata XTS function namespace
 	FNNAMESPACE string = "urn:speedata.de/2021/xtsfunctions/en"
 	// XHTMLNAMESPACE is the XHTML namespace for literal HTML elements in XTS layouts
-	XHTMLNAMESPACE string = "urn:speedata.de/2021/xhtml"
+	XHTMLNAMESPACE string = "http://www.w3.org/1999/xhtml"
 )
 
 // DoThings creates two schema files for »en« and »de«
@@ -38,7 +38,7 @@ func DoThings(cfg *config.Config) error {
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile(rngSchemaENPath, buf, 0644)
+	err = os.WriteFile(rngSchemaENPath, buf, 0o644)
 	if err != nil {
 		return err
 	}
@@ -47,7 +47,7 @@ func DoThings(cfg *config.Config) error {
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile(rngSchemaDEPath, buf, 0644)
+	err = os.WriteFile(rngSchemaDEPath, buf, 0o644)
 	if err != nil {
 		return err
 	}
@@ -70,7 +70,7 @@ func DoThings(cfg *config.Config) error {
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile(rngSchemaENPath, buf, 0644)
+	err = os.WriteFile(rngSchemaENPath, buf, 0o644)
 	if err != nil {
 		return err
 	}
@@ -78,7 +78,7 @@ func DoThings(cfg *config.Config) error {
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile(rngSchemaDEPath, buf, 0644)
+	err = os.WriteFile(rngSchemaDEPath, buf, 0o644)
 	if err != nil {
 		return err
 	}

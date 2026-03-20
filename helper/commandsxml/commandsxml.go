@@ -97,8 +97,7 @@ outer:
 		}
 		switch v := tok.(type) {
 		case xml.StartElement:
-			switch v.Name.Local {
-			case "cmd":
+			if v.Name.Local == "cmd" {
 				var cmdname string
 				for _, attribute := range v.Attr {
 					if attribute.Name.Local == "name" {
@@ -167,8 +166,7 @@ func (c *Choice) UnmarshalXML(dec *xml.Decoder, start xml.StartElement) error {
 		}
 		switch v := tok.(type) {
 		case xml.StartElement:
-			switch v.Name.Local {
-			case "description":
+			if v.Name.Local == "description" {
 				d := &description{}
 				d.commands = c.commands
 				dec.DecodeElement(d, &v)
@@ -307,7 +305,6 @@ func (d *description) Markdown() string {
 					panic(err)
 				}
 				ret = append(ret, p.Markdown())
-
 			}
 		}
 	}
@@ -340,7 +337,6 @@ func (d *description) String() string {
 					panic(err)
 				}
 				ret = append(ret, p.String())
-
 			}
 		}
 	}
@@ -379,7 +375,6 @@ type Command struct {
 
 // Parents returns all parent commands
 func (c *Command) Parents() []*Command {
-
 	var cmds []*Command
 	for k := range c.parentelements {
 		cmds = append(cmds, k)
@@ -649,7 +644,6 @@ func descriptiontext(c *Commands, text []byte) string {
 		}
 	}
 	return strings.Join(ret, "")
-
 }
 
 // DescriptionText returns the description as text.
@@ -847,16 +841,20 @@ type Commands struct {
 }
 
 // sorting (de, en)
-type sortcommands []*Command
-type sortattributes []*Attribute
+type (
+	sortcommands   []*Command
+	sortattributes []*Attribute
+)
 
 func (s sortcommands) Len() int        { return len(s) }
 func (s sortcommands) Swap(i, j int)   { s[i], s[j] = s[j], s[i] }
 func (s sortattributes) Len() int      { return len(s) }
 func (s sortattributes) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
-type commandsbyen struct{ sortcommands }
-type attributesbyen struct{ sortattributes }
+type (
+	commandsbyen   struct{ sortcommands }
+	attributesbyen struct{ sortattributes }
+)
 
 func (s commandsbyen) Less(i, j int) bool { return s.sortcommands[i].Name < s.sortcommands[j].Name }
 func (s attributesbyen) Less(i, j int) bool {

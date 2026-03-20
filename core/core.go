@@ -32,7 +32,7 @@ const (
 	// SDNAMESPACE is the speedata XTS layout rules namespace
 	SDNAMESPACE string = "urn:speedata.de/2021/xts/en"
 	// XHTMLNAMESPACE is used for literal HTML elements inside <HTML>
-	XHTMLNAMESPACE string = "urn:speedata.de/2021/xhtml"
+	XHTMLNAMESPACE string = "http://www.w3.org/1999/xhtml"
 	// LevelNotice is used for messages from Message
 	LevelNotice = slog.Level(2)
 )

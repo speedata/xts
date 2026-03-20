@@ -4161,12 +4161,13 @@
     <childelements>
       <oneOrMore>
         <interleave>
+          <optional><cmd name="CopyOf"/></optional>
           <optional><cmd name="Element"/></optional>
           <optional><cmd name="Paragraph"/></optional>
-          <optional><cmd name="Value"/></optional>
           <optional><cmd name="Table"/></optional>
           <optional><cmd name="Textblock"/></optional>
           <optional><cmd name="Until"/></optional>
+          <optional><cmd name="Value"/></optional>
           <optional><cmd name="While"/></optional>
         </interleave>
       </oneOrMore>

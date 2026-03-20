@@ -133,13 +133,9 @@ func genRelaxNGSchema(commands *commandsXML, lang string, allowForeignNodes bool
 
 	refLayout := xml.StartElement{Name: xml.Name{Local: "ref"}}
 	refLayout.Attr = []xml.Attr{{Name: xml.Name{Local: "name"}, Value: "e_Layout"}}
-	// refInclude := xml.StartElement{Name: xml.Name{Local: "ref"}}
-	// refInclude.Attr = []xml.Attr{{Name: xml.Name{Local: "name"}, Value: "e_Include"}}
 
 	enc.EncodeToken(refLayout)
 	enc.EncodeToken(refLayout.End())
-	// enc.EncodeToken(refInclude)
-	// enc.EncodeToken(refInclude.End())
 	enc.EncodeToken(choice.End())
 	enc.EncodeToken(start.End())
 

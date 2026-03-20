@@ -45,10 +45,10 @@ func DoThings(cfg *config.Config) error {
 	for _, v := range c.Commands() {
 		p := filepath.Join(referencedir, v.MDlink())
 		// If the file doesn't exist, create it, or append to the file
-		w, err := os.OpenFile(p, os.O_CREATE|os.O_WRONLY, 0644)
+		w, err := os.OpenFile(p, os.O_CREATE|os.O_WRONLY, 0o644)
 		if err == nil {
-			w.WriteString(fmt.Sprintf("---\ntitle: %s\n---\n", v.Name))
-			w.WriteString(fmt.Sprintf("{%% include-markdown \".ref/%s\" %%}\n\n\n## See also\n", v.MDlink()))
+			fmt.Fprintf(w, "---\ntitle: %s\n---\n", v.Name)
+			fmt.Fprintf(w, "{%% include-markdown \".ref/%s\" %%}\n\n\n## See also\n", v.MDlink())
 			w.Close()
 		}
 

@@ -170,6 +170,7 @@ func (g *grid) currentColArea(areaname string) coord {
 // Connect the grid to a page and initialize the allocation matrix.
 func (g *grid) setPage(p *page) {
 	g.page = p
+	g.inGroup = false
 	g.allocatedBlocks = make(allocationMatrix)
 	g.areas[pageAreaName] = &area{
 		name:  pageAreaName,
@@ -266,9 +267,8 @@ func (g *grid) allocate(x, y coord, area *area, wd, ht bag.ScaledPoint) {
 }
 
 func (g *grid) findSuitableRow(wdCols coord, htRows coord, startColumn coord, area *area) coord {
-	frameMarginTop := area.frame[area.currentFrame].row - 1
 	areaHeight := area.frame[area.currentFrame].height
-	for row := area.CurrentRow() + frameMarginTop; row < areaHeight+frameMarginTop; row++ {
+	for row := area.CurrentRow(); row < areaHeight; row++ {
 		if row+htRows-1 > areaHeight {
 			break
 		}

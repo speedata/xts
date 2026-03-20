@@ -2274,10 +2274,13 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		Type: html.ElementNode,
 	}
 
+	var startStopNodes []*node.StartStop
 	for _, itm := range seq {
 		switch t := itm.(type) {
 		case *html.Node:
 			body.AppendChild(t)
+		case *node.StartStop:
+			startStopNodes = append(startStopNodes, t)
 		default:
 			slog.Error(fmt.Sprintf("cmdTextblock: unknown type %T", t))
 		}
@@ -2303,6 +2306,12 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	vlist, _, err := xd.document.FormatParagraph(te, attValues.Width)
 	if err != nil {
 		return nil, err
+	}
+
+	// Prepend StartStop nodes (from Bookmark, Action/Mark) to the vlist so
+	// they are encountered during PDF shipout.
+	for i := len(startStopNodes) - 1; i >= 0; i-- {
+		vlists = node.InsertAfter(vlists, node.Tail(vlists), startStopNodes[i])
 	}
 	vlists = node.InsertAfter(vlists, node.Tail(vlists), vlist)
 
