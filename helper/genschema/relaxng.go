@@ -317,18 +317,46 @@ func genRelaxNGSchema(commands *commandsXML, lang string, allowForeignNodes bool
 				    <ref name="html"/>
 			    </element>
 			    <element name="b"><ref name="html" /></element>
+			    <element name="barcode">
+				    <attribute name="type"/>
+				    <attribute name="value"/>
+				    <optional><attribute name="width"/></optional>
+				    <optional><attribute name="height"/></optional>
+				    <optional><attribute name="eclevel"/></optional>
+			    </element>
 			    <element name="br"><empty /></element>
 			    <element name="code"><ref name="html" /></element>
+			    <element name="div">
+				    <ref name="htmlclassidstyle"/>
+				    <ref name="html" />
+			    </element>
+			    <element name="em"><ref name="html" /></element>
+			    <element name="h1"><ref name="htmlclassidstyle"/><ref name="html" /></element>
+			    <element name="h2"><ref name="htmlclassidstyle"/><ref name="html" /></element>
+			    <element name="h3"><ref name="htmlclassidstyle"/><ref name="html" /></element>
+			    <element name="h4"><ref name="htmlclassidstyle"/><ref name="html" /></element>
+			    <element name="h5"><ref name="htmlclassidstyle"/><ref name="html" /></element>
+			    <element name="h6"><ref name="htmlclassidstyle"/><ref name="html" /></element>
 			    <element name="i"><ref name="html" /></element>
+			    <element name="img">
+				    <attribute name="src"/>
+				    <optional><attribute name="width"/></optional>
+				    <optional><attribute name="height"/></optional>
+				    <optional><attribute name="alt"/></optional>
+				    <ref name="htmlclassidstyle"/>
+			    </element>
 			    <element name="kbd"><ref name="html" /></element>
-			    <element name="li"><ref name="html" /></element>
+			    <element name="li"><ref name="htmlclassidstyle"/><ref name="html" /></element>
+			    <element name="ol"><ref name="htmlclassidstyle"/><ref name="html" /></element>
 			    <element name="p">
 					<ref name="htmlclassidstyle"/>
 				<ref name="html" /></element>
+			    <element name="pre"><ref name="htmlclassidstyle"/><ref name="html" /></element>
 			    <element name="span"><ref name="html" /><oneOrMore><attribute><anyName/></attribute></oneOrMore></element>
+			    <element name="strong"><ref name="html" /></element>
                 <element name="table"><ref name="htmltable" /></element>
 			    <element name="u"><ref name="html" /></element>
-			    <element name="ul"><ref name="html" /></element>
+			    <element name="ul"><ref name="htmlclassidstyle"/><ref name="html" /></element>
 			    <element>
 				    <nsName ns="`+XHTMLNAMESPACE+`"/>
 				    <zeroOrMore>

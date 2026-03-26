@@ -40,7 +40,6 @@ func init() {
 		"Attribute":        cmdAttribute,
 		"B":                cmdB,
 		"Br":               cmdBr,
-		"Barcode":          cmdBarcode,
 		"Bookmark":         cmdBookmark,
 		"Box":              cmdBox,
 		"Circle":           cmdCircle,
@@ -60,7 +59,7 @@ func init() {
 		"I":                cmdI,
 		"Image":            cmdImage,
 		"Li":               cmdLi,
-		"LoadDataset":      cmdLoadDataset,
+		"LoadXML":          cmdLoadXML,
 		"Loop":             cmdLoop,
 		"Mark":             cmdMark,
 		"Message":          cmdMessage,
@@ -75,7 +74,7 @@ func init() {
 		"PlaceObject":      cmdPlaceObject,
 		"ProcessNode":      cmdProcessNode,
 		"Record":           cmdRecord,
-		"SaveDataset":      cmdSaveDataset,
+		"SaveXML":          cmdSaveXML,
 		"Section":          cmdSection,
 		"SetGrid":          cmdSetGrid,
 		"SetVariable":      cmdSetVariable,
@@ -207,59 +206,6 @@ func cmdB(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 func cmdBr(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	n, err := xd.textValuesToHTMLNode("br", xpath.Sequence{}, map[string]string{}, "cmdBr", layoutelt.Line)
 	return xpath.Sequence{n}, err
-}
-
-func cmdBarcode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
-	var err error
-	attValues := &struct {
-		Select     string `sdxml:"mustexist"`
-		Type       string
-		FontFamily *string
-		FontSize   string
-		Height     bag.ScaledPoint
-		Width      bag.ScaledPoint `sdxml:"mustexist"`
-		ShowText   bool
-	}{}
-	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
-		return nil, err
-	}
-	var ff *frontend.FontFamily
-	if af := attValues.FontFamily; af != nil {
-		if fontfamily := xd.document.FindFontFamily(*af); fontfamily != nil {
-			ff = fontfamily
-		}
-	}
-	var fontsize bag.ScaledPoint
-	if attValues.FontSize != "" {
-		fontsize, _, err = xd.getFontSizeLeading(attValues.FontSize)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	var eval xpath.Sequence
-	eval, err = evaluateXPath(xd, layoutelt.Namespaces, attValues.Select)
-	if err != nil {
-		return nil, newTypesettingErrorf("Barcode", layoutelt.Line, "error parsing select XPath expression %s", err)
-	}
-
-	var bcType int
-	switch attValues.Type {
-	case "EAN13":
-		bcType = barcodeEAN13
-	case "Code128":
-		bcType = barcodeCode128
-	case "QRCode":
-		bcType = barcodeQR
-	default:
-		return nil, fmt.Errorf("Unknown barcode type %q", attValues.Type)
-	}
-	var bc node.Node
-	if bc, err = createBarcode(bcType, eval.Stringvalue(), attValues.Width, attValues.Height, xd, ff, fontsize, attValues.ShowText); err != nil {
-		return nil, newTypesettingError("Barcode", layoutelt.Line, err.Error())
-	}
-
-	return xpath.Sequence{bc}, nil
 }
 
 func cmdBookmark(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -1158,7 +1104,7 @@ func cmdLi(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	return xpath.Sequence{n}, err
 }
 
-func cmdLoadDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+func cmdLoadXML(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
 		Href *string
@@ -1175,14 +1121,14 @@ func cmdLoadDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	}
 	xmlPath, err := xd.cfg.FindFile(filename)
 	if xmlPath == "" {
-		slog.Info(fmt.Sprintf("LoadDataset file %s does not exist", filename))
+		slog.Info(fmt.Sprintf("LoadXML file %s does not exist", filename))
 		return nil, nil
 	}
 	r, err := os.Open(xmlPath)
 	if err != nil {
 		return nil, err
 	}
-	slog.Info(fmt.Sprintf("LoadDataset file %s loaded", filename))
+	slog.Info(fmt.Sprintf("LoadXML file %s loaded", filename))
 	saveData := xd.data
 	defer r.Close()
 	xd.data, err = xpath.NewParser(r)
@@ -1712,13 +1658,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		if fmtErr != nil {
 			return nil, newTypesettingError("PlaceObject", layoutelt.Line, fmtErr.Error())
 		}
-		te := frontend.NewText()
-		te.Items = append(te.Items, htmlVL)
-		fmtVL, _, fmtErr := xd.document.FormatParagraph(te, htmlVL.Width)
-		if fmtErr != nil {
-			return nil, fmtErr
-		}
-		vl = node.Vpack(fmtVL)
+		vl = htmlVL
 		origin = "html in PlaceObject"
 	default:
 		slog.Error(fmt.Sprintf("PlaceObject: unknown node %T", t))
@@ -1843,7 +1783,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	return nil, nil
 }
 
-func cmdSaveDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+func cmdSaveXML(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	attValues := &struct {
 		Href        *string
 		Name        *string
@@ -1858,7 +1798,7 @@ func cmdSaveDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	if attValues.Select != nil {
 		eval, err = evaluateXPath(xd, layoutelt.Namespaces, *attValues.Select)
 		if err != nil {
-			return nil, newTypesettingErrorf("SaveDataset", layoutelt.Line, "error parsing select XPath expression %s", err)
+			return nil, newTypesettingErrorf("SaveXML", layoutelt.Line, "error parsing select XPath expression %s", err)
 		}
 	} else {
 		eval, err = dispatch(xd, layoutelt)
@@ -1882,7 +1822,7 @@ func cmdSaveDataset(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	}
 
 	if filename == "" {
-		return nil, fmt.Errorf("SaveDataset (line %d) filename must be provided via name or href", layoutelt.Line)
+		return nil, fmt.Errorf("SaveXML (line %d) filename must be provided via name or href", layoutelt.Line)
 	}
 
 	w, err := os.Create(filename)

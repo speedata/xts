@@ -27,9 +27,7 @@ import (
 
 const fnNS = "urn:speedata.de/2021/xtsfunctions/en"
 
-var (
-	onlyUnitRE = regexp.MustCompile(`^(sp|mm|cm|in|pt|px|pc|m)$`)
-)
+var onlyUnitRE = regexp.MustCompile(`^(sp|mm|cm|in|pt|px|pc|m)$`)
 
 func init() {
 	goxpath.RegisterFunction(&goxpath.Function{Name: "aspect-ratio", Namespace: fnNS, F: fnAspectRatio, MinArg: 1, MaxArg: 3})
@@ -43,6 +41,8 @@ func init() {
 	goxpath.RegisterFunction(&goxpath.Function{Name: "file-contents", Namespace: fnNS, F: fnFileContents, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "file-exists", Namespace: fnNS, F: fnFileExists, MinArg: 1, MaxArg: 1})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "format-number", Namespace: fnNS, F: fnFormatNumber, MinArg: 3, MaxArg: 3})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "grid-height", Namespace: fnNS, F: fnGridHeight, MinArg: 1, MaxArg: 2})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "grid-width", Namespace: fnNS, F: fnGridWidth, MinArg: 1, MaxArg: 2})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "group-height", Namespace: fnNS, F: fnGroupheight, MinArg: 1, MaxArg: 2})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "group-width", Namespace: fnNS, F: fnGroupwidth, MinArg: 1, MaxArg: 2})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "image-height", Namespace: fnNS, F: fnImageHeight, MinArg: 1, MaxArg: 4})
@@ -161,6 +161,7 @@ func insertSeparator(num string, sep string) string {
 
 	return reverseString(sb.String())
 }
+
 func formatNumber(f float64, thousands string, decimalpoint string) string {
 	a := strconv.FormatFloat(f, 'f', -1, 64)
 	parts := strings.Split(a, ".")
@@ -540,7 +541,50 @@ func fnGroupwidth(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequen
 
 	}
 	return nil, fmt.Errorf("sd:group-height() group %q not found", groupname)
+}
 
+// fnGridWidth returns the width of n grid cells (including gaps) as a float64
+// value. sd:grid-width(n) returns the value in points, sd:grid-width(n, unit)
+// returns the value in the given unit.
+func fnGridWidth(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	xd := ctx.Store["xd"].(*xtsDocument)
+	xd.setupPage()
+	n, err := args[0].IntValue()
+	if err != nil {
+		return nil, fmt.Errorf("sd:grid-width(): first argument must be an integer: %w", err)
+	}
+	wd := xd.currentGrid.width(coord(n))
+	unit := "pt"
+	if len(args) == 2 {
+		unit = args[1].Stringvalue()
+	}
+	val, err := wd.ToUnit(unit)
+	if err != nil {
+		return nil, err
+	}
+	return goxpath.Sequence{val}, nil
+}
+
+// fnGridHeight returns the height of n grid cells (including gaps) as a float64
+// value. sd:grid-height(n) returns the value in points, sd:grid-height(n, unit)
+// returns the value in the given unit.
+func fnGridHeight(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	xd := ctx.Store["xd"].(*xtsDocument)
+	xd.setupPage()
+	n, err := args[0].IntValue()
+	if err != nil {
+		return nil, fmt.Errorf("sd:grid-height(): first argument must be an integer: %w", err)
+	}
+	ht := xd.currentGrid.height(coord(n))
+	unit := "pt"
+	if len(args) == 2 {
+		unit = args[1].Stringvalue()
+	}
+	val, err := ht.ToUnit(unit)
+	if err != nil {
+		return nil, err
+	}
+	return goxpath.Sequence{val}, nil
 }
 
 func fnFileContents(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {

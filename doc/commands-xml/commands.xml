@@ -9,7 +9,7 @@
     <optional><cmd name="ClearPage"/></optional>
     <optional><cmd name="ForAll" /></optional>
     <optional><cmd name="HTML"/></optional>
-    <optional><cmd name="LoadDataset"/></optional>
+    <optional><cmd name="LoadXML"/></optional>
     <optional><cmd name="Loop"/></optional>
     <optional><cmd name="Li"/></optional>
     <optional><cmd name="Message"/></optional>
@@ -18,7 +18,7 @@
     <optional><cmd name="Paragraph"/></optional>
     <optional><cmd name="PlaceObject"/></optional>
     <optional><cmd name="ProcessNode"/></optional>
-    <optional><cmd name="SaveDataset"/></optional>
+    <optional><cmd name="SaveXML"/></optional>
     <optional><cmd name="SetVariable"/></optional>
     <optional><cmd name="Switch"/></optional>
     <optional><cmd name="Td"/></optional>
@@ -49,14 +49,14 @@
     <optional><cmd name="ClearPage"/></optional>
     <optional><cmd name="ForAll"/></optional>
     <optional><cmd name="Group"/></optional>
-    <optional><cmd name="LoadDataset"/></optional>
+    <optional><cmd name="LoadXML"/></optional>
     <optional><cmd name="Loop"/></optional>
     <optional><cmd name="Message"/></optional>
     <optional><cmd name="NextFrame"/></optional>
     <optional><cmd name="NextRow"/></optional>
     <optional><cmd name="PlaceObject"/></optional>
     <optional><cmd name="ProcessNode"/></optional>
-    <optional><cmd name="SaveDataset"/></optional>
+    <optional><cmd name="SaveXML"/></optional>
     <optional><cmd name="SetVariable"/></optional>
     <optional><cmd name="Switch"/></optional>
     <optional><cmd name="Until"/></optional>
@@ -708,10 +708,10 @@
   -->
   <command en="Attribute">
     <description xml:lang="en">
-      <para>Create an attribute for the <cmd name="Element"/> data structure that can be saved to the hard drive with <cmd name="SaveDataset"/>.</para>
+      <para>Create an attribute for the <cmd name="Element"/> data structure that can be saved to the hard drive with <cmd name="SaveXML"/>.</para>
     </description>
     <description xml:lang="de">
-      <para>Erzeugt ein Attribut für die <cmd name="Element"/> Datenstruktur, die mithilfe von <cmd name="SaveDataset"/> auf Festplatte gespeichert werden kann.</para>
+      <para>Erzeugt ein Attribut für die <cmd name="Element"/> Datenstruktur, die mithilfe von <cmd name="SaveXML"/> auf Festplatte gespeichert werden kann.</para>
     </description>
     <childelements/>
     <attribute en="name" type="text" optional="no">
@@ -813,219 +813,6 @@
   </PlaceObject>
 </Record>
 ]]></listing>
-    </example>
-  </command>
-
-  <!--
-      ****************************************************************************************
-      * Barcode
-      ****************************************************************************************
-  -->
-  <command en="Barcode" pro="yes">
-    <description xml:lang="en">
-      <para>Print a 1d or 2d barcode. To be used in <cmd name="PlaceObject"/>.</para>
-    </description>
-    <description xml:lang="de">
-    <para>Erzeugt einen 1D oder 2D Strichcode (barcode), der in <cmd name="PlaceObject"/> ausgegeben werden kann.</para>
-  </description>
-    <childelements/>
-    <attribute en="color" optional="yes" allowxpath="yes">
-      <description xml:lang="en">
-        <para>Color of the barcode. Must be defined with <cmd name="DefineColor"/> before use. Currently only used for QR codes.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Farbe des Strichcodes. Muss vorher mit <cmd name="DefineColor"/> definiert worden sein. Derzeit nur für QR-Codes.</para>
-      </description>
-    </attribute>
-    <attribute en="eclevel" optional="yes" >
-      <description xml:lang="en">
-        <para>Set the error correction level for QR-codes. If not provided, the system uses the maximum level for minimum size. The higher the level, the more error correction is in the QR-code.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Setzt den Fehlerkorrekturlevel für QR-Codes. Wenn nicht angegeben, nutzt das System den maximalen Level für die kleinste QR-Code Größe. Je höher der Level, desto mehr Fehlerkorrektur ist im QR-Code.</para>
-      </description>
-      <choice en="L">
-        <description xml:lang="en">
-          <para>Set the lowest level (1) with approx. 7% recovery.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Setzt den kleinsten Fehlerkorrekturwert (1) mit ca. 7% Korrektur.</para>
-        </description>
-      </choice>
-      <choice en="M">
-        <description xml:lang="en">
-          <para>Set the second lowest level (2) with approx. 15% recovery.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Setzt den zweitkleinsten Fehlerkorrekturwert (2) mit ca. 15% Korrektur.</para>
-        </description>
-      </choice>
-      <choice en="Q">
-        <description xml:lang="en">
-          <para>Set the second highest level (3) with approx. 25% recovery.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Setzt den zweitgrößten Fehlerkorrekturwert (3) mit ca. 25% Korrektur.</para>
-        </description>
-      </choice>
-      <choice en="H">
-        <description xml:lang="en">
-          <para>Set the highest level (4) with approx. 35% recovery.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Setzt den größten Fehlerkorrekturwert (4) mit ca. 35% Korrektur.</para>
-        </description>
-      </choice>
-    </attribute>
-    <attribute en="fontfamily" type="text" optional="yes">
-      <description xml:lang="en">
-        <para>Name of the font of the text that can be placed beneath the barcode. Not used in all codes.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Name der Schriftart des Textes, der ggf. unterhalb des Strichcodes ausgegeben wird. Nicht in allen Codes verwendet.</para>
-      </description>
-    </attribute>
-    <attribute en="fontsize" optional="yes" allowxpath="yes" type="text">
-      <description xml:lang="en">
-        <para>Set the font size. You can use a string such as "10pt/12pt" to set the font size and the leading. Defaults to 'text'.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Setze die Schriftgröße und den Zeilenabstand. Es kann eine Zeichenkette wie "10pt/12pt", die die Schriftgröße und den Zeilenabstand bestimmt. Voreinstellung ist 'text'.</para>
-      </description>
-    </attribute>
-    <attribute en="height" type="numberorlength" optional="yes">
-      <description xml:lang="en">
-        <para>Height of the barcode.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Höhe des Strichcodes.</para>
-      </description>
-    </attribute>
-    <attribute en="keepfontsize" optional="yes" type="boolean">
-      <description xml:lang="en">
-        <para>Try to keep the size of the requested font. Works with EAN13 only.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Versuche die Schriftgröße beizubehalten (EAN13).</para>
-      </description>
-    </attribute>
-    <attribute en="overshoot" optional="yes" type="number">
-      <description xml:lang="en">
-        <para>The factor denoting the extra length of the outer and middle bar. Only useful with EAN13.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Der Faktor, um den die äußeren und der innere Balken die normalen Balken übersteigt. Nur anwendbar bei EAN13.</para>
-      </description>
-    </attribute>
-    <attribute en="select" type="xpath" optional="no">
-      <description xml:lang="en">
-        <para>The data to be encoded in the barcode.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Wert, der als Strichcode kodiert werden soll.</para>
-      </description>
-    </attribute>
-    <attribute en="showtext" optional="yes">
-      <description xml:lang="en">
-        <para>Should the text be written under the barcode?</para>
-      </description>
-      <description xml:lang="de">
-        <para>Bestimmt, ob unterhalb des Barcodes der Text erscheint.</para>
-      </description>
-      <choice en="yes">
-        <description xml:lang="en">
-          <para>Write text beneath the barcode.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Text unterhalb des Barcodes schreiben.</para>
-        </description>
-      </choice>
-      <choice en="no">
-        <description xml:lang="en">
-          <para>Don't display text.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Keinen Text anzeigen.</para>
-        </description>
-      </choice>
-    </attribute>
-    <attribute en="type" optional="no">
-      <description xml:lang="en">
-        <para>Type of the barcode. One of <tt>EAN13</tt>, <tt>Code128</tt> or <tt>QRCode</tt>.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Typ des Strichcodes. Kann <tt>EAN13</tt>, <tt>Code128</tt> oder <tt>QRCode</tt> sein.</para>
-      </description>
-      <choice en="QRCode">
-        <description xml:lang="en">
-          <para>Create an “optimal” QR code in terms of error correction and size.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Erzeugt einen QR-Code, der für den Inhalt die kleinstmögliche Größe und den besten Fehlerkorrekturwert hat, sofern kein Fehlerkorrekturlevel angegeben ist.</para>
-        </description>
-      </choice>
-      <choice en="Code128">
-        <description xml:lang="en">
-          <para>Generate a code 128 barcode for numbers and text.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Erzeugt einen Code 128 Barcode für Ziffern und Text (ohne Umlaute)</para>
-        </description>
-      </choice>
-      <choice en="EAN13">
-        <description xml:lang="en">
-          <para>Create an EAN13 barcode for 13 digits.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Erzeugt einen EAN13 Barcode mit genau 13 Ziffern.</para>
-        </description>
-      </choice>
-    </attribute>
-    <attribute en="width" type="numberorlength" optional="yes">
-      <description xml:lang="en">
-        <para>Width of the barcode</para>
-      </description>
-      <description xml:lang="de">
-        <para>Breite des Strichcodes</para>
-      </description>
-    </attribute>
-    <example xml:lang="en">
-      <listing><![CDATA[<PlaceObject>
-  <Barcode select="'speedata Publisher'" type="Code128" showtext="yes"/>
-</PlaceObject>]]></listing>
-      <para>gives</para>
-      <image file="ref-code128-speedata-publisher.png"/>
-      <listing><![CDATA[<PlaceObject>
-  <Barcode select="4242002518169" type="EAN13"/>
-</PlaceObject>]]></listing>
-      <para>becomes</para>
-      <image file="ref-ean13-supertex.png" width="300"/>
-      <para>And finally the QR code</para>
-      <listing><![CDATA[<PlaceObject>
-  <Barcode select="'http://www.speedata.de'" type="QRCode" height="5"/>
-</PlaceObject>
-]]></listing>
-      <para>looks like</para>
-      <image file="ref-speedata-publisher-qrcode.png" width="300"/>
-    </example>
-    <example xml:lang="de">
-      <listing><![CDATA[<PlaceObject>
-  <Barcode select="'speedata Publisher'" type="Code128" showtext="yes"/>
-</PlaceObject>]]></listing>
-      <para>ergibt</para>
-      <image file="ref-code128-speedata-publisher.png"/>
-      <listing><![CDATA[<PlaceObject>
-  <Barcode select="4242002518169" type="EAN13"/>
-</PlaceObject>]]></listing>
-      <para>wird zu</para>
-      <image file="ref-ean13-supertex.png" width="30%"/>
-      <para>und</para>
-      <listing><![CDATA[<PlaceObject>
-  <Barcode select="'http://www.speedata.de'" type="QRCode" height="5"/>
-</PlaceObject>
-]]></listing>
-      <para>wird zu</para>
-      <image file="ref-speedata-publisher-qrcode.png" width="30%"/>
     </example>
   </command>
 
@@ -1915,10 +1702,10 @@
   -->
   <command en="Element">
     <description xml:lang="en">
-      <para>Create a data structure that can be used to save on the hard-drive between consecutive runs (with <cmd name="SaveDataset"/>).</para>
+      <para>Create a data structure that can be used to save on the hard-drive between consecutive runs (with <cmd name="SaveXML"/>).</para>
     </description>
     <description xml:lang="de">
-      <para>Erzeugt eine Datenstruktur, die mithilfe von <cmd name="SaveDataset"/> auf Festplatte gespeichert werden kann.</para>
+      <para>Erzeugt eine Datenstruktur, die mithilfe von <cmd name="SaveXML"/> auf Festplatte gespeichert werden kann.</para>
     </description>
     <childelements>
       <oneOrMore>
@@ -2054,14 +1841,14 @@
         <optional><cmd name="Columns"/></optional>
         <optional><cmd name="ForAll"/></optional>
         <optional><cmd name="Group"/></optional>
-        <optional><cmd name="LoadDataset"/></optional>
+        <optional><cmd name="LoadXML"/></optional>
         <optional><cmd name="Loop"/></optional>
         <optional><cmd name="Message"/></optional>
         <optional><cmd name="NextFrame"/></optional>
         <optional><cmd name="NextRow"/></optional>
         <optional><cmd name="PlaceObject"/></optional>
         <optional><cmd name="ProcessNode"/></optional>
-        <optional><cmd name="SaveDataset"/></optional>
+        <optional><cmd name="SaveXML"/></optional>
         <optional><cmd name="SetVariable"/></optional>
         <optional><cmd name="Switch"/></optional>
         <optional><cmd name="Value"/></optional>
@@ -2417,12 +2204,12 @@
 
     <!--
       ****************************************************************************************
-      * LoadDataset
+      * LoadXML
       ****************************************************************************************
   -->
-  <command en="LoadDataset">
+  <command en="LoadXML">
     <description xml:lang="en">
-      <para>Load an XML file previously written by <cmd name="SaveDataset"/> (attribute name) or a well formed XML file (attribute href). The regular data processing is interrupted and the contents of the data file is taken as a data source. If the file does not exist, the call to <cmd name="LoadDataset"/> is ignored.</para>
+      <para>Load an XML file previously written by <cmd name="SaveXML"/> (attribute name) or a well formed XML file (attribute href). The regular data processing is interrupted and the contents of the data file is taken as a data source. If the file does not exist, the call to <cmd name="LoadXML"/> is ignored.</para>
     </description>
     <description xml:lang="de">
       <para>Lädt eine Datensatzdatei, die in einem vorherigen Durchlauf des Publishers erzeugt wurde (Attribut name), oder eine reguläre XML-Datei (Attribut href). Die »normale« Verarbeitung des Layoutregelwerks wird unterbrochen und mit dem Inhalt der Datensatzdatei fortgeführt. Nachdem die Verarbeitung der neu geladenen Datensatzdatei beendet ist, wird die Verarbeitung des Layoutregelwerks mit dem ursprünglichen Datensatz fortgesetzt. Eine ausführlichere Erläuterung findet sich im Abschnitt über automatisch generierte Verzeichnisse.</para>
@@ -2446,7 +2233,7 @@
     </attribute>
     <example xml:lang="en">
       <listing><![CDATA[<Record element="articles">
-  <LoadDataset name="toc"/>
+  <LoadXML name="toc"/>
   <ClearPage/>
   <ProcessNode select="article"/>
 </Record>
@@ -2455,7 +2242,7 @@
     <example xml:lang="de">
       <listing><![CDATA[<Record element="planeten">
   <SetVariable variable="spalte" select="2" />
-  <LoadDataset name="toc"/>
+  <LoadXML name="toc"/>
   <SetVariable variable="Inhalt" select="''"/>
   <ClearPage/>
   <ProcessNode select="planet"/>
@@ -3509,15 +3296,14 @@
   -->
   <command en="PlaceObject">
     <description xml:lang="en">
-      <para>Outputs a rectangular object (image, table, box, barcode or textblock).</para>
+      <para>Outputs a rectangular object (image, table, box or textblock).</para>
     </description>
     <description xml:lang="de">
-      <para>Gibt ein rechteckiges Objekt (Bild, Tabelle, Box, Barcode oder Textblock) aus.</para>
+      <para>Gibt ein rechteckiges Objekt (Bild, Tabelle, Box oder Textblock) aus.</para>
     </description>
     <childelements>
       <oneOrMore>
         <interleave>
-          <optional><cmd name="Barcode"/></optional>
           <optional><cmd name="Box"/></optional>
           <optional><cmd name="Circle"/></optional>
           <optional><cmd name="HTML"/></optional>
@@ -3956,10 +3742,10 @@
 
   <!--
       ****************************************************************************************
-      * SaveDataset
+      * SaveXML
       ****************************************************************************************
   -->
-  <command en="SaveDataset">
+  <command en="SaveXML">
     <description xml:lang="en">
       <para>Saves an element/attribute structure to be used in the next publisher run. The contents must have a tree structure.</para>
     </description>
@@ -4021,11 +3807,11 @@
       <Attribute name="att2" select="123" />
     </SetVariable>
 
-    <SaveDataset name="toc" elementname="root" attributes="$attributesvar">
+    <SaveXML name="toc" elementname="root" attributes="$attributesvar">
       <Element name="child">
         <Attribute name="attchild" select="999"/>
       </Element>
-    </SaveDataset>
+    </SaveXML>
   </Record>
 ]]></listing>
       <para>This code saves an XML file to the disc which has this structure:</para>
@@ -4035,19 +3821,19 @@
 ]]></listing>
     </example>
     <example xml:lang="en">
-      <listing><![CDATA[<SaveDataset name="toc" elementname="Contents">
+      <listing><![CDATA[<SaveXML name="toc" elementname="Contents">
   <Value select="$contents"/>
-</SaveDataset>
+</SaveXML>
 ]]></listing>
       <para>is equivalent to</para>
-      <listing><![CDATA[<SaveDataset name="toc" elementname="Contents" select="$contents"/>]]></listing>
+      <listing><![CDATA[<SaveXML name="toc" elementname="Contents" select="$contents"/>]]></listing>
     </example>
     <example xml:lang="de">
-      <listing><![CDATA[<SaveDataset name="toc" elementname="Inhalt">
+      <listing><![CDATA[<SaveXML name="toc" elementname="Inhalt">
    <Value select="$Inhalt"/>
-</SaveDataset>]]></listing>
+</SaveXML>]]></listing>
       <para>Äquivalent dazu ist:</para>
-      <listing><![CDATA[<SaveDataset name="toc" elementname="Inhalt" select="$Inhalt" />]]></listing>
+      <listing><![CDATA[<SaveXML name="toc" elementname="Inhalt" select="$Inhalt" />]]></listing>
     </example>
   </command>
 
@@ -4844,11 +4630,11 @@
     </attribute>
     <remark xml:lang="en">
       <para>The child elements of the table cells are either block objects that start a new line or inline objects that are placed horizontally next to each other (from left to right) until the width of the table cell forces a line break.
-        Block objects are <cmd name="Paragraph"/>, <cmd name="Table"/> and <cmd name="Box"/>, inline objects are <cmd name="Barcode"/> and <cmd name="Image"/>.</para>
+        Block objects are <cmd name="Paragraph"/>, <cmd name="Table"/> and <cmd name="Box"/>, inline objects are <cmd name="Image"/>.</para>
     </remark>
     <remark xml:lang="de">
       <para>Die Kindelemente der Tabellenzelle können Blockobjekte oder Zeilenobjekte sein. Blockobjekte erzeugen eine neue Zeile, Zeilenobjekte werden von rechts nach links
-        so lange in eine Zeile geschrieben, bis die Zeilenbreite einen Zeilenumbruch erzwingt. Blockobjekte sind <cmd name="Paragraph"/>, <cmd name="Table"/> und <cmd name="Box"/>, Zeilenobjekte sind <cmd name="Barcode"/> und <cmd name="Image"/>.</para>
+        so lange in eine Zeile geschrieben, bis die Zeilenbreite einen Zeilenumbruch erzwingt. Blockobjekte sind <cmd name="Paragraph"/>, <cmd name="Table"/> und <cmd name="Box"/>, Zeilenobjekte sind <cmd name="Image"/>.</para>
     </remark>
     <example xml:lang="de">
       <listing><![CDATA[<Tr>
