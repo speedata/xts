@@ -44,10 +44,12 @@ github.com/speedata/go-lua v0.1.6 h1:pjSsjNIX359ktISKek4c4b9fUzMX7jb9HnGFp3+BfTM
 github.com/speedata/go-lua v0.1.6/go.mod h1:6Ay/2kO1IHOXkp7rmXPpAJrqwNTMwM4qcqM6U9u9RDc=
 github.com/speedata/goxlsx v1.0.2 h1:hi00xy1EQhqrag4HNIc9hVEtVmTGrh3z9C1AH9ysg74=
 github.com/speedata/goxlsx v1.0.2/go.mod h1:7eXkL4ZUZ2uUlnBBAmh0iwOdhOkqqstW/FmkEe2IPMY=
-github.com/speedata/goxml v1.0.7 h1:4X6VQoHGlg34YHku2tSb2OpcuJ2hCYBls4boTCTZXuQ=
-github.com/speedata/goxml v1.0.7/go.mod h1:G++cv0h2rC8ltAhvQmANDgwMbKRd3MetXlF8PLob6dw=
-github.com/speedata/goxpath v1.0.6 h1:r8NW9cReu5mYbOFw00YMlWpXT2ml2+ZYsYvGH2z7Olk=
-github.com/speedata/goxpath v1.0.6/go.mod h1:+CfhSgttH6ENwE9svy6rFBuOAcX6lXxLkkV77SiFWVw=
+github.com/speedata/goxml v1.0.8 h1:aY8yCr2epUmXe50FYGPYwrbNj3jwh1yfjuM04jGk18s=
+github.com/speedata/goxml v1.0.8/go.mod h1:G++cv0h2rC8ltAhvQmANDgwMbKRd3MetXlF8PLob6dw=
+github.com/speedata/goxpath v1.0.9 h1:8k3LQ/mjY5PE/BKTzmeoSKYig/uLx/uv59IHDtstYng=
+github.com/speedata/goxpath v1.0.9/go.mod h1:4BvqjEkhk/p847Rtc/3qJD0tImv7SGsBnN0yzuQZQ0M=
+github.com/speedata/goxslt v0.0.1 h1:S0RWV09IwNE8gFZi4WEpXI9duwz0iUF6x2bB2iYviDw=
+github.com/speedata/goxslt v0.0.1/go.mod h1:oy/ilglnZtwlGkHIg1cK5lf6r+5kJfumpvbpS3+gt00=
 github.com/speedata/hyphenation v1.0.2 h1:2rDCtAqNfbf+E56SsqbmNApsVx9CH+4fwIh1RZuu3B8=
 github.com/speedata/hyphenation v1.0.2/go.mod h1:vwrKKvBvJWFll0sVZw99hyWS/+r4YlMI7MAYjnje0nM=
 github.com/speedata/optionparser v1.1.1 h1:fGVD7n3bzRQH/T1iHpUNzdP1hMAgQSY85LTfqxDZ1zM=

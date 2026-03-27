@@ -53,8 +53,8 @@ func init() {
 		"Element":          cmdElement,
 		"ForAll":           cmdForall,
 		"Function":         cmdFunction,
-		"Group":            cmdGroup,
-		"Groupcontents":    cmdGroupcontents,
+		"Slate":            cmdSlate,
+		"Slatecontents":    cmdSlatecontents,
 		"HTML":             cmdHTML,
 		"I":                cmdI,
 		"Image":            cmdImage,
@@ -656,7 +656,7 @@ func cmdFunction(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, err
 	return nil, nil
 }
 
-func cmdGroup(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+func cmdSlate(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
 		Name string `sdxml:"mustexist"`
@@ -665,32 +665,32 @@ func cmdGroup(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		return nil, err
 	}
 	saveGrid := xd.currentGrid
-	xd.currentGroup = xd.newGroup(attValues.Name)
-	xd.currentGrid = xd.currentGroup.grid
+	xd.currentSlate = xd.newSlate(attValues.Name)
+	xd.currentGrid = xd.currentSlate.grid
 	_, err = dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
-	xd.currentGroup = nil
+	xd.currentSlate = nil
 	xd.currentGrid = saveGrid
 	return nil, nil
 }
 
-func cmdGroupcontents(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+func cmdSlatecontents(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	attValues := &struct {
 		Name string `sdxml:"mustexist"`
 	}{}
 	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
-	grp, ok := xd.groups[attValues.Name]
+	sl, ok := xd.slates[attValues.Name]
 	if !ok {
-		return nil, newTypesettingErrorf("Groupcontents", layoutelt.Line, "group %q not found", attValues.Name)
+		return nil, newTypesettingErrorf("Slatecontents", layoutelt.Line, "slate %q not found", attValues.Name)
 	}
-	if grp.contents == nil {
+	if sl.contents == nil {
 		return nil, nil
 	}
-	return xpath.Sequence{grp.contents}, nil
+	return xpath.Sequence{sl.contents}, nil
 }
 
 // expandTextValueTemplates evaluates {expr} expressions in text content (XSLT 3.0 style).
@@ -1554,7 +1554,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		Column          string
 		Frame           bool
 		Row             string
-		Groupname       string
+		Slate           string
 		HAlign          string
 		HReference      string
 		VReference      string
@@ -1596,8 +1596,8 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	xd.store["maxwidth"] = int(mw)
 
 	var seq xpath.Sequence
-	if attValues.Groupname != "" {
-		seq = xpath.Sequence{xd.groups[attValues.Groupname].contents}
+	if attValues.Slate != "" {
+		seq = xpath.Sequence{xd.slates[attValues.Slate].contents}
 	} else {
 		seq, err = dispatch(xd, layoutelt)
 		if err != nil {

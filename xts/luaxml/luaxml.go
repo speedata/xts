@@ -18,7 +18,7 @@ func lerr(l *lua.State, errormessage string) int {
 
 // encodeComment reads a comment from the table at the top of the stack
 func encodeComment(l *lua.State, enc *xml.Encoder) error {
-	l.Field(-1, "_value")
+	l.Field(-1, "value")
 	if !l.IsString(-1) {
 		l.Pop(1)
 		return fmt.Errorf("error reading comment")
@@ -32,7 +32,7 @@ func encodeComment(l *lua.State, enc *xml.Encoder) error {
 
 // encodeElement reads an element from the table at the top of the stack
 func encodeElement(l *lua.State, enc *xml.Encoder) error {
-	l.Field(-1, "_name")
+	l.Field(-1, "name")
 	localName, _ := l.ToString(-1)
 	l.Pop(1)
 
@@ -42,24 +42,21 @@ func encodeElement(l *lua.State, enc *xml.Encoder) error {
 		},
 	}
 
-	// iterate table for attributes (string keys not starting with '_')
-	l.PushNil()
-	for l.Next(-2) {
-		if l.IsString(-2) {
+	// read attributes from attribs sub-table
+	l.Field(-1, "attribs")
+	if l.IsTable(-1) {
+		l.PushNil()
+		for l.Next(-2) {
 			key, _ := l.ToString(-2)
-			if key[0] != '_' {
-				val, _ := l.ToString(-1)
-				attr := xml.Attr{
-					Value: val,
-					Name: xml.Name{
-						Local: key,
-					},
-				}
-				start.Attr = append(start.Attr, attr)
-			}
+			val, _ := l.ToString(-1)
+			start.Attr = append(start.Attr, xml.Attr{
+				Name:  xml.Name{Local: key},
+				Value: val,
+			})
+			l.Pop(1)
 		}
-		l.Pop(1)
 	}
+	l.Pop(1)
 
 	if err := enc.EncodeToken(start); err != nil {
 		return err
@@ -94,7 +91,7 @@ func encodeElement(l *lua.State, enc *xml.Encoder) error {
 
 // encodeItem encodes the table at the top of the stack
 func encodeItem(l *lua.State, enc *xml.Encoder) error {
-	l.Field(-1, "_type")
+	l.Field(-1, "type")
 	typ := "element"
 	if l.IsString(-1) {
 		typ, _ = l.ToString(-1)
@@ -138,6 +135,7 @@ func Open(l *lua.State) int {
 	lua.NewLibrary(l, []lua.RegistryFunction{
 		{"encode_table", encodeTable},
 		{"decode_xml", decodeXML},
+		{"run_xslt", runXSLT},
 	})
 	return 1
 }

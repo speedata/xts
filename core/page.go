@@ -212,16 +212,16 @@ func (p *page) String() string {
 }
 
 func (xd *xtsDocument) OutputAt(vl *node.VList, col coord, row coord, allocate bool, area *area, what string, halign frontend.HorizontalAlignment) error {
-	var currentGroup *group
-	if currentGroup = xd.currentGroup; currentGroup != nil {
+	var currentSlate *slate
+	if currentSlate = xd.currentSlate; currentSlate != nil {
 		if area.name != pageAreaName {
-			slog.Error(fmt.Sprintf("Cannot use area (%s) within a group (%s)", area.name, currentGroup.name))
+			slog.Error(fmt.Sprintf("Cannot use area (%s) within a slate (%s)", area.name, currentSlate.name))
 		}
-		if currentGroup.contents == nil {
-			currentGroup.contents = vl
+		if currentSlate.contents == nil {
+			currentSlate.contents = vl
 		} else {
-			currentGroup.contents.List = node.InsertAfter(currentGroup.contents.List, node.Tail(currentGroup.contents.List), vl)
-			currentGroup.contents.Height += vl.Height + vl.Depth
+			currentSlate.contents.List = node.InsertAfter(currentSlate.contents.List, node.Tail(currentSlate.contents.List), vl)
+			currentSlate.contents.Height += vl.Height + vl.Depth
 		}
 	} else {
 		slog.Info("PlaceObject", "obj", what, "col", col, "row", row, "area", area.name)

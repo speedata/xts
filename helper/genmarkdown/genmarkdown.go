@@ -41,16 +41,22 @@ func DoThings(cfg *config.Config) error {
 		return err
 	}
 
-	referencedir := filepath.Join(cfg.Basedir(), "..", "xts-docs", "docs", "reference", "cmdreference")
+	referencedir := filepath.Join(cfg.Basedir(), "..", "xts-docs", "content", "reference", "commands")
+	if err = os.MkdirAll(referencedir, 0o755); err != nil {
+		return err
+	}
+	if err = os.MkdirAll(refdir, 0o755); err != nil {
+		return err
+	}
 	for _, v := range c.Commands() {
 		p := filepath.Join(referencedir, v.MDlink())
-		// If the file doesn't exist, create it, or append to the file
-		w, err := os.OpenFile(p, os.O_CREATE|os.O_WRONLY, 0o644)
-		if err == nil {
-			fmt.Fprintf(w, "---\ntitle: %s\n---\n", v.Name)
-			fmt.Fprintf(w, "{%% include-markdown \".ref/%s\" %%}\n\n\n## See also\n", v.MDlink())
-			w.Close()
+		w, err := os.Create(p)
+		if err != nil {
+			return err
 		}
+		fmt.Fprintf(w, "---\ntype: docs\nlinktitle: %s\n---\n", v.Name)
+		fmt.Fprintf(w, "{{%% include \"%s\" %%}}\n\n\n## See also\n", v.MDlink())
+		w.Close()
 
 		fullpath := filepath.Join(refdir, v.MDlink())
 		builddoc(c, v, fullpath)
@@ -87,7 +93,7 @@ func childelements(children []*commandsxml.Command) string {
 func atttypeinfo(att *commandsxml.Attribute) string {
 	atttypesEn := map[string]string{
 		"boolean":                "yes or no",
-		"xpath":                  `[XPath expressions](/manual/xpath.md)`,
+		"xpath":                  `[XPath expressions](/manual/data-processing/xpath)`,
 		"numberorlength":         "number or length",
 		"numberlengthorstar":     "Number, length or *-numbers",
 		"yesnolength":            "yes, no or length",

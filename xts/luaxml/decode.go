@@ -41,13 +41,21 @@ done:
 			curIdx := l.AbsIndex(-1)
 
 			l.PushString("element")
-			l.SetField(curIdx, "_type")
+			l.SetField(curIdx, "type")
 			l.PushString(t.Name.Local)
-			l.SetField(curIdx, "_name")
+			l.SetField(curIdx, "name")
 
-			for _, attr := range t.Attr {
-				l.PushString(attr.Value)
-				l.SetField(curIdx, attr.Name.Local)
+			if len(t.Attr) > 0 {
+				l.NewTable()
+				for _, attr := range t.Attr {
+					key := attr.Name.Local
+					if attr.Name.Space != "" {
+						key = attr.Name.Space + ":" + attr.Name.Local
+					}
+					l.PushString(attr.Value)
+					l.SetField(-2, key)
+				}
+				l.SetField(curIdx, "attribs")
 			}
 
 			if len(parentStack) > 0 {

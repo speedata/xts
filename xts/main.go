@@ -240,15 +240,19 @@ func dothings() error {
 	op.On("--trace NAMES", "Set the trace to one or more of grid, allocation", cmdline)
 	op.On("--verbose", "Show log output in the terminal window (STDOUT)", cmdline)
 	op.On("-v", "--var=VALUE", "Set a variable for the publishing run", cmdline)
-	op.Command("list-fonts", "List installed fonts")
 	op.Command("clean", "Remove auxiliary and protocol files")
 	op.Command("compare", "Compare files for quality assurance")
 	op.Command("doc", "Open the documentation (web page)")
-	op.Command("new", "Create simple layout and data file to start. Provide optional directory.")
+	op.Command("help", "Show help and exit")
+	op.Command("list-fonts", "List installed fonts")
+	op.Command("new", "Create simple layout and data file to start. Provide optional directory")
 	op.Command("run", "Load layout and data files and create PDF (default)")
 	op.Command("version", "Print version information")
 	err = op.Parse()
 	if err != nil {
+		if err == optionparser.ErrHelp {
+			return nil
+		}
 		op.Help()
 		fmt.Println()
 		return err
@@ -411,6 +415,10 @@ func dothings() error {
 		fmt.Printf("Finished in %s\n", formatDuration(dur))
 	case "doc":
 		return openURL("https://doc.speedata.de/xts/")
+	case "help":
+		op.Help()
+		fmt.Println()
+		return err
 	case "list-fonts":
 		setupLog(protocolFilename)
 		defer teardownLog()

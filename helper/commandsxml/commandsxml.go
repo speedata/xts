@@ -806,6 +806,9 @@ func (c *Command) Childelements() []*Command {
 	if x != nil {
 		return x
 	}
+	if c.childelement == nil {
+		return nil
+	}
 
 	r := bytes.NewReader(c.childelement.Text)
 	dec := xml.NewDecoder(r)

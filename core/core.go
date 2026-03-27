@@ -56,7 +56,7 @@ type xtsDocument struct {
 	cssbuilder        *htmlbag.CSSBuilder
 	data              *xpath.Parser
 	pages             []*page
-	groups            map[string]*group
+	slates            map[string]*slate
 	defaultGridWidth  bag.ScaledPoint
 	defaultGridHeight bag.ScaledPoint
 	defaultGridGapX   bag.ScaledPoint
@@ -68,7 +68,7 @@ type xtsDocument struct {
 	aux               *auxfile // contents of the previous run, if available
 	currentPage       *page
 	currentGrid       *grid
-	currentGroup      *group
+	currentSlate      *slate
 	currentPagenumber int
 	tracing           VTrace
 	layoutNS          map[string]string
@@ -83,7 +83,7 @@ func newXTSDocument() *xtsDocument {
 		defaultGridGapX:   0,
 		defaultGridGapY:   0,
 		layoutcss:         csshtml.NewCSSParserWithDefaults(),
-		groups:            make(map[string]*group),
+		slates:            make(map[string]*slate),
 		store:             make(map[any]any),
 		marker:            make(mapmarker),
 	}
@@ -154,7 +154,7 @@ versionMismatch:
 var inSetupPage bool
 
 func (xd *xtsDocument) setupPage() {
-	if xd.currentGroup != nil {
+	if xd.currentSlate != nil {
 		return
 	}
 	if xd.currentPage != nil {

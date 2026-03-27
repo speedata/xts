@@ -43,8 +43,8 @@ func init() {
 	goxpath.RegisterFunction(&goxpath.Function{Name: "format-number", Namespace: fnNS, F: fnFormatNumber, MinArg: 3, MaxArg: 3})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "grid-height", Namespace: fnNS, F: fnGridHeight, MinArg: 1, MaxArg: 2})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "grid-width", Namespace: fnNS, F: fnGridWidth, MinArg: 1, MaxArg: 2})
-	goxpath.RegisterFunction(&goxpath.Function{Name: "group-height", Namespace: fnNS, F: fnGroupheight, MinArg: 1, MaxArg: 2})
-	goxpath.RegisterFunction(&goxpath.Function{Name: "group-width", Namespace: fnNS, F: fnGroupwidth, MinArg: 1, MaxArg: 2})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "slate-height", Namespace: fnNS, F: fnSlateheight, MinArg: 1, MaxArg: 2})
+	goxpath.RegisterFunction(&goxpath.Function{Name: "slate-width", Namespace: fnNS, F: fnSlatewidth, MinArg: 1, MaxArg: 2})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "image-height", Namespace: fnNS, F: fnImageHeight, MinArg: 1, MaxArg: 4})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "image-width", Namespace: fnNS, F: fnImageWidth, MinArg: 1, MaxArg: 4})
 	goxpath.RegisterFunction(&goxpath.Function{Name: "last-page-number", Namespace: fnNS, F: fnLastPagenumber, MinArg: 0, MaxArg: 0})
@@ -503,44 +503,44 @@ func fnFormatNumber(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequ
 	return goxpath.Sequence{formatNumber(f, thousandsSep.Stringvalue(), decimalComma.Stringvalue())}, nil
 }
 
-func fnGroupheight(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
-	groupname := args[0][0].(string)
+func fnSlateheight(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	slatename := args[0][0].(string)
 	xd := ctx.Store["xd"].(*xtsDocument)
 	xd.setupPage()
-	if grp, ok := xd.groups[groupname]; ok {
-		groupheight := grp.contents.Height
+	if sl, ok := xd.slates[slatename]; ok {
+		slateheight := sl.contents.Height
 		if len(args) == 1 {
-			return goxpath.Sequence{xd.currentGrid.heightToRows(groupheight)}, nil
+			return goxpath.Sequence{xd.currentGrid.heightToRows(slateheight)}, nil
 		}
 		unit := args[1][0].(string)
-		val, err := groupheight.ToUnit(unit)
+		val, err := slateheight.ToUnit(unit)
 		if err != nil {
 			return nil, err
 		}
 		return goxpath.Sequence{val}, nil
 
 	}
-	return nil, fmt.Errorf("sd:group-height() group %q not found", groupname)
+	return nil, fmt.Errorf("sd:slate-height() slate %q not found", slatename)
 }
 
-func fnGroupwidth(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
-	groupname := args[0][0].(string)
+func fnSlatewidth(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
+	slatename := args[0][0].(string)
 	xd := ctx.Store["xd"].(*xtsDocument)
 	xd.setupPage()
-	if grp, ok := xd.groups[groupname]; ok {
-		groupwidth := grp.contents.Width
+	if sl, ok := xd.slates[slatename]; ok {
+		slatewidth := sl.contents.Width
 		if len(args) == 1 {
-			return goxpath.Sequence{xd.currentGrid.widthToColumns(groupwidth)}, nil
+			return goxpath.Sequence{xd.currentGrid.widthToColumns(slatewidth)}, nil
 		}
 		unit := args[1][0].(string)
-		val, err := groupwidth.ToUnit(unit)
+		val, err := slatewidth.ToUnit(unit)
 		if err != nil {
 			return nil, err
 		}
 		return goxpath.Sequence{val}, nil
 
 	}
-	return nil, fmt.Errorf("sd:group-height() group %q not found", groupname)
+	return nil, fmt.Errorf("sd:slate-width() slate %q not found", slatename)
 }
 
 // fnGridWidth returns the width of n grid cells (including gaps) as a float64

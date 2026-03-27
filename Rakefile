@@ -23,9 +23,14 @@ task :xtshelper  do
 	sh "go build -ldflags \"-X main.version=#{@xts_version} -X main.basedir=#{INSTALDIR} \" -o bin/xtshelper github.com/speedata/xts/helper"
 end
 
-desc "Compile and install necessary software"
+desc "Build the 'xts' binary"
 task :build do
-	sh "go install -ldflags \"-X github.com/speedata/xts/core.Version=#{@xts_version}\" github.com/speedata/xts/xts"
+	sh "go build -ldflags \"-s -w -X github.com/speedata/xts/core.Version=#{@xts_version}\" -o bin/xts github.com/speedata/xts/xts"
+end
+
+desc "Install 'xts' into $GOBIN"
+task :install do
+	sh "go install -ldflags \"-s -w -X github.com/speedata/xts/core.Version=#{@xts_version}\" github.com/speedata/xts/xts"
 end
 
 desc "Create the schema files"
@@ -36,7 +41,7 @@ end
 
 desc "Run quality assurance"
 task :qa do
-	sh "#{INSTALDIR}/bin/xts compare #{INSTALDIR}/qa"
+	sh "xts compare #{INSTALDIR}/qa"
 end
 
 desc "Clean QA intermediate files"

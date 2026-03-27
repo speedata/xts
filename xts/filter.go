@@ -1,13 +1,10 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
-	"io"
 	"log/slog"
 	"os"
 	"os/exec"
-	"path/filepath"
 
 	"github.com/mitchellh/mapstructure"
 	lua "github.com/speedata/go-lua"
@@ -30,103 +27,6 @@ func lerr(errormessage string) int {
 	return 2
 }
 
-func validateRelaxNG(l *lua.State) int {
-	xmlfile := lua.CheckString(l, 1)
-	rngfile := lua.CheckString(l, 2)
-
-	cmd := exec.Command("java", "-jar", filepath.Join(configuration.libdir, "jing.jar"), rngfile, xmlfile)
-
-	stdoutPipe, err := cmd.StdoutPipe()
-	if err != nil {
-		return lerr(err.Error())
-	}
-	var b bytes.Buffer
-
-	err = cmd.Start()
-	if err != nil {
-		return lerr(err.Error())
-	}
-
-	go io.Copy(&b, stdoutPipe)
-	err = cmd.Wait()
-	if err != nil {
-		return lerr(b.String())
-	}
-
-	l.PushBoolean(true)
-	return 1
-}
-
-func runSaxon(l *lua.State) int {
-	numberArguments := l.Top()
-	var command []string
-	command = []string{"-jar", filepath.Join(configuration.libdir, "saxon-he-12.9.jar")}
-	if numberArguments == 1 {
-		if l.IsTable(-1) {
-			m := map[string]string{
-				"initialtemplate": "-it:%s",
-				"source":          "-s:%s",
-				"stylesheet":      "-xsl:%s",
-				"out":             "-o:%s",
-			}
-			for k, val := range m {
-				l.Field(-1, k)
-				if l.IsString(-1) {
-					str, _ := l.ToString(-1)
-					command = append(command, fmt.Sprintf(val, str))
-				}
-				l.Pop(1)
-			}
-			// parameters at the end
-			l.Field(-1, "params")
-			if l.IsString(-1) {
-				str, _ := l.ToString(-1)
-				command = append(command, str)
-			} else if l.IsTable(-1) {
-				l.PushNil()
-				for l.Next(-2) {
-					key, _ := l.ToString(-2)
-					value, _ := l.ToString(-1)
-					command = append(command, fmt.Sprintf("%s=%s", key, value))
-					l.Pop(1)
-				}
-			}
-			l.Pop(1)
-		} else {
-			return lerr("The single argument must be a table (run_saxon)")
-		}
-	} else if numberArguments < 3 {
-		return lerr("command requires 3 or 4 arguments")
-	} else {
-		xsl := lua.CheckString(l, 1)
-		src := lua.CheckString(l, 2)
-		out := lua.CheckString(l, 3)
-
-		command = append(command, fmt.Sprintf("-xsl:%s", xsl), fmt.Sprintf("-s:%s", src), fmt.Sprintf("-o:%s", out))
-
-		if numberArguments > 3 {
-			command = append(command, lua.CheckString(l, 4))
-		}
-	}
-	if configuration.Verbose {
-		fmt.Println(command)
-	}
-
-	cmd := exec.Command("java", command...)
-	cmd.Stdout = os.Stdout
-	cmd.Stdin = os.Stdin
-
-	cmd.Start()
-
-	if err := cmd.Wait(); err != nil {
-		if _, ok := err.(*exec.ExitError); ok {
-			l.PushBoolean(false)
-		}
-	} else {
-		l.PushBoolean(true)
-	}
-	return 1
-}
 
 func findFile(l *lua.State) int {
 	numberArguments := l.Top()
@@ -176,8 +76,6 @@ func execute(l *lua.State) int {
 }
 
 var exports = []lua.RegistryFunction{
-	{Name: "validate_relaxng", Function: validateRelaxNG},
-	{Name: "run_saxon", Function: runSaxon},
 	{Name: "find_file", Function: findFile},
 	{Name: "execute", Function: execute},
 }

@@ -1,31 +1,41 @@
-# XTS XML typesetting system
+# XTS - XML typesetting system
 
-This repository is an experimental playground for a [speedata Publisher](https://github.com/speedata/publisher/) “next generation”.
-It uses the Go library [boxes and glue](https://github.com/boxesandglue/boxesandglue) for typesetting and PDF generation.
+XTS turns XML data into PDF. You write a layout in XML, point it at your data, and get a fully typeset document -- no GUI, no manual intervention. Think product catalogs, price lists, data sheets, or anything where content changes but the design stays the same.
 
+Under the hood, XTS uses [boxes and glue](https://github.com/boxesandglue/boxesandglue), a Go library that implements TeX's typesetting algorithms. If you know the [speedata Publisher](https://github.com/speedata/publisher/), XTS is its next-generation successor.
 
-# Manual and examples
+## Getting started
 
-The [manual](https://doc.speedata.de/xts/) is at https://doc.speedata.de/xts/ and the example repository is at <https://github.com/speedata/xts-examples>.
+Grab the latest release from the [releases page](https://github.com/speedata/xts/releases/latest), unzip, add `bin/` to your PATH, and you're good to go:
 
-# Status
+```
+xts new hello
+cd hello
+xts
+open xts.pdf
+```
 
-This is still considered experimental.
+That's it -- your first PDF from XML.
 
-Direct links to the latest binaries are:
+## Documentation
 
-* [Linux 64bit (ARM)](https://github.com/speedata/xts/releases/latest/download/xts_linux_arm64.zip).
-* [Linux 64bit (Intel)](https://github.com/speedata/xts/releases/latest/download/xts_linux_intel.zip).
-* [macOS 64bit (ARM)](https://github.com/speedata/xts/releases/latest/download/xts_macos_arm64.zip).
-* [macOS 64bit (Intel)](https://github.com/speedata/xts/releases/latest/download/xts_macos_intel.zip).
-* [Windows 64bit (ARM)](https://github.com/speedata/xts/releases/latest/download/xts_windows_arm64.zip).
-* [Windows 64bit (Intel)](https://github.com/speedata/xts/releases/latest/download/xts_windows_intel.zip).
+- **[Manual and reference](https://doc.speedata.de/xts/)** -- everything from "Hello World" to advanced layouts
+- **[Examples](https://github.com/speedata/xts-examples)** -- complete, runnable projects you can learn from
 
+## Building from source
 
-# License
+```
+git clone https://github.com/speedata/xts.git
+cd xts
+rake build
+```
 
-BSD license - see License.md
+Needs Go 1.21+ and Ruby/rake (or just run the `go build` command from the Rakefile directly).
 
-# Contact
+## License
 
-Patrick Gundlach, <gundlach@speedata.de>
+BSD -- see [License.md](License.md)
+
+## Contact
+
+Patrick Gundlach, gundlach@speedata.de

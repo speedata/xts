@@ -48,7 +48,7 @@
   <define name="Commands">
     <optional><cmd name="ClearPage"/></optional>
     <optional><cmd name="ForAll"/></optional>
-    <optional><cmd name="Group"/></optional>
+    <optional><cmd name="Slate"/></optional>
     <optional><cmd name="LoadXML"/></optional>
     <optional><cmd name="Loop"/></optional>
     <optional><cmd name="Message"/></optional>
@@ -1386,10 +1386,10 @@
   -->
   <command en="Contents">
     <description xml:lang="en">
-      <para>Marks the contents of a <cmd name="Group"/>, a virtual area.</para>
+      <para>Marks the contents of a <cmd name="Slate"/>, a virtual area.</para>
     </description>
     <description xml:lang="de">
-      <para>Kennzeichnet den Inhalt einer <cmd name="Group"/>, einer virtuellen Fläche.</para>
+      <para>Kennzeichnet den Inhalt einer <cmd name="Slate"/>, einer virtuellen Fläche.</para>
     </description>
     <childelements>
       <oneOrMore>
@@ -1397,10 +1397,10 @@
       </oneOrMore>
     </childelements>
     <example xml:lang="en">
-      <para>See the example at <cmd name="Group"/>.</para>
+      <para>See the example at <cmd name="Slate"/>.</para>
     </example>
     <example xml:lang="de">
-      <para>Siehe das Beispiel bei <cmd name="Group"/>.</para>
+      <para>Siehe das Beispiel bei <cmd name="Slate"/>.</para>
     </example>
   </command>
 
@@ -1840,7 +1840,7 @@
         <optional><cmd name="Column"/></optional>
         <optional><cmd name="Columns"/></optional>
         <optional><cmd name="ForAll"/></optional>
-        <optional><cmd name="Group"/></optional>
+        <optional><cmd name="Slate"/></optional>
         <optional><cmd name="LoadXML"/></optional>
         <optional><cmd name="Loop"/></optional>
         <optional><cmd name="Message"/></optional>
@@ -1919,15 +1919,15 @@
 
   <!--
       ****************************************************************************************
-      * Group
+      * Slate
       ****************************************************************************************
   -->
-  <command en="Group">
+  <command en="Slate">
     <description xml:lang="en">
-      <para>Create a virtual page that behaves like a real page but is not placed into the PDF.</para>
+      <para>Create a virtual page (a slate) that behaves like a real page but is not placed into the PDF. Think of it as a magic slate — you draw on it, inspect the result, and then place it on the page.</para>
     </description>
     <description xml:lang="de">
-      <para>Erzeugt einen virtuellen Bereich, in dem Elemente platziert werden können. Ausgegeben werden die Gruppen anschließend mit <cmd name="PlaceObject"/>.</para>
+      <para>Erzeugt einen virtuellen Bereich (Slate), in dem Elemente platziert werden können. Wie bei einer Zaubertafel wird der Inhalt zunächst unsichtbar aufgebaut und dann mit <cmd name="PlaceObject"/> auf der Seite platziert.</para>
     </description>
     <childelements>
         <cmd name="Contents"/>
@@ -1939,14 +1939,14 @@
     </childelements>
     <attribute en="name" type="text" optional="no">
       <description xml:lang="en">
-        <para>Name of the group that is created.</para>
+        <para>Name of the slate that is created.</para>
       </description>
       <description xml:lang="de">
-        <para>Der Name der anzulegenden Gruppe.</para>
+        <para>Der Name des anzulegenden Slates.</para>
       </description>
     </attribute>
     <example xml:lang="en"><listing><![CDATA[<Record element="data">
-  <Group name="Some group">
+  <Slate name="sidebar">
     <!-- Optional, taken from the current page -->
     <Grid width="10mm" height="10mm"/>
     <Contents>
@@ -1965,12 +1965,12 @@
         </Textblock>
       </PlaceObject>
     </Contents>
-  </Group>
-  <PlaceObject groupname="Some group" row="1" />
+  </Slate>
+  <PlaceObject slate="sidebar" row="1" />
 </Record>
 ]]></listing></example>
     <example xml:lang="de">
-      <listing><![CDATA[<Gruppe name="Beispielgruppe">
+      <listing><![CDATA[<Slate name="seitenleiste">
   <Contents>
     <PlaceObject column="3" row="2">
       <Textblock width="14">
@@ -1987,30 +1987,30 @@
       </Textblock>
     </PlaceObject>
   </Contents>
-</Gruppe>
-<PlaceObject groupname="Beispielgruppe" />]]></listing>
+</Slate>
+<PlaceObject slate="seitenleiste" />]]></listing>
     </example>
   </command>
 
 
   <!--
       ****************************************************************************************
-      * Groupcontents
+      * Slatecontents
       ****************************************************************************************
   -->
-  <command en="Groupcontents">
+  <command en="Slatecontents">
     <description xml:lang="en">
-      <para>Insert the contents of a previously created group.</para>
+      <para>Insert the contents of a previously created slate.</para>
     </description>
     <description xml:lang="de">
-      <para>Fügt den Inhalt einer zuvor erstellten Gruppe ein.</para>
+      <para>Fügt den Inhalt eines zuvor erstellten Slates ein.</para>
     </description>
     <attribute en="name" type="text" optional="no">
       <description xml:lang="en">
-        <para>Name of the group whose contents should be inserted.</para>
+        <para>Name of the slate whose contents should be inserted.</para>
       </description>
       <description xml:lang="de">
-        <para>Name der Gruppe, deren Inhalt eingefügt werden soll.</para>
+        <para>Name des Slates, dessen Inhalt eingefügt werden soll.</para>
       </description>
     </attribute>
   </command>
@@ -3378,12 +3378,12 @@
         <para>Es wird ein Rahmen um das Objekt gezeichnet.</para>
       </description>
     </attribute>
-    <attribute en="groupname" type="text" optional="yes">
+    <attribute en="slate" type="text" optional="yes">
       <description xml:lang="en">
-        <para>The name of the group that gets output. When given a groupname, PlaceObject should not contain any objects.</para>
+        <para>The name of the slate that gets output. When given, PlaceObject should not contain any objects.</para>
       </description>
       <description xml:lang="de">
-        <para>Wenn eine Gruppe ausgegeben werden soll, muss der Name hier angegeben werden.</para>
+        <para>Wenn ein Slate ausgegeben werden soll, muss der Name hier angegeben werden.</para>
       </description>
     </attribute>
     <attribute en="halign" optional="yes" allowxpath="yes">
@@ -4575,7 +4575,7 @@
           <cmd name="Bookmark"/>
           <cmd name="Box"/>
           <cmd name="ForAll"/>
-          <cmd name="Groupcontents"/>
+          <cmd name="Slatecontents"/>
           <cmd name="HTML" />
           <cmd name="Image"/>
           <cmd name="Loop"/>

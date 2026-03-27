@@ -15,8 +15,9 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.8
 	github.com/speedata/go-lua v0.1.6
 	github.com/speedata/goxlsx v1.0.2
-	github.com/speedata/goxml v1.0.7
-	github.com/speedata/goxpath v1.0.6
+	github.com/speedata/goxml v1.0.8
+	github.com/speedata/goxpath v1.0.9
+	github.com/speedata/goxslt v0.0.1
 	github.com/speedata/optionparser v1.1.1
 	github.com/yuin/goldmark v1.7.16
 	github.com/yuin/goldmark-highlighting v0.0.0-20220208100518-594be1970594
