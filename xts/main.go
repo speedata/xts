@@ -149,7 +149,7 @@ func scaffold(extra ...string) error {
 `
 	layoutTxt := `<Layout xmlns="urn:speedata.de/2021/xts/en"
     xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
-    <Record element="data">
+    <Record match="data">
         <PlaceObject>
             <Textblock>
                 <Paragraph>

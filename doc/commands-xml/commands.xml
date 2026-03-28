@@ -3687,22 +3687,22 @@
   -->
   <command en="Record">
     <description xml:lang="en">
-      <para>Contains the instructions when the publisher processes the element in the data file with the given name. The record matching the root element will be called by the software automatically, all further data handling must be done by the user.</para>
+      <para>Contains the instructions to be executed when a data element matches the given match expression. The Record matching the root element will be called automatically, all further data handling must be done by the user via <cmd name="ProcessNode"/>. Match expressions support XPath predicates for conditional matching (similar to XSLT template matching).</para>
     </description>
     <description xml:lang="de">
-      <para>Enthält die Anweisungen, die bei dem angegebenen Datensatz ausgeführt werden sollen. Der oberste Datensatz (d.h. direkt unterhalb des Wurzelelements) wird vom Publisher aufgerufen, alle nachfolgenden Datensätze müssen über das Element BearbeiteKnoten aufgerufen werden.</para>
+      <para>Enthält die Anweisungen, die ausgeführt werden, wenn ein Datenelement dem angegebenen Match-Ausdruck entspricht. Der Record, der auf das Wurzelelement passt, wird automatisch aufgerufen; alle weiteren Datensätze müssen über <cmd name="ProcessNode"/> verarbeitet werden. Match-Ausdrücke unterstützen XPath-Prädikate für bedingtes Matching (ähnlich wie XSLT-Template-Matching).</para>
     </description>
     <childelements>
       <oneOrMore>
         <reference name="Commands"/>
       </oneOrMore>
     </childelements>
-    <attribute en="element" type="xpath" optional="no">
+    <attribute en="match" type="xpath" optional="no">
       <description xml:lang="en">
-        <para>The name of the element the record matches.</para>
+        <para>An XPath match expression. This can be a simple element name (e.g. <tt>data</tt>) or an element name followed by an XPath predicate in brackets (e.g. <tt>item[@type='invoice']</tt> or <tt>item[not(@hidden='true')]</tt>). When multiple Records match the same element, Records with predicates take priority over those without. Among Records with predicates, the last defined one wins.</para>
       </description>
       <description xml:lang="de">
-        <para>Der Name des Elements der auf den Datensatz passt.</para>
+        <para>Ein XPath-Match-Ausdruck. Dies kann ein einfacher Elementname sein (z.B. <tt>data</tt>) oder ein Elementname gefolgt von einem XPath-Prädikat in eckigen Klammern (z.B. <tt>item[@type='invoice']</tt> oder <tt>item[not(@hidden='true')]</tt>). Wenn mehrere Records auf dasselbe Element passen, haben Records mit Prädikaten Vorrang vor solchen ohne. Bei mehreren passenden Records mit Prädikaten gewinnt der zuletzt definierte.</para>
       </description>
     </attribute>
     <attribute en="mode" type="text" optional="yes">
@@ -3714,7 +3714,7 @@
       </description>
     </attribute>
     <example xml:lang="en">
-      <listing><![CDATA[<Record element="url" mode="output">
+      <listing><![CDATA[<Record match="url" mode="output">
   <PlaceObject>
     <Textblock>
       <Paragraph>
@@ -3724,14 +3724,50 @@
   </PlaceObject>
 </Record>
 ]]></listing>
+      <listing><![CDATA[<!-- Record with predicate: only matches item elements where type='invoice' -->
+<Record match="item[@type='invoice']">
+  <PlaceObject>
+    <Textblock>
+      <Paragraph><Value>Invoice item</Value></Paragraph>
+    </Textblock>
+  </PlaceObject>
+</Record>
+
+<!-- Fallback Record: matches all other item elements -->
+<Record match="item">
+  <PlaceObject>
+    <Textblock>
+      <Paragraph><Value>Other item</Value></Paragraph>
+    </Textblock>
+  </PlaceObject>
+</Record>
+]]></listing>
     </example>
     <example xml:lang="de">
-      <listing><![CDATA[<Record element="url" mode="ausgabe">
+      <listing><![CDATA[<Record match="url" mode="ausgabe">
   <PlaceObject>
     <Textblock>
       <Paragraph>
         <A href="https://www.speedata.de"><Value>Webseite von speedata</Value></A>
       </Paragraph>
+    </Textblock>
+  </PlaceObject>
+</Record>
+]]></listing>
+      <listing><![CDATA[<!-- Record mit Prädikat: trifft nur auf item-Elemente mit type='invoice' zu -->
+<Record match="item[@type='invoice']">
+  <PlaceObject>
+    <Textblock>
+      <Paragraph><Value>Rechnungsposten</Value></Paragraph>
+    </Textblock>
+  </PlaceObject>
+</Record>
+
+<!-- Fallback-Record: trifft auf alle anderen item-Elemente zu -->
+<Record match="item">
+  <PlaceObject>
+    <Textblock>
+      <Paragraph><Value>Anderer Posten</Value></Paragraph>
     </Textblock>
   </PlaceObject>
 </Record>

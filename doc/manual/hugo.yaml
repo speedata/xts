@@ -1,0 +1,56 @@
+# Hugo configuration file
+title: XTS XML typesetting system
+
+# import hextra as module
+module:
+  imports:
+    - path: github.com/imfing/hextra
+
+markup:
+  # allow raw html
+  goldmark:
+    renderer:
+      unsafe: true
+
+  # enable hextra syntax highlight
+  highlight:
+    noClasses: false
+
+menu:
+  main:
+    - name: Home
+      pageRef: /
+      weight: 1
+    - name: Contact ↗
+      url: "https://www.speedata.de/imprint/"
+      weight: 9
+    - name: Search
+      weight: 10
+      params:
+        type: search
+    - name: GitHub
+      weight: 11
+      url: "https://github.com/speedata/xts"
+      params:
+        icon: github
+    - name: mastodon
+      weight: 12
+      url: "https://typo.social/@speedata"
+      params:
+        icon: mastodon
+
+
+params:
+  theme:
+    default: light
+    displayToggle: false
+  navbar:
+    displayTitle: true
+    displayLogo: false
+
+  footer:
+    displayCopyright: false
+    displayPoweredBy: false
+
+  editURL:
+    enable: false

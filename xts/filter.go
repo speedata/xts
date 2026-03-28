@@ -27,7 +27,6 @@ func lerr(errormessage string) int {
 	return 2
 }
 
-
 func findFile(l *lua.State) int {
 	numberArguments := l.Top()
 	if numberArguments != 1 {

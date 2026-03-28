@@ -307,9 +307,8 @@ func RunXTS(cfg *XTSConfig) error {
 	}
 
 	d.data.Ctx.Root()
-	var startDispatcher *goxml.Element
-	var ok bool
-	if startDispatcher, ok = dataDispatcher[rootname][""]; !ok {
+	startDispatcher := findRecordByName(rootname)
+	if startDispatcher == nil {
 		return fmt.Errorf("cannot find <Record> for root element %s", rootname)
 	}
 	_, err = dispatch(d, startDispatcher)

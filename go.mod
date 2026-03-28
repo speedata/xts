@@ -1,6 +1,6 @@
 module github.com/speedata/xts
 
-go 1.24.0
+go 1.25.0
 
 require (
 	github.com/alecthomas/chroma v0.10.0
@@ -22,7 +22,7 @@ require (
 	github.com/yuin/goldmark v1.7.16
 	github.com/yuin/goldmark-highlighting v0.0.0-20220208100518-594be1970594
 	golang.org/x/net v0.48.0
-	golang.org/x/sys v0.39.0
+	golang.org/x/sys v0.42.0
 	golang.org/x/text v0.32.0
 )
 

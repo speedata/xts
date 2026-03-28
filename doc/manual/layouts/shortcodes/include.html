@@ -1,0 +1,4 @@
+{{ with .Get 0 }}
+{{ $path := printf "/ref/%s" . }}
+{{ readFile $path | markdownify }}
+{{ end }}

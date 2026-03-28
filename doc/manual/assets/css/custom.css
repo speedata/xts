@@ -1,0 +1,84 @@
+:root {
+  --nav-color: rgb(185, 220, 241);
+  --md-text-font: system-ui, sans-serif;
+  --md-code-font: ui-monospace, monospace;
+  font-family: var(--md-text-font);
+}
+
+.content {
+  font-family: var(--md-text-font);
+}
+
+pre, code {
+  font-family: var(--md-code-font);
+}
+
+.nav-container {
+  background-color: var(--nav-color);
+}
+
+footer {
+  background-color: var(--nav-color);
+}
+
+blockquote {
+  color: black;
+  border: none;
+  align-items: left;
+  font-weight: 100;
+  font-size: 1rem;
+  width: auto;
+  line-height: 1.4;
+  position: relative;
+  margin: 0;
+  padding: .5rem;
+}
+
+blockquote:before,
+blockquote:after {
+  position: absolute;
+  color: #f1efe6;
+  font-size: 8rem;
+  width: 1rem;
+  height: 4rem;
+}
+
+blockquote:before {
+  content: '“';
+  left: -2rem;
+  top: -2rem;
+}
+
+.nav-container-blur {
+  background-color: var(--nav-color);
+}
+
+span.TeX-e {
+  position: relative;
+  top: 0.4ex;
+  left: -0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+article ul li::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  margin-bottom: 2px;
+  margin-right: 10px;
+  margin-left: -1em;
+  background-color: rgb(18, 156, 236);
+  display: inline-block;
+  transform: rotate(-11deg);
+}
+
+article ul li {
+  list-style: none;
+}
+
+/* Font faces and proprietary fonts are injected at build time via the server
+   build script. The CSS variables above use system font fallbacks. The build
+   script overrides them with the actual font names after injecting @font-face
+   rules. See the deploy script for details. */

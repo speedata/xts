@@ -28,9 +28,16 @@ import (
 
 type commandFunc func(*xtsDocument, *goxml.Element) (xpath.Sequence, error)
 
+type recordEntry struct {
+	elemName string         // extracted element name (e.g. "foo")
+	pred     string         // XPath predicate without brackets (e.g. "not(@bar='baz')"), empty = always match
+	mode     string         // mode string, empty = default
+	layout   *goxml.Element // the layout element containing the Record body
+}
+
 var (
-	dataDispatcher = make(map[string]map[string]*goxml.Element)
-	dispatchTable  map[string]commandFunc
+	dataRecords   []recordEntry
+	dispatchTable map[string]commandFunc
 )
 
 func init() {
@@ -1145,10 +1152,8 @@ func cmdLoadXML(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	}
 	dataroot := rootNode.Stringvalue()
 	xd.data.Evaluate("/*")
-	if dd, ok := dataDispatcher[dataroot]; ok {
-		if rec, ok := dd[""]; ok {
-			_, err = dispatch(xd, rec)
-		}
+	if rec := findRecordByName(dataroot); rec != nil {
+		_, err = dispatch(xd, rec)
 	}
 	xd.data.Ctx.SetContextSequence(oldContext)
 	xd.data = saveData
@@ -1182,11 +1187,9 @@ func cmdProcessNode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		xd.data.Ctx.Pos = i + 1
 		if elt, ok := itm.(*goxml.Element); ok {
 			xd.data.Ctx.SetContextSequence(xpath.Sequence{elt})
-			slog.Debug(fmt.Sprintf("Call Record element %q mode %q (pos %d)", elt.Name, attValues.Mode, xd.data.Ctx.Pos))
-			if dd, ok := dataDispatcher[elt.Name]; ok {
-				if rec, ok := dd[attValues.Mode]; ok {
-					_, err = dispatch(xd, rec)
-				}
+			if rec := findRecord(xd, elt, attValues.Mode); rec != nil {
+				slog.Debug(fmt.Sprintf("Call Record match %q mode %q (pos %d)", elt.Name, attValues.Mode, xd.data.Ctx.Pos))
+				_, err = dispatch(xd, rec)
 			}
 		}
 	}
@@ -1194,22 +1197,79 @@ func cmdProcessNode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	return nil, nil
 }
 
+// findRecord finds the best matching Record for the given element and mode.
+// Records with predicates take priority over those without. Among records with
+// predicates, the last registered one wins (like XSLT import precedence).
+// Returns nil if no matching Record is found.
+func findRecord(xd *xtsDocument, elt *goxml.Element, mode string) *goxml.Element {
+	var fallback *goxml.Element
+	// Iterate in reverse: last registered = highest priority
+	for i := len(dataRecords) - 1; i >= 0; i-- {
+		rec := dataRecords[i]
+		if rec.elemName != elt.Name || rec.mode != mode {
+			continue
+		}
+		if rec.pred == "" {
+			if fallback == nil {
+				fallback = rec.layout
+			}
+			continue
+		}
+		// Evaluate predicate against current context node
+		seq, err := xd.data.Evaluate("self::*[" + rec.pred + "]")
+		if err != nil {
+			slog.Warn(fmt.Sprintf("Record predicate evaluation error: %s", err))
+			continue
+		}
+		if len(seq) > 0 {
+			return rec.layout
+		}
+	}
+	return fallback
+}
+
+// findRecordByName finds a Record matching the element name with default mode
+// and no predicate conditions (used for root element dispatch).
+func findRecordByName(elemName string) *goxml.Element {
+	for i := len(dataRecords) - 1; i >= 0; i-- {
+		rec := dataRecords[i]
+		if rec.elemName == elemName && rec.mode == "" && rec.pred == "" {
+			return rec.layout
+		}
+	}
+	return nil
+}
+
 func cmdRecord(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
-		Element string `sdxml:"mustexist"`
-		Mode    string
+		Match string `sdxml:"mustexist"`
+		Mode  string
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
 
-	dp := dataDispatcher[attValues.Element]
-	if dp == nil {
-		dataDispatcher[attValues.Element] = make(map[string]*goxml.Element)
-	}
-	dataDispatcher[attValues.Element][attValues.Mode] = layoutelt
+	elemName, pred := parseMatch(attValues.Match)
+	dataRecords = append(dataRecords, recordEntry{
+		elemName: elemName,
+		pred:     pred,
+		mode:     attValues.Mode,
+		layout:   layoutelt,
+	})
 	return nil, nil
+}
+
+// parseMatch splits a match expression like "foo[not(@bar='baz')]" into
+// element name ("foo") and predicate ("not(@bar='baz')").
+func parseMatch(match string) (string, string) {
+	idx := strings.Index(match, "[")
+	if idx == -1 {
+		return match, ""
+	}
+	elemName := match[:idx]
+	pred := match[idx+1 : len(match)-1] // strip [ and ]
+	return elemName, pred
 }
 
 func cmdLoop(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {

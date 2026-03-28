@@ -19,7 +19,7 @@ var (
 
 // DoThings creates the markdown documentation
 func DoThings(cfg *config.Config) error {
-	refdir = filepath.Join(cfg.Basedir(), "..", "xts-docs", "ref")
+	refdir = filepath.Join(cfg.Basedir(), "doc", "manual", "ref")
 	srcpath = filepath.Join(cfg.Basedir(), "doc")
 
 	r, err := os.Open(filepath.Join(cfg.Basedir(), "doc", "commands-xml", "commands.xml"))
@@ -41,7 +41,7 @@ func DoThings(cfg *config.Config) error {
 		return err
 	}
 
-	referencedir := filepath.Join(cfg.Basedir(), "..", "xts-docs", "content", "reference", "commands")
+	referencedir := filepath.Join(cfg.Basedir(), "doc", "manual", "content", "reference", "commands")
 	if err = os.MkdirAll(referencedir, 0o755); err != nil {
 		return err
 	}
