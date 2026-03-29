@@ -645,7 +645,7 @@
     <xs:complexType>
       <xs:attribute name="href">
         <xs:annotation>
-          <xs:documentation>Dateiname des Bildes. Kann entweder eine Datei im Suchpfad sein, ein absoluter Dateiname, ein file-URI-Schema (z.B. file:///pfad/zum/bild.pdf) oder eine Quelle im Web (http/https).</xs:documentation>
+          <xs:documentation>Dateiname des Bildes. Kann entweder eine Datei im Suchpfad sein, ein absoluter Dateiname, ein file-URI-Schema (z.B. file:///pfad/zum/bild.pdf) oder eine Quelle im Web (http/https). Mit placeholder://BxH (z.B. placeholder://200x150) wird ein Platzhalterbild mit den angegebenen Maßen in PDF-Punkten erzeugt.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="height">

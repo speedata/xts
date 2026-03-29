@@ -857,7 +857,7 @@
             <a:documentation>Bindet eine externe Grafik ein. Erlaubte Grafikformate sind PDF (.pdf), PNG (.png) und JPEG (.jpg). Siehe unten für die Einschränkung eingebundener PDF-Dateien.</a:documentation>
             <optional>
                 <attribute name="href">
-                    <a:documentation>Dateiname des Bildes. Kann entweder eine Datei im Suchpfad sein, ein absoluter Dateiname, ein file-URI-Schema (z.B. file:///pfad/zum/bild.pdf) oder eine Quelle im Web (http/https).</a:documentation>
+                    <a:documentation>Dateiname des Bildes. Kann entweder eine Datei im Suchpfad sein, ein absoluter Dateiname, ein file-URI-Schema (z.B. file:///pfad/zum/bild.pdf) oder eine Quelle im Web (http/https). Mit placeholder://BxH (z.B. placeholder://200x150) wird ein Platzhalterbild mit den angegebenen Maßen in PDF-Punkten erzeugt.</a:documentation>
                 </attribute>
             </optional>
             <optional>
