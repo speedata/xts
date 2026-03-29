@@ -1,4 +1,4 @@
-# DefineMasterpage
+# DefineMasterPage
 
 
 
@@ -46,16 +46,16 @@ When creating a new page, all page types are tried in reversed order. That means
 ## Example
 
 ```xml
-<DefineMasterpage name="right page" test=" sd:odd( sd:current-page() ) "/>
+<DefineMasterPage name="right page" test=" sd:odd( sd:current-page() ) "/>
 ```
 ```xml
-<DefineMasterpage name="left page" test=" sd:even( sd:current-page() ) "/>
+<DefineMasterPage name="left page" test=" sd:even( sd:current-page() ) "/>
 ```
 ```xml
-<DefineMasterpage name="main part right" test=" sd:odd( sd:current-page() ) and $chapter='main' "/>
+<DefineMasterPage name="main part right" test=" sd:odd( sd:current-page() ) and $chapter='main' "/>
 ```
 ```xml
-<DefineMasterpage name="right page" test="sd:odd( sd:current-page() )">
+<DefineMasterPage name="right page" test="sd:odd( sd:current-page() )">
   <Margin left="1cm" right="1cm" top="1cm" bottom="1cm"/>
   <PositioningArea name="frame1">
     <PositioningFrame width="12" height="30" column="2" row="2"/>
@@ -71,7 +71,7 @@ When creating a new page, all page types are tried in reversed order. That means
       <!-- footer -->
     </PlaceObject>
   </AtPageShipout>
-</DefineMasterpage>
+</DefineMasterPage>
 ```
 
 

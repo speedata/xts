@@ -122,7 +122,7 @@ func encodeTable(l *lua.State) int {
 	}
 	l.Pop(1)
 	enc.Flush()
-	if err := os.WriteFile(filename, b.Bytes(), 0644); err != nil {
+	if err := os.WriteFile(filename, b.Bytes(), 0o644); err != nil {
 		return lerr(l, err.Error())
 	}
 	l.SetTop(0)
@@ -133,9 +133,9 @@ func encodeTable(l *lua.State) int {
 // Open starts this lua module
 func Open(l *lua.State) int {
 	lua.NewLibrary(l, []lua.RegistryFunction{
-		{"encode_table", encodeTable},
-		{"decode_xml", decodeXML},
-		{"run_xslt", runXSLT},
+		{Name: "encode_table", Function: encodeTable},
+		{Name: "decode_xml", Function: decodeXML},
+		{Name: "run_xslt", Function: runXSLT},
 	})
 	return 1
 }

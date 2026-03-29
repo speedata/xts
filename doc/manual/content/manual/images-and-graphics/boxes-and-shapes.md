@@ -27,9 +27,9 @@ Boxes are commonly used as colored backgrounds behind other content. Place the b
 </PlaceObject>
 <!-- Content on top -->
 <PlaceObject row="1" column="1">
-    <Textblock>
+    <TextBlock>
         <Paragraph><Value>Text on colored background</Value></Paragraph>
-    </Textblock>
+    </TextBlock>
 </PlaceObject>
 ```
 

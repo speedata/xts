@@ -30,9 +30,9 @@ A Slate is a virtual layout surface -- like a magic drawing tablet, you sketch c
     <Grid width="5mm" height="12pt"/>
     <Contents>
         <PlaceObject>
-            <Textblock>
+            <TextBlock>
                 <Paragraph><Value>Sidebar content</Value></Paragraph>
-            </Textblock>
+            </TextBlock>
         </PlaceObject>
     </Contents>
 </Slate>

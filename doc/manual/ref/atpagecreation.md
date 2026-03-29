@@ -2,7 +2,7 @@
 
 
 
-The contents of the element [AtPageCreation](../atpagecreation) is executed the first time the page is accessed. This is used in [DefineMasterpage](../definemasterpage).
+The contents of the element [AtPageCreation](../atpagecreation) is executed the first time the page is accessed. This is used in [DefineMasterPage](../definemasterpage).
 
 
 
@@ -12,7 +12,7 @@ The contents of the element [AtPageCreation](../atpagecreation) is executed the 
 
 ##  Parent elements
 
-[DefineMasterpage](../definemasterpage)
+[DefineMasterPage](../definemasterpage)
 
 
 ## Attributes
@@ -23,11 +23,11 @@ The contents of the element [AtPageCreation](../atpagecreation) is executed the 
 ```xml
 <AtPageCreation>
   <PlaceObject column="1" row="1">
-    <Textblock>
+    <TextBlock>
       <Paragraph>
         <Value select="$pageheader"/>
       </Paragraph>
-    </Textblock>
+    </TextBlock>
   </PlaceObject>
 </AtPageCreation>
 

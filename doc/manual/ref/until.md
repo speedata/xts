@@ -28,7 +28,7 @@ Create a loop. All child elements are executed repeatedly until the given condit
 ## Example
 
 ```xml
-<Record element="data">
+<Record match="data">
   <SetVariable variable="i" select="0"/>
   <Until test="$i = 4">
     <Message select="concat('$i is: ', $i)"/>

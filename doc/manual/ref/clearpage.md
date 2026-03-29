@@ -21,17 +21,17 @@ Finishes the current page.
 ## Example
 
 ```xml
-<Record element="data">
+<Record match="data">
   <PlaceObject>
-    <Textblock>
+    <TextBlock>
       <Paragraph><Value>This is page 1</Value></Paragraph>
-    </Textblock>
+    </TextBlock>
   </PlaceObject>
   <ClearPage openon="right"/>
   <PlaceObject>
-    <Textblock>
+    <TextBlock>
       <Paragraph><Value>And this is page 3</Value></Paragraph>
-    </Textblock>
+    </TextBlock>
   </PlaceObject>
 </Record>
 

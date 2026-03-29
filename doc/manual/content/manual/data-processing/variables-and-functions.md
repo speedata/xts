@@ -38,9 +38,9 @@ Variables can hold not just simple values but entire XML structures:
 </SetVariable>
 
 <PlaceObject>
-    <Textblock>
+    <TextBlock>
         <Value select="$greeting"/>
-    </Textblock>
+    </TextBlock>
 </PlaceObject>
 ```
 
@@ -126,7 +126,7 @@ You can define custom functions in the layout file:
     xmlns:sd="urn:speedata.de/2021/xtsfunctions/en"
     xmlns:fn="mynamespace">
 
-    <Record element="data">
+    <Record match="data">
         <Message select="fn:add(4, 3)"/>
     </Record>
 

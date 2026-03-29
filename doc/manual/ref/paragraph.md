@@ -12,7 +12,7 @@ Insert a paragraph of text. The width of the paragraph is inherited from the sur
 
 ##  Parent elements
 
-[Case](../case), [ForAll](../forall), [Loop](../loop), [Otherwise](../otherwise), [SetVariable](../setvariable), [Td](../td), [Textblock](../textblock), [Until](../until), [While](../while)
+[Case](../case), [ForAll](../forall), [Loop](../loop), [Otherwise](../otherwise), [SetVariable](../setvariable), [Td](../td), [TextBlock](../textblock), [Until](../until), [While](../while)
 
 
 ## Attributes
@@ -40,11 +40,11 @@ Insert a paragraph of text. The width of the paragraph is inherited from the sur
 ## Example
 
 ```xml
-<Textblock>
+<TextBlock>
   <Paragraph>
     <Value>Hello World</Value>
   </Paragraph>
-</Textblock>
+</TextBlock>
 
 ```
 

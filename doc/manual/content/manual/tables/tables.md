@@ -61,7 +61,7 @@ Proportional columns are handy:
 
 ## Table headers
 
-`<Tablehead>` defines rows that repeat on every page when a table spans multiple pages:
+`<TableHead>` defines rows that repeat on every page when a table spans multiple pages:
 
 ```xml
 <Table>
@@ -70,13 +70,13 @@ Proportional columns are handy:
         <Column width="*"/>
         <Column width="3cm"/>
     </Columns>
-    <Tablehead>
+    <TableHead>
         <Tr>
             <Td><Paragraph><Value>ID</Value></Paragraph></Td>
             <Td><Paragraph><Value>Product</Value></Paragraph></Td>
             <Td><Paragraph><Value>Price</Value></Paragraph></Td>
         </Tr>
-    </Tablehead>
+    </TableHead>
     <ForAll select="product">
         <Tr>
             <Td><Paragraph><Value select="@id"/></Paragraph></Td>
@@ -106,23 +106,23 @@ Proportional columns are handy:
 Tables support full CSS styling:
 
 ```xml
-<Stylesheet>
+<StyleSheet>
     table { font-family: sans; font-size: 10pt; }
     thead { font-weight: bold; background-color: #e0e0e0; }
     td { padding: 4pt 8pt; border-bottom: 0.5pt solid #ccc; }
     tr:nth-child(even) { background-color: #f8f8f8; }
-</Stylesheet>
+</StyleSheet>
 ```
 
 ### Cell alignment
 
 ```xml
-<Stylesheet>
+<StyleSheet>
     .right { text-align: right; }
     .center { text-align: center; }
     .top { vertical-align: top; }
     .middle { vertical-align: middle; }
-</Stylesheet>
+</StyleSheet>
 
 <Td class="right"><Paragraph><Value>99.95</Value></Paragraph></Td>
 ```
@@ -130,12 +130,12 @@ Tables support full CSS styling:
 ### Tabular numbers for financial data
 
 ```xml
-<Stylesheet>
+<StyleSheet>
     .numbers {
         text-align: right;
         font-feature-settings: "tnum", "lnum";
     }
-</Stylesheet>
+</StyleSheet>
 ```
 
 ## Cell content
@@ -185,14 +185,14 @@ Generate tables from XML data using `<ForAll>`:
 ```
 
 ```xml title="layout.xml"
-<Stylesheet>
+<StyleSheet>
     table { font-family: sans; font-size: 10pt; }
     thead { font-weight: bold; background-color: #333; color: white; }
     td { padding: 4pt 8pt; border-bottom: 0.5pt solid #ddd; }
     .right { text-align: right; }
-</Stylesheet>
+</StyleSheet>
 
-<Record element="inventory">
+<Record match="inventory">
     <PlaceObject>
         <Table>
             <Columns>
@@ -201,14 +201,14 @@ Generate tables from XML data using `<ForAll>`:
                 <Column width="2cm"/>
                 <Column width="2.5cm"/>
             </Columns>
-            <Tablehead>
+            <TableHead>
                 <Tr>
                     <Td><Paragraph><Value>SKU</Value></Paragraph></Td>
                     <Td><Paragraph><Value>Product</Value></Paragraph></Td>
                     <Td class="right"><Paragraph><Value>Qty</Value></Paragraph></Td>
                     <Td class="right"><Paragraph><Value>Price</Value></Paragraph></Td>
                 </Tr>
-            </Tablehead>
+            </TableHead>
             <ForAll select="item">
                 <Tr>
                     <Td><Paragraph><Value select="@sku"/></Paragraph></Td>
@@ -227,10 +227,10 @@ Generate tables from XML data using `<ForAll>`:
 Apply different styles based on data values:
 
 ```xml
-<Stylesheet>
+<StyleSheet>
     .low-stock { background-color: #ffcccc; }
     .in-stock { background-color: #ccffcc; }
-</Stylesheet>
+</StyleSheet>
 
 <ForAll select="item">
     <Tr class="{ if (@qty &lt; 100) then 'low-stock' else 'in-stock' }">
@@ -264,11 +264,11 @@ Or use `<Switch>/<Case>` inside cells for more complex logic:
 <Table width="10">...</Table>
 
 <!-- Full available width via CSS -->
-<Stylesheet>
+<StyleSheet>
     table { width: 100%; }
-</Stylesheet>
+</StyleSheet>
 ```
 
 ## See also
 
-- [Table reference](/reference/commands/table), [Tr](/reference/commands/tr), [Td](/reference/commands/td), [Columns](/reference/commands/columns), [Tablehead](/reference/commands/tablehead)
+- [Table reference](/reference/commands/table), [Tr](/reference/commands/tr), [Td](/reference/commands/td), [Columns](/reference/commands/columns), [TableHead](/reference/commands/tablehead)

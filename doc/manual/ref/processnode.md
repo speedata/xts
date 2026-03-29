@@ -26,7 +26,7 @@ Executes all given nodes. The elements, that are to be executed, are given with 
 
 
 `mode` (text, optional)
-:   Name of the mode. This must match the mode at the corresponding [Record](../record) element. With this it is possible to have different rules for the same element. When a Record uses a match expression with a predicate (e.g. `item[@type='invoice']`), the predicate is evaluated against each element — the most specific matching Record is selected.
+:   Name of the mode. This must match the mode at the corresponding [Record](../record) element. With this it is possible to have different rules for the same element.
 
 
 

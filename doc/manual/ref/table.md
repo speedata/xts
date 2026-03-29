@@ -8,7 +8,7 @@ Create a table that is similar to the HTML table model.
 
 ##  Child elements
 
-[Columns](../columns), [ForAll](../forall), [Loop](../loop), [Tablehead](../tablehead), [Tablerule](../tablerule), [Tr](../tr), [Value](../value)
+[Columns](../columns), [ForAll](../forall), [Loop](../loop), [TableHead](../tablehead), [TableRule](../tablerule), [Tr](../tr), [Value](../value)
 
 ##  Parent elements
 
@@ -62,7 +62,7 @@ The table cells may contain Paragraphs, Images and other objects that are allowe
 
 ```xml
 
-<Stylesheet>
+<StyleSheet>
     table {
         font-family: serif;
         font-size: 14pt;
@@ -77,11 +77,11 @@ The table cells may contain Paragraphs, Images and other objects that are allowe
         font-weight: bold ;
     }
     .left { text-align: left ; }
-</Stylesheet>
-<Record element="data">
+</StyleSheet>
+<Record match="data">
     <PlaceObject>
         <Table>
-            <Tablehead>
+            <TableHead>
                 <Tr>
                     <Td colspan="2"/>
                     <Td colspan="7">
@@ -100,7 +100,7 @@ The table cells may contain Paragraphs, Images and other objects that are allowe
                     <Td><Paragraph><Value>+/-</Value></Paragraph></Td>
                     <Td><Paragraph><Value>Pts</Value></Paragraph></Td>
                 </Tr>
-            </Tablehead>
+            </TableHead>
             <ForAll select="entry">
                 <Tr>
                     <Td><Paragraph><Value select="@pos"/></Paragraph></Td>

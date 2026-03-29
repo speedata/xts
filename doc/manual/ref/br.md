@@ -21,13 +21,13 @@ Insert a newline
 ## Example
 
 ```xml
-<Record element="data">
+<Record match="data">
   <PlaceObject>
-   <Textblock>
+   <TextBlock>
      <Paragraph>
        <Value>Hello</Value><Br/><Value>world</Value>
      </Paragraph>
-   </Textblock>
+   </TextBlock>
   </PlaceObject>
 </Record>
 

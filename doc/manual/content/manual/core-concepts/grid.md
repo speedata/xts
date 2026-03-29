@@ -89,7 +89,7 @@ If you *want* objects to overlap (say, a background image behind text), use `all
 If you omit `row` and `column`, XTS finds the next free position automatically:
 
 ```xml
-<Record element="data">
+<Record match="data">
     <PlaceObject>
         <Image width="4" href="_samplea.pdf"/>
     </PlaceObject>

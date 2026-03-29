@@ -70,13 +70,13 @@ Just a root element with a `name` attribute. In a real project, this would be yo
 <Layout xmlns="urn:speedata.de/2021/xts/en"
     xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
 
-    <Record element="data">
+    <Record match="data">
         <PlaceObject>
-            <Textblock>
+            <TextBlock>
                 <Paragraph>
                     <Value select="concat('Hello, ', @name, '!')" />
                 </Paragraph>
-            </Textblock>
+            </TextBlock>
         </PlaceObject>
     </Record>
 </Layout>
@@ -85,9 +85,9 @@ Just a root element with a `name` attribute. In a real project, this would be yo
 Here's what's happening:
 
 1. `<Layout>` is the root element. The two `xmlns` declarations set up the XTS namespace and the XPath function namespace (`sd:`).
-2. `<Record element="data">` says: "When you encounter a `<data>` element in the data file, execute these commands."
+2. `<Record match="data">` says: "When you encounter a `<data>` element in the data file, execute these commands."
 3. `<PlaceObject>` places something on the page.
-4. `<Textblock>` is a rectangular text area (no page breaks).
+4. `<TextBlock>` is a rectangular text area (no page breaks).
 5. `<Paragraph>` holds one paragraph of text.
 6. `<Value select="...">` evaluates an XPath expression -- here it concatenates "Hello, " with the `name` attribute and "!".
 

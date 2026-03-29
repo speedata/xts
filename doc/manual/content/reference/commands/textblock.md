@@ -1,6 +1,6 @@
 ---
 type: docs
-linktitle: Textblock
+linktitle: TextBlock
 ---
 {{% include "textblock.md" %}}
 

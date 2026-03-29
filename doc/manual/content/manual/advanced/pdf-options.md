@@ -35,6 +35,16 @@ Create clickable links with `<A>`:
 <A link="chapter1"><Value>See Chapter 1</Value></A>
 ```
 
+### Page destinations
+
+Every page automatically gets a named destination (`page-1`, `page-2`, ...). You can link to a specific page using the `page` attribute:
+
+```xml
+<A page="2"><Value>Go to page 2</Value></A>
+```
+
+This also works in HTML mode (htmlbag) using `<a href="#page-2">Go to page 2</a>`.
+
 ## PDF metadata
 
 Set document properties with `<PDFOptions>`:

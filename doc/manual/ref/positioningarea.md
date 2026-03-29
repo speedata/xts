@@ -12,7 +12,7 @@ Describes an area which contains one or more frames. Elements can be placed with
 
 ##  Parent elements
 
-[DefineMasterpage](../definemasterpage)
+[DefineMasterPage](../definemasterpage)
 
 
 ## Attributes

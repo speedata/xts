@@ -1,6 +1,6 @@
 ---
 type: docs
-linktitle: Tablehead
+linktitle: TableHead
 ---
 {{% include "tablehead.md" %}}
 

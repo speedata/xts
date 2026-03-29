@@ -12,7 +12,7 @@ Associates an action with a text. Once the text is placed on the page, the assoc
 
 ##  Parent elements
 
-[A](../a), [B](../b), [I](../i), [Li](../li), [Paragraph](../paragraph), [Span](../span), [Textblock](../textblock), [U](../u)
+[A](../a), [B](../b), [I](../i), [Li](../li), [Paragraph](../paragraph), [Span](../span), [TextBlock](../textblock), [U](../u)
 
 
 ## Attributes
@@ -21,11 +21,11 @@ Associates an action with a text. Once the text is placed on the page, the assoc
 ## Example
 
 ```xml
-<Pageformat width="210mm" height="4cm"/>
+<PageFormat width="210mm" height="4cm"/>
 
-<Record element="data">
+<Record match="data">
   <PlaceObject>
-    <Textblock>
+    <TextBlock>
       <Paragraph>
         <Value>
           Row
@@ -34,8 +34,8 @@ Associates an action with a text. Once the text is placed on the page, the assoc
           Row
         </Value>
       </Paragraph>
-    </Textblock>
-    <Textblock>
+    </TextBlock>
+    <TextBlock>
       <Action>
         <Mark select="'textstart'"/>
       </Action>
@@ -46,7 +46,7 @@ Associates an action with a text. Once the text is placed on the page, the assoc
           Row
         </Value>
       </Paragraph>
-    </Textblock>
+    </TextBlock>
   </PlaceObject>
   <ClearPage/>
   <Message select="sd:pagenumber('textstart')"></Message>

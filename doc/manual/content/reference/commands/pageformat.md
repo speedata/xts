@@ -1,6 +1,6 @@
 ---
 type: docs
-linktitle: Pageformat
+linktitle: PageFormat
 ---
 {{% include "pageformat.md" %}}
 

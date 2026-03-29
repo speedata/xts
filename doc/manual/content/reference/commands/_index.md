@@ -18,9 +18,9 @@ Every XTS command with its attributes, child/parent elements, and examples. Brow
 
 ### Page layout
 
-[Pageformat](pageformat),
+[PageFormat](pageformat),
 [SetGrid](setgrid),
-[DefineMasterpage](definemasterpage),
+[DefineMasterPage](definemasterpage),
 [PositioningArea](positioningarea),
 [PositioningFrame](positioningframe),
 [AtPageCreation](atpagecreation),
@@ -34,11 +34,11 @@ Every XTS command with its attributes, child/parent elements, and examples. Brow
 [PlaceObject](placeobject),
 [Slate](slate),
 [Contents](contents),
-[Slatecontents](slatecontents)
+[SlateContents](slatecontents)
 
 ### Text formatting
 
-[Textblock](textblock),
+[TextBlock](textblock),
 [Paragraph](paragraph),
 [Value](value),
 [CopyOf](copyof),
@@ -49,7 +49,7 @@ Every XTS command with its attributes, child/parent elements, and examples. Brow
 [Span](span),
 [HTML](html),
 [A](a),
-[Stylesheet](stylesheet)
+[StyleSheet](stylesheet)
 
 ### Lists
 
@@ -64,8 +64,8 @@ Every XTS command with its attributes, child/parent elements, and examples. Brow
 [Td](td),
 [Columns](columns),
 [Column](column),
-[Tablehead](tablehead),
-[Tablerule](tablerule)
+[TableHead](tablehead),
+[TableRule](tablerule)
 
 ### Images and graphics
 
@@ -127,12 +127,12 @@ Every XTS command with its attributes, child/parent elements, and examples. Brow
 [Contents](contents) --
 [CopyOf](copyof) --
 [DefineColor](definecolor) --
-[DefineMasterpage](definemasterpage) --
+[DefineMasterPage](definemasterpage) --
 [Element](element) --
 [ForAll](forall) --
 [Function](function) --
 [Slate](slate) --
-[Slatecontents](slatecontents) --
+[SlateContents](slatecontents) --
 [HTML](html) --
 [I](i) --
 [Image](image) --
@@ -147,7 +147,7 @@ Every XTS command with its attributes, child/parent elements, and examples. Brow
 [Ol](ol) --
 [Options](options) --
 [Otherwise](otherwise) --
-[Pageformat](pageformat) --
+[PageFormat](pageformat) --
 [Paragraph](paragraph) --
 [Param](param) --
 [PDFOptions](pdfoptions) --
@@ -161,13 +161,13 @@ Every XTS command with its attributes, child/parent elements, and examples. Brow
 [SetGrid](setgrid) --
 [SetVariable](setvariable) --
 [Span](span) --
-[Stylesheet](stylesheet) --
+[StyleSheet](stylesheet) --
 [Switch](switch) --
 [Table](table) --
-[Tablehead](tablehead) --
-[Tablerule](tablerule) --
+[TableHead](tablehead) --
+[TableRule](tablerule) --
 [Td](td) --
-[Textblock](textblock) --
+[TextBlock](textblock) --
 [Tr](tr) --
 [Trace](trace) --
 [U](u) --

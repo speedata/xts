@@ -12,7 +12,7 @@ Create an unordered list, just like in HTML
 
 ##  Parent elements
 
-[A](../a), [B](../b), [I](../i), [Li](../li), [Paragraph](../paragraph), [Span](../span), [Td](../td), [Textblock](../textblock), [U](../u)
+[A](../a), [B](../b), [I](../i), [Li](../li), [Paragraph](../paragraph), [Span](../span), [Td](../td), [TextBlock](../textblock), [U](../u)
 
 
 ## Attributes
@@ -41,7 +41,7 @@ Create an unordered list, just like in HTML
 
 ```xml
 <PlaceObject>
-  <Textblock>
+  <TextBlock>
     <Paragraph>
       <Ul>
         <Li><Value>First item</Value></Li>
@@ -49,7 +49,7 @@ Create an unordered list, just like in HTML
         <Li><Value>Third item</Value></Li>
       </Ul>
     </Paragraph>
-  </Textblock>
+  </TextBlock>
 </PlaceObject>
 
 ```

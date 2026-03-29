@@ -1,6 +1,6 @@
 ---
 type: docs
-linktitle: Slatecontents
+linktitle: SlateContents
 ---
 {{% include "slatecontents.md" %}}
 

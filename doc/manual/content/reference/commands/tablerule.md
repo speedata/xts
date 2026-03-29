@@ -1,6 +1,6 @@
 ---
 type: docs
-linktitle: Tablerule
+linktitle: TableRule
 ---
 {{% include "tablerule.md" %}}
 

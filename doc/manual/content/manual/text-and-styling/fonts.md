@@ -10,10 +10,10 @@ XTS supports TrueType (`.ttf`), OpenType (`.otf`), and Type 1 (`.pfb`/`.afm`) fo
 
 ## Loading font families
 
-A font family groups the regular, bold, italic, and bold-italic variants under one name. Define them in a `<Stylesheet>` block:
+A font family groups the regular, bold, italic, and bold-italic variants under one name. Define them in a `<StyleSheet>` block:
 
 ```xml
-<Stylesheet>
+<StyleSheet>
   @font-face {
       font-family: "Minion Pro";
       src: url("MinionPro-Regular.otf");
@@ -34,7 +34,7 @@ A font family groups the regular, bold, italic, and bold-italic variants under o
       font-weight: bold;
       font-style: italic;
   }
-</Stylesheet>
+</StyleSheet>
 ```
 
 You only need to define the variants you actually use. If you never use bold italic, skip it.
@@ -47,14 +47,14 @@ You only need to define the variants you actually use. If you never use bold ita
 Once loaded, use the font family name in your CSS rules:
 
 ```xml
-<Stylesheet>
+<StyleSheet>
   body {
     font-family: serif;
   }
   .preface {
     font-family: sans;
   }
-</Stylesheet>
+</StyleSheet>
 
 <Paragraph>
     <Span class="preface"><Value>Preface</Value></Span>
@@ -93,32 +93,32 @@ $ xts list-fonts
 ...
 ```
 
-Copy the output into your `<Stylesheet>` block.
+Copy the output into your `<StyleSheet>` block.
 
 ## OpenType features
 
 OpenType fonts often include optional features like old-style figures, small caps, or fraction rendering. Control them with `font-feature-settings`:
 
 ```xml
-<Stylesheet>
+<StyleSheet>
     .regular {
         font-feature-settings: "lnum", "tnum";
     }
     .smcp {
         font-feature-settings: "smcp";
     }
-</Stylesheet>
+</StyleSheet>
 
-<Record element="data">
+<Record match="data">
     <PlaceObject>
-        <Textblock>
+        <TextBlock>
             <Paragraph class="regular">
                 <Value>Tabular figures: 1234567890</Value>
             </Paragraph>
             <Paragraph class="smcp">
                 <Value>Small caps: 1234567890</Value>
             </Paragraph>
-        </Textblock>
+        </TextBlock>
     </PlaceObject>
 </Record>
 ```

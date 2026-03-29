@@ -26,47 +26,44 @@ Contains the instructions to be executed when a data element matches the given m
 
 
 `mode` (text, optional)
-:   Name of the mode that matches the mode in [ProcessNode](../processnode).
+:   Name of the mode that matches the mode in .
 
 
 
 
-## Examples
-
-Simple match by element name:
+## Example
 
 ```xml
 <Record match="url" mode="output">
   <PlaceObject>
-    <Textblock>
+    <TextBlock>
       <Paragraph>
         <A href="https://www.speedata.de"><Value>website of speedata</Value></A>
       </Paragraph>
-    </Textblock>
+    </TextBlock>
   </PlaceObject>
 </Record>
+
 ```
-
-Match with XPath predicate — the Record with a predicate takes priority over the fallback:
-
 ```xml
-<!-- Only matches item elements where type='invoice' -->
+<!-- Record with predicate: only matches item elements where type='invoice' -->
 <Record match="item[@type='invoice']">
   <PlaceObject>
-    <Textblock>
+    <TextBlock>
       <Paragraph><Value>Invoice item</Value></Paragraph>
-    </Textblock>
+    </TextBlock>
   </PlaceObject>
 </Record>
 
-<!-- Fallback: matches all other item elements -->
+<!-- Fallback Record: matches all other item elements -->
 <Record match="item">
   <PlaceObject>
-    <Textblock>
+    <TextBlock>
       <Paragraph><Value>Other item</Value></Paragraph>
-    </Textblock>
+    </TextBlock>
   </PlaceObject>
 </Record>
+
 ```
 
 

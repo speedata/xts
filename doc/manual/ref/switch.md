@@ -12,7 +12,7 @@ Create an if-then-else construct. The test attribute of each [Case](../case) com
 
 ##  Parent elements
 
-[AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout), [Case](../case), [Columns](../columns), [Contents](../contents), [ForAll](../forall), [Function](../function), [Loop](../loop), [Otherwise](../otherwise), [PositioningArea](../positioningarea), [Record](../record), [Tablehead](../tablehead), [Td](../td), [Tr](../tr), [Until](../until), [While](../while)
+[AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout), [Case](../case), [Columns](../columns), [Contents](../contents), [ForAll](../forall), [Function](../function), [Loop](../loop), [Otherwise](../otherwise), [PositioningArea](../positioningarea), [Record](../record), [TableHead](../tablehead), [Td](../td), [Tr](../tr), [Until](../until), [While](../while)
 
 
 ## Attributes
@@ -21,7 +21,7 @@ Create an if-then-else construct. The test attribute of each [Case](../case) com
 ## Example
 
 ```xml
-<Record element="data">
+<Record match="data">
   <SetVariable variable="counter" select="3"/>
   <Switch>
     <Case test=" $counter &lt; 5">
@@ -35,9 +35,9 @@ Create an if-then-else construct. The test attribute of each [Case](../case) com
     </Otherwise>
   </Switch>
   <PlaceObject>
-    <Textblock>
+    <TextBlock>
       <Paragraph><Value select="$text"/></Paragraph>
-    </Textblock>
+    </TextBlock>
   </PlaceObject>
 </Record>
 ```

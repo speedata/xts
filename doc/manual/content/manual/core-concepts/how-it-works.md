@@ -21,7 +21,7 @@ The data file can be structured however you like, as long as it's well-formed XM
 
 When you run `xts`, this is what happens:
 
-1. XTS reads the layout file. Top-level commands that aren't `<Record>` are executed immediately -- things like `<DefineColor>`, `<Stylesheet>`, `<SetGrid>`, or `<Pageformat>`.
+1. XTS reads the layout file. Top-level commands that aren't `<Record>` are executed immediately -- things like `<DefineColor>`, `<StyleSheet>`, `<SetGrid>`, or `<PageFormat>`.
 2. All `<Record>` commands are stored for later.
 3. XTS reads the data file and looks at the root element.
 4. If there's a `<Record>` whose `element` attribute matches the root element's tag name, XTS executes that record.
@@ -33,17 +33,17 @@ Here's the minimal setup:
 <Layout xmlns="urn:speedata.de/2021/xts/en"
   xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
 
-  <Record element="catalog">
+  <Record match="catalog">
     <ProcessNode select="*"/>
   </Record>
 
-  <Record element="article">
+  <Record match="article">
     <PlaceObject>
-      <Textblock>
+      <TextBlock>
         <Paragraph>
           <Value select="@name"/>
         </Paragraph>
-      </Textblock>
+      </TextBlock>
     </PlaceObject>
   </Record>
 
@@ -61,7 +61,7 @@ When XTS processes this:
 
 1. It sees the root element `<catalog>` and runs the first `<Record>`.
 2. `<ProcessNode select="*"/>` tells XTS to visit each child element.
-3. For each `<article>`, XTS finds the matching `<Record element="article">` and runs it.
+3. For each `<article>`, XTS finds the matching `<Record match="article">` and runs it.
 4. Each article's name gets placed on the page.
 
 ## ProcessNode vs. ForAll
@@ -71,15 +71,15 @@ There are two ways to iterate over child elements:
 **`<ProcessNode>`** dispatches each child to its matching `<Record>`. This is great when different child elements need different treatment:
 
 ```xml
-<Record element="catalog">
+<Record match="catalog">
   <ProcessNode select="*"/>
 </Record>
 
-<Record element="article">
+<Record match="article">
   <!-- handle articles -->
 </Record>
 
-<Record element="category-header">
+<Record match="category-header">
   <!-- handle headers differently -->
 </Record>
 ```
@@ -87,7 +87,7 @@ There are two ways to iterate over child elements:
 **`<ForAll>`** runs the same commands for every matching element, right where it's used. This is great for tables and lists:
 
 ```xml
-<Record element="catalog">
+<Record match="catalog">
   <PlaceObject>
     <Table stretch="max">
       <ForAll select="article">

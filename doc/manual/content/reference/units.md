@@ -25,7 +25,7 @@ XTS recognizes the following units for length values.
 When an attribute expects a length, include the unit:
 
 ```xml
-<Pageformat width="210mm" height="297mm"/>
+<PageFormat width="210mm" height="297mm"/>
 <SetGrid height="12pt" width="5mm"/>
 <Image href="photo.jpg" width="8cm"/>
 ```

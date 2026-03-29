@@ -1,4 +1,4 @@
-# Stylesheet
+# StyleSheet
 
 
 
@@ -32,10 +32,10 @@ If no filename is given, the speedata Publisher expects the CSS rules as the con
 ## Example
 
 ```xml
-<Stylesheet href="style.css" />
+<StyleSheet href="style.css" />
 ```
 ```xml
-<Stylesheet>
+<StyleSheet>
   frame {
     border-bottom-right-radius: 1cm;
     border-bottom-left-radius: 1cm;
@@ -45,7 +45,7 @@ If no filename is given, the speedata Publisher expects the CSS rules as the con
   box {
     background-color: red;
   }
-</Stylesheet>
+</StyleSheet>
 ```
 
 

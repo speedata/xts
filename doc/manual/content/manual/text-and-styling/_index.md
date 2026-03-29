@@ -10,5 +10,5 @@ This chapter covers everything about making text look right: loading custom font
 
 - [Fonts](fonts) -- Load font families, use system fonts, explore OpenType features
 - [Text Formatting](text-formatting) -- Bold, italic, underline, spans, and paragraphs
-- [CSS and HTML](css-html) -- Stylesheets, classes, inline styles, and HTML content
+- [CSS and HTML](css-html) -- StyleSheets, classes, inline styles, and HTML content
 - [Lists](lists) -- Ordered and unordered lists

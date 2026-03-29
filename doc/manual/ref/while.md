@@ -33,7 +33,7 @@ The following example creates a textblock with three times the contents 'Text Te
 
 ```xml
 
-<Record element="data">
+<Record match="data">
     <SetVariable variable="counter" select="1"/>
     <SetVariable variable="text" select="''"/>
     <While test=" $counter &lt;= 3 "> <!-- less or equal -->
@@ -44,9 +44,9 @@ The following example creates a textblock with three times the contents 'Text Te
       </SetVariable>
     </While>
     <PlaceObject>
-        <Textblock>
+        <TextBlock>
             <Paragraph><Value select="$text"/></Paragraph>
-        </Textblock>
+        </TextBlock>
     </PlaceObject>
 </Record>
 

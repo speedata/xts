@@ -39,7 +39,7 @@ CSS `url()` references are relative to the CSS file:
 ![file organization](/manual/img/metaprocss.png)
 
 ```xml
-<Stylesheet href="css/metapro.css"/>
+<StyleSheet href="css/metapro.css"/>
 ```
 
 Inside `metapro.css`:

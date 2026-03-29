@@ -12,7 +12,7 @@ Tablerow
 
 ##  Parent elements
 
-[Case](../case), [ForAll](../forall), [Loop](../loop), [Otherwise](../otherwise), [Table](../table), [Tablehead](../tablehead), [Until](../until), [While](../while)
+[Case](../case), [ForAll](../forall), [Loop](../loop), [Otherwise](../otherwise), [Table](../table), [TableHead](../tablehead), [Until](../until), [While](../while)
 
 
 ## Attributes

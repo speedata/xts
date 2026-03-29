@@ -40,11 +40,11 @@ Underline text.
 ## Example
 
 ```xml
-<Textblock>
+<TextBlock>
   <Paragraph>
     <U><Value>underlined text</Value></U>
   </Paragraph>
-</Textblock>
+</TextBlock>
 
 ```
 

@@ -1,4 +1,4 @@
-# Pageformat
+# PageFormat
 
 
 
@@ -34,7 +34,7 @@ The size of the PDF pages. Defaults to 210mm width and 297mm height (A4).
 ## Example
 
 ```xml
-<Pageformat width="150mm" height="150mm"/>
+<PageFormat width="150mm" height="150mm"/>
 ```
 
 

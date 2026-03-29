@@ -29,10 +29,10 @@ func returnEvalBodyLater(layoutelt *goxml.Element, xd *xtsDocument, ctx *xpath.C
 	}
 }
 
-// applyLayoutStylesheet creates an HTML fragment, applies CSS and reads the
+// applyLayoutStyleSheet creates an HTML fragment, applies CSS and reads the
 // attributes from the fragment. This is handy when styling layout elements with
 // CSS.
-func (xd *xtsDocument) applyLayoutStylesheet(classname string, id string, style string, eltnames ...string) (map[string]string, error) {
+func (xd *xtsDocument) applyLayoutStyleSheet(classname string, id string, style string, eltnames ...string) (map[string]string, error) {
 	htmlstrings := []string{}
 	for i, eltname := range eltnames {
 		if i == len(eltnames)-1 {
@@ -94,43 +94,6 @@ func (xd *xtsDocument) parseHTMLText(input string) (*html.Node, error) {
 	return html.Parse(s)
 }
 
-// getFontSizeLeading returns the font size and ghe leading size from a single
-// input. The input can have the format "10pt/12pt" where the first length is a
-// font size and the second length is the leading.
-func (xd *xtsDocument) getFontSizeLeading(size string) (fontsize bag.ScaledPoint, leading bag.ScaledPoint, err error) {
-	if sp := strings.Split(size, "/"); len(sp) == 2 {
-		if fontsize, err = bag.SP(sp[0]); err != nil {
-			return
-		}
-		if leading, err = bag.SP(sp[1]); err != nil {
-			return
-		}
-	} else {
-		err = fmt.Errorf("unknown font size %s", size)
-		return
-	}
-	return
-}
-
-func debugFrontendText(fe *frontend.Text, level int) {
-	for i, itm := range fe.Items {
-		switch t := itm.(type) {
-		case *frontend.Text:
-			debugFrontendText(t, level+1)
-		case string:
-			fmt.Println(strings.Repeat("-", level), i, t)
-		default:
-			fmt.Printf("itm %T\n", itm)
-		}
-	}
-}
-
-func nodeToString(n *html.Node) string {
-	var b strings.Builder
-	_ = html.Render(&b, n)
-	return b.String()
-}
-
 // Get the values from the child elements of B, Paragraph and its ilk and return
 // the equivalent HTML structure.
 func (xd *xtsDocument) textValuesToHTMLNode(tagname string, seq xpath.Sequence, attributes map[string]string, cmdname string, line int) (*html.Node, error) {
@@ -139,7 +102,9 @@ func (xd *xtsDocument) textValuesToHTMLNode(tagname string, seq xpath.Sequence, 
 	n.Data = tagname
 	n.Type = html.ElementNode
 	for k, v := range attributes {
-		n.Attr = append(n.Attr, html.Attribute{Key: k, Val: v})
+		if v != "" {
+			n.Attr = append(n.Attr, html.Attribute{Key: k, Val: v})
+		}
 	}
 
 	if len(seq) == 0 && tagname == "p" {
@@ -196,18 +161,14 @@ func getStructTag(f reflect.StructField, tagName string) string {
 }
 
 var (
-	dummyBool           bool
-	dummyStr            string
-	dummyInt            int
-	dummySP             bag.ScaledPoint
-	boolType            = reflect.TypeOf(true)
-	boolPtrType         = reflect.TypeOf(&dummyBool)
-	stringType          = reflect.TypeOf("")
-	stringPtrType       = reflect.TypeOf(&dummyStr)
-	intType             = reflect.TypeOf(0)
-	intPtrType          = reflect.TypeOf(&dummyInt)
-	scaledPointsType    = reflect.TypeOf(dummySP)
-	scaledPointsPtrType = reflect.TypeOf(&dummySP)
+	boolType            = reflect.TypeFor[bool]()
+	boolPtrType         = reflect.TypeFor[*bool]()
+	stringType          = reflect.TypeFor[string]()
+	stringPtrType       = reflect.TypeFor[*string]()
+	intType             = reflect.TypeFor[int]()
+	intPtrType          = reflect.TypeFor[*int]()
+	scaledPointsType    = reflect.TypeFor[bag.ScaledPoint]()
+	scaledPointsPtrType = reflect.TypeFor[*bag.ScaledPoint]()
 )
 
 var voidElements = map[string]bool{
@@ -284,7 +245,7 @@ func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 	val := reflect.ValueOf(v)
 
 	// If it's an interface or a pointer, unwrap it.
-	if val.Kind() == reflect.Ptr && val.Elem().Kind() == reflect.Struct {
+	if val.Kind() == reflect.Pointer && val.Elem().Kind() == reflect.Struct {
 		val = val.Elem()
 	} else {
 		return fmt.Errorf("s must be a struct")
@@ -305,7 +266,7 @@ func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 		field := val.Field(i)
 		structField := val.Type().Field(i)
 		fieldName := strings.ToLower(structField.Name)
-		for _, tag := range strings.Split(getStructTag(structField, "sdxml"), ",") {
+		for tag := range strings.SplitSeq(getStructTag(structField, "sdxml"), ",") {
 			if suffix, ok := strings.CutPrefix(tag, "default:"); ok {
 				dflt = suffix
 			} else if suffix, ok := strings.CutPrefix(tag, "attr:"); ok {
@@ -426,35 +387,6 @@ func getInt(in string) (int, bool) {
 		return 0, false
 	}
 	return int(f), true
-}
-
-func getFourValues(str string) map[string]string {
-	fields := strings.Fields(str)
-	fourvalues := make(map[string]string)
-	switch len(fields) {
-	case 1:
-		fourvalues["top"] = fields[0]
-		fourvalues["bottom"] = fields[0]
-		fourvalues["left"] = fields[0]
-		fourvalues["right"] = fields[0]
-	case 2:
-		fourvalues["top"] = fields[0]
-		fourvalues["bottom"] = fields[0]
-		fourvalues["left"] = fields[1]
-		fourvalues["right"] = fields[1]
-	case 3:
-		fourvalues["top"] = fields[0]
-		fourvalues["left"] = fields[1]
-		fourvalues["right"] = fields[1]
-		fourvalues["bottom"] = fields[2]
-	case 4:
-		fourvalues["top"] = fields[0]
-		fourvalues["right"] = fields[1]
-		fourvalues["bottom"] = fields[2]
-		fourvalues["left"] = fields[3]
-	}
-
-	return fourvalues
 }
 
 func getFourValuesSP(str string) (map[string]bag.ScaledPoint, error) {

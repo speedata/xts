@@ -33,13 +33,13 @@ Define a function
     xmlns:fn="mynamespace"
     >
 
-  <Record element="data">
+  <Record match="data">
     <PlaceObject>
-        <Textblock>
+        <TextBlock>
             <Paragraph>
                 <Value select="fn:add(3,4)"></Value>
             </Paragraph>
-        </Textblock>
+        </TextBlock>
     </PlaceObject>
 </Record>
 

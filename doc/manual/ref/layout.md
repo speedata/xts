@@ -8,7 +8,7 @@ This command is the root element in the Layout instructions.
 
 ##  Child elements
 
-[DefineColor](../definecolor), [DefineMasterpage](../definemasterpage), [Function](../function), [Message](../message), [Options](../options), [PDFOptions](../pdfoptions), [Pageformat](../pageformat), [Record](../record), [Section](../section), [SetGrid](../setgrid), [SetVariable](../setvariable), [Stylesheet](../stylesheet), [Trace](../trace)
+[DefineColor](../definecolor), [DefineMasterPage](../definemasterpage), [Function](../function), [Message](../message), [Options](../options), [PDFOptions](../pdfoptions), [PageFormat](../pageformat), [Record](../record), [Section](../section), [SetGrid](../setgrid), [SetVariable](../setvariable), [StyleSheet](../stylesheet), [Trace](../trace)
 
 ##  Parent elements
 
@@ -48,17 +48,17 @@ This is a complete example for a layout rule set. The first part is the data fil
 
   <Options mainlanguage="English (USA)"/>
 
-  <Record element="root">
+  <Record match="root">
     <ProcessNode select="elt"/>
   </Record>
 
-  <Record element="elt">
+  <Record match="elt">
     <PlaceObject>
-      <Textblock>
+      <TextBlock>
         <Paragraph>
           <Value select="@greeting"></Value>
         </Paragraph>
-      </Textblock>
+      </TextBlock>
     </PlaceObject>
   </Record>
 </Layout>

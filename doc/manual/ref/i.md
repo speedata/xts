@@ -22,11 +22,11 @@ Switch to italic text.
 
 ```xml
 <PlaceObject>
-  <Textblock>
+  <TextBlock>
     <Paragraph>
       <I><Value>Italic text</Value></I>
     </Paragraph>
-  </Textblock>
+  </TextBlock>
 </PlaceObject>
 ```
 

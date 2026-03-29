@@ -8,7 +8,7 @@ Associates a value with a variable name. The value can be a simple value or a mo
 
 ##  Child elements
 
-[CopyOf](../copyof), [Element](../element), [Paragraph](../paragraph), [Table](../table), [Textblock](../textblock), [Until](../until), [Value](../value), [While](../while)
+[CopyOf](../copyof), [Element](../element), [Paragraph](../paragraph), [Table](../table), [TextBlock](../textblock), [Until](../until), [Value](../value), [While](../while)
 
 ##  Parent elements
 
@@ -54,14 +54,14 @@ Variables have global scope.
 ## Example
 
 ```xml
-<Record element="product">
+<Record match="product">
   <SetVariable variable="wd" select="5"/>
   <PlaceObject>
-    <Textblock width="{ $wd }">
+    <TextBlock width="{ $wd }">
       <Paragraph>
         <Value select="$articlenumber"/>
       </Paragraph>
-    </Textblock>
+    </TextBlock>
   </PlaceObject>
 </Record>
 
@@ -71,17 +71,17 @@ The following example shows a more complex scenario: you can collect complex ele
 
 
 ```xml
-<Record element="products">
+<Record match="products">
   <SetVariable variable="articletext"/>
   <ProcessNode select="article"/>
   <PlaceObject>
-    <Textblock>
+    <TextBlock>
       <Value select=" $articletext "/>
-    </Textblock>
+    </TextBlock>
   </PlaceObject>
 </Record>
 
-<Record element="article">
+<Record match="article">
   <SetVariable variable="articletext">
     <!-- the previous contents is added -->
     <Value select="$articletext"/>

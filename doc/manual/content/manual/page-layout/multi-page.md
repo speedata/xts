@@ -8,13 +8,13 @@ linktitle: Multi-Page Content
 
 ## Tables across pages
 
-Tables automatically break across pages. If you define a `<Tablehead>`, it repeats on each new page:
+Tables automatically break across pages. If you define a `<TableHead>`, it repeats on each new page:
 
 ```xml
 <Table>
-    <Tablehead>
+    <TableHead>
         <Tr><Td><Paragraph><Value>Header</Value></Paragraph></Td></Tr>
-    </Tablehead>
+    </TableHead>
     <!-- Hundreds of rows... they'll flow to new pages automatically -->
 </Table>
 ```
@@ -26,7 +26,7 @@ Individual table cells are *never* split -- each cell is rendered as a single bo
 Force a new page with `<ClearPage>`:
 
 ```xml
-<Record element="catalog">
+<Record match="catalog">
     <ForAll select="category">
         <ProcessNode select="."/>
         <ClearPage/>
@@ -49,13 +49,13 @@ If there's no next frame, a page break is inserted and content continues in the 
 Define multiple frames within a single area to create flowing multi-column layouts:
 
 ```xml
-<DefineMasterpage name="threeColumn" test="true()" margin="1cm">
+<DefineMasterPage name="threeColumn" test="true()" margin="1cm">
     <PositioningArea name="text">
         <PositioningFrame width="5" height="20" row="1" column="1"/>
         <PositioningFrame width="5" height="20" row="1" column="7"/>
         <PositioningFrame width="5" height="20" row="1" column="13"/>
     </PositioningArea>
-</DefineMasterpage>
+</DefineMasterPage>
 ```
 
 Content placed in the "text" area fills the first column, then flows to the second, then the third. When all three are full, a new page is created and the cycle repeats.

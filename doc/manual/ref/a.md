@@ -31,18 +31,24 @@ Insert hyperlink to a URL.
 
 
 
+`page` (number, optional)
+:   The target page number. Each page automatically gets a destination, so you can link to a specific page. Example: `2`
+
+
+
+
 ## Example
 
 ```xml
 <PlaceObject>
-  <Textblock>
+  <TextBlock>
     <Paragraph><Value>See the </Value>
       <A href="https://www.speedata.de">
         <Value>homepage</Value>
       </A>
       <Value> for more information.</Value>
     </Paragraph>
-  </Textblock>
+  </TextBlock>
 </PlaceObject>
 ```
 

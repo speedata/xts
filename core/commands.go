@@ -22,7 +22,6 @@ import (
 	"github.com/boxesandglue/svgreader"
 	"github.com/boxesandglue/textshape/ot"
 	"github.com/speedata/goxml"
-	"github.com/speedata/goxpath"
 	xpath "github.com/speedata/goxpath"
 )
 
@@ -56,12 +55,12 @@ func init() {
 		"Contents":         cmdContents,
 		"CopyOf":           cmdCopyOf,
 		"DefineColor":      cmdDefineColor,
-		"DefineMasterpage": cmdDefineMasterpage,
+		"DefineMasterPage": cmdDefineMasterPage,
 		"Element":          cmdElement,
 		"ForAll":           cmdForall,
 		"Function":         cmdFunction,
 		"Slate":            cmdSlate,
-		"Slatecontents":    cmdSlatecontents,
+		"SlateContents":    cmdSlateContents,
 		"HTML":             cmdHTML,
 		"I":                cmdI,
 		"Image":            cmdImage,
@@ -74,7 +73,7 @@ func init() {
 		"NextRow":          cmdNextRow,
 		"Ol":               cmdOl,
 		"Options":          cmdOptions,
-		"Pageformat":       cmdPageformat,
+		"PageFormat":       cmdPageFormat,
 		"Paragraph":        cmdParagraph,
 		"Param":            ignoreFunction,
 		"PDFOptions":       cmdPDFOptions,
@@ -86,12 +85,12 @@ func init() {
 		"SetGrid":          cmdSetGrid,
 		"SetVariable":      cmdSetVariable,
 		"Span":             cmdSpan,
-		"Stylesheet":       cmdStylesheet,
+		"StyleSheet":       cmdStyleSheet,
 		"Switch":           cmdSwitch,
-		"Tablehead":        cmdTableHead,
-		"Tablerule":        cmdTablerule,
+		"TableHead":        cmdTableHead,
+		"TableRule":        cmdTableRule,
 		"Table":            cmdTable,
-		"Textblock":        cmdTextblock,
+		"TextBlock":        cmdTextBlock,
 		"Td":               cmdTd,
 		"Trace":            cmdTrace,
 		"Tr":               cmdTr,
@@ -131,9 +130,14 @@ func cmdA(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	attValues := &struct {
 		Href string
 		Link string
+		Page int
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
+	}
+
+	if attValues.Page > 0 {
+		attValues.Link = fmt.Sprintf("page-%d", attValues.Page)
 	}
 
 	seq, err := dispatch(xd, layoutelt)
@@ -141,8 +145,7 @@ func cmdA(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		return nil, err
 	}
 	n, err := xd.textValuesToHTMLNode("a", seq, map[string]string{}, "cmdA", layoutelt.Line)
-	n.Attr = append(n.Attr, html.Attribute{Key: "href", Val: attValues.Href})
-	n.Attr = append(n.Attr, html.Attribute{Key: "link", Val: attValues.Link})
+	n.Attr = append(n.Attr, html.Attribute{Key: "href", Val: attValues.Href}, html.Attribute{Key: "link", Val: attValues.Link})
 	return xpath.Sequence{n}, err
 }
 
@@ -153,7 +156,9 @@ func cmdAction(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 	}
 	var ret xpath.Sequence
 	for _, itm := range seq {
-		if m, ok := itm.(marker); ok {
+		if m, ok := itm.(marker); !ok {
+			continue
+		} else {
 			var dest *node.StartStop
 			if m.pdftarget {
 				dest = getNameDest(m.name)
@@ -273,7 +278,7 @@ func cmdBox(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
-	attrs, err := xd.applyLayoutStylesheet(attValues.Class, attValues.ID, attValues.Style, "box")
+	attrs, err := xd.applyLayoutStyleSheet(attValues.Class, attValues.ID, attValues.Style, "box")
 	if err != nil {
 		return nil, err
 	}
@@ -321,7 +326,7 @@ func cmdCircle(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 	}
 
 	rx, ry := *attValues.RadiusX, *attValues.RadiusY
-	attrs, err := xd.applyLayoutStylesheet(attValues.Class, attValues.ID, attValues.Style, "circle")
+	attrs, err := xd.applyLayoutStyleSheet(attValues.Class, attValues.ID, attValues.Style, "circle")
 
 	var bgcolor, bordercolor *color.Color
 	var borderwidth bag.ScaledPoint
@@ -530,7 +535,7 @@ func cmdDefineColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	return nil, nil
 }
 
-func cmdDefineMasterpage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+func cmdDefineMasterPage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
 		Margin string `sdxml:"mustexist"`
@@ -659,7 +664,7 @@ func cmdFunction(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, err
 	}
 	minArg := len(params)
 	maxArg := len(params)
-	goxpath.RegisterFunction(&goxpath.Function{Name: name, Namespace: ns, F: a, MinArg: minArg, MaxArg: maxArg})
+	xpath.RegisterFunction(&xpath.Function{Name: name, Namespace: ns, F: a, MinArg: minArg, MaxArg: maxArg})
 	return nil, nil
 }
 
@@ -683,7 +688,7 @@ func cmdSlate(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	return nil, nil
 }
 
-func cmdSlatecontents(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+func cmdSlateContents(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	attValues := &struct {
 		Name string `sdxml:"mustexist"`
 	}{}
@@ -692,139 +697,12 @@ func cmdSlatecontents(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence
 	}
 	sl, ok := xd.slates[attValues.Name]
 	if !ok {
-		return nil, newTypesettingErrorf("Slatecontents", layoutelt.Line, "slate %q not found", attValues.Name)
+		return nil, newTypesettingErrorf("SlateContents", layoutelt.Line, "slate %q not found", attValues.Name)
 	}
 	if sl.contents == nil {
 		return nil, nil
 	}
 	return xpath.Sequence{sl.contents}, nil
-}
-
-// expandTextValueTemplates evaluates {expr} expressions in text content (XSLT 3.0 style).
-// Escaped braces {{ and }} are converted to literal { and }.
-func expandTextValueTemplates(xd *xtsDocument, layoutelt *goxml.Element, str string) string {
-	// First, replace escaped braces with placeholders
-	const leftPlaceholder = "\x00LEFT_BRACE\x00"
-	const rightPlaceholder = "\x00RIGHT_BRACE\x00"
-
-	str = strings.ReplaceAll(str, "{{", leftPlaceholder)
-	str = strings.ReplaceAll(str, "}}", rightPlaceholder)
-
-	// Evaluate {expr} expressions
-	str = attributeValueRE.ReplaceAllStringFunc(str, func(match string) string {
-		// Strip curly braces to get the expression
-		expr := match[1 : len(match)-1]
-		seq, err := evaluateXPath(xd, layoutelt.Namespaces, expr)
-		if err != nil {
-			slog.Error(fmt.Sprintf("HTML expand-text (line %d): error evaluating expression {%s}: %s", layoutelt.Line, expr, err))
-			return ""
-		}
-		return seq.Stringvalue()
-	})
-
-	// Replace placeholders with literal braces
-	str = strings.ReplaceAll(str, leftPlaceholder, "{")
-	str = strings.ReplaceAll(str, rightPlaceholder, "}")
-
-	return str
-}
-
-// hasMixedXHTMLContent checks if any child element uses the XHTML namespace.
-func hasMixedXHTMLContent(elt *goxml.Element) bool {
-	for _, cld := range elt.Children() {
-		if child, ok := cld.(*goxml.Element); ok {
-			if ns := child.Namespaces[child.Prefix]; ns == XHTMLNAMESPACE {
-				return true
-			}
-		}
-	}
-	return false
-}
-
-// convertXHTMLElement recursively converts a goxml Element in the XHTML
-// namespace to an *html.Node tree. XTS-namespace children are dispatched
-// and their results inserted into the tree.
-func (xd *xtsDocument) convertXHTMLElement(elt *goxml.Element) (*html.Node, error) {
-	n := &html.Node{
-		Type: html.ElementNode,
-		Data: strings.ToLower(elt.Name),
-	}
-	for _, attr := range elt.Attributes() {
-		if strings.HasPrefix(attr.Name, "xmlns") {
-			continue
-		}
-		n.Attr = append(n.Attr, html.Attribute{Key: attr.Name, Val: attr.Value})
-	}
-	for _, cld := range elt.Children() {
-		switch t := cld.(type) {
-		case goxml.CharData:
-			n.AppendChild(&html.Node{Type: html.TextNode, Data: t.Contents})
-		case *goxml.Element:
-			if ns := t.Namespaces[t.Prefix]; ns == XHTMLNAMESPACE {
-				child, err := xd.convertXHTMLElement(t)
-				if err != nil {
-					return nil, err
-				}
-				n.AppendChild(child)
-			} else {
-				// XTS command: dispatch and insert results
-				if f, ok := dispatchTable[t.Name]; ok {
-					seq, err := f(xd, t)
-					if err != nil {
-						return nil, err
-					}
-					for _, itm := range seq {
-						switch v := itm.(type) {
-						case *html.Node:
-							n.AppendChild(v)
-						case *goxml.Element:
-							n.AppendChild(&html.Node{Type: html.TextNode, Data: v.Stringvalue()})
-						case string:
-							n.AppendChild(&html.Node{Type: html.TextNode, Data: v})
-						}
-					}
-				} else {
-					return nil, fmt.Errorf("HTML (line %d): unknown element %q", t.Line, t.Name)
-				}
-			}
-		}
-	}
-	return n, nil
-}
-
-// buildHTMLFromMixedContent processes <HTML> with mixed XHTML literals
-// and XTS commands, returning a sequence of *html.Node.
-func (xd *xtsDocument) buildHTMLFromMixedContent(layoutelt *goxml.Element) (xpath.Sequence, error) {
-	var result xpath.Sequence
-	for _, cld := range layoutelt.Children() {
-		switch t := cld.(type) {
-		case goxml.CharData:
-			s := strings.TrimSpace(t.Contents)
-			if s != "" {
-				result = append(result, &html.Node{Type: html.TextNode, Data: t.Contents})
-			}
-		case *goxml.Element:
-			if ns := t.Namespaces[t.Prefix]; ns == XHTMLNAMESPACE {
-				n, err := xd.convertXHTMLElement(t)
-				if err != nil {
-					return nil, err
-				}
-				result = append(result, n)
-			} else {
-				// XTS command
-				if f, ok := dispatchTable[t.Name]; ok {
-					seq, err := f(xd, t)
-					if err != nil {
-						return nil, err
-					}
-					result = append(result, seq...)
-				} else {
-					return nil, fmt.Errorf("HTML (line %d): unknown element %q", t.Line, t.Name)
-				}
-			}
-		}
-	}
-	return result, nil
 }
 
 func cmdHTML(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -1228,18 +1106,6 @@ func findRecord(xd *xtsDocument, elt *goxml.Element, mode string) *goxml.Element
 	return fallback
 }
 
-// findRecordByName finds a Record matching the element name with default mode
-// and no predicate conditions (used for root element dispatch).
-func findRecordByName(elemName string) *goxml.Element {
-	for i := len(dataRecords) - 1; i >= 0; i-- {
-		rec := dataRecords[i]
-		if rec.elemName == elemName && rec.mode == "" && rec.pred == "" {
-			return rec.layout
-		}
-	}
-	return nil
-}
-
 func cmdRecord(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
@@ -1258,18 +1124,6 @@ func cmdRecord(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 		layout:   layoutelt,
 	})
 	return nil, nil
-}
-
-// parseMatch splits a match expression like "foo[not(@bar='baz')]" into
-// element name ("foo") and predicate ("not(@bar='baz')").
-func parseMatch(match string) (string, string) {
-	idx := strings.Index(match, "[")
-	if idx == -1 {
-		return match, ""
-	}
-	elemName := match[:idx]
-	pred := match[idx+1 : len(match)-1] // strip [ and ]
-	return elemName, pred
 }
 
 func cmdLoop(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -1547,7 +1401,7 @@ func cmdOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 		xd.document.Doc.ShowCutmarks = *attValues.Cutmarks
 	}
 	if features := attValues.Features; features != nil {
-		for _, str := range strings.Split(*features, ",") {
+		for str := range strings.SplitSeq(*features, ",") {
 			if f, ok := ot.FeatureFromString(str); ok {
 				xd.document.DefaultFeatures = append(xd.document.DefaultFeatures, f)
 			} else {
@@ -1559,7 +1413,7 @@ func cmdOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	return xpath.Sequence{}, nil
 }
 
-func cmdPageformat(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+func cmdPageFormat(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
 		Width  bag.ScaledPoint `sdxml:"mustexist"`
@@ -1696,7 +1550,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		}
 	case *html.Node:
 		// HTML node (e.g. from <HTML> command): build a complete HTML document
-		// and render it to a VList, similar to cmdTextblock.
+		// and render it to a VList, similar to cmdTextBlock.
 		doc := &html.Node{Type: html.DocumentNode}
 		root := &html.Node{Data: "html", Type: html.ElementNode}
 		head := &html.Node{Data: "head", Type: html.ElementNode}
@@ -1826,10 +1680,10 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 			row = row - ht/2
 		}
 		if shiftX != 0 {
-			col = col + xd.currentGrid.widthToColumns(shiftX)
+			col += xd.currentGrid.widthToColumns(shiftX)
 		}
 		if shiftY != 0 {
-			row = row + xd.currentGrid.heightToRows(shiftY)
+			row += xd.currentGrid.heightToRows(shiftY)
 		}
 		xd.OutputAt(vl, col, row, attValues.Allocate, area, origin, halign)
 
@@ -1990,7 +1844,7 @@ func cmdSpan(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 	return xpath.Sequence{n}, err
 }
 
-func cmdStylesheet(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+func cmdStyleSheet(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
 		Href string
@@ -2001,28 +1855,28 @@ func cmdStylesheet(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 
 	if attrHref := attValues.Href; attrHref == "" {
 		if err = xd.layoutcss.AddCSSText(layoutelt.Stringvalue()); err != nil {
-			return nil, newTypesettingError("Stylesheet", layoutelt.Line, err.Error())
+			return nil, newTypesettingError("StyleSheet", layoutelt.Line, err.Error())
 		}
 	} else {
 		var loc string
 		loc, err = FindFile(attrHref)
 		if err != nil {
-			return nil, newTypesettingError("Stylesheet", layoutelt.Line, err.Error())
+			return nil, newTypesettingError("StyleSheet", layoutelt.Line, err.Error())
 		}
 		xd.layoutcss.PushDir(filepath.Dir(loc))
 		data, err := os.ReadFile(loc)
 		if err != nil {
-			return nil, newTypesettingError("Stylesheet", layoutelt.Line, err.Error())
+			return nil, newTypesettingError("StyleSheet", layoutelt.Line, err.Error())
 		}
 		if err = xd.layoutcss.AddCSSText(string(data)); err != nil {
-			return nil, newTypesettingError("Stylesheet", layoutelt.Line, err.Error())
+			return nil, newTypesettingError("StyleSheet", layoutelt.Line, err.Error())
 		}
 	}
 	if err != nil {
-		return nil, newTypesettingError("Stylesheet", layoutelt.Line, err.Error())
+		return nil, newTypesettingError("StyleSheet", layoutelt.Line, err.Error())
 	}
 	if err = htmlbag.AddFontFamiliesFromCSS(xd.layoutcss, xd.document); err != nil {
-		return nil, newTypesettingError("Stylesheet", layoutelt.Line, err.Error())
+		return nil, newTypesettingError("StyleSheet", layoutelt.Line, err.Error())
 	}
 
 	return xpath.Sequence{nil}, nil
@@ -2037,21 +1891,22 @@ func cmdSwitch(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 			case "Case":
 				attrs := c.Attributes()
 				for _, attr := range attrs {
-					if attr.Name == "test" {
-						var eval xpath.Sequence
-						eval, err = evaluateXPath(xd, layoutelt.Namespaces, attr.Value)
-						if err != nil {
-							return nil, newTypesettingErrorf("Case", layoutelt.Line, "error parsing test XPath expression %s", err)
-						}
-						var ok bool
-						if ok, err = xpath.BooleanValue(eval); err != nil {
-							return nil, err
-						}
-						if ok {
-							return dispatch(xd, c)
-						}
-
+					if attr.Name != "test" {
+						continue
 					}
+					var eval xpath.Sequence
+					eval, err = evaluateXPath(xd, layoutelt.Namespaces, attr.Value)
+					if err != nil {
+						return nil, newTypesettingErrorf("Case", layoutelt.Line, "error parsing test XPath expression %s", err)
+					}
+					var ok bool
+					if ok, err = xpath.BooleanValue(eval); err != nil {
+						return nil, err
+					}
+					if ok {
+						return dispatch(xd, c)
+					}
+
 				}
 			case "Otherwise":
 				return dispatch(xd, c)
@@ -2179,8 +2034,7 @@ func cmdTableHead(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	}
 
 	for _, itm := range seq {
-		switch t := itm.(type) {
-		case *html.Node:
+		if t, ok := itm.(*html.Node); ok {
 			th.AppendChild(t)
 		}
 	}
@@ -2188,7 +2042,7 @@ func cmdTableHead(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	return xpath.Sequence{th}, nil
 }
 
-func cmdTablerule(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+func cmdTableRule(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	attValues := &struct {
 		Class     string
 		Color     string
@@ -2233,7 +2087,7 @@ func cmdTablerule(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	return xpath.Sequence{tr}, nil
 }
 
-func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+func cmdTextBlock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	xd.setupPage()
 	var err error
 	attValues := &struct {
@@ -2282,7 +2136,7 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		case *node.StartStop:
 			startStopNodes = append(startStopNodes, t)
 		default:
-			slog.Error(fmt.Sprintf("cmdTextblock: unknown type %T", t))
+			slog.Error(fmt.Sprintf("cmdTextBlock: unknown type %T", t))
 		}
 	}
 
@@ -2292,11 +2146,11 @@ func cmdTextblock(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 
 	vlistFormatter, err := xd.decodeHTMLFromHTMLNode(doc)
 	if err != nil {
-		return nil, newTypesettingError("Textblock", layoutelt.Line, err.Error())
+		return nil, newTypesettingError("TextBlock", layoutelt.Line, err.Error())
 	}
 	vl, err := vlistFormatter(attValues.Width)
 	if err != nil {
-		return nil, newTypesettingError("Textblock", layoutelt.Line, err.Error())
+		return nil, newTypesettingError("TextBlock", layoutelt.Line, err.Error())
 	}
 	te := frontend.NewText()
 
@@ -2345,13 +2199,13 @@ func cmdTr(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		Data: "tr",
 		Type: html.ElementNode,
 	}
-	tr.Attr = append(tr.Attr, html.Attribute{Key: "style", Val: fmt.Sprintf("%s", attValues.Style)})
-	tr.Attr = append(tr.Attr, html.Attribute{Key: "class", Val: fmt.Sprintf("%s", attValues.Class)})
-	tr.Attr = append(tr.Attr, html.Attribute{Key: "id", Val: fmt.Sprintf("%s", attValues.ID)})
+	tr.Attr = append(tr.Attr,
+		html.Attribute{Key: "style", Val: attValues.Style},
+		html.Attribute{Key: "class", Val: attValues.Class},
+		html.Attribute{Key: "id", Val: attValues.ID})
 
 	for _, itm := range seq {
-		switch t := itm.(type) {
-		case *html.Node:
+		if t, ok := itm.(*html.Node); ok {
 			tr.AppendChild(t)
 		}
 	}
@@ -2380,11 +2234,12 @@ func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		Data: "td",
 		Type: html.ElementNode,
 	}
-	td.Attr = append(td.Attr, html.Attribute{Key: "colspan", Val: fmt.Sprintf("%d", attValues.Colspan)})
-	td.Attr = append(td.Attr, html.Attribute{Key: "rowspan", Val: fmt.Sprintf("%d", attValues.Rowspan)})
-	td.Attr = append(td.Attr, html.Attribute{Key: "style", Val: fmt.Sprintf("%s", attValues.Style)})
-	td.Attr = append(td.Attr, html.Attribute{Key: "class", Val: fmt.Sprintf("%s", attValues.Class)})
-	td.Attr = append(td.Attr, html.Attribute{Key: "id", Val: fmt.Sprintf("%s", attValues.ID)})
+	td.Attr = append(td.Attr,
+		html.Attribute{Key: "colspan", Val: fmt.Sprintf("%d", attValues.Colspan)},
+		html.Attribute{Key: "rowspan", Val: fmt.Sprintf("%d", attValues.Rowspan)},
+		html.Attribute{Key: "style", Val: attValues.Style},
+		html.Attribute{Key: "class", Val: attValues.Class},
+		html.Attribute{Key: "id", Val: attValues.ID})
 	for _, itm := range seq {
 		switch t := itm.(type) {
 		case string:
@@ -2532,7 +2387,7 @@ func cmdUntil(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
-	var ret []goxpath.Item
+	var ret []xpath.Item
 	for {
 		seq, err := dispatch(xd, layoutelt)
 		if err != nil {
@@ -2592,7 +2447,7 @@ func cmdWhile(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
-	var ret []goxpath.Item
+	var ret []xpath.Item
 	for {
 		var eval xpath.Sequence
 		eval, err = evaluateXPath(xd, layoutelt.Namespaces, attValues.Test)

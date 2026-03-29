@@ -37,9 +37,9 @@ Objects are drawn in the order they appear in the layout. Later objects overlap 
     <Box width="{sd:number-of-columns()}" height="3" backgroundcolor="lightyellow"/>
 </PlaceObject>
 <PlaceObject row="1" column="1">
-    <Textblock>
+    <TextBlock>
         <Paragraph><Value>Text on a yellow background</Value></Paragraph>
-    </Textblock>
+    </TextBlock>
 </PlaceObject>
 ```
 
@@ -50,9 +50,9 @@ You can also overlay a ready-made page with dynamic content, like adding page nu
   <Image file="termsofservice.pdf" width="180mm" height="280mm"/>
 </PlaceObject>
 <PlaceObject column="1" row="{sd:number-of-rows()}">
-  <Textblock>
+  <TextBlock>
     <Paragraph><Value select="sd:current-page()"/></Paragraph>
-  </Textblock>
+  </TextBlock>
 </PlaceObject>
 ```
 
@@ -77,14 +77,14 @@ A text block is a rectangular area for text that doesn't break across pages. It'
 
 ```xml
 <PlaceObject>
-  <Textblock>
+  <TextBlock>
     <Paragraph style="color: green">
       <Value>green text</Value>
     </Paragraph>
     <Paragraph>
       <Value>this text is in blue (given by CSS)</Value>
     </Paragraph>
-  </Textblock>
+  </TextBlock>
 </PlaceObject>
 ```
 

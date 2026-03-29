@@ -52,7 +52,7 @@ Saves an element/attribute structure to be used in the next publisher run. The c
 ## Example
 
 ```xml
-  <Record element="data">
+  <Record match="data">
     <SetVariable variable="attributesvar">
       <Attribute name="att1" select="'Hello'" />
       <Attribute name="att2" select="123" />

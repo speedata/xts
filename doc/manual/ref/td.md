@@ -8,7 +8,7 @@ Td wraps a table cell, just like HTML.
 
 ##  Child elements
 
-[Bookmark](../bookmark), [Box](../box), [ForAll](../forall), [HTML](../html), [Image](../image), [Loop](../loop), [Ol](../ol), [Paragraph](../paragraph), [Slatecontents](../slatecontents), [Switch](../switch), [Table](../table), [Ul](../ul), [Value](../value)
+[Bookmark](../bookmark), [Box](../box), [ForAll](../forall), [HTML](../html), [Image](../image), [Loop](../loop), [Ol](../ol), [Paragraph](../paragraph), [SlateContents](../slatecontents), [Switch](../switch), [Table](../table), [Ul](../ul), [Value](../value)
 
 ##  Parent elements
 
@@ -62,7 +62,7 @@ The following example places a background text behind the Td cell.
 
 ```xml
 
-<Record element="data">
+<Record match="data">
    <PlaceObject>
      <Table stretch="yes">
        <Columns>

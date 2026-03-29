@@ -23,6 +23,11 @@ task :xtshelper  do
 	sh "go build -ldflags \"-X main.version=#{@xts_version} -X main.basedir=#{INSTALDIR} \" -o bin/xtshelper github.com/speedata/xts/helper"
 end
 
+desc "Create markdown reference"
+task :doc => [:xtshelper] do
+	sh "bin/xtshelper doc"
+end
+
 desc "Build the 'xts' binary"
 task :build do
 	sh "go build -ldflags \"-s -w -X github.com/speedata/xts/core.Version=#{@xts_version}\" -o bin/xts github.com/speedata/xts/xts"

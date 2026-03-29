@@ -41,13 +41,13 @@ List item in an ordered or unordered list.
 
 ```xml
 <PlaceObject>
-  <Textblock>
+  <TextBlock>
     <Ol>
       <Li><Value>First item</Value></Li>
       <Li><Value>Second item</Value></Li>
       <Li><Value>Third item</Value></Li>
     </Ol>
-  </Textblock>
+  </TextBlock>
 </PlaceObject>
 
 ```

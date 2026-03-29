@@ -12,7 +12,7 @@ Insert HTML content, either inline or retrieved via an XPath expression.
 
 ##  Parent elements
 
-[A](../a), [B](../b), [Case](../case), [ForAll](../forall), [I](../i), [Li](../li), [Loop](../loop), [Otherwise](../otherwise), [Paragraph](../paragraph), [PlaceObject](../placeobject), [Span](../span), [Td](../td), [Textblock](../textblock), [U](../u), [Until](../until), [While](../while)
+[A](../a), [B](../b), [Case](../case), [ForAll](../forall), [I](../i), [Li](../li), [Loop](../loop), [Otherwise](../otherwise), [Paragraph](../paragraph), [PlaceObject](../placeobject), [Span](../span), [Td](../td), [TextBlock](../textblock), [U](../u), [Until](../until), [While](../while)
 
 
 ## Attributes
@@ -34,11 +34,11 @@ Insert HTML content, either inline or retrieved via an XPath expression.
 ## Example
 
 ```xml
-<Record element="data">
+<Record match="data">
   <PlaceObject>
-    <Textblock>
+    <TextBlock>
       <HTML select="/data/htmlcontent"/>
-    </Textblock>
+    </TextBlock>
   </PlaceObject>
 </Record>
 
@@ -47,12 +47,12 @@ Insert HTML content, either inline or retrieved via an XPath expression.
 ```xml
 <SetVariable variable="product" select="'Widget'"/>
 <PlaceObject>
-  <Textblock>
+  <TextBlock>
     <HTML expand-text="yes">
       <p>Product: {$product}</p>
       <p>Literal braces: {{ and }}</p>
     </HTML>
-  </Textblock>
+  </TextBlock>
 </PlaceObject>
 
 ```

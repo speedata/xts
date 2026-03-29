@@ -40,17 +40,17 @@ Surround text by styling options.
 ## Example
 
 ```xml
-<Stylesheet>
+<StyleSheet>
   .green { background-color: lightgreen; }
-</Stylesheet>
+</StyleSheet>
 
-<Record element="data">
+<Record match="data">
   <PlaceObject>
-    <Textblock>
+    <TextBlock>
       <Paragraph>
         <Span class="green"><Value>green</Value></Span>
       </Paragraph>
-    </Textblock>
+    </TextBlock>
   </PlaceObject>
 </Record>
 

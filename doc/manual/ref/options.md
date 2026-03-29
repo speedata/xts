@@ -48,7 +48,7 @@ Set publisher specific options.
 
 
 `mainlanguage` (optional)
-:   The default language for text (hyphenation and rendering). You can also set the default language on the command line and locally set it at [Paragraph](../paragraph) and [Textblock](../textblock).
+:   The default language for text (hyphenation and rendering). You can also set the default language on the command line and locally set it at [Paragraph](../paragraph) and [TextBlock](../textblock).
 
 
 

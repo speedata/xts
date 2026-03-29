@@ -1,6 +1,6 @@
 ---
 type: docs
-linktitle: Stylesheet
+linktitle: StyleSheet
 ---
 {{% include "stylesheet.md" %}}
 

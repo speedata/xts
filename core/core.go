@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	pdf "github.com/boxesandglue/baseline-pdf"
 	"github.com/boxesandglue/boxesandglue/backend/bag"
 	"github.com/boxesandglue/boxesandglue/backend/document"
 	"github.com/boxesandglue/boxesandglue/backend/node"
@@ -168,7 +169,7 @@ func (xd *xtsDocument) setupPage() {
 	if err != nil {
 		slog.Error(err.Error())
 	}
-	slog.Info("Page created", "wd", p.pagegrid.nx, "ht", p.pagegrid.ny, "Page", p.pagenumber, "type", p.pagetype.name)
+	slog.Info("Page created", "wd", p.pagegrid.nx, "ht", p.pagegrid.ny, "page", p.pagenumber, "type", p.pagetype.name)
 	xd.pages = append(xd.pages, p)
 	xd.currentPage = p
 	inSetupPage = false
@@ -343,7 +344,16 @@ func RunXTS(cfg *XTSConfig) error {
 // purpose.
 func (xd *xtsDocument) registerCallbacks() {
 	preShipout := func(pg *document.Page) {
+		// Create an automatic named destination for this page (page-1, page-2, ...)
 		xtspage := pg.Userdata["xtspage"].(*page)
+		pageDestName := fmt.Sprintf("page-%d", xtspage.pagenumber)
+		xd.document.Doc.PDFWriter.NameDestinations[pdf.String(pageDestName)] = &pdf.NameDest{
+			Name:             pdf.String(pageDestName),
+			PageObjectnumber: pg.Objectnumber,
+			X:                0,
+			Y:                (pg.Height + 2*pg.ExtraOffset).ToPT(),
+		}
+
 		curGrid := xtspage.pagegrid
 		pageArea := curGrid.areas[pageAreaName]
 		// Draw grid when requested

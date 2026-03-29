@@ -56,11 +56,11 @@ Sets an invisible mark into the output. This is helpful when you want to know on
 ## Example
 
 ```xml
-<Pageformat width="210mm" height="4cm"/>
+<PageFormat width="210mm" height="4cm"/>
 
-<Record element="data">
+<Record match="data">
   <PlaceObject>
-    <Textblock>
+    <TextBlock>
       <Paragraph>
         <Value>
           Row
@@ -69,8 +69,8 @@ Sets an invisible mark into the output. This is helpful when you want to know on
           Row
         </Value>
       </Paragraph>
-    </Textblock>
-    <Textblock>
+    </TextBlock>
+    <TextBlock>
       <Action>
         <Mark select="'textstart'"/>
       </Action>
@@ -81,7 +81,7 @@ Sets an invisible mark into the output. This is helpful when you want to know on
           Row
         </Value>
       </Paragraph>
-    </Textblock>
+    </TextBlock>
   </PlaceObject>
   <ClearPage/>
   <Message select="sd:pagenumber('textstart')"></Message>

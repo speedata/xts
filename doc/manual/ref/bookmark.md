@@ -12,7 +12,7 @@ Create a bookmark for the PDF viewer (e.g. Adobe Reader). When the user clicks o
 
 ##  Parent elements
 
-[Td](../td), [Textblock](../textblock)
+[Td](../td), [TextBlock](../textblock)
 
 
 ## Attributes

@@ -93,8 +93,10 @@ func (am allocationMatrix) String() string {
 	return ret.String()
 }
 
-type gridCoord int64
-type coord int32
+type (
+	gridCoord int64
+	coord     int32
+)
 
 func (c coord) String() string {
 	return fmt.Sprintf("%d", c)
@@ -149,22 +151,6 @@ func newGrid(xd *xtsDocument) *grid {
 	}
 
 	return g
-}
-
-// convenience function to get the current row of the area.
-func (g *grid) currentRowArea(areaname string) coord {
-	if area, ok := g.areas[areaname]; ok {
-		return area.CurrentRow()
-	}
-	return 0
-}
-
-// convenience function to get the current column of the area.
-func (g *grid) currentColArea(areaname string) coord {
-	if area, ok := g.areas[areaname]; ok {
-		return area.CurrentCol()
-	}
-	return 0
 }
 
 // Connect the grid to a page and initialize the allocation matrix.

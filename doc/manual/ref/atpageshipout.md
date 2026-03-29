@@ -2,7 +2,7 @@
 
 
 
-The enclosed instructions will be executed when the page is placed into the PDF file. Used in [DefineMasterpage](../definemasterpage).
+The enclosed instructions will be executed when the page is placed into the PDF file. Used in [DefineMasterPage](../definemasterpage).
 
 
 
@@ -12,7 +12,7 @@ The enclosed instructions will be executed when the page is placed into the PDF 
 
 ##  Parent elements
 
-[DefineMasterpage](../definemasterpage)
+[DefineMasterPage](../definemasterpage)
 
 
 ## Attributes
@@ -23,11 +23,11 @@ The enclosed instructions will be executed when the page is placed into the PDF 
 ```xml
 <AtPageShipout>
   <PlaceObject column="1" row="20">
-    <Textblock>
+    <TextBlock>
       <Paragraph>
         <Value select="sd:current-page()"/>
       </Paragraph>
-    </Textblock>
+    </TextBlock>
   </PlaceObject>
 </AtPageShipout>
 

@@ -1,4 +1,4 @@
-# Tablehead
+# TableHead
 
 
 
@@ -8,7 +8,7 @@ Create a repeating table head.
 
 ##  Child elements
 
-[ForAll](../forall), [Switch](../switch), [Tablerule](../tablerule), [Tr](../tr)
+[ForAll](../forall), [Switch](../switch), [TableRule](../tablerule), [Tr](../tr)
 
 ##  Parent elements
 

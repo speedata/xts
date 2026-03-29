@@ -8,7 +8,7 @@ Outputs a rectangular object (image, table, box or textblock).
 
 ##  Child elements
 
-[Box](../box), [Circle](../circle), [HTML](../html), [Image](../image), [Table](../table), [Textblock](../textblock), [Value](../value)
+[Box](../box), [Circle](../circle), [HTML](../html), [Image](../image), [Table](../table), [TextBlock](../textblock), [Value](../value)
 
 ##  Parent elements
 
@@ -142,7 +142,7 @@ Positioning inside the grid:
 
 
 ```xml
-<Record element="image">
+<Record match="image">
   <PlaceObject column="12" frame="solid" framecolor="red">
     <Image width="10" file="_samplea.pdf"/>
   </PlaceObject>
@@ -153,7 +153,7 @@ Absolute positioning (from top left edge):
 
 
 ```xml
-<Record element="image">
+<Record match="image">
   <PlaceObject column="1cm" row="4cm" frame="solid" framecolor="red">
     <Image width="10" file="_samplea.pdf"/>
   </PlaceObject>

@@ -26,12 +26,11 @@ func decodeXML(l *lua.State) int {
 	}
 	var parentStack []stackEntry
 
-done:
 	for {
 		tok, err := dec.Token()
 		if err != nil {
 			if err == io.EOF {
-				break done
+				break
 			}
 			return lerr(l, err.Error())
 		}

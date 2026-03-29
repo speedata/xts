@@ -151,11 +151,11 @@ func scaffold(extra ...string) error {
     xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
     <Record match="data">
         <PlaceObject>
-            <Textblock>
+            <TextBlock>
                 <Paragraph>
                     <Value select="."/>
                 </Paragraph>
-            </Textblock>
+            </TextBlock>
         </PlaceObject>
     </Record>
 </Layout>

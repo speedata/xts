@@ -161,7 +161,7 @@ The page size defaults to A4 (210mm × 297mm).
 The master page for all pages is defined as follows:
 
 ~~~xml
-<DefineMasterpage name="default page" test="true()" margin="1cm" />
+<DefineMasterPage name="default page" test="true()" margin="1cm" />
 ~~~
 
 The page grid is set to 10mm × 10mm.

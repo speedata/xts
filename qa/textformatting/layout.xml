@@ -2,7 +2,7 @@
     xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
 
     <SetGrid height="14pt" width="1cm"></SetGrid>
-    <Stylesheet>
+    <StyleSheet>
     @font-face {
         font-family: code;
         src: local("CamingoCode Regular");
@@ -29,37 +29,37 @@
         margin-bottom: 0;
         padding-left: 1.5em;
         }
-    </Stylesheet>
+    </StyleSheet>
 
     <Record match="data">
         <PlaceObject>
-            <Textblock width="8">
+            <TextBlock width="8">
                 <Paragraph>
                     <Value>There are various ways to put HTML like formatting in your PDF document. See the contents of the layout.xml and data.xml.</Value>
                 </Paragraph>
-            </Textblock>
+            </TextBlock>
         </PlaceObject>
         <NextRow rows="2"></NextRow>
         <PlaceObject>
-            <Textblock>
+            <TextBlock>
                 <Paragraph class="title">
                     <Value>Text and markup from the CDATA section (with HTML):</Value>
                 </Paragraph>
                 <HTML select="html" />
-            </Textblock>
+            </TextBlock>
         </PlaceObject>
         <PlaceObject>
-            <Textblock>
+            <TextBlock>
                 <Paragraph class="title">
                     <Value>Text and markup from the data file:</Value>
                 </Paragraph>
                 <Paragraph>
                     <CopyOf select="text"  />
                 </Paragraph>
-            </Textblock>
+            </TextBlock>
         </PlaceObject>
         <PlaceObject>
-            <Textblock>
+            <TextBlock>
                 <Paragraph class="title">
                     <Value>Text and markup from the layout file:</Value>
                 </Paragraph>
@@ -93,10 +93,10 @@
                 <Paragraph>
                     <Value>&amp; # \ { } %</Value>
                 </Paragraph>
-            </Textblock>
+            </TextBlock>
         </PlaceObject>
         <PlaceObject>
-            <Textblock>
+            <TextBlock>
                 <Paragraph class="title">
                     <Value>Text and markup as HTML in the layout file:</Value>
                 </Paragraph>
@@ -106,7 +106,7 @@
                             <li>of spring</li>
                             <li>which I enjoy</li>
                     </ul> &amp; # \ { } % </HTML>
-            </Textblock>
+            </TextBlock>
         </PlaceObject>
     </Record>
 </Layout>

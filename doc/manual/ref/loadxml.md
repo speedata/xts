@@ -34,7 +34,7 @@ Load an XML file previously written by [SaveXML](../savexml) (attribute name) or
 ## Example
 
 ```xml
-<Record element="articles">
+<Record match="articles">
   <LoadXML name="toc"/>
   <ClearPage/>
   <ProcessNode select="article"/>

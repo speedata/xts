@@ -14,7 +14,7 @@ The most direct way to switch fonts is with the inline commands:
 
 ```xml
 <PlaceObject>
-  <Textblock>
+  <TextBlock>
     <Paragraph>
       <Value>A wonderful </Value>
       <B><Value>serenity</Value></B>
@@ -25,7 +25,7 @@ The most direct way to switch fonts is with the inline commands:
       </I>
       <Value> like these sweet mornings.</Value>
     </Paragraph>
-  </Textblock>
+  </TextBlock>
 </PlaceObject>
 ```
 
@@ -40,7 +40,7 @@ If you prefer HTML-style formatting, use `<HTML>`:
 
 ```xml
 <PlaceObject>
-  <Textblock>
+  <TextBlock>
     <Paragraph>
       <HTML>A wonderful <b>serenity</b>
           has taken possession
@@ -48,7 +48,7 @@ If you prefer HTML-style formatting, use `<HTML>`:
           like these sweet mornings.
       </HTML>
     </Paragraph>
-  </Textblock>
+  </TextBlock>
 </PlaceObject>
 ```
 
@@ -75,7 +75,7 @@ If your data contains raw HTML (not well-formed XML), use `sd:decode-html()` to 
 
 ## Paragraphs and text blocks
 
-`<Textblock>` is a rectangular area that holds one or more `<Paragraph>` elements. Text blocks don't break across pages -- they're placed as a single unit. This makes them ideal for:
+`<TextBlock>` is a rectangular area that holds one or more `<Paragraph>` elements. Text blocks don't break across pages -- they're placed as a single unit. This makes them ideal for:
 
 - Page numbers and headers
 - Short descriptions and captions
@@ -84,14 +84,14 @@ If your data contains raw HTML (not well-formed XML), use `sd:decode-html()` to 
 Each paragraph can have its own class or inline style:
 
 ```xml
-<Textblock>
+<TextBlock>
   <Paragraph style="color: green">
     <Value>green text</Value>
   </Paragraph>
   <Paragraph>
     <Value>default text</Value>
   </Paragraph>
-</Textblock>
+</TextBlock>
 ```
 
 ## Spans

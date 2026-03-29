@@ -1,4 +1,4 @@
-# Textblock
+# TextBlock
 
 
 
@@ -34,13 +34,13 @@ Create a rectangular piece of text.
 ## Example
 
 ```xml
-<Record element="data">
+<Record match="data">
   <PlaceObject>
-    <Textblock width="10">
+    <TextBlock width="10">
       <Paragraph>
         <B><Value>Bold text</Value></B>
       </Paragraph>
-    </Textblock>
+    </TextBlock>
   </PlaceObject>
 </Record>
 

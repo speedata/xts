@@ -10,12 +10,12 @@ So far, you've been placing objects on the whole page. But real layouts usually 
 
 ## Defining areas in a master page
 
-Areas are defined inside `<DefineMasterpage>` using `<PositioningArea>` and `<PositioningFrame>`:
+Areas are defined inside `<DefineMasterPage>` using `<PositioningArea>` and `<PositioningFrame>`:
 
 ```xml
 <Trace grid="yes"/>
 <SetGrid nx="19" ny="28"/>
-<DefineMasterpage name="page" test="true()" margin="1cm">
+<DefineMasterPage name="page" test="true()" margin="1cm">
     <PositioningArea name="pagehead">
         <PositioningFrame width="19" height="2" row="1" column="1"/>
     </PositioningArea>
@@ -33,7 +33,7 @@ Areas are defined inside `<DefineMasterpage>` using `<PositioningArea>` and `<Po
             row="4"
             column="8"/>
     </PositioningArea>
-</DefineMasterpage>
+</DefineMasterPage>
 ```
 
 This creates three areas: `pagehead`, `left`, and `text`. Each has a position and size defined in grid cells.
@@ -43,30 +43,30 @@ This creates three areas: `pagehead`, `left`, and `text`. Each has a position an
 Use the `area` attribute on `<PlaceObject>` to target a specific area:
 
 ```xml
-<Record element="data">
+<Record match="data">
   <PlaceObject area="pagehead">
-    <Textblock>
+    <TextBlock>
       <Paragraph>
         <Value>Page header, height: </Value>
         <Value select="sd:number-of-rows('pagehead')"/>
       </Paragraph>
-    </Textblock>
+    </TextBlock>
   </PlaceObject>
   <PlaceObject area="left">
-    <Textblock>
+    <TextBlock>
       <Paragraph>
         <Value>Sidebar, height: </Value>
         <Value select="sd:number-of-rows('left')"/>
       </Paragraph>
-    </Textblock>
+    </TextBlock>
   </PlaceObject>
   <PlaceObject area="text">
-    <Textblock>
+    <TextBlock>
       <Paragraph>
         <Value>Main text, width: </Value>
         <Value select="sd:number-of-columns('text')"/>
       </Paragraph>
-    </Textblock>
+    </TextBlock>
   </PlaceObject>
 </Record>
 ```
@@ -85,7 +85,7 @@ Key points about the cursor:
 - After a full-width object, the cursor wraps to the next line automatically.
 
 ```xml
-<Record element="data">
+<Record match="data">
     <PlaceObject>
       <Box width="{sd:number-of-columns()}" height="1"/>
     </PlaceObject>

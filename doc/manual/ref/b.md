@@ -21,11 +21,11 @@ Switch to font weight “bold”
 ## Example
 
 ```xml
-<Textblock>
+<TextBlock>
   <Paragraph>
     <B><Value>Bold text</Value></B>
   </Paragraph>
-</Textblock>
+</TextBlock>
 
 ```
 

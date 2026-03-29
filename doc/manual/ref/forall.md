@@ -12,7 +12,7 @@ Executes the given commands for all elements in the data XML file that match the
 
 ##  Parent elements
 
-[AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout), [Case](../case), [Columns](../columns), [Contents](../contents), [DefineMasterpage](../definemasterpage), [ForAll](../forall), [Function](../function), [Loop](../loop), [Ol](../ol), [Otherwise](../otherwise), [Record](../record), [SaveXML](../savexml), [Table](../table), [Tablehead](../tablehead), [Td](../td), [Textblock](../textblock), [Tr](../tr), [Ul](../ul), [Until](../until), [While](../while)
+[AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout), [Case](../case), [Columns](../columns), [Contents](../contents), [DefineMasterPage](../definemasterpage), [ForAll](../forall), [Function](../function), [Loop](../loop), [Ol](../ol), [Otherwise](../otherwise), [Record](../record), [SaveXML](../savexml), [Table](../table), [TableHead](../tablehead), [Td](../td), [TextBlock](../textblock), [Tr](../tr), [Ul](../ul), [Until](../until), [While](../while)
 
 
 ## Attributes
@@ -40,7 +40,7 @@ Executes the given commands for all elements in the data XML file that match the
 ## Example
 
 ```xml
-<Record element="data">
+<Record match="data">
   <PlaceObject>
     <Table>
       <ForAll select="entry">

@@ -28,11 +28,11 @@ Inside `<ForAll>`, the context switches to each matched element, so `@name` refe
 `<ProcessNode>` sends each child element to its matching `<Record>`:
 
 ```xml
-<Record element="catalog">
+<Record match="catalog">
     <ProcessNode select="*"/>
 </Record>
 
-<Record element="article">
+<Record match="article">
     <!-- handle each article -->
 </Record>
 ```
@@ -58,9 +58,9 @@ The loop counter is stored in `$_loopcounter` by default, or you can name it: `<
 <SetVariable variable="i" select="1"/>
 <While test="$i &lt;= 4">
     <PlaceObject>
-        <Textblock>
+        <TextBlock>
             <Paragraph><Value select="$i"/></Paragraph>
-        </Textblock>
+        </TextBlock>
     </PlaceObject>
     <SetVariable variable="i" select="$i + 1"/>
 </While>
@@ -107,15 +107,15 @@ The `test` attribute expects an XPath expression that evaluates to `true()` or `
 A data-driven table with conditional styling:
 
 ```xml
-<Record element="inventory">
+<Record match="inventory">
     <PlaceObject>
         <Table stretch="max">
-            <Tablehead>
+            <TableHead>
                 <Tr>
                     <Td><Paragraph><Value>Product</Value></Paragraph></Td>
                     <Td><Paragraph><Value>Stock</Value></Paragraph></Td>
                 </Tr>
-            </Tablehead>
+            </TableHead>
             <ForAll select="item">
                 <Tr>
                     <Td><Paragraph><Value select="@name"/></Paragraph></Td>

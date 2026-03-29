@@ -20,7 +20,7 @@ If you're new to XPath, the [W3Schools XPath tutorial](https://www.w3schools.com
 
 <!-- test: evaluate to true/false -->
 <Case test="$count > 10"/>
-<DefineMasterpage test="sd:current-page() > 1"/>
+<DefineMasterPage test="sd:current-page() > 1"/>
 
 <!-- Curly braces in attributes -->
 <Column width="{sd:grid-width(3)}"/>

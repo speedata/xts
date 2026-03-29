@@ -1,6 +1,6 @@
 ---
 type: docs
-linktitle: DefineMasterpage
+linktitle: DefineMasterPage
 ---
 {{% include "definemasterpage.md" %}}
 

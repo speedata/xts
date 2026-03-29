@@ -13,6 +13,7 @@ import (
 	"math"
 	"os"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -409,10 +410,8 @@ func fnMode(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, er
 	xd := ctx.Store["xd"].(*xtsDocument)
 	findMode := args[0].Stringvalue()
 
-	for _, mode := range xd.cfg.Mode {
-		if mode == findMode {
-			return goxpath.Sequence{true}, nil
-		}
+	if slices.Contains(xd.cfg.Mode, findMode) {
+		return goxpath.Sequence{true}, nil
 	}
 	return goxpath.Sequence{false}, nil
 }

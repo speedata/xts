@@ -12,13 +12,13 @@ XTS supports ordered and unordered lists, both through XTS elements and HTML mar
 
 ```xml
 <PlaceObject>
-    <Textblock>
+    <TextBlock>
         <Ul>
             <Li><Value>First item</Value></Li>
             <Li><Value>Second item</Value></Li>
             <Li><Value>Third item</Value></Li>
         </Ul>
-    </Textblock>
+    </TextBlock>
 </PlaceObject>
 ```
 
@@ -53,11 +53,11 @@ You can also create lists inside `<HTML>` blocks:
 ## Styling lists with CSS
 
 ```xml
-<Stylesheet>
+<StyleSheet>
     ul { list-style-type: disc; }
     ol { list-style-type: decimal; }
     li { padding-left: 0; margin-bottom: 4pt; }
-</Stylesheet>
+</StyleSheet>
 ```
 
 Lists can appear inside table cells, text blocks, and anywhere else that accepts content.

@@ -15,7 +15,7 @@ HTML markup and CSS styling are first-class citizens in XTS. You can use CSS to 
 Define CSS rules directly in your layout file:
 
 ```xml
-<Stylesheet>
+<StyleSheet>
     p {
         font-family: serif;
         font-size: 12pt;
@@ -24,7 +24,7 @@ Define CSS rules directly in your layout file:
     .highlight {
         background-color: yellow;
     }
-</Stylesheet>
+</StyleSheet>
 ```
 
 ### External stylesheets
@@ -32,8 +32,8 @@ Define CSS rules directly in your layout file:
 For larger projects, keep CSS in separate files:
 
 ```xml
-<Stylesheet href="styles/main.css"/>
-<Stylesheet href="styles/typography.css"/>
+<StyleSheet href="styles/main.css"/>
+<StyleSheet href="styles/typography.css"/>
 ```
 
 You can include as many as you need. They're processed in order, so later rules override earlier ones (normal CSS cascade).
@@ -43,7 +43,7 @@ You can include as many as you need. They're processed in order, so later rules 
 Apply classes with the `class` attribute -- works on both XTS elements and HTML elements:
 
 ```xml
-<Stylesheet>
+<StyleSheet>
     .product-title {
         font-size: 18pt;
         font-weight: bold;
@@ -53,17 +53,17 @@ Apply classes with the `class` attribute -- works on both XTS elements and HTML 
         font-family: monospace;
         color: green;
     }
-</Stylesheet>
+</StyleSheet>
 
 <PlaceObject>
-    <Textblock>
+    <TextBlock>
         <Paragraph class="product-title">
             <Value select="@name"/>
         </Paragraph>
         <Paragraph class="price">
             <Value select="concat(@price, ' EUR')"/>
         </Paragraph>
-    </Textblock>
+    </TextBlock>
 </PlaceObject>
 ```
 
@@ -95,12 +95,12 @@ The `<HTML>` element lets you include HTML markup:
 
 ```xml
 <PlaceObject>
-    <Textblock>
+    <TextBlock>
         <HTML>
             <p>A wonderful <b>serenity</b> has taken possession
                <i>of my <b>entire soul,</b></i> like these sweet mornings.</p>
         </HTML>
-    </Textblock>
+    </TextBlock>
 </PlaceObject>
 ```
 
@@ -130,12 +130,12 @@ By default, `{...}` expressions are *not* evaluated inside HTML. Enable them wit
 <SetVariable variable="product" select="'Premium Widget'"/>
 
 <PlaceObject>
-    <Textblock>
+    <TextBlock>
         <HTML expand-text="yes">
             <p><b>{$product}</b></p>
             <p>Page: {sd:current-page()}</p>
         </HTML>
-    </Textblock>
+    </TextBlock>
 </PlaceObject>
 ```
 
@@ -155,10 +155,10 @@ Pull HTML from your data file using `select`:
 
 ## Combining XTS elements and HTML
 
-Mix freely within a `<Textblock>`:
+Mix freely within a `<TextBlock>`:
 
 ```xml
-<Textblock>
+<TextBlock>
     <Paragraph>
         <Value>Introduction: </Value>
         <HTML><b>Important</b> information follows.</HTML>
@@ -169,7 +169,7 @@ Mix freely within a `<Textblock>`:
             <li>Second item</li>
         </ul>
     </HTML>
-</Textblock>
+</TextBlock>
 ```
 
 ## Practical example
@@ -177,18 +177,18 @@ Mix freely within a `<Textblock>`:
 A complete product catalog card:
 
 ```xml
-<Stylesheet>
+<StyleSheet>
     body { font-family: serif; font-size: 11pt; }
     h1 { font-size: 18pt; color: darkblue; margin-bottom: 12pt; }
     .product { border: 1pt solid #ccc; padding: 10pt; margin-bottom: 10pt; }
     .product-name { font-weight: bold; font-size: 14pt; }
     .price { color: green; font-feature-settings: "tnum"; }
     .description { font-style: italic; color: #666; }
-</Stylesheet>
+</StyleSheet>
 
-<Record element="products">
+<Record match="products">
     <PlaceObject>
-        <Textblock>
+        <TextBlock>
             <HTML><h1>Product Catalog</h1></HTML>
             <ForAll select="product">
                 <HTML expand-text="yes">
@@ -199,7 +199,7 @@ A complete product catalog card:
                     </div>
                 </HTML>
             </ForAll>
-        </Textblock>
+        </TextBlock>
     </PlaceObject>
 </Record>
 ```

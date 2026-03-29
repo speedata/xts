@@ -17,13 +17,13 @@ Commands inside `<AtPageCreation>` run when a new page is created, *before* any 
 - Repeating page headers or footers
 
 ```xml
-<DefineMasterpage name="default" test="true()" margin="1cm">
+<DefineMasterPage name="default" test="true()" margin="1cm">
     <AtPageCreation>
         <PlaceObject row="1" column="1" allocate="no">
             <Image href="letterhead.pdf" width="210mm" height="297mm"/>
         </PlaceObject>
     </AtPageCreation>
-</DefineMasterpage>
+</DefineMasterPage>
 ```
 
 ## AtPageShipout
@@ -35,18 +35,18 @@ Commands inside `<AtPageShipout>` run when a page is finalized and written to th
 - Content that depends on what's on the page
 
 ```xml
-<DefineMasterpage name="default" test="true()" margin="1cm">
+<DefineMasterPage name="default" test="true()" margin="1cm">
     <AtPageShipout>
         <PlaceObject column="{sd:number-of-columns()}" row="{sd:number-of-rows()}"
             hreference="right" halign="right">
-            <Textblock>
+            <TextBlock>
                 <Paragraph>
                     <Value select="sd:current-page()"/>
                 </Paragraph>
-            </Textblock>
+            </TextBlock>
         </PlaceObject>
     </AtPageShipout>
-</DefineMasterpage>
+</DefineMasterPage>
 ```
 
 ## Combining both
@@ -54,7 +54,7 @@ Commands inside `<AtPageShipout>` run when a page is finalized and written to th
 A typical setup uses `<AtPageCreation>` for the background and `<AtPageShipout>` for page-dependent content:
 
 ```xml
-<DefineMasterpage name="standard" test="true()" margin="2cm 1cm 1cm 1cm">
+<DefineMasterPage name="standard" test="true()" margin="2cm 1cm 1cm 1cm">
     <AtPageCreation>
         <!-- Company logo in the top-right corner -->
         <PlaceObject column="{sd:number-of-columns()}" row="1"
@@ -65,14 +65,14 @@ A typical setup uses `<AtPageCreation>` for the background and `<AtPageShipout>`
     <AtPageShipout>
         <!-- Page number at the bottom center -->
         <PlaceObject column="1" row="{sd:number-of-rows()}" allocate="no">
-            <Textblock>
+            <TextBlock>
                 <Paragraph style="text-align: center;">
                     <Value select="sd:current-page()"/>
                 </Paragraph>
-            </Textblock>
+            </TextBlock>
         </PlaceObject>
     </AtPageShipout>
-</DefineMasterpage>
+</DefineMasterPage>
 ```
 
 ## See also
