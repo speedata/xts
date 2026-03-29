@@ -26,7 +26,7 @@ Includes an external Graphic. Allowed graphic formats are PDF (.pdf), PNG (.png)
 
 
 `href` (text, optional)
-:   Filename of the image. Can be a file in the search path, an absolute file name, a file-URI for absolute paths (e.g. `file:///path/to/image.pdf`) or a location on the web (http, https).
+:   Filename of the image. Can be a file in the search path, an absolute file name, a file-URI for absolute paths (e.g. `file:///path/to/image.pdf`) or a location on the web (http, https). Use `placeholder://WxH` (e.g. `placeholder://200x150`) to generate a placeholder image with the given dimensions in PDF points.
 
 
 

@@ -19,12 +19,6 @@ Colors defined with DefineColors can be referenced later by their name.
 
 
 
-`alpha` (number, optional)
-:   Set the opacity of the color. (0-100/255, where 0 is invisible)
-
-
-
-
 `b` (0 to 100 or 0 to 255, optional)
 :   Blue part with rgb (0-100) or RGB (0-255).
 
@@ -94,22 +88,6 @@ Colors defined with DefineColors can be referenced later by their name.
 
 `name` (text)
 :   The name of the color to be defined.
-
-
-
-
-`overprint` (optional)
-:   Enable overprint for this color.
-
-
-
-    `yes`
-    :    Enable overprint for this color.
-
-
-
-    `no`
-    :    Disable overprint for this color (default).
 
 
 

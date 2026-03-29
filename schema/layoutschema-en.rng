@@ -429,49 +429,8 @@
         <element name="Column">
             <a:documentation>Set the properties of a column in the table.</a:documentation>
             <optional>
-                <attribute name="align">
-                    <a:documentation>The horizontal alignment of the table cells in this column. Can be overridden in a cell (Td).</a:documentation>
-                    <choice>
-                        <value>left</value>
-                        <a:documentation>The table cells are left aligned.</a:documentation>
-                        <value>center</value>
-                        <a:documentation>The table cells are horizontally centered.</a:documentation>
-                        <value>right</value>
-                        <a:documentation>The table cells are right aligned.</a:documentation>
-                    </choice>
-                </attribute>
-            </optional>
-            <optional>
-                <attribute name="backgroundcolor">
-                    <a:documentation>All cells in this column have this background color.</a:documentation>
-                </attribute>
-            </optional>
-            <optional>
-                <attribute name="padding-left">
-                    <a:documentation>Set the left padding for the column</a:documentation>
-                </attribute>
-            </optional>
-            <optional>
-                <attribute name="padding-right">
-                    <a:documentation>Set the right padding for the column</a:documentation>
-                </attribute>
-            </optional>
-            <optional>
                 <attribute name="width">
                     <a:documentation>Width of the column. Argument can be a number (in grid cells) a length (e.g. 2cm) or a *-number (e.g. 4*).</a:documentation>
-                </attribute>
-            </optional>
-            <optional>
-                <attribute name="valign">
-                    <a:documentation>The vertical alignment of the cells in this column. Can be overridden in a cell (Td).</a:documentation>
-                    <choice>
-                        <value>top</value>
-                        <a:documentation>The table cells are top aligned.</a:documentation>
-                        <value>middle</value>
-                        <a:documentation>The table cells are vertically centered.</a:documentation>
-                        <value>bottom</value>
-                        <a:documentation>The table cells are aligned at the bottom.</a:documentation>
-                    </choice>
                 </attribute>
             </optional>
             <empty></empty>
@@ -569,11 +528,6 @@
         <element name="DefineColor">
             <a:documentation>Colors defined with DefineColors can be referenced later by their name.</a:documentation>
             <optional>
-                <attribute name="alpha">
-                    <a:documentation>Set the opacity of the color. (0-100/255, where 0 is invisible)</a:documentation>
-                </attribute>
-            </optional>
-            <optional>
                 <attribute name="colorname">
                     <a:documentation>The name of the spot color if model is “spotcolor”. The name must match the required color name, such as “PANTONE 116 C”.</a:documentation>
                 </attribute>
@@ -598,17 +552,6 @@
             <attribute name="name">
                 <a:documentation>The name of the color to be defined.</a:documentation>
             </attribute>
-            <optional>
-                <attribute name="overprint">
-                    <a:documentation>Enable overprint for this color.</a:documentation>
-                    <choice>
-                        <value>yes</value>
-                        <a:documentation>Enable overprint for this color.</a:documentation>
-                        <value>no</value>
-                        <a:documentation>Disable overprint for this color (default).</a:documentation>
-                    </choice>
-                </attribute>
-            </optional>
             <optional>
                 <attribute name="value">
                     <a:documentation>Hex value of the color, such as #FA5 or #FFAA55 or rgb(255,170,85) or rgba(255,170,85,1).</a:documentation>
@@ -720,16 +663,6 @@
                     <attribute name="select">
                         <a:documentation>Selects the child elements from the data XML</a:documentation>
                     </attribute>
-                    <optional>
-                        <attribute name="limit">
-                            <a:documentation>Limits the number of children to the given number.</a:documentation>
-                        </attribute>
-                    </optional>
-                    <optional>
-                        <attribute name="start">
-                            <a:documentation>The first entry to process. Default is 1.</a:documentation>
-                        </attribute>
-                    </optional>
                     <oneOrMore>
                         <interleave>
                             <optional>
@@ -1161,22 +1094,6 @@
                             </choice>
                         </attribute>
                     </optional>
-                    <optional>
-                        <attribute name="errorcode">
-                            <a:documentation>If an error is raised, use this code on exit. Defaults to 1. Negative values are reserved for system purpose.</a:documentation>
-                        </attribute>
-                    </optional>
-                    <optional>
-                        <attribute name="exit">
-                            <a:documentation>Tells the software to exit immediately.</a:documentation>
-                            <choice>
-                                <value>no</value>
-                                <a:documentation>The speedata Publisher continues with the PDF creation.</a:documentation>
-                                <value>yes</value>
-                                <a:documentation>The speedata Publisher exits without finishing the PDF file.</a:documentation>
-                            </choice>
-                        </attribute>
-                    </optional>
                     <interleave>
                         <optional>
                             <oneOrMore>
@@ -1202,11 +1119,6 @@
                     <optional>
                         <attribute name="version">
                             <a:documentation>Minimum publisher version required. If major or minor version differ, give a warning. Format: 1.6.12 (revision number can be left out).</a:documentation>
-                        </attribute>
-                    </optional>
-                    <optional>
-                        <attribute name="name">
-                            <a:documentation>A name for the layout. Optional, without any influence on the layout itself.</a:documentation>
                         </attribute>
                     </optional>
                     <oneOrMore>
@@ -1860,11 +1772,6 @@
                     <attribute name="name">
                         <a:documentation>Name of the area.</a:documentation>
                     </attribute>
-                    <optional>
-                        <attribute name="framecolor">
-                            <a:documentation>Set the color of the frame in grid=yes mode. Defaults to &#39;red&#39;</a:documentation>
-                        </attribute>
-                    </optional>
                     <oneOrMore>
                         <interleave>
                             <optional>
@@ -1901,11 +1808,6 @@
     <define name="e_ProcessNode">
         <element name="ProcessNode">
             <a:documentation>Executes all given nodes. The elements, that are to be executed, are given with the attribute selection.</a:documentation>
-            <optional>
-                <attribute name="limit">
-                    <a:documentation>Limits the number of items processed with this command</a:documentation>
-                </attribute>
-            </optional>
             <attribute name="select">
                 <a:documentation>Selection of child elements, that are to be processed.</a:documentation>
             </attribute>
@@ -1927,7 +1829,7 @@
                     </attribute>
                     <optional>
                         <attribute name="mode">
-                            <a:documentation>Name of the mode that matches the mode in .</a:documentation>
+                            <a:documentation>Name of the mode that matches the mode in ProcessNode.</a:documentation>
                         </attribute>
                     </optional>
                     <oneOrMore>
@@ -2006,11 +1908,6 @@
                     <optional>
                         <attribute name="select">
                             <a:documentation>Alternative to giving the data structure in the child elements.</a:documentation>
-                        </attribute>
-                    </optional>
-                    <optional>
-                        <attribute name="attributes">
-                            <a:documentation>The variable (as an XPath expression, e.g. $foo) which contains Attribute Elements. These attributes are added to the root element.</a:documentation>
                         </attribute>
                     </optional>
                     <oneOrMore>

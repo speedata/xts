@@ -323,73 +323,10 @@
       <xs:documentation>Set the properties of a column in the table.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
-      <xs:attribute name="align">
-        <xs:annotation>
-          <xs:documentation>The horizontal alignment of the table cells in this column. Can be overridden in a cell (Td).</xs:documentation>
-        </xs:annotation>
-        <xs:simpleType>
-          <xs:restriction base="xs:token">
-            <xs:enumeration value="left">
-              <xs:annotation>
-                <xs:documentation>The table cells are left aligned.</xs:documentation>
-              </xs:annotation>
-            </xs:enumeration>
-            <xs:enumeration value="center">
-              <xs:annotation>
-                <xs:documentation>The table cells are horizontally centered.</xs:documentation>
-              </xs:annotation>
-            </xs:enumeration>
-            <xs:enumeration value="right">
-              <xs:annotation>
-                <xs:documentation>The table cells are right aligned.</xs:documentation>
-              </xs:annotation>
-            </xs:enumeration>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:attribute>
-      <xs:attribute name="backgroundcolor">
-        <xs:annotation>
-          <xs:documentation>All cells in this column have this background color.</xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
-      <xs:attribute name="padding-left">
-        <xs:annotation>
-          <xs:documentation>Set the left padding for the column</xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
-      <xs:attribute name="padding-right">
-        <xs:annotation>
-          <xs:documentation>Set the right padding for the column</xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
       <xs:attribute name="width">
         <xs:annotation>
           <xs:documentation>Width of the column. Argument can be a number (in grid cells) a length (e.g. 2cm) or a *-number (e.g. 4*).</xs:documentation>
         </xs:annotation>
-      </xs:attribute>
-      <xs:attribute name="valign">
-        <xs:annotation>
-          <xs:documentation>The vertical alignment of the cells in this column. Can be overridden in a cell (Td).</xs:documentation>
-        </xs:annotation>
-        <xs:simpleType>
-          <xs:restriction base="xs:token">
-            <xs:enumeration value="top">
-              <xs:annotation>
-                <xs:documentation>The table cells are top aligned.</xs:documentation>
-              </xs:annotation>
-            </xs:enumeration>
-            <xs:enumeration value="middle">
-              <xs:annotation>
-                <xs:documentation>The table cells are vertically centered.</xs:documentation>
-              </xs:annotation>
-            </xs:enumeration>
-            <xs:enumeration value="bottom">
-              <xs:annotation>
-                <xs:documentation>The table cells are aligned at the bottom.</xs:documentation>
-              </xs:annotation>
-            </xs:enumeration>
-          </xs:restriction>
-        </xs:simpleType>
       </xs:attribute>
     </xs:complexType>
   </xs:element>
@@ -454,11 +391,6 @@
       <xs:documentation>Colors defined with DefineColors can be referenced later by their name.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
-      <xs:attribute name="alpha">
-        <xs:annotation>
-          <xs:documentation>Set the opacity of the color. (0-100/255, where 0 is invisible)</xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
       <xs:attribute name="colorname">
         <xs:annotation>
           <xs:documentation>The name of the spot color if model is “spotcolor”. The name must match the required color name, such as “PANTONE 116 C”.</xs:documentation>
@@ -502,25 +434,6 @@
         <xs:annotation>
           <xs:documentation>The name of the color to be defined.</xs:documentation>
         </xs:annotation>
-      </xs:attribute>
-      <xs:attribute name="overprint">
-        <xs:annotation>
-          <xs:documentation>Enable overprint for this color.</xs:documentation>
-        </xs:annotation>
-        <xs:simpleType>
-          <xs:restriction base="xs:token">
-            <xs:enumeration value="yes">
-              <xs:annotation>
-                <xs:documentation>Enable overprint for this color.</xs:documentation>
-              </xs:annotation>
-            </xs:enumeration>
-            <xs:enumeration value="no">
-              <xs:annotation>
-                <xs:documentation>Disable overprint for this color (default).</xs:documentation>
-              </xs:annotation>
-            </xs:enumeration>
-          </xs:restriction>
-        </xs:simpleType>
       </xs:attribute>
       <xs:attribute name="value">
         <xs:annotation>
@@ -639,16 +552,6 @@
       <xs:attribute name="select" use="required">
         <xs:annotation>
           <xs:documentation>Selects the child elements from the data XML</xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
-      <xs:attribute name="limit">
-        <xs:annotation>
-          <xs:documentation>Limits the number of children to the given number.</xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
-      <xs:attribute name="start">
-        <xs:annotation>
-          <xs:documentation>The first entry to process. Default is 1.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
     </xs:complexType>
@@ -988,30 +891,6 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
-      <xs:attribute name="errorcode">
-        <xs:annotation>
-          <xs:documentation>If an error is raised, use this code on exit. Defaults to 1. Negative values are reserved for system purpose.</xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
-      <xs:attribute name="exit">
-        <xs:annotation>
-          <xs:documentation>Tells the software to exit immediately.</xs:documentation>
-        </xs:annotation>
-        <xs:simpleType>
-          <xs:restriction base="xs:token">
-            <xs:enumeration value="no">
-              <xs:annotation>
-                <xs:documentation>The speedata Publisher continues with the PDF creation.</xs:documentation>
-              </xs:annotation>
-            </xs:enumeration>
-            <xs:enumeration value="yes">
-              <xs:annotation>
-                <xs:documentation>The speedata Publisher exits without finishing the PDF file.</xs:documentation>
-              </xs:annotation>
-            </xs:enumeration>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:attribute>
     </xs:complexType>
   </xs:element>
   <xs:element name="Layout">
@@ -1038,11 +917,6 @@
       <xs:attribute name="version">
         <xs:annotation>
           <xs:documentation>Minimum publisher version required. If major or minor version differ, give a warning. Format: 1.6.12 (revision number can be left out).</xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
-      <xs:attribute name="name">
-        <xs:annotation>
-          <xs:documentation>A name for the layout. Optional, without any influence on the layout itself.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
     </xs:complexType>
@@ -2071,11 +1945,6 @@
           <xs:documentation>Name of the area.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="framecolor">
-        <xs:annotation>
-          <xs:documentation>Set the color of the frame in grid=yes mode. Defaults to 'red'</xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
     </xs:complexType>
   </xs:element>
   <xs:element name="PositioningFrame">
@@ -2110,11 +1979,6 @@
       <xs:documentation>Executes all given nodes. The elements, that are to be executed, are given with the attribute selection.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
-      <xs:attribute name="limit">
-        <xs:annotation>
-          <xs:documentation>Limits the number of items processed with this command</xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
       <xs:attribute name="select" use="required">
         <xs:annotation>
           <xs:documentation>Selection of child elements, that are to be processed.</xs:documentation>
@@ -2157,7 +2021,7 @@
       </xs:attribute>
       <xs:attribute name="mode">
         <xs:annotation>
-          <xs:documentation>Name of the mode that matches the mode in .</xs:documentation>
+          <xs:documentation>Name of the mode that matches the mode in ProcessNode.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
     </xs:complexType>
@@ -2191,11 +2055,6 @@
       <xs:attribute name="select">
         <xs:annotation>
           <xs:documentation>Alternative to giving the data structure in the child elements.</xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
-      <xs:attribute name="attributes">
-        <xs:annotation>
-          <xs:documentation>The variable (as an XPath expression, e.g. $foo) which contains Attribute Elements. These attributes are added to the root element.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
     </xs:complexType>

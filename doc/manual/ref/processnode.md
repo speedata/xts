@@ -19,12 +19,6 @@ Executes all given nodes. The elements, that are to be executed, are given with 
 
 
 
-`limit` (number, optional)
-:   Limits the number of items processed with this command
-
-
-
-
 `mode` (text, optional)
 :   Name of the mode. This must match the mode at the corresponding [Record](../record) element. With this it is possible to have different rules for the same element.
 

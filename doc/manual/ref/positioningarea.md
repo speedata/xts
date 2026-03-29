@@ -19,12 +19,6 @@ Describes an area which contains one or more frames. Elements can be placed with
 
 
 
-`framecolor` (text, optional)
-:   Set the color of the frame in grid=yes mode. Defaults to 'red'
-
-
-
-
 `name` (text)
 :   Name of the area.
 

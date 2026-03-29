@@ -955,7 +955,7 @@
 </PlaceObject>
 ]]></listing>
       <para>looks like</para>
-      <image file="ref-greenbox.png"/>
+      <image href="ref-greenbox.png"/>
     </example>
     <example xml:lang="de">
       <listing><![CDATA[<DefineColor name="meingrün" model="cmyk" c="22" m="0" y="55" k="0"/>
@@ -964,7 +964,7 @@
 </PlaceObject>
 ]]></listing>
       <para>erzeugt ein farbiges Rechteck</para>
-      <image file="ref-greenbox.png"/>
+      <image href="ref-greenbox.png"/>
     </example>
   </command>
 
@@ -1101,7 +1101,7 @@
 </PlaceObject>
 ]]></listing>
       <para>looks like</para>
-      <image file="ref-circlewithborder.png"/>
+      <image href="ref-circlewithborder.png"/>
     </example>
     <example xml:lang="de">
       <listing><![CDATA[<DefineColor name="meingrün" model="cmyk" c="22" m="0" y="55" k="0"/>
@@ -1110,7 +1110,7 @@
 </PlaceObject>
 ]]></listing>
       <para>erzeugt einen Kreis</para>
-      <image file="ref-circlewithborder.png" width="30%"/>
+      <image href="ref-circlewithborder.png" width="30%"/>
     </example>
   </command>
 
@@ -1179,62 +1179,6 @@
       <para>Gibt die Eigenschaften einer Spalte in einer Tabelle an.</para>
     </description>
     <childelements/>
-    <attribute en="align" optional="yes">
-      <description xml:lang="en">
-        <para>The horizontal alignment of the table cells in this column. Can be overridden in a cell (<cmd name="Td"/>).</para>
-      </description>
-      <description xml:lang="de">
-        <para>Die horizontale Ausrichtung des Tabelleninhalts. Kann in einer Zelle (<cmd name="Td"/>) überschrieben werden.</para>
-      </description>
-      <choice en="left">
-        <description xml:lang="en">
-          <para>The table cells are left aligned.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Die Tabellenzellen dieser Spalte werden linksbündig ausgerichtet.</para>
-        </description>
-      </choice>
-      <choice en="center">
-        <description xml:lang="en">
-          <para>The table cells are horizontally centered.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Die Tabellenzellen dieser Spalte werden horizontal zentriert.</para>
-        </description>
-      </choice>
-      <choice en="right">
-        <description xml:lang="en">
-          <para>The table cells are right aligned.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Die Tabellenzellen dieser Spalte werden rechtsbündig ausgerichtet.</para>
-        </description>
-      </choice>
-    </attribute>
-    <attribute en="backgroundcolor" type="text" optional="yes">
-      <description xml:lang="en">
-        <para>All cells in this column have this background color.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Farbe der Tabellenspalte.</para>
-      </description>
-    </attribute>
-    <attribute en="padding-left" optional="yes" type="length">
-      <description xml:lang="en">
-        <para>Set the left padding for the column</para>
-      </description>
-      <description xml:lang="de">
-        <para>Setze das linke padding für diese Spalte</para>
-      </description>
-    </attribute>
-    <attribute en="padding-right" optional="yes" type="length">
-      <description xml:lang="en">
-        <para>Set the right padding for the column</para>
-      </description>
-      <description xml:lang="de">
-        <para>Setze das rechte padding für diese Spalte</para>
-      </description>
-    </attribute>
     <attribute en="width" type="numberlengthorstar" optional="yes">
       <description xml:lang="en">
         <para>Width of the column. Argument can be a number (in grid cells) a length (e.g. 2cm) or a *-number (e.g. 4*).</para>
@@ -1242,38 +1186,6 @@
       <description xml:lang="de">
         <para>Breite der Spalte. Kann entweder in Rasterzellen (Zahl), absoluten Maßangaben (z.B. 1cm) oder in <tt>*</tt>-Angaben (z.B. <tt>4*</tt>) angegeben werden.</para>
       </description>
-    </attribute>
-    <attribute en="valign" optional="yes">
-      <description xml:lang="en">
-        <para>The vertical alignment of the cells in this column. Can be overridden in a cell (<cmd name="Td"/>).</para>
-      </description>
-      <description xml:lang="de">
-        <para>Die vertikale Ausrichtung des Tabelleninhalts. Kann in einer Zelle (Td) überschrieben werden.</para>
-      </description>
-      <choice en="top">
-        <description xml:lang="en">
-          <para>The table cells are top aligned.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Die Tabellenzellen dieser Spalte werden oben ausgerichtet.</para>
-        </description>
-      </choice>
-      <choice en="middle">
-        <description xml:lang="en">
-          <para>The table cells are vertically centered.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Die Tabellenzellen dieser Spalte werden vertikal zentriert ausgerichtet.</para>
-        </description>
-      </choice>
-      <choice en="bottom">
-        <description xml:lang="en">
-          <para>The table cells are aligned at the bottom.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Die Tabellenzellen dieser Spalte werden  unten ausgerichtet.</para>
-        </description>
-      </choice>
     </attribute>
     <example xml:lang="en">
       <para>See the example at <cmd name="Columns"/>.</para>
@@ -1427,14 +1339,6 @@
       <para>Definiert Farben, die später im Layout benutzt werden können</para>
     </description>
     <childelements/>
-    <attribute en="alpha" type="number" optional="yes">
-      <description xml:lang="en">
-        <para>Set the opacity of the color. (0-100/255, where 0 is invisible)</para>
-      </description>
-      <description xml:lang="de">
-        <para>Setze die Farbintensität (Deckung) im Bereich von 0-100 bzw. bei RGB von 0-255. 0 bedeutet unsichtbar.</para>
-      </description>
-    </attribute>
     <attribute en="colorname" type="text" optional="yes">
       <description xml:lang="en">
         <para>The name of the spot color if model is “spotcolor”. The name must match the required color name, such as “PANTONE 116 C”.</para>
@@ -1498,30 +1402,6 @@
       <description xml:lang="de">
         <para>Name der Farbe, die definiert wird.</para>
       </description>
-    </attribute>
-    <attribute en="overprint" optional="yes">
-      <description xml:lang="en">
-        <para>Enable overprint for this color.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Überdrucken für diese Farbe anschalten</para>
-      </description>
-      <choice en="yes">
-        <description xml:lang="en">
-          <para>Enable overprint for this color.</para>
-        </description>
-        <description xml:lang="de">
-          <para>Überdrucken für diese Farbe anschalten.</para>
-        </description>
-      </choice>
-      <choice en="no">
-        <description xml:lang="en">
-          <para>Disable overprint for this color (default).</para>
-        </description>
-        <description xml:lang="de">
-          <para>Überdrucken für diese Farbe ausschalten (Voreinstellung).</para>
-        </description>
-      </choice>
     </attribute>
     <attribute en="value" type="text" optional="yes">
       <description xml:lang="en">
@@ -1773,22 +1653,6 @@
       </description>
       <description xml:lang="de">
         <para>Wählt die Kindelemente aus.</para>
-      </description>
-    </attribute>
-    <attribute en="limit" type="number" optional="yes">
-      <description xml:lang="en">
-        <para>Limits the number of children to the given number.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Die Anzahl der Kinder wird durch die Zahl begrenzt.</para>
-      </description>
-    </attribute>
-    <attribute en="start" optional="yes" type="number" >
-      <description xml:lang="en">
-        <para>The first entry to process. Default is 1.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Der erste Eintrag der verarbeitet werden soll. Voreinstellung ist 1.</para>
       </description>
     </attribute>
     <example xml:lang="de">
@@ -2073,10 +1937,10 @@
     <childelements/>
     <attribute en="href" type="text" optional="yes">
       <description xml:lang="en">
-        <para>Filename of the image. Can be a file in the search path, an absolute file name, a file-URI for absolute paths (e.g. <tt>file:///path/to/image.pdf</tt>) or a location on the web (http, https).</para>
+        <para>Filename of the image. Can be a file in the search path, an absolute file name, a file-URI for absolute paths (e.g. <tt>file:///path/to/image.pdf</tt>) or a location on the web (http, https). Use <tt>placeholder://WxH</tt> (e.g. <tt>placeholder://200x150</tt>) to generate a placeholder image with the given dimensions in PDF points.</para>
       </description>
       <description xml:lang="de">
-        <para>Dateiname des Bildes. Kann entweder eine Datei im Suchpfad sein, ein absoluter Dateiname, ein file-URI-Schema (z.B. <tt>file:///pfad/zum/bild.pdf</tt>) oder eine Quelle im Web (http/https).</para>
+        <para>Dateiname des Bildes. Kann entweder eine Datei im Suchpfad sein, ein absoluter Dateiname, ein file-URI-Schema (z.B. <tt>file:///pfad/zum/bild.pdf</tt>) oder eine Quelle im Web (http/https). Mit <tt>placeholder://BxH</tt> (z.B. <tt>placeholder://200x150</tt>) wird ein Platzhalterbild mit den angegebenen Maßen in PDF-Punkten erzeugt.</para>
       </description>
     </attribute>
     <attribute en="height" type="numberorlength" optional="yes">
@@ -2194,7 +2058,7 @@
     <example xml:lang="en">
       <listing><![CDATA[<Record match="productdata">
   <PlaceObject column="{ $column }">
-    <Image width="10" file="{ string(.) }"/>
+    <Image width="10" href="{ string(.) }"/>
   </PlaceObject>
 </Record>
 ]]></listing>
@@ -2204,7 +2068,7 @@
     <example xml:lang="de">
       <listing><![CDATA[<Record match="produktbild">
   <PlaceObject column="{ $spalte }">
-    <Image width="10" file="{string(.)}" />
+    <Image width="10" href="{string(.)}" />
   </PlaceObject>
 </Record>]]></listing>
     </example>
@@ -2460,26 +2324,6 @@
       </choice>
 
     </attribute>
-    <attribute en="errorcode" optional="yes" type="number" >
-      <description xml:lang="en">
-        <para>If an error is raised, use this code on exit. Defaults to 1. Negative values are reserved for system purpose.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Wenn ein Fehler ausgegeben wird, benutze diesen Fehlercode. Voreinstellung 1. Negative Werte sind für interne Zwecke reserviert.</para>
-      </description>
-    </attribute>
-    <attribute en="exit" optional="yes">
-      <description xml:lang="en"><para>Tells the software to exit immediately.</para></description>
-      <description xml:lang="de"><para>Soll sich der Publisher beenden?</para></description>
-      <choice en="no">
-        <description xml:lang="en"><para>The speedata Publisher continues with the PDF creation.</para></description>
-        <description xml:lang="de"><para>Der speedata Publisher erzeugt weiterhin die PDF-Datei</para></description>
-      </choice>
-      <choice en="yes">
-        <description xml:lang="en"><para>The speedata Publisher exits without finishing the PDF file.</para></description>
-        <description xml:lang="de"><para>Der speedata Publisher beendet sich ohne die PDF-Datei fertig zu stellen.</para></description>
-      </choice>
-    </attribute>
     <example xml:lang="de">
       <listing><![CDATA[<Message select="concat('Price: ',@price)" error="no"/>]]></listing>
     </example>
@@ -2517,14 +2361,6 @@
       </description>
       <description xml:lang="de">
         <para>Gibt die minimale Version des Publishers an. Format: 1.6.13. Die letzten Ziffern können weggelassen werden. Falls die erste oder die zweite Ziffer der Versionsangabe unterschiedlich ist, wird eine Warnung ausgegeben.</para>
-      </description>
-    </attribute>
-    <attribute en="name" type="text" optional="yes">
-      <description xml:lang="en">
-        <para>A name for the layout. Optional, without any influence on the layout itself.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Name des Layouts. Hat keinen Einfluss auf das Layout.</para>
       </description>
     </attribute>
     <example xml:lang="en">
@@ -2788,7 +2624,7 @@
       <listing><![CDATA[<Record match="image">
   <NextRow row="5"/>
   <PlaceObject column="{column}">
-    <Image width="10" file="{.}"/>
+    <Image width="10" href="{.}"/>
   </PlaceObject>
 </Record>]]></listing>
       <para>This places the image on row 5.</para>
@@ -2797,7 +2633,7 @@
       <listing><![CDATA[<Record match="bild">
   <NeueZeile row="5" />
   <PlaceObject column="{$spalte}">
-    <Image width="10" file="{.}" />
+    <Image width="10" href="{.}" />
   </PlaceObject>
 </Record>]]></listing>
     </example>
@@ -3494,13 +3330,13 @@
       <para>Positioning inside the grid:</para>
       <listing><![CDATA[<Record match="image">
   <PlaceObject column="12" frame="solid" framecolor="red">
-    <Image width="10" file="_samplea.pdf"/>
+    <Image width="10" href="_samplea.pdf"/>
   </PlaceObject>
 </Record>]]></listing>
       <para>Absolute positioning (from top left edge):</para>
       <listing><![CDATA[<Record match="image">
   <PlaceObject column="1cm" row="4cm" frame="solid" framecolor="red">
-    <Image width="10" file="_samplea.pdf"/>
+    <Image width="10" href="_samplea.pdf"/>
   </PlaceObject>
 </Record>
 ]]></listing>
@@ -3508,13 +3344,13 @@
     <example xml:lang="de">
       <listing><![CDATA[<Record match="bild">
   <PlaceObject column="12" frame="solid" framecolor="red">
-    <Image width="10" file="_samplea.pdf" />
+    <Image width="10" href="_samplea.pdf" />
   </PlaceObject>
 </Record>]]></listing>
       <para>Absolute Platzierung:</para>
       <listing><![CDATA[<Record match="bild">
   <PlaceObject column="1cm" row="4cm" frame="solid" framecolor="red">
-    <Image width="10" file="_samplea.pdf" />
+    <Image width="10" href="_samplea.pdf" />
   </PlaceObject>
 </Record>]]></listing>
     </example>
@@ -3553,14 +3389,6 @@
       </description>
       <description xml:lang="de">
         <para>Name des Platzierungsbereichs</para>
-      </description>
-    </attribute>
-    <attribute en="framecolor" optional="yes" type="text">
-      <description xml:lang="en">
-        <para>Set the color of the frame in grid=yes mode. Defaults to 'red'</para>
-      </description>
-      <description xml:lang="de">
-        <para>Setze die Farbe im Modus wenn die Platzierungsbereiche angezeigt werden (grid=yes). Voreinstellung ist 'red'.</para>
       </description>
     </attribute>
     <example xml:lang="en">
@@ -3656,14 +3484,6 @@
       <para>Bearbeitet alle angegebenen Datensätze. Die Elemente, für die die Regeln ausgeführt werden sollen, werden mit dem Attribut select angegeben.</para>
     </description>
     <childelements/>
-    <attribute en="limit" optional="yes" type="number">
-      <description xml:lang="en">
-        <para>Limits the number of items processed with this command</para>
-      </description>
-      <description xml:lang="de">
-        <para>Beschränkt die Anzahl der Datensätze, die mit diesem Befehl verarbeitet werden.</para>
-      </description>
-    </attribute>
     <attribute en="select" type="xpath" optional="no">
       <description xml:lang="en">
         <para>Selection of child elements, that are to be processed.</para>
@@ -3715,10 +3535,10 @@
     </attribute>
     <attribute en="mode" type="text" optional="yes">
       <description xml:lang="en">
-        <para>Name of the mode that matches the mode in .</para>
+        <para>Name of the mode that matches the mode in <cmd name="ProcessNode" />.</para>
       </description>
       <description xml:lang="de">
-        <para>Name des Modus der mit dem in  übereinstimmt.</para>
+        <para>Name des Modus der mit dem in <cmd name="ProcessNode" /> übereinstimmt.</para>
       </description>
     </attribute>
     <example xml:lang="en">
@@ -3834,14 +3654,6 @@
       </description>
       <description xml:lang="de">
         <para>Alternativ zur Angabe des Datensatzes im Kindelement.</para>
-      </description>
-    </attribute>
-    <attribute en="attributes" type="xpath" optional="yes">
-      <description xml:lang="en">
-        <para>The variable (as an XPath expression, e.g. <tt>$foo</tt>) which contains <cmd name="Attribute"/> Elements. These attributes are added to the root element.</para>
-      </description>
-      <description xml:lang="de">
-        <para>Der Variablenname (als XPath-Ausdruck, also <tt>$foo</tt>), der <cmd name="Attribute"/>-Elemente beinhaltet. Diese Attribute werden zum Wurzelelement hinzugefügt.</para>
       </description>
     </attribute>
     <example xml:lang="en">
@@ -4504,7 +4316,7 @@
   <entry pos="4" name="GNK Dinamo Zagreb" p="6"
   	  tw="0" td="1" tl="5" tf="1"  ta="14" tpm="-13" pts="1" />
 </data>]]></listing>
-      <image file="ref-table.png"/>
+      <image href="ref-table.png"/>
     </example>
   </command>
 
@@ -4683,7 +4495,7 @@
     <example xml:lang="de">
       <listing><![CDATA[<Tr>
   <Td colspan="2" align="right"><Paragraph><Value>Text</Value></Paragraph></Td>
-  <Td rowspan="3"><Image width="3" file="bildname.jpg"/></Td>
+  <Td rowspan="3"><Image width="3" href="bildname.jpg"/></Td>
 </Tr>]]></listing>
     </example>
     <example xml:lang="en">

@@ -6,7 +6,9 @@ linktitle: XPath
 
 # XPath and Layout Functions
 
-XTS uses XPath as its expression language. XPath appears in `select` attributes, `test` conditions, and inside curly braces `{...}` in some contexts.
+XPath is a query language for selecting nodes and computing values in XML documents. It lets you navigate the XML tree, filter elements by conditions, and combine values with expressions — similar to how file paths navigate a directory tree, but much more powerful.
+
+XTS uses XPath as its expression language. XPath appears in `select` attributes, `test` conditions, and inside curly braces `{...}` in some contexts. The XPath implementation is provided by the [goxml XPath package](https://doc.speedata.de/goxml/xpath/) — see its documentation for the full list of supported XPath functions and syntax details.
 
 If you're new to XPath, the [W3Schools XPath tutorial](https://www.w3schools.com/xml/xpath_intro.asp) is a good starting point. This page focuses on the XTS-specific extensions.
 

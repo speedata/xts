@@ -892,6 +892,25 @@ func cmdImage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	if attValues.Page == 0 {
 		attValues.Page = 1
 	}
+
+	if strings.HasPrefix(attValues.Href, "placeholder://") {
+		imgObj, err := loadPlaceholderImage(xd, attValues.Href)
+		if err != nil {
+			return nil, err
+		}
+		hl := createImageHlist(xd, attValues.Width, attValues.Height,
+			attValues.MinWidth, attValues.MaxWidth, attValues.MinHeight, attValues.MaxHeight,
+			attValues.Stretch, imgObj, 1)
+		if hl == nil {
+			return nil, nil
+		}
+		if hl.Attributes == nil {
+			hl.Attributes = node.H{}
+		}
+		hl.Attributes["origin"] = "image"
+		return xpath.Sequence{hl}, nil
+	}
+
 	filename, err := xd.cfg.FindFile(attValues.Href)
 	if err != nil {
 		slog.Error(err.Error())
@@ -1751,6 +1770,8 @@ func cmdSaveXML(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 }
 
 // cmdSection is a structural grouping element that simply dispatches its children.
+// The "name" attribute exists in the XML schema for documentation purposes only
+// and is intentionally not parsed here.
 func cmdSection(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	return dispatch(xd, layoutelt)
 }

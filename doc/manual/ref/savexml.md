@@ -19,12 +19,6 @@ Saves an element/attribute structure to be used in the next publisher run. The c
 
 
 
-`attributes` ([XPath expressions](/manual/data-processing/xpath), optional)
-:   The variable (as an XPath expression, e.g. `$foo`) which contains [Attribute](../attribute) Elements. These attributes are added to the root element.
-
-
-
-
 `elementname` (text)
 :   Name of the root element that surrounds the elements given by the child elements.
 

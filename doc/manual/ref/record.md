@@ -26,7 +26,7 @@ Contains the instructions to be executed when a data element matches the given m
 
 
 `mode` (text, optional)
-:   Name of the mode that matches the mode in .
+:   Name of the mode that matches the mode in [ProcessNode](../processnode).
 
 
 

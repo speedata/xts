@@ -10,6 +10,8 @@ Think of the grid as an invisible sheet of graph paper laid over your page. Ever
 
 XTS always works with a grid. Since every publication is different, there's no magic default. Out of the box, the grid is 1cm x 1cm, which is rarely what you want. So you'll almost always set it yourself.
 
+Don't worry -- the grid doesn't limit you. You can always place objects at exact positions using absolute coordinates (like `column="5cm" row="12mm"`), which is perfect for logos, page numbers, or other elements that need pixel-precise placement. You can also use `<HTML>` for content that follows its own CSS-based flow layout. The grid is there to help, not to constrain.
+
 ## Setting up the grid
 
 Use `<SetGrid>` to define your grid. There are two approaches:

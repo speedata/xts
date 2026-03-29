@@ -19,20 +19,8 @@ Executes the given commands for all elements in the data XML file that match the
 
 
 
-`limit` (number, optional)
-:   Limits the number of children to the given number.
-
-
-
-
 `select` ([XPath expressions](/manual/data-processing/xpath))
 :   Selects the child elements from the data XML
-
-
-
-
-`start` (number, optional)
-:   The first entry to process. Default is 1.
 
 
 

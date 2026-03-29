@@ -83,6 +83,17 @@ Images follow the same file lookup rules as everything else in XTS -- see [File 
 <Image href="photo.jpg" width="5cm"/>
 ```
 
+## Placeholder images
+
+During development you often need images that don't exist yet. Instead of hunting for dummy files, use the built-in `placeholder://` scheme:
+
+```xml
+<Image href="placeholder://200x150" />
+<Image href="placeholder://400x200" width="10cm"/>
+```
+
+The dimensions after `placeholder://` are in PDF points (WxH). XTS generates a simple placeholder graphic on the fly -- gray background, diagonal cross, a colored circle, and the dimensions as text. No files on disk needed.
+
 ## See also
 
 - [Image reference](/reference/commands/image)

@@ -429,49 +429,8 @@
         <element name="Column">
             <a:documentation>Gibt die Eigenschaften einer Spalte in einer Tabelle an.</a:documentation>
             <optional>
-                <attribute name="align">
-                    <a:documentation>Die horizontale Ausrichtung des Tabelleninhalts. Kann in einer Zelle (Td) überschrieben werden.</a:documentation>
-                    <choice>
-                        <value>left</value>
-                        <a:documentation>Die Tabellenzellen dieser Spalte werden linksbündig ausgerichtet.</a:documentation>
-                        <value>center</value>
-                        <a:documentation>Die Tabellenzellen dieser Spalte werden horizontal zentriert.</a:documentation>
-                        <value>right</value>
-                        <a:documentation>Die Tabellenzellen dieser Spalte werden rechtsbündig ausgerichtet.</a:documentation>
-                    </choice>
-                </attribute>
-            </optional>
-            <optional>
-                <attribute name="backgroundcolor">
-                    <a:documentation>Farbe der Tabellenspalte.</a:documentation>
-                </attribute>
-            </optional>
-            <optional>
-                <attribute name="padding-left">
-                    <a:documentation>Setze das linke padding für diese Spalte</a:documentation>
-                </attribute>
-            </optional>
-            <optional>
-                <attribute name="padding-right">
-                    <a:documentation>Setze das rechte padding für diese Spalte</a:documentation>
-                </attribute>
-            </optional>
-            <optional>
                 <attribute name="width">
                     <a:documentation>Breite der Spalte. Kann entweder in Rasterzellen (Zahl), absoluten Maßangaben (z.B. 1cm) oder in *-Angaben (z.B. 4*) angegeben werden.</a:documentation>
-                </attribute>
-            </optional>
-            <optional>
-                <attribute name="valign">
-                    <a:documentation>Die vertikale Ausrichtung des Tabelleninhalts. Kann in einer Zelle (Td) überschrieben werden.</a:documentation>
-                    <choice>
-                        <value>top</value>
-                        <a:documentation>Die Tabellenzellen dieser Spalte werden oben ausgerichtet.</a:documentation>
-                        <value>middle</value>
-                        <a:documentation>Die Tabellenzellen dieser Spalte werden vertikal zentriert ausgerichtet.</a:documentation>
-                        <value>bottom</value>
-                        <a:documentation>Die Tabellenzellen dieser Spalte werden  unten ausgerichtet.</a:documentation>
-                    </choice>
                 </attribute>
             </optional>
             <empty></empty>
@@ -569,11 +528,6 @@
         <element name="DefineColor">
             <a:documentation>Definiert Farben, die später im Layout benutzt werden können</a:documentation>
             <optional>
-                <attribute name="alpha">
-                    <a:documentation>Setze die Farbintensität (Deckung) im Bereich von 0-100 bzw. bei RGB von 0-255. 0 bedeutet unsichtbar.</a:documentation>
-                </attribute>
-            </optional>
-            <optional>
                 <attribute name="colorname">
                     <a:documentation>Der Name der Sonderfarbe wenn das Modell auf »spotcolor« eingestellt ist. Der muss den offiziellen Namen tragen, wie z.B. »PANTONE 116 C«.</a:documentation>
                 </attribute>
@@ -598,17 +552,6 @@
             <attribute name="name">
                 <a:documentation>Name der Farbe, die definiert wird.</a:documentation>
             </attribute>
-            <optional>
-                <attribute name="overprint">
-                    <a:documentation>Überdrucken für diese Farbe anschalten</a:documentation>
-                    <choice>
-                        <value>yes</value>
-                        <a:documentation>Überdrucken für diese Farbe anschalten.</a:documentation>
-                        <value>no</value>
-                        <a:documentation>Überdrucken für diese Farbe ausschalten (Voreinstellung).</a:documentation>
-                    </choice>
-                </attribute>
-            </optional>
             <optional>
                 <attribute name="value">
                     <a:documentation>Der Hexwert der Farbe, wie beispielsweise #FA5 oder #FFAA55 oder rgb(255,170,85) oder rgba(255,170,85,1).</a:documentation>
@@ -720,16 +663,6 @@
                     <attribute name="select">
                         <a:documentation>Wählt die Kindelemente aus.</a:documentation>
                     </attribute>
-                    <optional>
-                        <attribute name="limit">
-                            <a:documentation>Die Anzahl der Kinder wird durch die Zahl begrenzt.</a:documentation>
-                        </attribute>
-                    </optional>
-                    <optional>
-                        <attribute name="start">
-                            <a:documentation>Der erste Eintrag der verarbeitet werden soll. Voreinstellung ist 1.</a:documentation>
-                        </attribute>
-                    </optional>
                     <oneOrMore>
                         <interleave>
                             <optional>
@@ -1161,22 +1094,6 @@
                             </choice>
                         </attribute>
                     </optional>
-                    <optional>
-                        <attribute name="errorcode">
-                            <a:documentation>Wenn ein Fehler ausgegeben wird, benutze diesen Fehlercode. Voreinstellung 1. Negative Werte sind für interne Zwecke reserviert.</a:documentation>
-                        </attribute>
-                    </optional>
-                    <optional>
-                        <attribute name="exit">
-                            <a:documentation>Soll sich der Publisher beenden?</a:documentation>
-                            <choice>
-                                <value>no</value>
-                                <a:documentation>Der speedata Publisher erzeugt weiterhin die PDF-Datei</a:documentation>
-                                <value>yes</value>
-                                <a:documentation>Der speedata Publisher beendet sich ohne die PDF-Datei fertig zu stellen.</a:documentation>
-                            </choice>
-                        </attribute>
-                    </optional>
                     <interleave>
                         <optional>
                             <oneOrMore>
@@ -1202,11 +1119,6 @@
                     <optional>
                         <attribute name="version">
                             <a:documentation>Gibt die minimale Version des Publishers an. Format: 1.6.13. Die letzten Ziffern können weggelassen werden. Falls die erste oder die zweite Ziffer der Versionsangabe unterschiedlich ist, wird eine Warnung ausgegeben.</a:documentation>
-                        </attribute>
-                    </optional>
-                    <optional>
-                        <attribute name="name">
-                            <a:documentation>Name des Layouts. Hat keinen Einfluss auf das Layout.</a:documentation>
                         </attribute>
                     </optional>
                     <oneOrMore>
@@ -1860,11 +1772,6 @@
                     <attribute name="name">
                         <a:documentation>Name des Platzierungsbereichs</a:documentation>
                     </attribute>
-                    <optional>
-                        <attribute name="framecolor">
-                            <a:documentation>Setze die Farbe im Modus wenn die Platzierungsbereiche angezeigt werden (grid=yes). Voreinstellung ist &#39;red&#39;.</a:documentation>
-                        </attribute>
-                    </optional>
                     <oneOrMore>
                         <interleave>
                             <optional>
@@ -1901,11 +1808,6 @@
     <define name="e_ProcessNode">
         <element name="ProcessNode">
             <a:documentation>Bearbeitet alle angegebenen Datensätze. Die Elemente, für die die Regeln ausgeführt werden sollen, werden mit dem Attribut select angegeben.</a:documentation>
-            <optional>
-                <attribute name="limit">
-                    <a:documentation>Beschränkt die Anzahl der Datensätze, die mit diesem Befehl verarbeitet werden.</a:documentation>
-                </attribute>
-            </optional>
             <attribute name="select">
                 <a:documentation>Auswahl der Kindelemente, die verarbeitet werden sollen.</a:documentation>
             </attribute>
@@ -1927,7 +1829,7 @@
                     </attribute>
                     <optional>
                         <attribute name="mode">
-                            <a:documentation>Name des Modus der mit dem in  übereinstimmt.</a:documentation>
+                            <a:documentation>Name des Modus der mit dem in ProcessNode übereinstimmt.</a:documentation>
                         </attribute>
                     </optional>
                     <oneOrMore>
@@ -2006,11 +1908,6 @@
                     <optional>
                         <attribute name="select">
                             <a:documentation>Alternativ zur Angabe des Datensatzes im Kindelement.</a:documentation>
-                        </attribute>
-                    </optional>
-                    <optional>
-                        <attribute name="attributes">
-                            <a:documentation>Der Variablenname (als XPath-Ausdruck, also $foo), der Attribute-Elemente beinhaltet. Diese Attribute werden zum Wurzelelement hinzugefügt.</a:documentation>
                         </attribute>
                     </optional>
                     <oneOrMore>

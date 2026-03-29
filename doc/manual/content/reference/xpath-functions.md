@@ -7,6 +7,8 @@ linktitle: XPath Functions
 
 XTS extends XPath with functions in the `urn:speedata.de/2021/xtsfunctions/en` namespace, typically bound to the `sd:` prefix. All functions are called as `sd:functionname(...)`.
 
+In addition to the `sd:` functions listed below, all standard XPath functions (such as `string()`, `number()`, `concat()`, `contains()`, `count()`, etc.) are available. XTS uses the [goxml XPath package](https://doc.speedata.de/goxml/xpath/) — see its documentation for the full list of supported standard XPath functions and operators.
+
 ## Page and position
 
 `sd:current-page()`

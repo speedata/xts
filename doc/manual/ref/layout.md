@@ -19,12 +19,6 @@ This command is the root element in the Layout instructions.
 
 
 
-`name` (text, optional)
-:   A name for the layout. Optional, without any influence on the layout itself.
-
-
-
-
 `version` (number, optional)
 :   Minimum publisher version required. If major or minor version differ, give a warning. Format: 1.6.12 (revision number can be left out).
 
