@@ -43,6 +43,33 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
+  <xs:element name="AttachFile">
+    <xs:annotation>
+      <xs:documentation>Attach a file to the PDF document. This is used for example to embed ZUGFeRD/Factur-X invoices.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="href" use="required">
+        <xs:annotation>
+          <xs:documentation>Path to the file to attach.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="name">
+        <xs:annotation>
+          <xs:documentation>Display name in PDF viewer. Defaults to the file name.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="description">
+        <xs:annotation>
+          <xs:documentation>Description of the attachment.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="type">
+        <xs:annotation>
+          <xs:documentation>The MIME type of the attachment (e.g. "application/pdf"). If set to "ZUGFeRD invoice" or "facturx", the attached XML is treated as a Factur-X / ZUGFeRD invoice: the conformance profile is detected automatically, the required XMP metadata is added, and the PDF format is automatically set to PDF/A-3b. If not set, the MIME type is detected from the file extension.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="Action">
     <xs:annotation>
       <xs:documentation>Associates an action with a text. Once the text is placed on the page, the associated action will be executed. The action can be compared to an invisible character. When the publisher outputs the character, the corresponding instructions will be run.</xs:documentation>
@@ -59,6 +86,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:sequence maxOccurs="unbounded">
+        <xs:element minOccurs="0" ref="en:AttachFile"/>
         <xs:element minOccurs="0" ref="en:ClearPage"/>
         <xs:element minOccurs="0" ref="en:ForAll"/>
         <xs:element minOccurs="0" ref="en:Slate"/>
@@ -84,6 +112,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:sequence maxOccurs="unbounded">
+        <xs:element minOccurs="0" ref="en:AttachFile"/>
         <xs:element minOccurs="0" ref="en:ClearPage"/>
         <xs:element minOccurs="0" ref="en:ForAll"/>
         <xs:element minOccurs="0" ref="en:Slate"/>
@@ -367,6 +396,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:sequence maxOccurs="unbounded">
+        <xs:element minOccurs="0" ref="en:AttachFile"/>
         <xs:element minOccurs="0" ref="en:ClearPage"/>
         <xs:element minOccurs="0" ref="en:ForAll"/>
         <xs:element minOccurs="0" ref="en:Slate"/>
@@ -899,6 +929,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:sequence maxOccurs="unbounded">
+        <xs:element minOccurs="0" ref="en:AttachFile"/>
         <xs:element minOccurs="0" ref="en:DefineColor"/>
         <xs:element minOccurs="0" ref="en:DefineMasterPage"/>
         <xs:element minOccurs="0" ref="en:Function"/>
@@ -1061,6 +1092,49 @@
         <xs:annotation>
           <xs:documentation>A comma separated list of OpenType features such as +kern,-liga. Used as a default for all paragraphs.</xs:documentation>
         </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="imagenotfound">
+        <xs:annotation>
+          <xs:documentation>Controls behavior when an image file is not found. With "warning" (default), a placeholder image is inserted and processing continues. With "error", a missing image stops the layout run.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="warning">
+              <xs:annotation>
+                <xs:documentation>Insert a placeholder image and continue (default).</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="error">
+              <xs:annotation>
+                <xs:documentation>Report an error and stop processing.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="missingglyph">
+        <xs:annotation>
+          <xs:documentation>Controls behavior when a character is not found in the font. With "warning" (default), a warning is logged and the character is skipped. With "error", the layout run is stopped. With "none", missing glyphs are silently ignored.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="warning">
+              <xs:annotation>
+                <xs:documentation>Log a warning and skip the character (default).</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="error">
+              <xs:annotation>
+                <xs:documentation>Report an error and stop processing.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="none">
+              <xs:annotation>
+                <xs:documentation>Silently ignore missing glyphs.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
       </xs:attribute>
       <xs:attribute name="mainlanguage">
         <xs:annotation>
@@ -1650,6 +1724,35 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
+      <xs:attribute name="format">
+        <xs:annotation>
+          <xs:documentation>Set the PDF output format.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="PDF/A-3b">
+              <xs:annotation>
+                <xs:documentation>PDF/A-3b format (supports file attachments, required for ZUGFeRD)</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="PDF/X-3">
+              <xs:annotation>
+                <xs:documentation>PDF/X-3 format (for printing)</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="PDF/X-4">
+              <xs:annotation>
+                <xs:documentation>PDF/X-4 format (for printing)</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="PDF/UA">
+              <xs:annotation>
+                <xs:documentation>PDF/UA format (for accessibility)</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
       <xs:attribute name="duplex">
         <xs:annotation>
           <xs:documentation>Set viewer preference to one or two page printing. Default: empty.</xs:documentation>
@@ -1997,6 +2100,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:sequence maxOccurs="unbounded">
+        <xs:element minOccurs="0" ref="en:AttachFile"/>
         <xs:element minOccurs="0" ref="en:ClearPage"/>
         <xs:element minOccurs="0" ref="en:ForAll"/>
         <xs:element minOccurs="0" ref="en:Slate"/>
@@ -2065,6 +2169,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:sequence maxOccurs="unbounded">
+        <xs:element minOccurs="0" ref="en:AttachFile"/>
         <xs:element minOccurs="0" ref="en:DefineColor"/>
         <xs:element minOccurs="0" ref="en:DefineMasterPage"/>
         <xs:element minOccurs="0" ref="en:Function"/>

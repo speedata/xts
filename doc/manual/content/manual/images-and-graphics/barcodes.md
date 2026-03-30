@@ -18,7 +18,7 @@ XTS can generate barcodes and QR codes directly via the HTML `<barcode>` element
 </PlaceObject>
 ```
 
-![qrcode](/manual/img/qrcode-hallowelt.png)
+<img src="/manual/img/qrcode-hallowelt.png" alt="qrcode" style="max-width: 200px">
 <figcaption>A QR code encoding "Hello world".</figcaption>
 
 ## Supported types

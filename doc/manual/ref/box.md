@@ -69,7 +69,7 @@ looks like
 
 
 
-![](../img/ref-greenbox.png){: style="width=auto"; }
+![](../img/ref-greenbox.png)
 
 
 

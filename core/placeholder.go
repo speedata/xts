@@ -132,6 +132,99 @@ func writeBezierCircle(buf *bytes.Buffer, cx, cy, r float64) {
 		ff(cx+kr), ff(cy-r), ff(cx+r), ff(cy-kr), ff(cx+r), ff(cy))
 }
 
+// loadFileNotFoundImage generates a "file not found" placeholder PDF and loads
+// it as an Imagefile. The image has a red background with a large question mark
+// and the filename displayed below.
+func loadFileNotFoundImage(xd *xtsDocument, filename string) (*pdf.Imagefile, error) {
+	const w, h = 150, 150
+	pdfData, err := generateFileNotFoundPDF(w, h, filename)
+	if err != nil {
+		return nil, fmt.Errorf("generating file-not-found PDF: %w", err)
+	}
+	reader := bytes.NewReader(pdfData)
+	return xd.document.Doc.LoadImageFromReader(reader, "/MediaBox", 1)
+}
+
+// generateFileNotFoundPDF creates a single-page PDF with a red background,
+// a large "?" and the missing filename.
+func generateFileNotFoundPDF(w, h float64, filename string) ([]byte, error) {
+	var buf bytes.Buffer
+	pw := pdf.NewPDFWriter(&buf)
+	pw.DefaultPageWidth = w
+	pw.DefaultPageHeight = h
+
+	cs := pw.NewObject()
+	writeFileNotFoundStream(cs.Data, w, h, filename)
+
+	pg := pw.AddPage(cs, 0)
+	pg.Width = w
+	pg.Height = h
+	pg.Dict = pdf.Dict{
+		"Resources": pdf.Dict{
+			"Font": pdf.Dict{
+				pdf.Name("F1"): "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>",
+				pdf.Name("F2"): "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+			},
+		},
+	}
+
+	if err := pw.Finish(); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+// writeFileNotFoundStream writes PDF drawing operators for the file-not-found visual.
+func writeFileNotFoundStream(buf *bytes.Buffer, w, h float64, filename string) {
+	cx := w / 2
+
+	// Red background
+	fmt.Fprintf(buf, "0.85 0.15 0.15 rg\n")
+	fmt.Fprintf(buf, "0 0 %s %s re f\n", ff(w), ff(h))
+
+	// Dark red border
+	fmt.Fprintf(buf, "0.6 0.1 0.1 RG 2 w\n")
+	fmt.Fprintf(buf, "1 1 %s %s re S\n", ff(w-2), ff(h-2))
+
+	// Large white question mark
+	qSize := math.Min(w, h) * 0.55
+	qSize = math.Max(20, math.Min(qSize, 120))
+	// "?" is about 0.58 em wide in Helvetica-Bold
+	qx := cx - qSize*0.29
+	qy := h*0.55 - qSize*0.35
+
+	fmt.Fprintf(buf, "1 g\n")
+	fmt.Fprintf(buf, "BT\n")
+	fmt.Fprintf(buf, "/F1 %s Tf\n", ff(qSize))
+	fmt.Fprintf(buf, "%s %s Td\n", ff(qx), ff(qy))
+	fmt.Fprintf(buf, "(?) Tj\n")
+	fmt.Fprintf(buf, "ET\n")
+
+	// Filename text at the bottom
+	if len(filename) > 0 {
+		fnSize := math.Min(w, h) * 0.07
+		fnSize = math.Max(5, math.Min(fnSize, 12))
+
+		// Truncate filename if too long for the width
+		maxChars := int(w / (fnSize * 0.52))
+		label := filename
+		if len(label) > maxChars && maxChars > 3 {
+			label = "..." + label[len(label)-maxChars+3:]
+		}
+
+		fnWidth := float64(len(label)) * fnSize * 0.52
+		fnx := cx - fnWidth/2
+		fny := h * 0.08
+
+		fmt.Fprintf(buf, "1 1 1 rg\n")
+		fmt.Fprintf(buf, "BT\n")
+		fmt.Fprintf(buf, "/F2 %s Tf\n", ff(fnSize))
+		fmt.Fprintf(buf, "%s %s Td\n", ff(fnx), ff(fny))
+		fmt.Fprintf(buf, "(%s) Tj\n", pdfEscape(label))
+		fmt.Fprintf(buf, "ET\n")
+	}
+}
+
 // ff formats a float for PDF content streams.
 func ff(f float64) string {
 	return pdf.FloatToPoint(f)

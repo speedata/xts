@@ -109,7 +109,7 @@ Includes an external Graphic. Allowed graphic formats are PDF (.pdf), PNG (.png)
 ```xml
 <Record match="productdata">
   <PlaceObject column="{ $column }">
-    <Image width="10" file="{ string(.) }"/>
+    <Image width="10" href="{ string(.) }"/>
   </PlaceObject>
 </Record>
 

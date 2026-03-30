@@ -8,7 +8,7 @@ A structural grouping element for organizing the layout. Has no effect on the ou
 
 ##  Child elements
 
-[DefineColor](../definecolor), [DefineMasterPage](../definemasterpage), [Function](../function), [Message](../message), [Options](../options), [PDFOptions](../pdfoptions), [PageFormat](../pageformat), [Record](../record), [Section](../section), [SetGrid](../setgrid), [SetVariable](../setvariable), [StyleSheet](../stylesheet), [Trace](../trace)
+[AttachFile](../attachfile), [DefineColor](../definecolor), [DefineMasterPage](../definemasterpage), [Function](../function), [Message](../message), [Options](../options), [PDFOptions](../pdfoptions), [PageFormat](../pageformat), [Record](../record), [Section](../section), [SetGrid](../setgrid), [SetVariable](../setvariable), [StyleSheet](../stylesheet), [Trace](../trace)
 
 ##  Parent elements
 

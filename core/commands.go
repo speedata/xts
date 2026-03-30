@@ -2,8 +2,10 @@ package core
 
 import (
 	"context"
+	"encoding/xml"
 	"fmt"
 	"log/slog"
+	"mime"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -43,6 +45,7 @@ func init() {
 	dispatchTable = map[string]commandFunc{
 		"A":                cmdA,
 		"Action":           cmdAction,
+		"AttachFile":       cmdAttachFile,
 		"Attribute":        cmdAttribute,
 		"B":                cmdB,
 		"Br":               cmdBr,
@@ -913,8 +916,26 @@ func cmdImage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 
 	filename, err := xd.cfg.FindFile(attValues.Href)
 	if err != nil {
-		slog.Error(err.Error())
-		return nil, err
+		if xd.imageNotFoundError {
+			slog.Error("Image file not found", "href", attValues.Href, "error", err)
+			return nil, err
+		}
+		slog.Warn("Image file not found, using placeholder", "href", attValues.Href, "error", err)
+		imgObj, fnfErr := loadFileNotFoundImage(xd, attValues.Href)
+		if fnfErr != nil {
+			return nil, fmt.Errorf("file not found (%w) and placeholder generation failed: %w", err, fnfErr)
+		}
+		hl := createImageHlist(xd, attValues.Width, attValues.Height,
+			attValues.MinWidth, attValues.MaxWidth, attValues.MinHeight, attValues.MaxHeight,
+			attValues.Stretch, imgObj, 1)
+		if hl == nil {
+			return nil, nil
+		}
+		if hl.Attributes == nil {
+			hl.Attributes = node.H{}
+		}
+		hl.Attributes["origin"] = "image"
+		return xpath.Sequence{hl}, nil
 	}
 
 	var box string
@@ -1263,6 +1284,125 @@ func cmdNextFrame(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	return nil, nil
 }
 
+// facturxProfiles maps GuidelineSpecifiedDocumentContextParameter URNs to
+// Factur-X conformance level names.
+var facturxProfiles = map[string]string{
+	"urn:factur-x.eu:1p0:minimum":                                                        "MINIMUM",
+	"urn:factur-x.eu:1p0:basicwl":                                                        "BASIC WL",
+	"urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic":                        "BASIC",
+	"urn:cen.eu:en16931:2017":                                                             "EN 16931",
+	"urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended":                    "EXTENDED",
+	"urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0":              "XRECHNUNG",
+	"urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_2.3":              "XRECHNUNG",
+	"urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_2.2":              "XRECHNUNG",
+	"urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_2.1":              "XRECHNUNG",
+	"urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_2.0":              "XRECHNUNG",
+	"urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_1.2":              "XRECHNUNG",
+	"urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.3":         "XRECHNUNG",
+	"urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.2":         "XRECHNUNG",
+	"urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.1":         "XRECHNUNG",
+	"urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.0":         "XRECHNUNG",
+	"urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_1.2":         "XRECHNUNG",
+}
+
+// detectFacturxProfile reads a CrossIndustryInvoice XML and returns the
+// conformance level string, or "" if not detected.
+func detectFacturxProfile(data []byte) string {
+	type guidelineID struct {
+		ID string `xml:"ExchangedDocumentContext>GuidelineSpecifiedDocumentContextParameter>ID"`
+	}
+	var doc guidelineID
+	if err := xml.Unmarshal(data, &doc); err != nil {
+		return ""
+	}
+	if level, ok := facturxProfiles[doc.ID]; ok {
+		return level
+	}
+	return ""
+}
+
+func cmdAttachFile(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+	attValues := &struct {
+		Href        string `sdxml:"mustexist"`
+		Name        *string
+		Description *string
+		Type        *string
+	}{}
+	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+
+	filename, err := xd.cfg.FindFile(attValues.Href)
+	if err != nil {
+		return nil, newTypesettingErrorf("AttachFile", layoutelt.Line, "file not found: %s", attValues.Href)
+	}
+
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		return nil, newTypesettingErrorf("AttachFile", layoutelt.Line, "cannot read file: %s", err)
+	}
+
+	name := filepath.Base(filename)
+	if attValues.Name != nil {
+		name = *attValues.Name
+	}
+
+	mimeType := mime.TypeByExtension(filepath.Ext(filename))
+	if mimeType == "" {
+		mimeType = "application/octet-stream"
+	}
+
+	isFacturx := false
+	if attValues.Type != nil {
+		switch *attValues.Type {
+		case "ZUGFeRD invoice", "facturx":
+			isFacturx = true
+			mimeType = "text/xml"
+		default:
+			mimeType = *attValues.Type
+		}
+	}
+
+	attachment := document.Attachment{
+		Name:     name,
+		Data:     data,
+		MimeType: mimeType,
+	}
+	if attValues.Description != nil {
+		attachment.Description = *attValues.Description
+	}
+
+	xd.document.Doc.AttachFile(attachment)
+
+	if isFacturx {
+		xd.document.Doc.Format = document.FormatPDFA3b
+		conformanceLevel := detectFacturxProfile(data)
+		if conformanceLevel == "" {
+			return nil, newTypesettingErrorf("AttachFile", layoutelt.Line, "cannot detect Factur-X profile from %s", attValues.Href)
+		}
+		xd.document.Doc.AddXMPExtension(document.XMPExtension{
+			Schema:       "Factur-X PDFA Extension Schema",
+			NamespaceURI: "urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0#",
+			Prefix:       "fx",
+			Properties: []document.XMPExtensionProperty{
+				{Name: "DocumentFileName", ValueType: "Text", Category: "external", Description: "name of the embedded XML invoice file"},
+				{Name: "DocumentType", ValueType: "Text", Category: "external", Description: "INVOICE"},
+				{Name: "Version", ValueType: "Text", Category: "external", Description: "The actual Factur-X version"},
+				{Name: "ConformanceLevel", ValueType: "Text", Category: "external", Description: "The conformance level of the Factur-X invoice"},
+			},
+			Values: map[string]string{
+				"ConformanceLevel": conformanceLevel,
+				"DocumentFileName": name,
+				"DocumentType":     "INVOICE",
+				"Version":          "1.0",
+			},
+		})
+	}
+
+	return nil, nil
+}
+
 func cmdPDFOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
@@ -1270,6 +1410,7 @@ func cmdPDFOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 		Creator           *string
 		DisplayMode       *string
 		Duplex            *string
+		Format            *string
 		PickTrayByPDFSize *bool
 		PrintScaling      *string
 		ShowHyperlinks    *bool
@@ -1298,6 +1439,20 @@ func cmdPDFOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 			xd.document.Doc.ViewerPreferences["PageMode"] = "/UseNone"
 		case "thumbnails":
 			xd.document.Doc.ViewerPreferences["PageMode"] = "/UseThumbs"
+		}
+	}
+	if f := attValues.Format; f != nil {
+		switch *f {
+		case "PDF/A-3b":
+			xd.document.Doc.Format = document.FormatPDFA3b
+		case "PDF/X-3":
+			xd.document.Doc.Format = document.FormatPDFX3
+		case "PDF/X-4":
+			xd.document.Doc.Format = document.FormatPDFX4
+		case "PDF/UA":
+			xd.document.Doc.Format = document.FormatPDFUA
+		default:
+			return nil, newTypesettingErrorf("PDFOptions", layoutelt.Line, "unknown format %s", *f)
 		}
 	}
 	if dplx := attValues.Duplex; dplx != nil {
@@ -1396,10 +1551,12 @@ func cmdOl(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 func cmdOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
-		Mainlanguage *string
-		Bleed        *bag.ScaledPoint
-		Cutmarks     *bool
-		Features     *string
+		Mainlanguage  *string
+		Bleed         *bag.ScaledPoint
+		Cutmarks      *bool
+		Features      *string // OpenType features
+		Imagenotfound *string
+		Missingglyph  *string
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -1426,6 +1583,24 @@ func cmdOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 			} else {
 				slog.Error(fmt.Sprintf("cannot parse OpenType feature tag %q.", str))
 			}
+		}
+	}
+	if attValues.Imagenotfound != nil {
+		switch *attValues.Imagenotfound {
+		case "error":
+			xd.imageNotFoundError = true
+		case "warning":
+			xd.imageNotFoundError = false
+		default:
+			slog.Error(fmt.Sprintf("Options (line %d): imagenotfound must be 'warning' or 'error', got %q", layoutelt.Line, *attValues.Imagenotfound))
+		}
+	}
+	if attValues.Missingglyph != nil {
+		switch *attValues.Missingglyph {
+		case "warning", "error", "none":
+			xd.missingGlyph = *attValues.Missingglyph
+		default:
+			slog.Error(fmt.Sprintf("Options (line %d): missingglyph must be 'warning', 'error', or 'none', got %q", layoutelt.Line, *attValues.Missingglyph))
 		}
 	}
 

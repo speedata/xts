@@ -47,8 +47,45 @@ Set publisher specific options.
 
 
 
+`imagenotfound` (optional)
+:   Controls behavior when an image file is not found. With "warning" (default), a placeholder image is inserted and processing continues. With "error", a missing image stops the layout run.
+
+
+
+    `warning`
+    :    Insert a placeholder image and continue (default).
+
+
+
+    `error`
+    :    Report an error and stop processing.
+
+
+
+
 `mainlanguage` (optional)
 :   The default language for text (hyphenation and rendering). You can also set the default language on the command line and locally set it at [Paragraph](../paragraph) and [TextBlock](../textblock).
+
+
+
+
+`missingglyph` (optional)
+:   Controls behavior when a character is not found in the font. With "warning" (default), a warning is logged and the character is skipped. With "error", the layout run is stopped. With "none", missing glyphs are silently ignored.
+
+
+
+    `warning`
+    :    Log a warning and skip the character (default).
+
+
+
+    `error`
+    :    Report an error and stop processing.
+
+
+
+    `none`
+    :    Silently ignore missing glyphs.
 
 
 

@@ -83,6 +83,32 @@ Set PDF options
 
 
 
+`format` (optional)
+:   Set the PDF output format.
+
+
+
+    `PDF/A-3b`
+    :    PDF/A-3b format (supports file attachments, required for ZUGFeRD)
+
+
+
+    `PDF/X-3`
+    :    PDF/X-3 format (for printing)
+
+
+
+    `PDF/X-4`
+    :    PDF/X-4 format (for printing)
+
+
+
+    `PDF/UA`
+    :    PDF/UA format (for accessibility)
+
+
+
+
 `picktraybypdfsize` (optional)
 :   Activate the check box in the PDF viewer for choosing the paper tray based on the page size.
 

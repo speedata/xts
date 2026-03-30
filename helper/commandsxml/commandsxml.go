@@ -711,16 +711,13 @@ func (c *Command) ExampleMarkdown() string {
 				case "listing":
 					inListing = true
 				case "image":
-					var fn, wd string
+					var fn string
 					for _, a := range v.Attr {
-						wd = "auto"
-						if a.Name.Local == "file" {
+						if a.Name.Local == "file" || a.Name.Local == "href" {
 							fn = a.Value
-						} else if a.Name.Local == "width" {
-							wd = fmt.Sprintf(`%s`, a.Value)
 						}
 					}
-					ret = append(ret, fmt.Sprintf("\n![](../img/%s){: style=\"width=%s\"; }\n", fn, wd))
+					ret = append(ret, fmt.Sprintf("\n![](../img/%s)\n", fn))
 				case "para":
 					p := &para{}
 					p.commands = c.commands

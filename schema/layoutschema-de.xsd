@@ -43,6 +43,33 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
+  <xs:element name="AttachFile">
+    <xs:annotation>
+      <xs:documentation>Eine Datei an das PDF-Dokument anhängen. Dies wird z. B. für ZUGFeRD/Factur-X-Rechnungen verwendet.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="href" use="required">
+        <xs:annotation>
+          <xs:documentation>Pfad zur anzuhängenden Datei.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="name">
+        <xs:annotation>
+          <xs:documentation>Anzeigename im PDF-Viewer. Standardmäßig wird der Dateiname verwendet.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="description">
+        <xs:annotation>
+          <xs:documentation>Beschreibung des Anhangs.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="type">
+        <xs:annotation>
+          <xs:documentation>Der MIME-Typ des Anhangs (z. B. "application/pdf"). Wenn auf "ZUGFeRD invoice" oder "facturx" gesetzt, wird die angehängte XML als Factur-X / ZUGFeRD-Rechnung behandelt: das Konformitätsprofil wird automatisch erkannt, die erforderlichen XMP-Metadaten werden gesetzt und das PDF-Format wird automatisch auf PDF/A-3b gestellt. Wenn nicht gesetzt, wird der MIME-Typ aus der Dateiendung ermittelt.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="Action">
     <xs:annotation>
       <xs:documentation>Assoziiert eine Aktion mit einem Text. Sobald der Text auf einer Seite platziert wird, wird die dazugehörige Aktion ausgeführt. Die Aktion kann man sich als unsichtbares Zeichen vorstellen. Wenn der Publisher das unsichtbare Zeichen ausgibt, werden die Anweisungen in der Aktion ausgeführt.</xs:documentation>
@@ -59,6 +86,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:sequence maxOccurs="unbounded">
+        <xs:element minOccurs="0" ref="en:AttachFile"/>
         <xs:element minOccurs="0" ref="en:ClearPage"/>
         <xs:element minOccurs="0" ref="en:ForAll"/>
         <xs:element minOccurs="0" ref="en:Slate"/>
@@ -84,6 +112,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:sequence maxOccurs="unbounded">
+        <xs:element minOccurs="0" ref="en:AttachFile"/>
         <xs:element minOccurs="0" ref="en:ClearPage"/>
         <xs:element minOccurs="0" ref="en:ForAll"/>
         <xs:element minOccurs="0" ref="en:Slate"/>
@@ -367,6 +396,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:sequence maxOccurs="unbounded">
+        <xs:element minOccurs="0" ref="en:AttachFile"/>
         <xs:element minOccurs="0" ref="en:ClearPage"/>
         <xs:element minOccurs="0" ref="en:ForAll"/>
         <xs:element minOccurs="0" ref="en:Slate"/>
@@ -899,6 +929,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:sequence maxOccurs="unbounded">
+        <xs:element minOccurs="0" ref="en:AttachFile"/>
         <xs:element minOccurs="0" ref="en:DefineColor"/>
         <xs:element minOccurs="0" ref="en:DefineMasterPage"/>
         <xs:element minOccurs="0" ref="en:Function"/>
@@ -1061,6 +1092,49 @@
         <xs:annotation>
           <xs:documentation>Eine kommaseparierte Liste mit OpenType Features wie +kern,-liga. Wird als Voreinstellung für alle Absätze benutzt.</xs:documentation>
         </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="imagenotfound">
+        <xs:annotation>
+          <xs:documentation>Steuert das Verhalten bei nicht gefundenen Bilddateien. Bei "warning" (Voreinstellung) wird ein Platzhalterbild eingefügt und die Verarbeitung fortgesetzt. Bei "error" wird der Layoutlauf abgebrochen.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="warning">
+              <xs:annotation>
+                <xs:documentation>Platzhalterbild einfügen und fortfahren (Voreinstellung).</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="error">
+              <xs:annotation>
+                <xs:documentation>Fehler melden und Verarbeitung abbrechen.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="missingglyph">
+        <xs:annotation>
+          <xs:documentation>Steuert das Verhalten bei Zeichen, die nicht im Zeichensatz vorhanden sind. Bei "warning" (Voreinstellung) wird eine Warnung ausgegeben und das Zeichen übersprungen. Bei "error" wird der Layoutlauf abgebrochen. Bei "none" werden fehlende Zeichen stillschweigend ignoriert.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="warning">
+              <xs:annotation>
+                <xs:documentation>Warnung ausgeben und das Zeichen überspringen (Voreinstellung).</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="error">
+              <xs:annotation>
+                <xs:documentation>Fehler melden und Verarbeitung abbrechen.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="none">
+              <xs:annotation>
+                <xs:documentation>Fehlende Zeichen stillschweigend ignorieren.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
       </xs:attribute>
       <xs:attribute name="mainlanguage">
         <xs:annotation>
@@ -1650,6 +1724,35 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
+      <xs:attribute name="format">
+        <xs:annotation>
+          <xs:documentation>Legt das PDF-Ausgabeformat fest.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="PDF/A-3b">
+              <xs:annotation>
+                <xs:documentation>PDF/A-3b-Format (unterstützt Dateianhänge, benötigt für ZUGFeRD)</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="PDF/X-3">
+              <xs:annotation>
+                <xs:documentation>PDF/X-3-Format (für den Druck)</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="PDF/X-4">
+              <xs:annotation>
+                <xs:documentation>PDF/X-4-Format (für den Druck)</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="PDF/UA">
+              <xs:annotation>
+                <xs:documentation>PDF/UA-Format (für Barrierefreiheit)</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
       <xs:attribute name="duplex">
         <xs:annotation>
           <xs:documentation>Setze PDF Anzeigeprogramm auf einseitigen oder doppelseitigen Druck. Voreinstellung: leer.</xs:documentation>
@@ -1997,6 +2100,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:sequence maxOccurs="unbounded">
+        <xs:element minOccurs="0" ref="en:AttachFile"/>
         <xs:element minOccurs="0" ref="en:ClearPage"/>
         <xs:element minOccurs="0" ref="en:ForAll"/>
         <xs:element minOccurs="0" ref="en:Slate"/>
@@ -2065,6 +2169,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:sequence maxOccurs="unbounded">
+        <xs:element minOccurs="0" ref="en:AttachFile"/>
         <xs:element minOccurs="0" ref="en:DefineColor"/>
         <xs:element minOccurs="0" ref="en:DefineMasterPage"/>
         <xs:element minOccurs="0" ref="en:Function"/>

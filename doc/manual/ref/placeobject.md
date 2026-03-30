@@ -144,7 +144,7 @@ Positioning inside the grid:
 ```xml
 <Record match="image">
   <PlaceObject column="12" frame="solid" framecolor="red">
-    <Image width="10" file="_samplea.pdf"/>
+    <Image width="10" href="_samplea.pdf"/>
   </PlaceObject>
 </Record>
 ```
@@ -155,7 +155,7 @@ Absolute positioning (from top left edge):
 ```xml
 <Record match="image">
   <PlaceObject column="1cm" row="4cm" frame="solid" framecolor="red">
-    <Image width="10" file="_samplea.pdf"/>
+    <Image width="10" href="_samplea.pdf"/>
   </PlaceObject>
 </Record>
 

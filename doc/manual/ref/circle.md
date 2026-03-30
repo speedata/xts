@@ -93,7 +93,7 @@ looks like
 
 
 
-![](../img/ref-circlewithborder.png){: style="width=auto"; }
+![](../img/ref-circlewithborder.png)
 
 
 

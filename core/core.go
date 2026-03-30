@@ -70,9 +70,11 @@ type xtsDocument struct {
 	currentPage       *page
 	currentGrid       *grid
 	currentSlate      *slate
-	currentPagenumber int
-	tracing           VTrace
-	layoutNS          map[string]string
+	currentPagenumber  int
+	tracing            VTrace
+	layoutNS           map[string]string
+	imageNotFoundError bool   // if true, missing images are errors instead of warnings
+	missingGlyph       string // “warning” (default), “error”, or “none”
 	// for “global” variables
 	store map[any]any
 }
@@ -236,6 +238,8 @@ func RunXTS(cfg *XTSConfig) error {
 	}
 
 	d.document.Doc.CompressLevel = 9
+	d.missingGlyph = "warning"
+	d.document.MissingGlyphFunc = d.handleMissingGlyph
 
 	var defaultPagetype *pagetype
 	if defaultPagetype, err = d.newPagetype("default page", "true()"); err != nil {
@@ -342,6 +346,15 @@ func RunXTS(cfg *XTSConfig) error {
 
 // Add necessary callbacks to boxes and glue callback mechanism for tracing
 // purpose.
+func (xd *xtsDocument) handleMissingGlyph(face *pdf.Face, r rune) {
+	switch xd.missingGlyph {
+	case "error":
+		slog.Error(fmt.Sprintf("Missing glyph for character U+%04X (%c) in font %s", r, r, face.Filename))
+	case "warning":
+		slog.Warn(fmt.Sprintf("Missing glyph for character U+%04X (%c) in font %s", r, r, face.Filename))
+	}
+}
+
 func (xd *xtsDocument) registerCallbacks() {
 	preShipout := func(pg *document.Page) {
 		// Create an automatic named destination for this page (page-1, page-2, ...)

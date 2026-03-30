@@ -137,7 +137,7 @@ Using the following data:
 </data>
 ```
 
-![](../img/ref-table.png){: style="width=auto"; }
+![](../img/ref-table.png)
 
 
 

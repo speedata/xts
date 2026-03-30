@@ -55,6 +55,30 @@
             </interleave>
         </element>
     </define>
+    <define name="e_AttachFile">
+        <element name="AttachFile">
+            <a:documentation>Eine Datei an das PDF-Dokument anhängen. Dies wird z. B. für ZUGFeRD/Factur-X-Rechnungen verwendet.</a:documentation>
+            <attribute name="href">
+                <a:documentation>Pfad zur anzuhängenden Datei.</a:documentation>
+            </attribute>
+            <optional>
+                <attribute name="name">
+                    <a:documentation>Anzeigename im PDF-Viewer. Standardmäßig wird der Dateiname verwendet.</a:documentation>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="description">
+                    <a:documentation>Beschreibung des Anhangs.</a:documentation>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="type">
+                    <a:documentation>Der MIME-Typ des Anhangs (z. B. "application/pdf"). Wenn auf "ZUGFeRD invoice" oder "facturx" gesetzt, wird die angehängte XML als Factur-X / ZUGFeRD-Rechnung behandelt: das Konformitätsprofil wird automatisch erkannt, die erforderlichen XMP-Metadaten werden gesetzt und das PDF-Format wird automatisch auf PDF/A-3b gestellt. Wenn nicht gesetzt, wird der MIME-Typ aus der Dateiendung ermittelt.</a:documentation>
+                </attribute>
+            </optional>
+            <empty></empty>
+        </element>
+    </define>
     <define name="e_Action">
         <element name="Action">
             <a:documentation>Assoziiert eine Aktion mit einem Text. Sobald der Text auf einer Seite platziert wird, wird die dazugehörige Aktion ausgeführt. Die Aktion kann man sich als unsichtbares Zeichen vorstellen. Wenn der Publisher das unsichtbare Zeichen ausgibt, werden die Anweisungen in der Aktion ausgeführt.</a:documentation>
@@ -74,6 +98,9 @@
             <interleave>
                 <group>
                     <oneOrMore>
+                        <optional>
+                            <ref name="e_AttachFile"></ref>
+                        </optional>
                         <optional>
                             <ref name="e_ClearPage"></ref>
                         </optional>
@@ -134,6 +161,9 @@
             <interleave>
                 <group>
                     <oneOrMore>
+                        <optional>
+                            <ref name="e_AttachFile"></ref>
+                        </optional>
                         <optional>
                             <ref name="e_ClearPage"></ref>
                         </optional>
@@ -470,6 +500,9 @@
             <interleave>
                 <group>
                     <oneOrMore>
+                        <optional>
+                            <ref name="e_AttachFile"></ref>
+                        </optional>
                         <optional>
                             <ref name="e_ClearPage"></ref>
                         </optional>
@@ -1123,6 +1156,9 @@
                     </optional>
                     <oneOrMore>
                         <optional>
+                            <ref name="e_AttachFile"></ref>
+                        </optional>
+                        <optional>
                             <ref name="e_DefineColor"></ref>
                         </optional>
                         <optional>
@@ -1291,6 +1327,30 @@
             <optional>
                 <attribute name="features">
                     <a:documentation>Eine kommaseparierte Liste mit OpenType Features wie +kern,-liga. Wird als Voreinstellung für alle Absätze benutzt.</a:documentation>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="imagenotfound">
+                    <a:documentation>Steuert das Verhalten bei nicht gefundenen Bilddateien. Bei &#34;warning&#34; (Voreinstellung) wird ein Platzhalterbild eingefügt und die Verarbeitung fortgesetzt. Bei &#34;error&#34; wird der Layoutlauf abgebrochen.</a:documentation>
+                    <choice>
+                        <value>warning</value>
+                        <a:documentation>Platzhalterbild einfügen und fortfahren (Voreinstellung).</a:documentation>
+                        <value>error</value>
+                        <a:documentation>Fehler melden und Verarbeitung abbrechen.</a:documentation>
+                    </choice>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="missingglyph">
+                    <a:documentation>Steuert das Verhalten bei Zeichen, die nicht im Zeichensatz vorhanden sind. Bei &#34;warning&#34; (Voreinstellung) wird eine Warnung ausgegeben und das Zeichen übersprungen. Bei &#34;error&#34; wird der Layoutlauf abgebrochen. Bei &#34;none&#34; werden fehlende Zeichen stillschweigend ignoriert.</a:documentation>
+                    <choice>
+                        <value>warning</value>
+                        <a:documentation>Warnung ausgeben und das Zeichen überspringen (Voreinstellung).</a:documentation>
+                        <value>error</value>
+                        <a:documentation>Fehler melden und Verarbeitung abbrechen.</a:documentation>
+                        <value>none</value>
+                        <a:documentation>Fehlende Zeichen stillschweigend ignorieren.</a:documentation>
+                    </choice>
                 </attribute>
             </optional>
             <optional>
@@ -1573,6 +1633,21 @@
                 </attribute>
             </optional>
             <optional>
+                <attribute name="format">
+                    <a:documentation>Legt das PDF-Ausgabeformat fest.</a:documentation>
+                    <choice>
+                        <value>PDF/A-3b</value>
+                        <a:documentation>PDF/A-3b-Format (unterstützt Dateianhänge, benötigt für ZUGFeRD)</a:documentation>
+                        <value>PDF/X-3</value>
+                        <a:documentation>PDF/X-3-Format (für den Druck)</a:documentation>
+                        <value>PDF/X-4</value>
+                        <a:documentation>PDF/X-4-Format (für den Druck)</a:documentation>
+                        <value>PDF/UA</value>
+                        <a:documentation>PDF/UA-Format (für Barrierefreiheit)</a:documentation>
+                    </choice>
+                </attribute>
+            </optional>
+            <optional>
                 <attribute name="duplex">
                     <a:documentation>Setze PDF Anzeigeprogramm auf einseitigen oder doppelseitigen Druck. Voreinstellung: leer.</a:documentation>
                     <choice>
@@ -1834,6 +1909,9 @@
                     </optional>
                     <oneOrMore>
                         <optional>
+                            <ref name="e_AttachFile"></ref>
+                        </optional>
+                        <optional>
                             <ref name="e_ClearPage"></ref>
                         </optional>
                         <optional>
@@ -1938,6 +2016,9 @@
                         <a:documentation>Name dieses Abschnitts (nur zur Dokumentation).</a:documentation>
                     </attribute>
                     <oneOrMore>
+                        <optional>
+                            <ref name="e_AttachFile"></ref>
+                        </optional>
                         <optional>
                             <ref name="e_DefineColor"></ref>
                         </optional>

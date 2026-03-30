@@ -43,14 +43,14 @@ menu:
 params:
   theme:
     default: light
-    displayToggle: false
+    displayToggle: true
   navbar:
     displayTitle: true
     displayLogo: false
-
   footer:
     displayCopyright: false
     displayPoweredBy: false
-
   editURL:
     enable: false
+  imageZoom:
+    enable: true
