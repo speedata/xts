@@ -228,13 +228,13 @@ func httpResponseIndex(l *lua.State) int {
 // Open starts the http lua module
 func Open(l *lua.State) int {
 	lua.NewLibrary(l, []lua.RegistryFunction{
-		{"get", httpGet},
-		{"delete", httpDelete},
-		{"head", httpHead},
-		{"patch", httpPatch},
-		{"post", httpPost},
-		{"put", httpPut},
-		{"request", httpRequest},
+		{Name: "get", Function: httpGet},
+		{Name: "delete", Function: httpDelete},
+		{Name: "head", Function: httpHead},
+		{Name: "patch", Function: httpPatch},
+		{Name: "post", Function: httpPost},
+		{Name: "put", Function: httpPut},
+		{Name: "request", Function: httpRequest},
 	})
 	return 1
 }

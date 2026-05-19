@@ -1449,8 +1449,10 @@ func cmdPDFOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 			xd.document.Doc.Format = document.FormatPDFX3
 		case "PDF/X-4":
 			xd.document.Doc.Format = document.FormatPDFX4
-		case "PDF/UA":
+		case "PDF/UA", "PDF/UA-1":
 			xd.document.Doc.Format = document.FormatPDFUA
+		case "PDF/UA-2":
+			xd.document.Doc.Format = document.FormatPDFUA2
 		default:
 			return nil, newTypesettingErrorf("PDFOptions", layoutelt.Line, "unknown format %s", *f)
 		}

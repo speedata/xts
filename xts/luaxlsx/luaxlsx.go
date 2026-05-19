@@ -5,8 +5,10 @@ import (
 	"github.com/speedata/goxlsx"
 )
 
-const luaSpreadsheetTypeName = "spreadsheet"
-const luaWorksheetTypeName = "worksheet"
+const (
+	luaSpreadsheetTypeName = "spreadsheet"
+	luaWorksheetTypeName   = "worksheet"
+)
 
 func lerr(l *lua.State, errormessage string) int {
 	l.SetTop(0)
@@ -142,8 +144,8 @@ func openfile(l *lua.State) int {
 // Open sets up the XLSX Lua module.
 func Open(l *lua.State) int {
 	lua.NewLibrary(l, []lua.RegistryFunction{
-		{"open", openfile},
-		{"string_to_date", stringToDate},
+		{Name: "open", Function: openfile},
+		{Name: "string_to_date", Function: stringToDate},
 	})
 	return 1
 }
