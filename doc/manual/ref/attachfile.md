@@ -12,7 +12,7 @@ Attach a file to the PDF document. This is used for example to embed ZUGFeRD/Fac
 
 ##  Parent elements
 
-[AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout), [Contents](../contents), [Layout](../layout), [Record](../record), [Section](../section)
+[AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout), [Contents](../contents), [Layout](../layout), [Record](../record), [Section](../section), [Template](../template)
 
 
 ## Attributes

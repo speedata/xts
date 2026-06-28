@@ -1,12 +1,16 @@
 ---
-weight: 20
+weight: 70
 type: docs
-linktitle: Loops and Conditions
+linktitle: Control flow
+aliases:
+  - /manual/data-processing/loops-and-conditions/
 ---
 
-# Loops and Conditions
+# Control flow
 
-XTS has two programming levels: the **layout language** (XML commands like `<Loop>` and `<Switch>`) and **XPath** (expressions inside `select` and `test` attributes). This page covers the layout language constructs.
+XTS has two programming levels: the **layout language** (XML commands like `<Loop>` and `<Switch>`) and **XPath** (expressions inside `select` and `test` attributes). This page covers the layout-language control-flow constructs. Each of them is *transparent*: it inherits the data/action role of whatever it contains (see [Data vs. action](/programming/data-and-actions)).
+
+`<ProcessNode>` and `<Record>` are covered separately in [Records and dispatch](/programming/records-and-dispatch).
 
 ## ForAll -- iterating over data
 

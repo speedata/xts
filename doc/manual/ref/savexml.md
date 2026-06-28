@@ -12,7 +12,7 @@ Saves an element/attribute structure to be used in the next publisher run. The c
 
 ##  Parent elements
 
-[AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout), [Case](../case), [Contents](../contents), [ForAll](../forall), [Function](../function), [Loop](../loop), [Otherwise](../otherwise), [Record](../record), [Until](../until), [While](../while)
+[AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout), [Case](../case), [Contents](../contents), [ForAll](../forall), [Function](../function), [Loop](../loop), [Otherwise](../otherwise), [Record](../record), [Template](../template), [Until](../until), [While](../while)
 
 
 ## Attributes

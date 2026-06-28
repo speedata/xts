@@ -8,11 +8,11 @@ Create a loop. All child elements are executed repeatedly until the given condit
 
 ##  Child elements
 
-[ClearPage](../clearpage), [Column](../column), [ForAll](../forall), [HTML](../html), [Li](../li), [LoadXML](../loadxml), [Loop](../loop), [Message](../message), [NextFrame](../nextframe), [NextRow](../nextrow), [Paragraph](../paragraph), [PlaceObject](../placeobject), [ProcessNode](../processnode), [SaveXML](../savexml), [SetVariable](../setvariable), [Switch](../switch), [Td](../td), [Tr](../tr), [Until](../until), [Value](../value), [While](../while)
+[CallTemplate](../calltemplate), [ClearPage](../clearpage), [Column](../column), [ForAll](../forall), [HTML](../html), [Li](../li), [LoadXML](../loadxml), [Loop](../loop), [Message](../message), [NextFrame](../nextframe), [NextRow](../nextrow), [Paragraph](../paragraph), [PlaceObject](../placeobject), [ProcessNode](../processnode), [SaveXML](../savexml), [SetVariable](../setvariable), [Switch](../switch), [Td](../td), [Tr](../tr), [Until](../until), [Value](../value), [While](../while)
 
 ##  Parent elements
 
-[AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout), [Case](../case), [Contents](../contents), [ForAll](../forall), [Loop](../loop), [Otherwise](../otherwise), [Record](../record), [SetVariable](../setvariable), [Until](../until), [While](../while)
+[AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout), [Case](../case), [Contents](../contents), [ForAll](../forall), [Loop](../loop), [Otherwise](../otherwise), [Record](../record), [SetVariable](../setvariable), [Template](../template), [Until](../until), [While](../while)
 
 
 ## Attributes

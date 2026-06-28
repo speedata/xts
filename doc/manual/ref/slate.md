@@ -12,7 +12,7 @@ Create a virtual page (a slate) that behaves like a real page but is not placed 
 
 ##  Parent elements
 
-[AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout), [Contents](../contents), [Function](../function), [Record](../record)
+[AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout), [Contents](../contents), [Function](../function), [Record](../record), [Template](../template)
 
 
 ## Attributes

@@ -1,7 +1,9 @@
 ---
-weight: 40
+weight: 90
 type: docs
-linktitle: XPath
+linktitle: XPath in XTS
+aliases:
+  - /manual/data-processing/xpath/
 ---
 
 # XPath and Layout Functions
@@ -10,7 +12,9 @@ XPath is a query language for selecting nodes and computing values in XML docume
 
 XTS uses XPath as its expression language. XPath appears in `select` attributes, `test` conditions, and inside curly braces `{...}` in some contexts. The XPath implementation is provided by the [goxml XPath package](https://doc.speedata.de/goxml/xpath/) — see its documentation for the full list of supported XPath functions and syntax details.
 
-If you're new to XPath, the [W3Schools XPath tutorial](https://www.w3schools.com/xml/xpath_intro.asp) is a good starting point. This page focuses on the XTS-specific extensions.
+If you're new to XPath, start with [XPath basics](/programming/xpath-basics) for a
+practical primer (paths, predicates, operators, functions). This page focuses on
+*where* XPath is used in XTS and the XTS-specific `sd:` extension functions.
 
 ## Where XPath is used
 
@@ -108,6 +112,12 @@ Inside `<HTML>` elements, XPath expressions are only evaluated when `expand-text
     <p>Page {sd:current-page()} of {sd:last-page-number()}</p>
 </HTML>
 ```
+
+## Maps and arrays
+
+The XPath engine is version 3.1, so it also supports structured data: arrays
+(`[1, 2, 3]`), maps (`map { 'a': 1 }`), and the `?` lookup operator. These have
+their own chapter: [Maps and arrays](/programming/maps-and-arrays).
 
 ## Full reference
 

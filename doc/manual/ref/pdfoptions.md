@@ -83,28 +83,8 @@ Set PDF options
 
 
 
-`format` (optional)
-:   Set the PDF output format.
-
-
-
-    `PDF/A-3b`
-    :    PDF/A-3b format (supports file attachments, required for ZUGFeRD)
-
-
-
-    `PDF/X-3`
-    :    PDF/X-3 format (for printing)
-
-
-
-    `PDF/X-4`
-    :    PDF/X-4 format (for printing)
-
-
-
-    `PDF/UA`
-    :    PDF/UA format (for accessibility)
+`format` (pdfformat, optional)
+:   Set the PDF output format. Accepts a single conformance class or a comma-separated combination, e.g. "PDF/A-3b, PDF/UA-1" for an accessible archival PDF. Recognised tokens: PDF, PDF/A-3b (supports file attachments, required for ZUGFeRD), PDF/X-3, PDF/X-4 (for printing), PDF/UA (alias for PDF/UA-1), PDF/UA-2 (both for accessibility).
 
 
 

@@ -8,7 +8,7 @@ This command is the root element in the Layout instructions.
 
 ##  Child elements
 
-[AttachFile](../attachfile), [DefineColor](../definecolor), [DefineMasterPage](../definemasterpage), [Function](../function), [Message](../message), [Options](../options), [PDFOptions](../pdfoptions), [PageFormat](../pageformat), [Record](../record), [Section](../section), [SetGrid](../setgrid), [SetVariable](../setvariable), [StyleSheet](../stylesheet), [Trace](../trace)
+[AttachFile](../attachfile), [DefineColor](../definecolor), [DefineMasterPage](../definemasterpage), [Function](../function), [Message](../message), [Options](../options), [PDFOptions](../pdfoptions), [PageFormat](../pageformat), [Record](../record), [Section](../section), [SetGrid](../setgrid), [SetVariable](../setvariable), [StyleSheet](../stylesheet), [Template](../template), [Trace](../trace)
 
 ##  Parent elements
 

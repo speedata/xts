@@ -12,7 +12,7 @@ Writes a message onto the console and to the protocol file.
 
 ##  Parent elements
 
-[AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout), [Case](../case), [Contents](../contents), [ForAll](../forall), [Function](../function), [Layout](../layout), [Loop](../loop), [Otherwise](../otherwise), [Record](../record), [Section](../section), [Tr](../tr), [Until](../until), [While](../while)
+[AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout), [Case](../case), [Contents](../contents), [ForAll](../forall), [Function](../function), [Layout](../layout), [Loop](../loop), [Otherwise](../otherwise), [Record](../record), [Section](../section), [Template](../template), [Tr](../tr), [Until](../until), [While](../while)
 
 
 ## Attributes

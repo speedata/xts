@@ -84,6 +84,8 @@ Every XTS command with its attributes, child/parent elements, and examples. Brow
 [Otherwise](otherwise),
 [SetVariable](setvariable),
 [Function](function),
+[Template](template),
+[CallTemplate](calltemplate),
 [Param](param),
 [Message](message)
 
@@ -119,6 +121,7 @@ Every XTS command with its attributes, child/parent elements, and examples. Brow
 [Bookmark](bookmark) --
 [Box](box) --
 [Br](br) --
+[CallTemplate](calltemplate) --
 [Case](case) --
 [Circle](circle) --
 [ClearPage](clearpage) --
@@ -167,6 +170,7 @@ Every XTS command with its attributes, child/parent elements, and examples. Brow
 [TableHead](tablehead) --
 [TableRule](tablerule) --
 [Td](td) --
+[Template](template) --
 [TextBlock](textblock) --
 [Tr](tr) --
 [Trace](trace) --

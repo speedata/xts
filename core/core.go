@@ -51,30 +51,35 @@ func genIntegerSequence(ids chan int) {
 }
 
 type xtsDocument struct {
-	cfg               *XTSConfig
-	document          *frontend.Document
-	layoutcss         *csshtml.CSS
-	cssbuilder        *htmlbag.CSSBuilder
-	data              *xpath.Parser
-	pages             []*page
-	slates            map[string]*slate
-	defaultGridWidth  bag.ScaledPoint
-	defaultGridHeight bag.ScaledPoint
-	defaultGridGapX   bag.ScaledPoint
-	defaultGridGapY   bag.ScaledPoint
-	defaultGridNx     int
-	defaultGridNy     int
-	masterpages       []*pagetype
-	marker            mapmarker
-	aux               *auxfile // contents of the previous run, if available
-	currentPage       *page
-	currentGrid       *grid
-	currentSlate      *slate
+	cfg                *XTSConfig
+	document           *frontend.Document
+	layoutcss          *csshtml.CSS
+	cssbuilder         *htmlbag.CSSBuilder
+	data               *xpath.Parser
+	pages              []*page
+	slates             map[string]*slate
+	templates          map[string]*goxml.Element // named <Template> bodies for <CallTemplate>
+	defaultGridWidth   bag.ScaledPoint
+	defaultGridHeight  bag.ScaledPoint
+	defaultGridGapX    bag.ScaledPoint
+	defaultGridGapY    bag.ScaledPoint
+	defaultGridNx      int
+	defaultGridNy      int
+	masterpages        []*pagetype
+	marker             mapmarker
+	aux                *auxfile // contents of the previous run, if available
+	currentPage        *page
+	currentGrid        *grid
+	currentSlate       *slate
 	currentPagenumber  int
 	tracing            VTrace
 	layoutNS           map[string]string
 	imageNotFoundError bool   // if true, missing images are errors instead of warnings
 	missingGlyph       string // “warning” (default), “error”, or “none”
+	// valueContext is true while a subtree is dispatched as a bound data value
+	// (e.g. the body of a <SetVariable as="…"> or a <Function>). In that mode
+	// dispatch rejects action commands, see dispatchValueContext.
+	valueContext bool
 	// for “global” variables
 	store map[any]any
 }
@@ -87,6 +92,7 @@ func newXTSDocument() *xtsDocument {
 		defaultGridGapY:   0,
 		layoutcss:         csshtml.NewCSSParserWithDefaults(),
 		slates:            make(map[string]*slate),
+		templates:         make(map[string]*goxml.Element),
 		store:             make(map[any]any),
 		marker:            make(mapmarker),
 	}

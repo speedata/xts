@@ -1,12 +1,14 @@
 ---
 weight: 10
 type: docs
-linktitle: User Manual
+linktitle: Layout Guide
 ---
 
-# User Manual
+# Layout Guide
 
-This manual walks you through XTS step by step. Each chapter builds on the previous one, but feel free to skip ahead if you already know the basics.
+This guide walks you through producing documents with XTS: fonts, text, tables, images, the grid, and the page. Each chapter builds on the previous one, but feel free to skip ahead if you already know the basics.
+
+For the language itself -- the data/action model, variables, functions, templates, XPath, and control flow -- see the [Programming](/programming) section.
 
 ### Getting Started
 [Install XTS and create your first PDF.](getting-started)
@@ -22,9 +24,6 @@ This manual walks you through XTS step by step. Each chapter builds on the previ
 
 ### Images & Graphics
 [Include images, draw shapes, and generate barcodes.](images-and-graphics)
-
-### Data Processing
-[Work with XML data: loops, conditions, variables, XPath, and custom functions.](data-processing)
 
 ### Page Layout
 [Define master pages, use page hooks, and handle multi-page content.](page-layout)

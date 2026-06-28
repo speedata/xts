@@ -73,7 +73,7 @@
             </optional>
             <optional>
                 <attribute name="type">
-                    <a:documentation>The MIME type of the attachment (e.g. "application/pdf"). If set to "ZUGFeRD invoice" or "facturx", the attached XML is treated as a Factur-X / ZUGFeRD invoice: the conformance profile is detected automatically, the required XMP metadata is added, and the PDF format is automatically set to PDF/A-3b. If not set, the MIME type is detected from the file extension.</a:documentation>
+                    <a:documentation>The MIME type of the attachment (e.g. &#34;application/pdf&#34;). If set to &#34;ZUGFeRD invoice&#34; or &#34;facturx&#34;, the attached XML is treated as a Factur-X / ZUGFeRD invoice: the conformance profile is detected automatically from the XML data, the required XMP metadata for ZUGFeRD compliance is added, and the PDF format is automatically set to PDF/A-3b. If not set, the MIME type is detected from the file extension.</a:documentation>
                 </attribute>
             </optional>
             <empty></empty>
@@ -100,6 +100,9 @@
                     <oneOrMore>
                         <optional>
                             <ref name="e_AttachFile"></ref>
+                        </optional>
+                        <optional>
+                            <ref name="e_CallTemplate"></ref>
                         </optional>
                         <optional>
                             <ref name="e_ClearPage"></ref>
@@ -163,6 +166,9 @@
                     <oneOrMore>
                         <optional>
                             <ref name="e_AttachFile"></ref>
+                        </optional>
+                        <optional>
+                            <ref name="e_CallTemplate"></ref>
                         </optional>
                         <optional>
                             <ref name="e_ClearPage"></ref>
@@ -326,6 +332,9 @@
                         <a:documentation>The test that gets evaluated.</a:documentation>
                     </attribute>
                     <oneOrMore>
+                        <optional>
+                            <ref name="e_CallTemplate"></ref>
+                        </optional>
                         <optional>
                             <ref name="e_Column"></ref>
                         </optional>
@@ -502,6 +511,9 @@
                     <oneOrMore>
                         <optional>
                             <ref name="e_AttachFile"></ref>
+                        </optional>
+                        <optional>
+                            <ref name="e_CallTemplate"></ref>
                         </optional>
                         <optional>
                             <ref name="e_ClearPage"></ref>
@@ -698,6 +710,9 @@
                     </attribute>
                     <oneOrMore>
                         <interleave>
+                            <optional>
+                                <ref name="e_CallTemplate"></ref>
+                            </optional>
                             <optional>
                                 <ref name="e_Column"></ref>
                             </optional>
@@ -1033,6 +1048,9 @@
                     <oneOrMore>
                         <interleave>
                             <optional>
+                                <ref name="e_CallTemplate"></ref>
+                            </optional>
+                            <optional>
                                 <ref name="e_Column"></ref>
                             </optional>
                             <optional>
@@ -1193,6 +1211,9 @@
                         </optional>
                         <optional>
                             <ref name="e_StyleSheet"></ref>
+                        </optional>
+                        <optional>
+                            <ref name="e_Template"></ref>
                         </optional>
                         <optional>
                             <ref name="e_Trace"></ref>
@@ -1470,6 +1491,9 @@
                 <group>
                     <oneOrMore>
                         <optional>
+                            <ref name="e_CallTemplate"></ref>
+                        </optional>
+                        <optional>
                             <ref name="e_Column"></ref>
                         </optional>
                         <optional>
@@ -1593,10 +1617,15 @@
     </define>
     <define name="e_Param">
         <element name="Param">
-            <a:documentation>Specify a parameter for a function definition.</a:documentation>
+            <a:documentation>Specify a parameter for a Function or Template definition, or pass an argument in a CallTemplate.</a:documentation>
             <optional>
                 <attribute name="name">
                     <a:documentation>The name of the parameter.</a:documentation>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="select">
+                    <a:documentation>The value of the parameter. On a CallTemplate it is the argument passed to the template; on a Template definition it is the default value used when the caller omits the parameter.</a:documentation>
                 </attribute>
             </optional>
             <empty></empty>
@@ -1634,17 +1663,10 @@
             </optional>
             <optional>
                 <attribute name="format">
-                    <a:documentation>Set the PDF output format.</a:documentation>
-                    <choice>
-                        <value>PDF/A-3b</value>
-                        <a:documentation>PDF/A-3b format (supports file attachments, required for ZUGFeRD)</a:documentation>
-                        <value>PDF/X-3</value>
-                        <a:documentation>PDF/X-3 format (for printing)</a:documentation>
-                        <value>PDF/X-4</value>
-                        <a:documentation>PDF/X-4 format (for printing)</a:documentation>
-                        <value>PDF/UA</value>
-                        <a:documentation>PDF/UA format (for accessibility)</a:documentation>
-                    </choice>
+                    <a:documentation>Set the PDF output format. Accepts a single conformance class or a comma-separated combination, e.g. &#34;PDF/A-3b, PDF/UA-1&#34; for an accessible archival PDF. Recognised tokens: PDF, PDF/A-3b (supports file attachments, required for ZUGFeRD), PDF/X-3, PDF/X-4 (for printing), PDF/UA (alias for PDF/UA-1), PDF/UA-2 (both for accessibility).</a:documentation>
+                    <data type="string">
+                        <param name="pattern">\s*(PDF|PDF/A-3b|PDF/X-3|PDF/X-4|PDF/UA|PDF/UA-1|PDF/UA-2)(\s*,\s*(PDF|PDF/A-3b|PDF/X-3|PDF/X-4|PDF/UA|PDF/UA-1|PDF/UA-2))*\s*</param>
+                    </data>
                 </attribute>
             </optional>
             <optional>
@@ -1912,6 +1934,9 @@
                             <ref name="e_AttachFile"></ref>
                         </optional>
                         <optional>
+                            <ref name="e_CallTemplate"></ref>
+                        </optional>
+                        <optional>
                             <ref name="e_ClearPage"></ref>
                         </optional>
                         <optional>
@@ -2056,6 +2081,9 @@
                             <ref name="e_StyleSheet"></ref>
                         </optional>
                         <optional>
+                            <ref name="e_Template"></ref>
+                        </optional>
+                        <optional>
                             <ref name="e_Trace"></ref>
                         </optional>
                     </oneOrMore>
@@ -2100,6 +2128,96 @@
             <empty></empty>
         </element>
     </define>
+    <define name="e_Template">
+        <element name="Template">
+            <a:documentation>Define a named template that can be invoked with CallTemplate. Unlike a Function, a template may contain layout actions (such as PlaceObject); they run at the call site, in document order, exactly once.</a:documentation>
+            <interleave>
+                <group>
+                    <attribute name="name">
+                        <a:documentation>The name of the template.</a:documentation>
+                    </attribute>
+                    <zeroOrMore>
+                        <ref name="e_Param"></ref>
+                    </zeroOrMore>
+                    <oneOrMore>
+                        <interleave>
+                            <optional>
+                                <ref name="e_AttachFile"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_CallTemplate"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_ClearPage"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_ForAll"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_Slate"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_LoadXML"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_Loop"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_Message"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_NextFrame"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_NextRow"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_PlaceObject"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_ProcessNode"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_SaveXML"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_SetVariable"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_Switch"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_Until"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_Value"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_While"></ref>
+                            </optional>
+                        </interleave>
+                    </oneOrMore>
+                </group>
+                <ref name="foreign-nodes"></ref>
+            </interleave>
+        </element>
+    </define>
+    <define name="e_CallTemplate">
+        <element name="CallTemplate">
+            <a:documentation>Invoke a named Template. Parameters are passed with Param children, whose select expressions are evaluated in the calling context. The parameter bindings are scoped to the template body.</a:documentation>
+            <interleave>
+                <group>
+                    <attribute name="name">
+                        <a:documentation>The name of the template to call.</a:documentation>
+                    </attribute>
+                    <zeroOrMore>
+                        <ref name="e_Param"></ref>
+                    </zeroOrMore>
+                </group>
+                <ref name="foreign-nodes"></ref>
+            </interleave>
+        </element>
+    </define>
       <sch:pattern>
         <sch:rule context="t:SetVariable">
           <sch:assert test="not(  not(empty(@select)) and node()  )">SetVariable: either use select Attribute _or_ child elements, but not both.</sch:assert>
@@ -2111,6 +2229,11 @@
             <a:documentation>Associates a value with a variable name. The value can be a simple value or a more complex one consisting of several elements.</a:documentation>
             <interleave>
                 <group>
+                    <optional>
+                        <attribute name="as">
+                            <a:documentation>A sequence type (in the style of XSLT/XQuery, e.g. element(Column)*, xs:string, node()*) that declares the variable holds a data value. When given, the element body is treated as a data value: layout actions such as PlaceObject are not allowed inside it.</a:documentation>
+                        </attribute>
+                    </optional>
                     <optional>
                         <attribute name="select">
                             <a:documentation>The value of the contents.</a:documentation>
@@ -2133,10 +2256,19 @@
                     <oneOrMore>
                         <interleave>
                             <optional>
+                                <ref name="e_Column"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_Columns"></ref>
+                            </optional>
+                            <optional>
                                 <ref name="e_CopyOf"></ref>
                             </optional>
                             <optional>
                                 <ref name="e_Element"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_ForAll"></ref>
                             </optional>
                             <optional>
                                 <ref name="e_Paragraph"></ref>
@@ -2645,6 +2777,9 @@
                     <oneOrMore>
                         <interleave>
                             <optional>
+                                <ref name="e_CallTemplate"></ref>
+                            </optional>
+                            <optional>
                                 <ref name="e_Column"></ref>
                             </optional>
                             <optional>
@@ -2760,6 +2895,9 @@
                     </attribute>
                     <oneOrMore>
                         <interleave>
+                            <optional>
+                                <ref name="e_CallTemplate"></ref>
+                            </optional>
                             <optional>
                                 <ref name="e_Column"></ref>
                             </optional>

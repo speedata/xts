@@ -222,6 +222,19 @@ func genRelaxNGSchema(commands *commandsXML, lang string, allowForeignNodes bool
 				enc.EncodeToken(xml.CharData(`[0-9]+|yes|no`))
 				enc.EncodeToken(param.End())
 				enc.EncodeToken(data.End())
+			} else if attr.Type == "pdfformat" {
+				// PDF conformance-class list: single value or comma-
+				// separated combination such as "PDF/A-3b, PDF/UA-1".
+				// Kept in sync with document.ParseFormat.
+				data := xml.StartElement{Name: xml.Name{Local: "data"}}
+				data.Attr = []xml.Attr{{Name: xml.Name{Local: "type"}, Value: "string"}}
+				enc.EncodeToken(data)
+				param := xml.StartElement{Name: xml.Name{Local: "param"}}
+				param.Attr = []xml.Attr{{Name: xml.Name{Local: "name"}, Value: "pattern"}}
+				enc.EncodeToken(param)
+				enc.EncodeToken(xml.CharData(`\s*(PDF|PDF/A-3b|PDF/X-3|PDF/X-4|PDF/UA|PDF/UA-1|PDF/UA-2)(\s*,\s*(PDF|PDF/A-3b|PDF/X-3|PDF/X-4|PDF/UA|PDF/UA-1|PDF/UA-2))*\s*`))
+				enc.EncodeToken(param.End())
+				enc.EncodeToken(data.End())
 			} else if attr.Type == "boolean" {
 				enc.EncodeToken(choiceElement.Copy())
 				enc.EncodeToken(valueElement.Copy())

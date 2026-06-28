@@ -5,6 +5,7 @@
   >
 
   <define name="Switchcontents">
+    <optional><cmd name="CallTemplate"/></optional>
     <optional><cmd name="Column"/></optional>
     <optional><cmd name="ClearPage"/></optional>
     <optional><cmd name="ForAll" /></optional>
@@ -43,11 +44,13 @@
     <optional><cmd name="SetGrid"/></optional>
     <optional><cmd name="SetVariable"/></optional>
     <optional><cmd name="StyleSheet"/></optional>
+    <optional><cmd name="Template"/></optional>
     <optional><cmd name="Trace"/></optional>
   </define>
 
   <define name="Commands">
     <optional><cmd name="AttachFile"/></optional>
+    <optional><cmd name="CallTemplate"/></optional>
     <optional><cmd name="ClearPage"/></optional>
     <optional><cmd name="ForAll"/></optional>
     <optional><cmd name="Slate"/></optional>
@@ -3034,10 +3037,10 @@
   -->
   <command en="Param">
     <description xml:lang="en">
-      <para>Specify a parameter for a function definition.</para>
+      <para>Specify a parameter for a <cmd name="Function"/> or <cmd name="Template"/> definition, or pass an argument in a <cmd name="CallTemplate"/>.</para>
     </description>
     <description xml:lang="de">
-      <para>Lege einen Parameter für eine Funktionsdefinition fest.</para>
+      <para>Lege einen Parameter für eine <cmd name="Function"/>- oder <cmd name="Template"/>-Definition fest oder übergebe ein Argument bei <cmd name="CallTemplate"/>.</para>
     </description>
     <childelements></childelements>
     <attribute en="name" optional="yes" type="text">
@@ -3048,11 +3051,19 @@
         <para>Der Name des Parameters</para>
       </description>
     </attribute>
+    <attribute en="select" optional="yes" type="xpath">
+      <description xml:lang="en">
+        <para>The value of the parameter. On a <cmd name="CallTemplate"/> it is the argument passed to the template; on a <cmd name="Template"/> definition it is the default value used when the caller omits the parameter.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Der Wert des Parameters. Bei <cmd name="CallTemplate"/> ist es das an das Template übergebene Argument; bei einer <cmd name="Template"/>-Definition der Vorgabewert, falls der Aufrufer den Parameter weglässt.</para>
+      </description>
+    </attribute>
     <example xml:lang="en">
-      <para>See the example at <cmd name="Function"/></para>
+      <para>See the example at <cmd name="Function"/> and <cmd name="CallTemplate"/>.</para>
     </example>
     <example xml:lang="de">
-      <para>Siehe das Bespiel bei <cmd name="Function"/>.</para>
+      <para>Siehe das Bespiel bei <cmd name="Function"/> und <cmd name="CallTemplate"/>.</para>
     </example>
   </command>
 
@@ -3133,45 +3144,13 @@
         </description>
       </choice>
     </attribute>
-    <attribute en="format" optional="yes">
+    <attribute en="format" optional="yes" type="pdfformat">
       <description xml:lang="en">
-        <para>Set the PDF output format.</para>
+        <para>Set the PDF output format. Accepts a single conformance class or a comma-separated combination, e.g. "PDF/A-3b, PDF/UA-1" for an accessible archival PDF. Recognised tokens: PDF, PDF/A-3b (supports file attachments, required for ZUGFeRD), PDF/X-3, PDF/X-4 (for printing), PDF/UA (alias for PDF/UA-1), PDF/UA-2 (both for accessibility).</para>
       </description>
       <description xml:lang="de">
-        <para>Legt das PDF-Ausgabeformat fest.</para>
+        <para>Legt das PDF-Ausgabeformat fest. Akzeptiert eine einzelne Konformitätsklasse oder eine komma-separierte Kombination, z.B. "PDF/A-3b, PDF/UA-1" für eine barrierefreie Archivdatei. Erkannte Werte: PDF, PDF/A-3b (unterstützt Dateianhänge, benötigt für ZUGFeRD), PDF/X-3, PDF/X-4 (für den Druck), PDF/UA (Alias für PDF/UA-1), PDF/UA-2 (beide für Barrierefreiheit).</para>
       </description>
-      <choice en="PDF/A-3b">
-        <description xml:lang="en">
-          <para>PDF/A-3b format (supports file attachments, required for ZUGFeRD)</para>
-        </description>
-        <description xml:lang="de">
-          <para>PDF/A-3b-Format (unterstützt Dateianhänge, benötigt für ZUGFeRD)</para>
-        </description>
-      </choice>
-      <choice en="PDF/X-3">
-        <description xml:lang="en">
-          <para>PDF/X-3 format (for printing)</para>
-        </description>
-        <description xml:lang="de">
-          <para>PDF/X-3-Format (für den Druck)</para>
-        </description>
-      </choice>
-      <choice en="PDF/X-4">
-        <description xml:lang="en">
-          <para>PDF/X-4 format (for printing)</para>
-        </description>
-        <description xml:lang="de">
-          <para>PDF/X-4-Format (für den Druck)</para>
-        </description>
-      </choice>
-      <choice en="PDF/UA">
-        <description xml:lang="en">
-          <para>PDF/UA format (for accessibility)</para>
-        </description>
-        <description xml:lang="de">
-          <para>PDF/UA-Format (für Barrierefreiheit)</para>
-        </description>
-      </choice>
     </attribute>
     <attribute en="duplex" optional="yes">
       <description xml:lang="en">
@@ -3943,6 +3922,105 @@
 
   <!--
       ****************************************************************************************
+      * Template
+      ****************************************************************************************
+  -->
+  <command en="Template">
+    <description xml:lang="en">
+      <para>Define a named template that can be invoked with <cmd name="CallTemplate"/>. Unlike a <cmd name="Function"/>, a template may contain layout actions (such as <cmd name="PlaceObject"/>); they run at the call site, in document order, exactly once.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Definiert ein benanntes Template, das mit <cmd name="CallTemplate"/> aufgerufen werden kann. Anders als eine <cmd name="Function"/> darf ein Template Layout-Aktionen (etwa <cmd name="PlaceObject"/>) enthalten; diese laufen an der Aufrufstelle, in Dokumentreihenfolge, genau einmal.</para>
+    </description>
+    <childelements>
+      <zeroOrMore>
+        <cmd name="Param"></cmd>
+      </zeroOrMore>
+      <oneOrMore>
+        <interleave>
+          <reference name="Commands"/>
+        </interleave>
+      </oneOrMore>
+    </childelements>
+    <attribute en="name" optional="no" type="text">
+      <description xml:lang="en">
+        <para>The name of the template.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Der Name des Templates.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <para>See the example at <cmd name="CallTemplate"/>.</para>
+    </example>
+    <example xml:lang="de">
+      <para>Siehe das Beispiel bei <cmd name="CallTemplate"/>.</para>
+    </example>
+  </command>
+
+  <!--
+      ****************************************************************************************
+      * CallTemplate
+      ****************************************************************************************
+  -->
+  <command en="CallTemplate">
+    <description xml:lang="en">
+      <para>Invoke a named <cmd name="Template"/>. Parameters are passed with <cmd name="Param"/> children, whose <tt>select</tt> expressions are evaluated in the calling context. The parameter bindings are scoped to the template body.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Ruft ein benanntes <cmd name="Template"/> auf. Parameter werden über <cmd name="Param"/>-Kindelemente übergeben, deren <tt>select</tt>-Ausdrücke im Aufruferkontext ausgewertet werden. Die Parameterbindungen gelten nur im Rumpf des Templates.</para>
+    </description>
+    <childelements>
+      <zeroOrMore>
+        <cmd name="Param"></cmd>
+      </zeroOrMore>
+    </childelements>
+    <attribute en="name" optional="no" type="text">
+      <description xml:lang="en">
+        <para>The name of the template to call.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Der Name des aufzurufenden Templates.</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<Template name="headline">
+  <Param name="text"/>
+  <PlaceObject>
+    <TextBlock>
+      <Paragraph><B><Value select="$text"/></B></Paragraph>
+    </TextBlock>
+  </PlaceObject>
+</Template>
+
+<Record match="chapter">
+  <CallTemplate name="headline">
+    <Param name="text" select="@title"/>
+  </CallTemplate>
+</Record>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Template name="headline">
+  <Param name="text"/>
+  <PlaceObject>
+    <TextBlock>
+      <Paragraph><B><Value select="$text"/></B></Paragraph>
+    </TextBlock>
+  </PlaceObject>
+</Template>
+
+<Record match="chapter">
+  <CallTemplate name="headline">
+    <Param name="text" select="@title"/>
+  </CallTemplate>
+</Record>
+]]></listing>
+    </example>
+  </command>
+
+  <!--
+      ****************************************************************************************
       * SetVariable
       ****************************************************************************************
   -->
@@ -3956,8 +4034,11 @@
     <childelements>
       <oneOrMore>
         <interleave>
+          <optional><cmd name="Column"/></optional>
+          <optional><cmd name="Columns"/></optional>
           <optional><cmd name="CopyOf"/></optional>
           <optional><cmd name="Element"/></optional>
+          <optional><cmd name="ForAll"/></optional>
           <optional><cmd name="Paragraph"/></optional>
           <optional><cmd name="Table"/></optional>
           <optional><cmd name="TextBlock"/></optional>
@@ -3967,6 +4048,14 @@
         </interleave>
       </oneOrMore>
     </childelements>
+    <attribute en="as" type="text" optional="yes">
+      <description xml:lang="en">
+        <para>A sequence type (in the style of XSLT/XQuery, e.g. <tt>element(Column)*</tt>, <tt>xs:string</tt>, <tt>node()*</tt>) that declares the variable holds a data value. When given, the element body is treated as a data value: layout actions such as <cmd name="PlaceObject"/> are not allowed inside it.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Ein Sequenztyp (im Stil von XSLT/XQuery, z.&#160;B. <tt>element(Column)*</tt>, <tt>xs:string</tt>, <tt>node()*</tt>), der angibt, dass die Variable einen Datenwert enthält. Wenn angegeben, wird der Inhalt des Elements als Datenwert behandelt: Layout-Aktionen wie <cmd name="PlaceObject"/> sind darin nicht erlaubt.</para>
+      </description>
+    </attribute>
     <attribute en="select" type="xpath" optional="yes">
       <description xml:lang="en">
         <para>The value of the contents.</para>

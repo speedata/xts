@@ -65,7 +65,7 @@
       </xs:attribute>
       <xs:attribute name="type">
         <xs:annotation>
-          <xs:documentation>The MIME type of the attachment (e.g. "application/pdf"). If set to "ZUGFeRD invoice" or "facturx", the attached XML is treated as a Factur-X / ZUGFeRD invoice: the conformance profile is detected automatically, the required XMP metadata is added, and the PDF format is automatically set to PDF/A-3b. If not set, the MIME type is detected from the file extension.</xs:documentation>
+          <xs:documentation>The MIME type of the attachment (e.g. "application/pdf"). If set to "ZUGFeRD invoice" or "facturx", the attached XML is treated as a Factur-X / ZUGFeRD invoice: the conformance profile is detected automatically from the XML data, the required XMP metadata for ZUGFeRD compliance is added, and the PDF format is automatically set to PDF/A-3b. If not set, the MIME type is detected from the file extension.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
     </xs:complexType>
@@ -87,6 +87,7 @@
     <xs:complexType>
       <xs:sequence maxOccurs="unbounded">
         <xs:element minOccurs="0" ref="en:AttachFile"/>
+        <xs:element minOccurs="0" ref="en:CallTemplate"/>
         <xs:element minOccurs="0" ref="en:ClearPage"/>
         <xs:element minOccurs="0" ref="en:ForAll"/>
         <xs:element minOccurs="0" ref="en:Slate"/>
@@ -113,6 +114,7 @@
     <xs:complexType>
       <xs:sequence maxOccurs="unbounded">
         <xs:element minOccurs="0" ref="en:AttachFile"/>
+        <xs:element minOccurs="0" ref="en:CallTemplate"/>
         <xs:element minOccurs="0" ref="en:ClearPage"/>
         <xs:element minOccurs="0" ref="en:ForAll"/>
         <xs:element minOccurs="0" ref="en:Slate"/>
@@ -255,6 +257,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:sequence maxOccurs="unbounded">
+        <xs:element minOccurs="0" ref="en:CallTemplate"/>
         <xs:element minOccurs="0" ref="en:Column"/>
         <xs:element minOccurs="0" ref="en:ClearPage"/>
         <xs:element minOccurs="0" ref="en:ForAll"/>
@@ -397,6 +400,7 @@
     <xs:complexType>
       <xs:sequence maxOccurs="unbounded">
         <xs:element minOccurs="0" ref="en:AttachFile"/>
+        <xs:element minOccurs="0" ref="en:CallTemplate"/>
         <xs:element minOccurs="0" ref="en:ClearPage"/>
         <xs:element minOccurs="0" ref="en:ForAll"/>
         <xs:element minOccurs="0" ref="en:Slate"/>
@@ -557,6 +561,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="en:CallTemplate"/>
         <xs:element ref="en:Column"/>
         <xs:element ref="en:ClearPage"/>
         <xs:element ref="en:ForAll"/>
@@ -844,6 +849,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="en:CallTemplate"/>
         <xs:element ref="en:Column"/>
         <xs:element ref="en:ClearPage"/>
         <xs:element ref="en:ForAll"/>
@@ -942,6 +948,7 @@
         <xs:element minOccurs="0" ref="en:SetGrid"/>
         <xs:element minOccurs="0" ref="en:SetVariable"/>
         <xs:element minOccurs="0" ref="en:StyleSheet"/>
+        <xs:element minOccurs="0" ref="en:Template"/>
         <xs:element minOccurs="0" ref="en:Trace"/>
         <xs:element minOccurs="0" ref="en:Layout"/>
       </xs:sequence>
@@ -1586,6 +1593,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:sequence maxOccurs="unbounded">
+        <xs:element minOccurs="0" ref="en:CallTemplate"/>
         <xs:element minOccurs="0" ref="en:Column"/>
         <xs:element minOccurs="0" ref="en:ClearPage"/>
         <xs:element minOccurs="0" ref="en:ForAll"/>
@@ -1665,12 +1673,17 @@
   </xs:element>
   <xs:element name="Param">
     <xs:annotation>
-      <xs:documentation>Specify a parameter for a function definition.</xs:documentation>
+      <xs:documentation>Specify a parameter for a Function or Template definition, or pass an argument in a CallTemplate.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:attribute name="name">
         <xs:annotation>
           <xs:documentation>The name of the parameter.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="select">
+        <xs:annotation>
+          <xs:documentation>The value of the parameter. On a CallTemplate it is the argument passed to the template; on a Template definition it is the default value used when the caller omits the parameter.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
     </xs:complexType>
@@ -1726,30 +1739,11 @@
       </xs:attribute>
       <xs:attribute name="format">
         <xs:annotation>
-          <xs:documentation>Set the PDF output format.</xs:documentation>
+          <xs:documentation>Set the PDF output format. Accepts a single conformance class or a comma-separated combination, e.g. "PDF/A-3b, PDF/UA-1" for an accessible archival PDF. Recognised tokens: PDF, PDF/A-3b (supports file attachments, required for ZUGFeRD), PDF/X-3, PDF/X-4 (for printing), PDF/UA (alias for PDF/UA-1), PDF/UA-2 (both for accessibility).</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
-          <xs:restriction base="xs:token">
-            <xs:enumeration value="PDF/A-3b">
-              <xs:annotation>
-                <xs:documentation>PDF/A-3b format (supports file attachments, required for ZUGFeRD)</xs:documentation>
-              </xs:annotation>
-            </xs:enumeration>
-            <xs:enumeration value="PDF/X-3">
-              <xs:annotation>
-                <xs:documentation>PDF/X-3 format (for printing)</xs:documentation>
-              </xs:annotation>
-            </xs:enumeration>
-            <xs:enumeration value="PDF/X-4">
-              <xs:annotation>
-                <xs:documentation>PDF/X-4 format (for printing)</xs:documentation>
-              </xs:annotation>
-            </xs:enumeration>
-            <xs:enumeration value="PDF/UA">
-              <xs:annotation>
-                <xs:documentation>PDF/UA format (for accessibility)</xs:documentation>
-              </xs:annotation>
-            </xs:enumeration>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="\s*(PDF|PDF/A-3b|PDF/X-3|PDF/X-4|PDF/UA|PDF/UA-1|PDF/UA-2)(\s*,\s*(PDF|PDF/A-3b|PDF/X-3|PDF/X-4|PDF/UA|PDF/UA-1|PDF/UA-2))*\s*"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
@@ -2101,6 +2095,7 @@
     <xs:complexType>
       <xs:sequence maxOccurs="unbounded">
         <xs:element minOccurs="0" ref="en:AttachFile"/>
+        <xs:element minOccurs="0" ref="en:CallTemplate"/>
         <xs:element minOccurs="0" ref="en:ClearPage"/>
         <xs:element minOccurs="0" ref="en:ForAll"/>
         <xs:element minOccurs="0" ref="en:Slate"/>
@@ -2182,6 +2177,7 @@
         <xs:element minOccurs="0" ref="en:SetGrid"/>
         <xs:element minOccurs="0" ref="en:SetVariable"/>
         <xs:element minOccurs="0" ref="en:StyleSheet"/>
+        <xs:element minOccurs="0" ref="en:Template"/>
         <xs:element minOccurs="0" ref="en:Trace"/>
       </xs:sequence>
       <xs:attribute name="name" use="required">
@@ -2228,14 +2224,67 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
+  <xs:element name="Template">
+    <xs:annotation>
+      <xs:documentation>Define a named template that can be invoked with CallTemplate. Unlike a Function, a template may contain layout actions (such as PlaceObject); they run at the call site, in document order, exactly once.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="en:Param"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element ref="en:AttachFile"/>
+          <xs:element ref="en:CallTemplate"/>
+          <xs:element ref="en:ClearPage"/>
+          <xs:element ref="en:ForAll"/>
+          <xs:element ref="en:Slate"/>
+          <xs:element ref="en:LoadXML"/>
+          <xs:element ref="en:Loop"/>
+          <xs:element ref="en:Message"/>
+          <xs:element ref="en:NextFrame"/>
+          <xs:element ref="en:NextRow"/>
+          <xs:element ref="en:PlaceObject"/>
+          <xs:element ref="en:ProcessNode"/>
+          <xs:element ref="en:SaveXML"/>
+          <xs:element ref="en:SetVariable"/>
+          <xs:element ref="en:Switch"/>
+          <xs:element ref="en:Until"/>
+          <xs:element ref="en:Value"/>
+          <xs:element ref="en:While"/>
+        </xs:choice>
+      </xs:sequence>
+      <xs:attribute name="name" use="required">
+        <xs:annotation>
+          <xs:documentation>The name of the template.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CallTemplate">
+    <xs:annotation>
+      <xs:documentation>Invoke a named Template. Parameters are passed with Param children, whose select expressions are evaluated in the calling context. The parameter bindings are scoped to the template body.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="en:Param"/>
+      </xs:sequence>
+      <xs:attribute name="name" use="required">
+        <xs:annotation>
+          <xs:documentation>The name of the template to call.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="SetVariable">
     <xs:annotation>
       <xs:documentation>Associates a value with a variable name. The value can be a simple value or a more complex one consisting of several elements.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="en:Column"/>
+        <xs:element ref="en:Columns"/>
         <xs:element ref="en:CopyOf"/>
         <xs:element ref="en:Element"/>
+        <xs:element ref="en:ForAll"/>
         <xs:element ref="en:Paragraph"/>
         <xs:element ref="en:Table"/>
         <xs:element ref="en:TextBlock"/>
@@ -2243,6 +2292,11 @@
         <xs:element ref="en:Value"/>
         <xs:element ref="en:While"/>
       </xs:choice>
+      <xs:attribute name="as">
+        <xs:annotation>
+          <xs:documentation>A sequence type (in the style of XSLT/XQuery, e.g. element(Column)*, xs:string, node()*) that declares the variable holds a data value. When given, the element body is treated as a data value: layout actions such as PlaceObject are not allowed inside it.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
       <xs:attribute name="select">
         <xs:annotation>
           <xs:documentation>The value of the contents.</xs:documentation>
@@ -2721,6 +2775,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="en:CallTemplate"/>
         <xs:element ref="en:Column"/>
         <xs:element ref="en:ClearPage"/>
         <xs:element ref="en:ForAll"/>
@@ -2799,6 +2854,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="en:CallTemplate"/>
         <xs:element ref="en:Column"/>
         <xs:element ref="en:ClearPage"/>
         <xs:element ref="en:ForAll"/>

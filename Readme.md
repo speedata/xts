@@ -1,3 +1,5 @@
+[![Explore in Constellation](https://img.shields.io/badge/Explore%20in-Constellation-blue)](https://constellation.speedata.de)
+
 # XTS - XML typesetting system
 
 XTS turns XML data into PDF. You write a layout in XML, point it at your data, and get a fully typeset document -- no GUI, no manual intervention. Think product catalogs, price lists, data sheets, or anything where content changes but the design stays the same.
@@ -31,6 +33,12 @@ rake build
 ```
 
 Needs Go 1.21+ and Ruby/rake (or just run the `go build` command from the Rakefile directly).
+
+## Ecosystem
+
+XTS is part of a broader ecosystem of PDF, typesetting and publishing technologies.
+
+**[Explore the constellation →](https://constellation.speedata.de)**
 
 ## License
 

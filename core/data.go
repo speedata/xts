@@ -23,7 +23,11 @@ type seqfunc func() (xpath.Sequence, error)
 func returnEvalBodyLater(layoutelt *goxml.Element, xd *xtsDocument, ctx *xpath.Context) seqfunc {
 	oldCtx := xpath.CopyContext(ctx)
 	return func() (xpath.Sequence, error) {
-		eval, err := dispatch(xd, layoutelt)
+		// A <Function> body is evaluated lazily by the XPath engine (possibly
+		// multiple times, in any order, or not at all). It must therefore be
+		// action-free: dispatch it in a value context so action commands are
+		// rejected. Effects belong in <Template>/<CallTemplate>.
+		eval, err := dispatchValueContext(xd, layoutelt)
 		xd.data.Ctx = oldCtx
 		return eval, err
 	}
@@ -212,6 +216,29 @@ func reconstructHTMLText(elt *goxml.Element) *html.Node {
 	}
 
 	return n
+}
+
+// goxmlToHTMLNode converts a constructor's goxml.Element into the *html.Node
+// shape that the htmlbag consumers (cmdTable, cmdPlaceObject) expect. Layout
+// constructor element names are mapped to their HTML equivalents (e.g. Column →
+// <col data-width="…">). Unknown elements fall back to a structural
+// reconstruction via reconstructHTMLText.
+func goxmlToHTMLNode(elt *goxml.Element) *html.Node {
+	switch elt.Name {
+	case "Column":
+		n := &html.Node{Data: "col", Type: html.ElementNode}
+		for _, attr := range elt.Attributes() {
+			if attr.Name == "width" {
+				// htmlbag reads the column width from the data-width attribute.
+				// This handles both fixed widths (e.g. "3cm") and flexible
+				// widths (e.g. "*", "2*").
+				n.Attr = append(n.Attr, html.Attribute{Key: "data-width", Val: attr.Value})
+			}
+		}
+		return n
+	default:
+		return reconstructHTMLText(elt)
+	}
 }
 
 // getXMLAttributes fills the struct at v with the attribute values of the

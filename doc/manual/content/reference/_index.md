@@ -8,7 +8,7 @@ weight: 50
 
 Quick lookup for every command, function, and configuration option in XTS. Each page gives you the exact syntax, attributes, and defaults -- no narrative, just the facts.
 
-For explanations and tutorials, see the [User Manual](/manual).
+For explanations and tutorials, see the [Layout Guide](/manual) and [Programming](/programming).
 
 ### Sections
 

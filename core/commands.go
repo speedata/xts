@@ -36,9 +36,25 @@ type recordEntry struct {
 	layout   *goxml.Element // the layout element containing the Record body
 }
 
+// cmdKind classifies every dispatch handler. The classification feeds the
+// data/action boundary: constructors build queryable material (and may be bound
+// with `as`), actions have an effect and cannot be bound, and control-flow
+// commands are transparent: they inherit the kind of whatever they contain, so
+// they are simply allowed to recurse in a value context.
+type cmdKind int
+
+const (
+	kindConstructor cmdKind = iota // builds queryable/placeable material
+	kindAction                     // effect only, not bindable, rejected in a value context
+	kindControlFlow                // transparent wrapper, recurses into its content
+)
+
 var (
 	dataRecords   []recordEntry
 	dispatchTable map[string]commandFunc
+	// cmdKinds classifies each dispatchTable entry. A command missing from this
+	// map defaults to kindConstructor (the safe, bindable default).
+	cmdKinds map[string]cmdKind
 )
 
 func init() {
@@ -51,6 +67,7 @@ func init() {
 		"Br":               cmdBr,
 		"Bookmark":         cmdBookmark,
 		"Box":              cmdBox,
+		"CallTemplate":     cmdCallTemplate,
 		"Circle":           cmdCircle,
 		"ClearPage":        cmdClearpage,
 		"Column":           cmdColumn,
@@ -93,6 +110,7 @@ func init() {
 		"TableHead":        cmdTableHead,
 		"TableRule":        cmdTableRule,
 		"Table":            cmdTable,
+		"Template":         cmdTemplate,
 		"TextBlock":        cmdTextBlock,
 		"Td":               cmdTd,
 		"Trace":            cmdTrace,
@@ -103,6 +121,59 @@ func init() {
 		"Value":            cmdValue,
 		"While":            cmdWhile,
 	}
+
+	// cmdKinds classifies every command for the data/action boundary. Commands
+	// not listed here default to kindConstructor.
+	cmdKinds = map[string]cmdKind{
+		// Actions: effect only, not bindable.
+		"Action":           kindAction,
+		"AttachFile":       kindAction,
+		"Bookmark":         kindAction,
+		"ClearPage":        kindAction,
+		"DefineColor":      kindAction,
+		"DefineMasterPage": kindAction,
+		"LoadXML":          kindAction,
+		"Mark":             kindAction,
+		"Message":          kindAction,
+		"NextFrame":        kindAction,
+		"NextRow":          kindAction,
+		"Options":          kindAction,
+		"PageFormat":       kindAction,
+		"PDFOptions":       kindAction,
+		"PlaceObject":      kindAction,
+		"SaveXML":          kindAction,
+		"Section":          kindAction,
+		"SetGrid":          kindAction,
+		"Slate":            kindAction,
+		"StyleSheet":       kindAction,
+		"Trace":            kindAction,
+
+		// Control flow / definitions: transparent, recurses into its content.
+		"CallTemplate": kindAction,
+		"Contents":     kindControlFlow,
+		"ForAll":       kindControlFlow,
+		"Function":     kindControlFlow,
+		"Loop":         kindControlFlow,
+		"Param":        kindControlFlow,
+		"ProcessNode":  kindControlFlow,
+		"Record":       kindControlFlow,
+		"SetVariable":  kindControlFlow,
+		"Switch":       kindControlFlow,
+		"Template":     kindControlFlow,
+		"Until":        kindControlFlow,
+		"While":        kindControlFlow,
+
+		// Everything else (Element, Attribute, Column, Columns, CopyOf, Value,
+		// Box, TextBlock, Table, Tr, Td, TableHead, TableRule, Image, Paragraph,
+		// Span, A, B, I, U, Br, Li, Ol, Ul, Circle, HTML, SlateContents) is a
+		// constructor by default.
+	}
+}
+
+// kindOf returns the classification of a command, defaulting to kindConstructor
+// for commands that are not explicitly listed in cmdKinds.
+func kindOf(name string) cmdKind {
+	return cmdKinds[name]
 }
 
 func ignoreFunction(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -114,6 +185,9 @@ func dispatch(xd *xtsDocument, layoutelement *goxml.Element) (xpath.Sequence, er
 	for _, cld := range layoutelement.Children() {
 		if elt, ok := cld.(*goxml.Element); ok {
 			if f, ok := dispatchTable[elt.Name]; ok {
+				if xd.valueContext && kindOf(elt.Name) == kindAction {
+					return nil, newTypesettingErrorf(elt.Name, elt.Line, "action %q is not allowed in a value context", elt.Name)
+				}
 				slog.Debug("Command", "cmd", elt.Name, "line", elt.Line)
 				seq, err := f(xd, elt)
 				if err != nil {
@@ -126,6 +200,18 @@ func dispatch(xd *xtsDocument, layoutelement *goxml.Element) (xpath.Sequence, er
 		}
 	}
 	return retSequence, nil
+}
+
+// dispatchValueContext dispatches the children of layoutelement as a bound data
+// value. Action commands anywhere in the subtree are rejected (see dispatch);
+// constructors and control-flow commands recurse normally. The previous
+// value-context state is saved and restored so nested bindings compose.
+func dispatchValueContext(xd *xtsDocument, layoutelement *goxml.Element) (xpath.Sequence, error) {
+	saved := xd.valueContext
+	xd.valueContext = true
+	seq, err := dispatch(xd, layoutelement)
+	xd.valueContext = saved
+	return seq, err
 }
 
 func cmdA(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -394,14 +480,15 @@ func cmdColumn(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
-	colNode := &html.Node{
-		Data: "col",
-		Type: html.ElementNode,
-	}
-	// Store width in data-width attribute for processing by htmlbag
-	// This handles both fixed widths (e.g., "3cm") and flexible widths (e.g., "*", "2*")
-	colNode.Attr = append(colNode.Attr, html.Attribute{Key: "data-width", Val: attValues.Width})
-	return xpath.Sequence{colNode}, nil
+	// Return a queryable goxml.Element named "Column" with a width attribute
+	// (rather than an opaque *html.Node), so that bound values such as
+	// $head/@width and count($head) work. The conversion to the *html.Node that
+	// htmlbag consumes happens at the consume boundary (goxmlToHTMLNode), e.g.
+	// in cmdTable and cmdPlaceObject.
+	col := goxml.NewElement()
+	col.Name = "Column"
+	col.SetAttribute(xml.Attr{Name: xml.Name{Local: "width"}, Value: attValues.Width})
+	return xpath.Sequence{col}, nil
 }
 
 func cmdColumns(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -668,6 +755,108 @@ func cmdFunction(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, err
 	minArg := len(params)
 	maxArg := len(params)
 	xpath.RegisterFunction(&xpath.Function{Name: name, Namespace: ns, F: a, MinArg: minArg, MaxArg: maxArg})
+	return nil, nil
+}
+
+// cmdTemplate registers a named template body for later invocation by
+// <CallTemplate>. The body is not dispatched here: unlike <Function> a template
+// may contain actions, which must run at the call site in document order.
+func cmdTemplate(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	attValues := &struct {
+		Name string `sdxml:"mustexist"`
+	}{}
+	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	xd.templates[attValues.Name] = layoutelt
+	return nil, nil
+}
+
+// templateParam reads a <Param name="…" select="…"> child and evaluates its
+// select expression (if any) in the current context.
+func templateParam(xd *xtsDocument, cldElt *goxml.Element) (name string, value xpath.Sequence, err error) {
+	pv := &struct {
+		Name   string  `sdxml:"mustexist"`
+		Select *string `sdxml:"noescape"`
+	}{}
+	if err = getXMLAttributes(xd, cldElt, pv); err != nil {
+		return "", nil, err
+	}
+	if pv.Select != nil {
+		if value, err = evaluateXPath(xd, cldElt.Namespaces, *pv.Select); err != nil {
+			return "", nil, newTypesettingErrorf("CallTemplate", cldElt.Line, "error in Param %q select expression: %s", pv.Name, err)
+		}
+	}
+	return pv.Name, value, nil
+}
+
+// cmdCallTemplate invokes a named template. Parameters supplied on the call
+// (<Param> children) are evaluated in the caller context; <Param> declarations
+// on the template provide defaults for any the caller omits. The bindings are
+// scoped: the previous values of the parameter variables are restored after the
+// template body has run (which runs in the full imperative flow, with effects).
+func cmdCallTemplate(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	attValues := &struct {
+		Name string `sdxml:"mustexist"`
+	}{}
+	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	tmpl, ok := xd.templates[attValues.Name]
+	if !ok {
+		return nil, newTypesettingErrorf("CallTemplate", layoutelt.Line, "template %q not found", attValues.Name)
+	}
+
+	bindings := map[string]xpath.Sequence{}
+	// caller-provided parameters
+	for _, cld := range layoutelt.Children() {
+		if cldElt, ok := cld.(*goxml.Element); ok && cldElt.Name == "Param" {
+			name, value, err := templateParam(xd, cldElt)
+			if err != nil {
+				return nil, err
+			}
+			bindings[name] = value
+		}
+	}
+	// template-side defaults for omitted parameters
+	for _, cld := range tmpl.Children() {
+		if cldElt, ok := cld.(*goxml.Element); ok && cldElt.Name == "Param" {
+			name, value, err := templateParam(xd, cldElt)
+			if err != nil {
+				return nil, err
+			}
+			if _, set := bindings[name]; !set {
+				bindings[name] = value
+			}
+		}
+	}
+
+	// Save current values, bind parameters, dispatch the body, then restore.
+	type savedVar struct {
+		value xpath.Sequence
+		had   bool
+	}
+	saves := make(map[string]savedVar, len(bindings))
+	for name, value := range bindings {
+		old, had := xd.data.GetVariable(name)
+		saves[name] = savedVar{old, had}
+		xd.data.SetVariable(name, value)
+	}
+
+	_, err := dispatch(xd, tmpl)
+
+	for name, s := range saves {
+		if s.had {
+			xd.data.SetVariable(name, s.value)
+		} else {
+			// No previous binding: reset to the empty sequence (goxpath has no
+			// delete; an unset variable and an empty sequence behave alike).
+			xd.data.SetVariable(name, nil)
+		}
+	}
+	if err != nil {
+		return nil, err
+	}
 	return nil, nil
 }
 
@@ -1287,22 +1476,22 @@ func cmdNextFrame(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 // facturxProfiles maps GuidelineSpecifiedDocumentContextParameter URNs to
 // Factur-X conformance level names.
 var facturxProfiles = map[string]string{
-	"urn:factur-x.eu:1p0:minimum":                                                        "MINIMUM",
-	"urn:factur-x.eu:1p0:basicwl":                                                        "BASIC WL",
-	"urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic":                        "BASIC",
-	"urn:cen.eu:en16931:2017":                                                             "EN 16931",
-	"urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended":                    "EXTENDED",
-	"urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0":              "XRECHNUNG",
-	"urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_2.3":              "XRECHNUNG",
-	"urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_2.2":              "XRECHNUNG",
-	"urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_2.1":              "XRECHNUNG",
-	"urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_2.0":              "XRECHNUNG",
-	"urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_1.2":              "XRECHNUNG",
-	"urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.3":         "XRECHNUNG",
-	"urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.2":         "XRECHNUNG",
-	"urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.1":         "XRECHNUNG",
-	"urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.0":         "XRECHNUNG",
-	"urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_1.2":         "XRECHNUNG",
+	"urn:factur-x.eu:1p0:minimum":                                                "MINIMUM",
+	"urn:factur-x.eu:1p0:basicwl":                                                "BASIC WL",
+	"urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic":                "BASIC",
+	"urn:cen.eu:en16931:2017":                                                    "EN 16931",
+	"urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended":            "EXTENDED",
+	"urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0":      "XRECHNUNG",
+	"urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_2.3":      "XRECHNUNG",
+	"urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_2.2":      "XRECHNUNG",
+	"urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_2.1":      "XRECHNUNG",
+	"urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_2.0":      "XRECHNUNG",
+	"urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_1.2":      "XRECHNUNG",
+	"urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.3": "XRECHNUNG",
+	"urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.2": "XRECHNUNG",
+	"urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.1": "XRECHNUNG",
+	"urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.0": "XRECHNUNG",
+	"urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_1.2": "XRECHNUNG",
 }
 
 // detectFacturxProfile reads a CrossIndustryInvoice XML and returns the
@@ -1376,7 +1565,10 @@ func cmdAttachFile(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 	xd.document.Doc.AttachFile(attachment)
 
 	if isFacturx {
-		xd.document.Doc.Format = document.FormatPDFA3b
+		// Additive: only the PDF/A sub-conformance is set, so a PDF/UA
+		// declaration from <PDFOptions format="…"> survives an embedded
+		// Factur-X invoice.
+		xd.document.Doc.Format.PDFA = &document.PDFAConf{Part: 3, Level: document.PDFALevelB}
 		conformanceLevel := detectFacturxProfile(data)
 		if conformanceLevel == "" {
 			return nil, newTypesettingErrorf("AttachFile", layoutelt.Line, "cannot detect Factur-X profile from %s", attValues.Href)
@@ -1442,20 +1634,14 @@ func cmdPDFOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 		}
 	}
 	if f := attValues.Format; f != nil {
-		switch *f {
-		case "PDF/A-3b":
-			xd.document.Doc.Format = document.FormatPDFA3b
-		case "PDF/X-3":
-			xd.document.Doc.Format = document.FormatPDFX3
-		case "PDF/X-4":
-			xd.document.Doc.Format = document.FormatPDFX4
-		case "PDF/UA", "PDF/UA-1":
-			xd.document.Doc.Format = document.FormatPDFUA
-		case "PDF/UA-2":
-			xd.document.Doc.Format = document.FormatPDFUA2
-		default:
-			return nil, newTypesettingErrorf("PDFOptions", layoutelt.Line, "unknown format %s", *f)
+		// Accept comma-separated combinations such as
+		//   format="PDF/A-3b, PDF/UA-1"
+		// which declare both sub-conformances on the same document.
+		parsed, err := document.ParseFormat(*f)
+		if err != nil {
+			return nil, newTypesettingErrorf("PDFOptions", layoutelt.Line, "%s", err.Error())
 		}
+		xd.document.Doc.Format = parsed
 	}
 	if dplx := attValues.Duplex; dplx != nil {
 		switch *dplx {
@@ -1744,16 +1930,23 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		if t.Attributes != nil {
 			origin = t.Attributes["origin"].(string)
 		}
-	case *html.Node:
-		// HTML node (e.g. from <HTML> command): build a complete HTML document
-		// and render it to a VList, similar to cmdTextBlock.
+	case *html.Node, *goxml.Element, goxml.Element:
+		// HTML node (e.g. from <HTML> command) or constructor output (goxml
+		// element): build a complete HTML document and render it to a VList,
+		// similar to cmdTextBlock. goxml elements are converted at this consume
+		// boundary via goxmlToHTMLNode.
 		doc := &html.Node{Type: html.DocumentNode}
 		root := &html.Node{Data: "html", Type: html.ElementNode}
 		head := &html.Node{Data: "head", Type: html.ElementNode}
 		body := &html.Node{Data: "body", Type: html.ElementNode}
 		for _, itm := range seq {
-			if hn, ok := itm.(*html.Node); ok {
+			switch hn := itm.(type) {
+			case *html.Node:
 				body.AppendChild(hn)
+			case *goxml.Element:
+				body.AppendChild(goxmlToHTMLNode(hn))
+			case goxml.Element:
+				body.AppendChild(goxmlToHTMLNode(&hn))
 			}
 		}
 		root.AppendChild(head)
@@ -1989,6 +2182,7 @@ func cmdSetGrid(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 
 func cmdSetVariable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	attValues := &struct {
+		As       string
 		Select   *string `sdxml:"noescape"`
 		Variable string  `sdxml:"mustexist"`
 		Trace    bool
@@ -2000,11 +2194,21 @@ func cmdSetVariable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	var eval xpath.Sequence
 	var err error
 	if attValues.Select != nil {
+		// A select expression is pure XPath and cannot perform layout actions,
+		// so it is always a value. (Stufe b: type-check the result against
+		// attValues.As here.)
 		eval, err = evaluateXPath(xd, layoutelt.Namespaces, *attValues.Select)
 		if err != nil {
 			return nil, newTypesettingErrorf("SetVariable", layoutelt.Line, "error parsing select XPath expression %s", err)
 		}
-		xd.data.SetVariable(attValues.Variable, eval)
+	} else if attValues.As != "" {
+		// With an `as` type the body is bound as a data value: dispatch it in a
+		// value context so that action commands are rejected (Stufe a). A full
+		// XQuery sequence-type check of the result is a later step (Stufe b).
+		eval, err = dispatchValueContext(xd, layoutelt)
+		if err != nil {
+			return nil, err
+		}
 	} else {
 		eval, err = dispatch(xd, layoutelt)
 		if err != nil {
@@ -2166,20 +2370,29 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	}
 
 	for _, itm := range seq {
-		switch t := itm.(type) {
+		var t *html.Node
+		switch v := itm.(type) {
 		case *html.Node:
-			switch t.Data {
-			case "tr":
-				tableBodyNode.AppendChild(t)
-			case "thead":
-				tableNode.AppendChild(t)
-			case "col":
-				tableColgroupNode.AppendChild(t)
-			default:
-				slog.Error(fmt.Sprintf("cmdTable: unknown html node %s", t.Data))
-			}
+			t = v
+		case *goxml.Element:
+			// Constructor output (e.g. <Column> → goxml.Element) is converted to
+			// the *html.Node htmlbag expects at this consume boundary.
+			t = goxmlToHTMLNode(v)
+		case goxml.Element:
+			t = goxmlToHTMLNode(&v)
 		default:
-			slog.Error(fmt.Sprintf("table append item, unknown type %t", t))
+			slog.Error(fmt.Sprintf("table append item, unknown type %T", itm))
+			continue
+		}
+		switch t.Data {
+		case "tr":
+			tableBodyNode.AppendChild(t)
+		case "thead":
+			tableNode.AppendChild(t)
+		case "col":
+			tableColgroupNode.AppendChild(t)
+		default:
+			slog.Error(fmt.Sprintf("cmdTable: unknown html node %s", t.Data))
 		}
 	}
 

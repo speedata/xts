@@ -8,14 +8,20 @@ Associates a value with a variable name. The value can be a simple value or a mo
 
 ##  Child elements
 
-[CopyOf](../copyof), [Element](../element), [Paragraph](../paragraph), [Table](../table), [TextBlock](../textblock), [Until](../until), [Value](../value), [While](../while)
+[Column](../column), [Columns](../columns), [CopyOf](../copyof), [Element](../element), [ForAll](../forall), [Paragraph](../paragraph), [Table](../table), [TextBlock](../textblock), [Until](../until), [Value](../value), [While](../while)
 
 ##  Parent elements
 
-[AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout), [Case](../case), [Contents](../contents), [ForAll](../forall), [Function](../function), [Layout](../layout), [Loop](../loop), [Otherwise](../otherwise), [Record](../record), [Section](../section), [Until](../until), [While](../while)
+[AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout), [Case](../case), [Contents](../contents), [ForAll](../forall), [Function](../function), [Layout](../layout), [Loop](../loop), [Otherwise](../otherwise), [Record](../record), [Section](../section), [Template](../template), [Until](../until), [While](../while)
 
 
 ## Attributes
+
+
+
+`as` (text, optional)
+:   A sequence type (in the style of XSLT/XQuery, e.g. `element(Column)\*`, `xs:string`, `node()*`) that declares the variable holds a data value. When given, the element body is treated as a data value: layout actions such as [PlaceObject](../placeobject) are not allowed inside it.
+
 
 
 
