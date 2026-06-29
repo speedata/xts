@@ -2826,25 +2826,25 @@
     </attribute>
     <attribute en="imagenotfound" optional="yes">
       <description xml:lang="en">
-        <para>Controls behavior when an image file is not found. With "warning" (default), a placeholder image is inserted and processing continues. With "error", a missing image stops the layout run.</para>
+        <para>Controls how a missing image file is reported. In both cases a placeholder image is inserted and the PDF is still produced. With "warning" (default) a warning is logged; with "error" the issue is logged as an error, so the run exits with a non-zero status.</para>
       </description>
       <description xml:lang="de">
-        <para>Steuert das Verhalten bei nicht gefundenen Bilddateien. Bei "warning" (Voreinstellung) wird ein Platzhalterbild eingefügt und die Verarbeitung fortgesetzt. Bei "error" wird der Layoutlauf abgebrochen.</para>
+        <para>Steuert, wie eine nicht gefundene Bilddatei gemeldet wird. In beiden Fällen wird ein Platzhalterbild eingefügt und das PDF dennoch erzeugt. Bei "warning" (Voreinstellung) wird eine Warnung ausgegeben; bei "error" wird der Fehler protokolliert, sodass der Lauf mit einem Exit-Status ungleich null endet.</para>
       </description>
       <choice en="warning">
         <description xml:lang="en">
-          <para>Insert a placeholder image and continue (default).</para>
+          <para>Insert a placeholder image and log a warning (default).</para>
         </description>
         <description xml:lang="de">
-          <para>Platzhalterbild einfügen und fortfahren (Voreinstellung).</para>
+          <para>Platzhalterbild einfügen und eine Warnung ausgeben (Voreinstellung).</para>
         </description>
       </choice>
       <choice en="error">
         <description xml:lang="en">
-          <para>Report an error and stop processing.</para>
+          <para>Insert a placeholder image and report an error (non-zero exit status).</para>
         </description>
         <description xml:lang="de">
-          <para>Fehler melden und Verarbeitung abbrechen.</para>
+          <para>Platzhalterbild einfügen und einen Fehler melden (Exit-Status ungleich null).</para>
         </description>
       </choice>
     </attribute>

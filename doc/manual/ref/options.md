@@ -48,17 +48,17 @@ Set publisher specific options.
 
 
 `imagenotfound` (optional)
-:   Controls behavior when an image file is not found. With "warning" (default), a placeholder image is inserted and processing continues. With "error", a missing image stops the layout run.
+:   Controls how a missing image file is reported. In both cases a placeholder image is inserted and the PDF is still produced. With "warning" (default) a warning is logged; with "error" the issue is logged as an error, so the run exits with a non-zero status.
 
 
 
     `warning`
-    :    Insert a placeholder image and continue (default).
+    :    Insert a placeholder image and log a warning (default).
 
 
 
     `error`
-    :    Report an error and stop processing.
+    :    Insert a placeholder image and report an error (non-zero exit status).
 
 
 

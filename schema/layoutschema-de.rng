@@ -1352,12 +1352,12 @@
             </optional>
             <optional>
                 <attribute name="imagenotfound">
-                    <a:documentation>Steuert das Verhalten bei nicht gefundenen Bilddateien. Bei &#34;warning&#34; (Voreinstellung) wird ein Platzhalterbild eingefügt und die Verarbeitung fortgesetzt. Bei &#34;error&#34; wird der Layoutlauf abgebrochen.</a:documentation>
+                    <a:documentation>Steuert, wie eine nicht gefundene Bilddatei gemeldet wird. In beiden Fällen wird ein Platzhalterbild eingefügt und das PDF dennoch erzeugt. Bei &#34;warning&#34; (Voreinstellung) wird eine Warnung ausgegeben; bei &#34;error&#34; wird der Fehler protokolliert, sodass der Lauf mit einem Exit-Status ungleich null endet.</a:documentation>
                     <choice>
                         <value>warning</value>
-                        <a:documentation>Platzhalterbild einfügen und fortfahren (Voreinstellung).</a:documentation>
+                        <a:documentation>Platzhalterbild einfügen und eine Warnung ausgeben (Voreinstellung).</a:documentation>
                         <value>error</value>
-                        <a:documentation>Fehler melden und Verarbeitung abbrechen.</a:documentation>
+                        <a:documentation>Platzhalterbild einfügen und einen Fehler melden (Exit-Status ungleich null).</a:documentation>
                     </choice>
                 </attribute>
             </optional>

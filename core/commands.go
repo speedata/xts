@@ -1105,11 +1105,15 @@ func cmdImage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 
 	filename, err := xd.cfg.FindFile(attValues.Href)
 	if err != nil {
+		// A missing image always falls back to the file-not-found placeholder
+		// so the run still produces a PDF. With imagenotfound="error" the issue
+		// is logged at ERROR level (non-zero exit status); with "warning" it is
+		// only a warning.
 		if xd.imageNotFoundError {
-			slog.Error("Image file not found", "href", attValues.Href, "error", err)
-			return nil, err
+			slog.Error("Image file not found, using placeholder", "href", attValues.Href, "error", err)
+		} else {
+			slog.Warn("Image file not found, using placeholder", "href", attValues.Href, "error", err)
 		}
-		slog.Warn("Image file not found, using placeholder", "href", attValues.Href, "error", err)
 		imgObj, fnfErr := loadFileNotFoundImage(xd, attValues.Href)
 		if fnfErr != nil {
 			return nil, fmt.Errorf("file not found (%w) and placeholder generation failed: %w", err, fnfErr)
@@ -2823,7 +2827,36 @@ func cmdValue(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	}
 
 	if attValues.Select == nil {
-		return xpath.Sequence{layoutelt.Stringvalue()}, nil
+		// Mixed inline content such as <Value>foo<br/>bar</Value> must keep
+		// its child elements: Stringvalue() flattens the subtree to text and
+		// silently drops the <br/> (and any other inline markup), gluing the
+		// surrounding runs together. When the Value carries element children
+		// we emit text runs as strings and child elements as reconstructed
+		// HTML nodes in document order so the parent (Paragraph/A/…) sees the
+		// <br> and turns it into a line break. Pure-text Values keep the
+		// simple Stringvalue() path.
+		hasElementChild := false
+		for _, cld := range layoutelt.Children() {
+			if _, ok := cld.(*goxml.Element); ok {
+				hasElementChild = true
+				break
+			}
+		}
+		if !hasElementChild {
+			return xpath.Sequence{layoutelt.Stringvalue()}, nil
+		}
+		var seq xpath.Sequence
+		for _, cld := range layoutelt.Children() {
+			switch t := cld.(type) {
+			case goxml.CharData:
+				seq = append(seq, string(t.Contents))
+			case *goxml.Element:
+				if n := reconstructHTMLText(t); n != nil {
+					seq = append(seq, n)
+				}
+			}
+		}
+		return seq, nil
 	}
 
 	eval, err := evaluateXPath(xd, layoutelt.Namespaces, *attValues.Select)

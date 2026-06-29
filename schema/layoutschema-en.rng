@@ -1352,12 +1352,12 @@
             </optional>
             <optional>
                 <attribute name="imagenotfound">
-                    <a:documentation>Controls behavior when an image file is not found. With &#34;warning&#34; (default), a placeholder image is inserted and processing continues. With &#34;error&#34;, a missing image stops the layout run.</a:documentation>
+                    <a:documentation>Controls how a missing image file is reported. In both cases a placeholder image is inserted and the PDF is still produced. With &#34;warning&#34; (default) a warning is logged; with &#34;error&#34; the issue is logged as an error, so the run exits with a non-zero status.</a:documentation>
                     <choice>
                         <value>warning</value>
-                        <a:documentation>Insert a placeholder image and continue (default).</a:documentation>
+                        <a:documentation>Insert a placeholder image and log a warning (default).</a:documentation>
                         <value>error</value>
-                        <a:documentation>Report an error and stop processing.</a:documentation>
+                        <a:documentation>Insert a placeholder image and report an error (non-zero exit status).</a:documentation>
                     </choice>
                 </attribute>
             </optional>

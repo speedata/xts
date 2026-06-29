@@ -1102,18 +1102,18 @@
       </xs:attribute>
       <xs:attribute name="imagenotfound">
         <xs:annotation>
-          <xs:documentation>Steuert das Verhalten bei nicht gefundenen Bilddateien. Bei "warning" (Voreinstellung) wird ein Platzhalterbild eingefügt und die Verarbeitung fortgesetzt. Bei "error" wird der Layoutlauf abgebrochen.</xs:documentation>
+          <xs:documentation>Steuert, wie eine nicht gefundene Bilddatei gemeldet wird. In beiden Fällen wird ein Platzhalterbild eingefügt und das PDF dennoch erzeugt. Bei "warning" (Voreinstellung) wird eine Warnung ausgegeben; bei "error" wird der Fehler protokolliert, sodass der Lauf mit einem Exit-Status ungleich null endet.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
           <xs:restriction base="xs:token">
             <xs:enumeration value="warning">
               <xs:annotation>
-                <xs:documentation>Platzhalterbild einfügen und fortfahren (Voreinstellung).</xs:documentation>
+                <xs:documentation>Platzhalterbild einfügen und eine Warnung ausgeben (Voreinstellung).</xs:documentation>
               </xs:annotation>
             </xs:enumeration>
             <xs:enumeration value="error">
               <xs:annotation>
-                <xs:documentation>Fehler melden und Verarbeitung abbrechen.</xs:documentation>
+                <xs:documentation>Platzhalterbild einfügen und einen Fehler melden (Exit-Status ungleich null).</xs:documentation>
               </xs:annotation>
             </xs:enumeration>
           </xs:restriction>

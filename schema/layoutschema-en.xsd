@@ -1102,18 +1102,18 @@
       </xs:attribute>
       <xs:attribute name="imagenotfound">
         <xs:annotation>
-          <xs:documentation>Controls behavior when an image file is not found. With "warning" (default), a placeholder image is inserted and processing continues. With "error", a missing image stops the layout run.</xs:documentation>
+          <xs:documentation>Controls how a missing image file is reported. In both cases a placeholder image is inserted and the PDF is still produced. With "warning" (default) a warning is logged; with "error" the issue is logged as an error, so the run exits with a non-zero status.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
           <xs:restriction base="xs:token">
             <xs:enumeration value="warning">
               <xs:annotation>
-                <xs:documentation>Insert a placeholder image and continue (default).</xs:documentation>
+                <xs:documentation>Insert a placeholder image and log a warning (default).</xs:documentation>
               </xs:annotation>
             </xs:enumeration>
             <xs:enumeration value="error">
               <xs:annotation>
-                <xs:documentation>Report an error and stop processing.</xs:documentation>
+                <xs:documentation>Insert a placeholder image and report an error (non-zero exit status).</xs:documentation>
               </xs:annotation>
             </xs:enumeration>
           </xs:restriction>
