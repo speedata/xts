@@ -69,8 +69,23 @@ Control how the PDF opens:
     showhyperlinks="false"/>
 ```
 
+## Conformance (PDF/UA, PDF/A, PDF/X)
+
+The output conformance is **not** set with `<PDFOptions>`. It has to be known before the document is built, so it is configured on the [command line](../../running-xts/command-line) or in the [configuration file](../../running-xts/configuration) instead, using the orthogonal axes `pdfua`, `pdfa` and `pdfx`:
+
+```bash
+xts --pdfua 2
+```
+
+```toml title="xts.cfg"
+pdfua = "2"
+```
+
+For PDF/UA you should also set a meaningful document `title` (see above); without it XTS emits a placeholder title and a warning. See the [Accessible PDF documents](../../accessibility) chapter for the full workflow.
+
 ## See also
 
+- [Accessible PDF documents](../../accessibility)
 - [Bookmark reference](/reference/commands/bookmark)
 - [A reference](/reference/commands/a)
 - [PDFOptions reference](/reference/commands/pdfoptions)

@@ -1737,16 +1737,6 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
-      <xs:attribute name="format">
-        <xs:annotation>
-          <xs:documentation>Legt das PDF-Ausgabeformat fest. Akzeptiert eine einzelne Konformitätsklasse oder eine komma-separierte Kombination, z.B. "PDF/A-3b, PDF/UA-1" für eine barrierefreie Archivdatei. Erkannte Werte: PDF, PDF/A-3b (unterstützt Dateianhänge, benötigt für ZUGFeRD), PDF/X-3, PDF/X-4 (für den Druck), PDF/UA (Alias für PDF/UA-1), PDF/UA-2 (beide für Barrierefreiheit).</xs:documentation>
-        </xs:annotation>
-        <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:pattern value="\s*(PDF|PDF/A-3b|PDF/X-3|PDF/X-4|PDF/UA|PDF/UA-1|PDF/UA-2)(\s*,\s*(PDF|PDF/A-3b|PDF/X-3|PDF/X-4|PDF/UA|PDF/UA-1|PDF/UA-2))*\s*"/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:attribute>
       <xs:attribute name="duplex">
         <xs:annotation>
           <xs:documentation>Setze PDF Anzeigeprogramm auf einseitigen oder doppelseitigen Druck. Voreinstellung: leer.</xs:documentation>
@@ -2909,6 +2899,7 @@
       <xs:element ref="en:img"/>
       <xs:element ref="en:kbd"/>
       <xs:element ref="en:li"/>
+      <xs:element ref="en:math"/>
       <xs:element ref="en:ol"/>
       <xs:element ref="en:p"/>
       <xs:element ref="en:pre"/>
@@ -3027,6 +3018,7 @@
       </xs:complexContent>
     </xs:complexType>
   </xs:element>
+  <xs:element name="math" type="en:anything"/>
   <xs:element name="ol">
     <xs:complexType>
       <xs:complexContent>
@@ -3150,14 +3142,12 @@
     </xs:complexType>
   </xs:element>
   <!-- This pattern allows any element from any namespace -->
-  <xs:group name="anything">
+  <xs:complexType name="anything" mixed="true">
     <xs:sequence>
       <xs:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
     </xs:sequence>
-  </xs:group>
-  <xs:attributeGroup name="anything">
     <xs:anyAttribute processContents="skip"/>
-  </xs:attributeGroup>
+  </xs:complexType>
   <!-- Like anything but without top-level attributes (for use alongside explicit attributes) -->
   <xs:complexType name="anycontent" mixed="true">
     <xs:sequence>

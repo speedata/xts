@@ -83,12 +83,6 @@ Set PDF options
 
 
 
-`format` (pdfformat, optional)
-:   Set the PDF output format. Accepts a single conformance class or a comma-separated combination, e.g. "PDF/A-3b, PDF/UA-1" for an accessible archival PDF. Recognised tokens: PDF, PDF/A-3b (supports file attachments, required for ZUGFeRD), PDF/X-3, PDF/X-4 (for printing), PDF/UA (alias for PDF/UA-1), PDF/UA-2 (both for accessibility).
-
-
-
-
 `picktraybypdfsize` (optional)
 :   Activate the check box in the PDF viewer for choosing the paper tray based on the page size.
 

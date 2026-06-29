@@ -31,6 +31,9 @@ year = 2026
 | `filter` | string | `""` | Lua script to run before publishing |
 | `jobname` | string | `"xts"` | Output file name (without `.pdf`) |
 | `loglevel` | string | `"info"` | Log level: debug, info, warn, error |
+| `pdfua` | string | `""` | PDF/UA accessibility conformance: `none`, `1`, `2` |
+| `pdfa` | string | `""` | PDF/A archival conformance: `none`, `3b` |
+| `pdfx` | string | `""` | PDF/X print conformance: `none`, `X-3`, `X-4` |
 | `runs` | integer | `1` | Number of publishing runs |
 | `systemfonts` | boolean | `false` | Use system fonts |
 | `quiet` | boolean | `false` | Suppress console output |

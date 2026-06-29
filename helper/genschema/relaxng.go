@@ -360,6 +360,7 @@ func genRelaxNGSchema(commands *commandsXML, lang string, allowForeignNodes bool
 			    </element>
 			    <element name="kbd"><ref name="html" /></element>
 			    <element name="li"><ref name="htmlclassidstyle"/><ref name="html" /></element>
+			    <element name="math"><ref name="anything"/></element>
 			    <element name="ol"><ref name="htmlclassidstyle"/><ref name="html" /></element>
 			    <element name="p">
 					<ref name="htmlclassidstyle"/>

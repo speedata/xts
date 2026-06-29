@@ -1602,7 +1602,6 @@ func cmdPDFOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 		Creator           *string
 		DisplayMode       *string
 		Duplex            *string
-		Format            *string
 		PickTrayByPDFSize *bool
 		PrintScaling      *string
 		ShowHyperlinks    *bool
@@ -1632,16 +1631,6 @@ func cmdPDFOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 		case "thumbnails":
 			xd.document.Doc.ViewerPreferences["PageMode"] = "/UseThumbs"
 		}
-	}
-	if f := attValues.Format; f != nil {
-		// Accept comma-separated combinations such as
-		//   format="PDF/A-3b, PDF/UA-1"
-		// which declare both sub-conformances on the same document.
-		parsed, err := document.ParseFormat(*f)
-		if err != nil {
-			return nil, newTypesettingErrorf("PDFOptions", layoutelt.Line, "%s", err.Error())
-		}
-		xd.document.Doc.Format = parsed
 	}
 	if dplx := attValues.Duplex; dplx != nil {
 		switch *dplx {

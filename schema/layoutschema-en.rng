@@ -1662,14 +1662,6 @@
                 </attribute>
             </optional>
             <optional>
-                <attribute name="format">
-                    <a:documentation>Set the PDF output format. Accepts a single conformance class or a comma-separated combination, e.g. &#34;PDF/A-3b, PDF/UA-1&#34; for an accessible archival PDF. Recognised tokens: PDF, PDF/A-3b (supports file attachments, required for ZUGFeRD), PDF/X-3, PDF/X-4 (for printing), PDF/UA (alias for PDF/UA-1), PDF/UA-2 (both for accessibility).</a:documentation>
-                    <data type="string">
-                        <param name="pattern">\s*(PDF|PDF/A-3b|PDF/X-3|PDF/X-4|PDF/UA|PDF/UA-1|PDF/UA-2)(\s*,\s*(PDF|PDF/A-3b|PDF/X-3|PDF/X-4|PDF/UA|PDF/UA-1|PDF/UA-2))*\s*</param>
-                    </data>
-                </attribute>
-            </optional>
-            <optional>
                 <attribute name="duplex">
                     <a:documentation>Set viewer preference to one or two page printing. Default: empty.</a:documentation>
                     <choice>
@@ -3012,6 +3004,7 @@
 			    </element>
 			    <element name="kbd"><ref name="html" /></element>
 			    <element name="li"><ref name="htmlclassidstyle"/><ref name="html" /></element>
+			    <element name="math"><ref name="anything"/></element>
 			    <element name="ol"><ref name="htmlclassidstyle"/><ref name="html" /></element>
 			    <element name="p">
 					<ref name="htmlclassidstyle"/>

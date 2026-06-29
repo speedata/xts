@@ -206,6 +206,12 @@ type XTSConfig struct {
 	Tracing      []string
 	Variables    map[string]any
 	Info         PublishingInfo
+	// PDF conformance axes (orthogonal families). Empty/"none" means the
+	// axis is not claimed. Parsed into Doc.Format before htmlbag is built,
+	// so structure tagging is enabled from the start for PDF/UA.
+	Pdfua string
+	Pdfa  string
+	Pdfx  string
 }
 
 // RunXTS is the entry point
@@ -217,6 +223,12 @@ func RunXTS(cfg *XTSConfig) error {
 	d := newXTSDocument()
 	d.cfg = cfg
 	if d.document, err = frontend.New(cfg.OutFilename); err != nil {
+		return err
+	}
+	// Resolve the PDF conformance before htmlbag is constructed: htmlbag
+	// decides structure tagging from Doc.Format at New() time, so the format
+	// must be known up front (not set later via a layout command).
+	if d.document.Doc.Format, err = document.ParseFormatAxes(cfg.Pdfua, cfg.Pdfa, cfg.Pdfx); err != nil {
 		return err
 	}
 	bag.SetLogger(slog.Default())

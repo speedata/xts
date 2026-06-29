@@ -50,6 +50,9 @@ type config struct {
 	Layout       string         `mapstructure:"layout"`
 	LogLevel     string         `mapstructure:"loglevel"`
 	Mode         []string       `mapstructure:"mode"`
+	Pdfua        string         `mapstructure:"pdfua"`
+	Pdfa         string         `mapstructure:"pdfa"`
+	Pdfx         string         `mapstructure:"pdfx"`
 	Quiet        bool           `mapstructure:"quiet"`
 	Runs         int            `mapstructure:"runs"`
 	Systemfonts  bool           `mapstructure:"systemfonts"`
@@ -233,6 +236,9 @@ func dothings() error {
 	op.On("--layout NAME", "Name of the layout file. Defaults to 'layout.xml'", cmdline)
 	op.On("--loglevel LVL", "Set the log level for the console to one of debug, info, warn, error", cmdline)
 	op.On("--mode NAME", "Set mode. Multiple modes given in a comma separated list.", cmdline)
+	op.On("--pdfua VAL", "Claim PDF/UA accessibility conformance: 'none', '1', or '2'", cmdline)
+	op.On("--pdfa VAL", "Claim PDF/A archival conformance: 'none' or '3b'", cmdline)
+	op.On("--pdfx VAL", "Claim PDF/X print conformance: 'none', 'X-3', or 'X-4'", cmdline)
 	op.On("--quiet", "Run XTS in quiet mode (no output on STDOUT)", cmdline)
 	op.On("--runs N", "Run XTS N times", cmdline)
 	op.On("--suppressinfo", "Create a reproducible document", cmdline)
@@ -292,6 +298,12 @@ func dothings() error {
 			configuration.LogLevel = v
 		case "mode":
 			configuration.Mode = strings.Split(v, ",")
+		case "pdfua":
+			configuration.Pdfua = v
+		case "pdfa":
+			configuration.Pdfa = v
+		case "pdfx":
+			configuration.Pdfx = v
 		case "quiet":
 			configuration.Quiet = (v == "true")
 		case "suppressinfo":
@@ -495,6 +507,9 @@ func dothings() error {
 				SuppressInfo: configuration.SuppressInfo,
 				Tracing:      configuration.Trace,
 				Variables:    configuration.VariablesMap,
+				Pdfua:        configuration.Pdfua,
+				Pdfa:         configuration.Pdfa,
+				Pdfx:         configuration.Pdfx,
 			}
 
 			if fn := dumpOutputFileName; fn != "" {

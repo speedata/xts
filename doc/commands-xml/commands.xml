@@ -3144,14 +3144,6 @@
         </description>
       </choice>
     </attribute>
-    <attribute en="format" optional="yes" type="pdfformat">
-      <description xml:lang="en">
-        <para>Set the PDF output format. Accepts a single conformance class or a comma-separated combination, e.g. "PDF/A-3b, PDF/UA-1" for an accessible archival PDF. Recognised tokens: PDF, PDF/A-3b (supports file attachments, required for ZUGFeRD), PDF/X-3, PDF/X-4 (for printing), PDF/UA (alias for PDF/UA-1), PDF/UA-2 (both for accessibility).</para>
-      </description>
-      <description xml:lang="de">
-        <para>Legt das PDF-Ausgabeformat fest. Akzeptiert eine einzelne Konformitätsklasse oder eine komma-separierte Kombination, z.B. "PDF/A-3b, PDF/UA-1" für eine barrierefreie Archivdatei. Erkannte Werte: PDF, PDF/A-3b (unterstützt Dateianhänge, benötigt für ZUGFeRD), PDF/X-3, PDF/X-4 (für den Druck), PDF/UA (Alias für PDF/UA-1), PDF/UA-2 (beide für Barrierefreiheit).</para>
-      </description>
-    </attribute>
     <attribute en="duplex" optional="yes">
       <description xml:lang="en">
         <para>Set viewer preference to one or two page printing. Default: empty.</para>

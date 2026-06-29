@@ -35,6 +35,9 @@ xts <command> <parameters>
 | `--jobname=NAME` | Output PDF name without extension (default: `xts`) |
 | `--layout=NAME` | Layout file (default: `layout.xml`) |
 | `--loglevel=LVL` | Console log level: `debug`, `info`, `warn`, `error` |
+| `--pdfua=VAL` | Claim PDF/UA accessibility conformance: `none`, `1`, `2` (see [Accessible PDF](../../accessibility)) |
+| `--pdfa=VAL` | Claim PDF/A archival conformance: `none`, `3b` |
+| `--pdfx=VAL` | Claim PDF/X print conformance: `none`, `X-3`, `X-4` |
 | `--runs=N` | Run XTS N times (for cross-references) |
 | `--quiet` | No console output |
 | `--suppressinfo` | Create reproducible PDF (no timestamps/random IDs) |
