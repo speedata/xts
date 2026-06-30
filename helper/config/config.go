@@ -5,7 +5,6 @@ import "path/filepath"
 // Config is the basic configuration object
 type Config struct {
 	basedir    string
-	Libdir     string
 	Xtsversion string
 	Builddir   string
 }
@@ -13,7 +12,6 @@ type Config struct {
 // SetBasedir sets the root of the speedata xts source files
 func (cfg *Config) SetBasedir(basedir string) {
 	cfg.basedir = basedir
-	cfg.Libdir = filepath.Join(basedir, "lib")
 	cfg.Builddir = filepath.Join(basedir, "build")
 
 }

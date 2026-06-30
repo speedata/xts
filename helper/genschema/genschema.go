@@ -2,9 +2,7 @@
 package genschema
 
 import (
-	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 
 	"github.com/speedata/xts/helper/config"
@@ -19,68 +17,34 @@ const (
 	XHTMLNAMESPACE string = "http://www.w3.org/1999/xhtml"
 )
 
-// DoThings creates two schema files for »en« and »de«
+// DoThings creates Relax NG and XSD schema files for »en« and »de«. Both
+// schemas are generated programmatically from commands.xml; no external
+// converter (formerly trang.jar) is required.
 func DoThings(cfg *config.Config) error {
 	basedir := cfg.Basedir()
-	libdir := cfg.Libdir
 	c, err := readCommandsFile(basedir)
 	if err != nil {
 		return err
 	}
-	var buf []byte
-	rngSchemaENPath := filepath.Join(basedir, "schema", "layoutschema-en.rng")
-	rngSchemaDEPath := filepath.Join(basedir, "schema", "layoutschema-de.rng")
-	xsdSchemaENPath := filepath.Join(basedir, "schema", "layoutschema-en.xsd")
-	xsdSchemaDEPath := filepath.Join(basedir, "schema", "layoutschema-de.xsd")
-	// in the first pass we generate the RELAX NG layout schema without “foreign nodes” and convert those to
-	// XSD. This is easier than creating XSD programatically.
-	buf, err = genRelaxNGSchema(c, "en", false)
-	if err != nil {
-		return err
-	}
-	err = os.WriteFile(rngSchemaENPath, buf, 0o644)
-	if err != nil {
-		return err
+
+	schemas := []struct {
+		path string
+		gen  func() ([]byte, error)
+	}{
+		{filepath.Join(basedir, "schema", "layoutschema-en.rng"), func() ([]byte, error) { return genRelaxNGSchema(c, "en", true) }},
+		{filepath.Join(basedir, "schema", "layoutschema-de.rng"), func() ([]byte, error) { return genRelaxNGSchema(c, "de", true) }},
+		{filepath.Join(basedir, "schema", "layoutschema-en.xsd"), func() ([]byte, error) { return genXSDSchema(c, "en") }},
+		{filepath.Join(basedir, "schema", "layoutschema-de.xsd"), func() ([]byte, error) { return genXSDSchema(c, "de") }},
 	}
 
-	buf, err = genRelaxNGSchema(c, "de", false)
-	if err != nil {
-		return err
-	}
-	err = os.WriteFile(rngSchemaDEPath, buf, 0o644)
-	if err != nil {
-		return err
-	}
-	// now use TRANG to convert these to XSD
-	cmd := exec.Command("java", "-jar", filepath.Join(libdir, "trang.jar"), rngSchemaENPath, xsdSchemaENPath)
-	var out []byte
-	out, err = cmd.CombinedOutput()
-	if err != nil {
-		fmt.Println(string(out))
-		return err
-	}
-
-	cmd = exec.Command("java", "-jar", filepath.Join(libdir, "trang.jar"), rngSchemaDEPath, xsdSchemaDEPath)
-	err = cmd.Run()
-	if err != nil {
-		return err
-	}
-
-	buf, err = genRelaxNGSchema(c, "en", true)
-	if err != nil {
-		return err
-	}
-	err = os.WriteFile(rngSchemaENPath, buf, 0o644)
-	if err != nil {
-		return err
-	}
-	buf, err = genRelaxNGSchema(c, "de", true)
-	if err != nil {
-		return err
-	}
-	err = os.WriteFile(rngSchemaDEPath, buf, 0o644)
-	if err != nil {
-		return err
+	for _, s := range schemas {
+		buf, err := s.gen()
+		if err != nil {
+			return err
+		}
+		if err = os.WriteFile(s.path, buf, 0o644); err != nil {
+			return err
+		}
 	}
 	return nil
 }
