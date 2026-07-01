@@ -82,19 +82,6 @@ Font files follow the same rules as all other resources in XTS -- see [File Orga
 - Or use `--extradir` to add a shared font directory
 - Or use `--systemfonts` to access system-installed fonts
 
-## The list-fonts shortcut
-
-To save typing, let XTS scan your fonts and generate the `@font-face` rules for you:
-
-```
-$ xts list-fonts
-@font-face { font-family: "CamingoCode"; src: url("CamingoCode-Bold.ttf"); font-weight: bold; }
-@font-face { font-family: "CamingoCode"; src: url("CamingoCode-Regular.ttf"); }
-...
-```
-
-Copy the output into your `<StyleSheet>` block.
-
 ## OpenType features
 
 OpenType fonts often include optional features like old-style figures, small caps, or fraction rendering. Control them with `font-feature-settings`:

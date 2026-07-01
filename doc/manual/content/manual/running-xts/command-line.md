@@ -18,7 +18,6 @@ xts <command> <parameters>
 | `clean` | Remove auxiliary and protocol files |
 | `compare` | Compare PDFs for [quality assurance](../quality-assurance) |
 | `doc` | Open the documentation in a web browser |
-| `list-fonts` | List available fonts with `@font-face` rules |
 | `new` | Create a starter project in the given directory |
 | `version` | Print version number |
 

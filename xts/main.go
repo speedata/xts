@@ -9,12 +9,10 @@ import (
 	"path/filepath"
 	"runtime"
 	"runtime/pprof"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/boxesandglue/textshape/ot"
 	"github.com/pelletier/go-toml/v2"
 	"github.com/speedata/optionparser"
 	"github.com/speedata/xts/core"
@@ -69,55 +67,6 @@ func pluralize(n int, text string) string {
 		return "1 " + text
 	}
 	return fmt.Sprintf("%d %ss", n, text)
-}
-
-func listFonts() error {
-	ff := core.FindFontFiles()
-	ret := make([]string, len(ff))
-	for i, fontfile := range ff {
-		ret[i] = filepath.Base(fontfile)
-	}
-	sort.Slice(ff, func(i, j int) bool {
-		return filepath.Base(strings.ToLower(ff[i])) < filepath.Base(strings.ToLower(ff[j]))
-	})
-	for _, fontfile := range ff {
-		data, err := os.ReadFile(fontfile)
-		if err != nil {
-			return err
-		}
-
-		font, err := ot.ParseFont(data, 0)
-		if err != nil {
-			continue
-		}
-		face, err := ot.NewFace(font)
-		if err != nil {
-			continue
-		}
-		l := strings.ToLower(fontfile)
-		weight := "normal"
-		style := "normal"
-		switch {
-		case strings.Contains(l, "regular"):
-			weight = "normal"
-		case strings.Contains(l, "bolditalic"):
-			style = "italic"
-			weight = "bold"
-		case strings.Contains(l, "italic"):
-			style = "italic"
-		case strings.Contains(l, "bold"):
-			weight = "bold"
-		}
-		fmt.Printf("@font-face { font-family: %q; src: url(%q);", face.FamilyName(), filepath.Base(fontfile))
-		if weight != "normal" {
-			fmt.Printf(" font-weight: %s; ", weight)
-		}
-		if style != "normal" {
-			fmt.Printf(" font-style: %s;", style)
-		}
-		fmt.Println("}")
-	}
-	return nil
 }
 
 func scaffold(extra ...string) error {
@@ -250,7 +199,6 @@ func dothings() error {
 	op.Command("compare", "Compare files for quality assurance")
 	op.Command("doc", "Open the documentation (web page)")
 	op.Command("help", "Show help and exit")
-	op.Command("list-fonts", "List installed fonts")
 	op.Command("new", "Create simple layout and data file to start. Provide optional directory")
 	op.Command("run", "Load layout and data files and create PDF (default)")
 	op.Command("version", "Print version information")
@@ -431,21 +379,6 @@ func dothings() error {
 		op.Help()
 		fmt.Println()
 		return err
-	case "list-fonts":
-		setupLog(protocolFilename)
-		defer teardownLog()
-
-		if err = core.InitDirs(configuration.basedir); err != nil {
-			return err
-		}
-		if wd, wdErr := os.Getwd(); wdErr == nil {
-			core.AddDir(wd)
-		}
-
-		if err = listFonts(); err != nil {
-			slog.Error(err.Error())
-			return err
-		}
 	case "new":
 		if err = scaffold(op.Extra[1:]...); err != nil {
 			return err

@@ -23,7 +23,6 @@ If no command is given, `run` is assumed.
 | `clean` | Remove auxiliary files (`xts-protocol.xml`, `xts-aux.xml`, etc.) |
 | `compare <dir>` | Recursively compare generated PDFs against `reference.pdf` files |
 | `doc` | Open the documentation website in the default browser |
-| `list-fonts` | Print `@font-face` CSS rules for all fonts found in the search path |
 | `new [dir]` | Create a starter project with `data.xml` and `layout.xml` |
 | `version` | Print the version number and exit |
 
@@ -70,9 +69,6 @@ xts --suppressinfo --jobname reference
 
 # Run QA suite
 xts compare qa/
-
-# Generate font CSS
-xts list-fonts
 
 # Scaffold a new project
 xts new myproject
