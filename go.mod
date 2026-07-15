@@ -5,9 +5,9 @@ go 1.25.0
 require (
 	github.com/alecthomas/chroma v0.10.0
 	github.com/boxesandglue/baseline-pdf v1.1.18
-	github.com/boxesandglue/boxesandglue v0.2.36
-	github.com/boxesandglue/csshtml v0.0.12
-	github.com/boxesandglue/htmlbag v0.0.35
+	github.com/boxesandglue/boxesandglue v0.2.37
+	github.com/boxesandglue/csshtml v0.0.13
+	github.com/boxesandglue/htmlbag v0.0.36
 	github.com/boxesandglue/svgreader v0.0.4
 	github.com/boxesandglue/textshape v0.0.13
 	github.com/gammazero/workerpool v1.1.3
@@ -21,14 +21,14 @@ require (
 	github.com/speedata/optionparser v1.2.1
 	github.com/yuin/goldmark v1.7.16
 	github.com/yuin/goldmark-highlighting v0.0.0-20220208100518-594be1970594
-	golang.org/x/net v0.48.0
-	golang.org/x/sys v0.42.0
-	golang.org/x/text v0.32.0
+	golang.org/x/net v0.57.0
+	golang.org/x/sys v0.47.0
+	golang.org/x/text v0.40.0
 )
 
 require (
-	github.com/PuerkitoBio/goquery v1.11.0 // indirect
-	github.com/andybalholm/cascadia v1.3.3 // indirect
+	github.com/PuerkitoBio/goquery v1.12.0 // indirect
+	github.com/andybalholm/cascadia v1.3.4 // indirect
 	github.com/boxesandglue/gofpdi v1.0.24 // indirect
 	github.com/clipperhouse/stringish v0.1.1 // indirect
 	github.com/clipperhouse/uax29/v2 v2.5.0 // indirect
