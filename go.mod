@@ -4,12 +4,12 @@ go 1.25.0
 
 require (
 	github.com/alecthomas/chroma v0.10.0
-	github.com/boxesandglue/baseline-pdf v1.1.18
-	github.com/boxesandglue/boxesandglue v0.2.38
-	github.com/boxesandglue/csshtml v0.0.14
-	github.com/boxesandglue/htmlbag v0.0.37
+	github.com/boxesandglue/baseline-pdf v1.1.20
+	github.com/boxesandglue/boxesandglue v0.2.43
+	github.com/boxesandglue/csshtml v0.0.16
+	github.com/boxesandglue/htmlbag v0.0.44
 	github.com/boxesandglue/svgreader v0.0.4
-	github.com/boxesandglue/textshape v0.0.13
+	github.com/boxesandglue/textshape v0.0.15
 	github.com/gammazero/workerpool v1.1.3
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pelletier/go-toml/v2 v2.0.8
@@ -30,8 +30,7 @@ require (
 	github.com/PuerkitoBio/goquery v1.12.0 // indirect
 	github.com/andybalholm/cascadia v1.3.4 // indirect
 	github.com/boxesandglue/gofpdi v1.0.24 // indirect
-	github.com/clipperhouse/stringish v0.1.1 // indirect
-	github.com/clipperhouse/uax29/v2 v2.5.0 // indirect
+	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
 	github.com/dlclark/regexp2 v1.4.0 // indirect
 	github.com/gammazero/deque v0.2.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
