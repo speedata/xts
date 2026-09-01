@@ -313,3 +313,9 @@ func (g *grid) nextArea(area *area) {
 	}
 	area.currentFrame++
 }
+
+// frameBottom returns the vertical offset of the bottom edge of the area's
+// current frame, measured from the page top like posY.
+func (g *grid) frameBottom(area *area) bag.ScaledPoint {
+	return g.posY(area.frame[area.currentFrame].height, area) + g.gridHeight
+}
