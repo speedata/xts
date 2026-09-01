@@ -50,6 +50,32 @@ func TestSplittableTable(t *testing.T) {
 	if got := splittableTable(headerless); got != nil {
 		t.Errorf("headerless table: got %v, want nil", got)
 	}
+
+	// A table next to other content, e.g. a paragraph in mixed <HTML>
+	// content, keeps the single-placement path: splitTable lays out the
+	// table alone and would drop the sibling.
+	sibling := node.NewVList()
+	tblWithSibling := tableVList()
+	var head node.Node
+	head = node.InsertAfter(head, nil, sibling)
+	head = node.InsertAfter(head, sibling, tblWithSibling)
+	body := node.NewVList()
+	body.List = head
+	if got := splittableTable(wrapVList(body, 1)); got != nil {
+		t.Errorf("table with sibling content: got %v, want nil", got)
+	}
+
+	// Glue next to the wrapper carries no content and is tolerated.
+	glue := node.NewGlue()
+	tblAfterGlue := tableVList()
+	head = nil
+	head = node.InsertAfter(head, nil, glue)
+	head = node.InsertAfter(head, glue, tblAfterGlue)
+	wrapper := node.NewVList()
+	wrapper.List = head
+	if got := splittableTable(wrapper); got != tblAfterGlue {
+		t.Errorf("table behind glue: got %v, want the table", got)
+	}
 }
 
 // TestFrameBottom checks the bottom edge of a frame, which is where the

@@ -1966,6 +1966,17 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		}
 		vl.Attributes["id"] = attValues.ID
 	}
+	// A table with a <TableHead> can be laid out row by row and continued in
+	// the next frame or on the next page. Detecting it here changes how the
+	// row search below treats a table that is taller than the frame: without
+	// this it would give up, advance the area and start the table on a fresh
+	// frame that it still does not fit into. The check runs before the trace
+	// box and the frame/background rules are added, since those sit next to
+	// the table wrapper and would defeat the sole-content test.
+	var splitTable *node.VList
+	if xd.currentSlate == nil {
+		splitTable = splittableTable(vl)
+	}
 	if xd.IsTrace(VTraceObjects) {
 		vl = node.Boxit(vl).(*node.VList)
 	}
@@ -1981,16 +1992,6 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		r.Hide = true
 		r.Pre = pdfdraw.NewStandalone().ColorNonstroking(*col).Rect(0, 0, vl.Width, -vl.Height).Fill().String()
 		vl.List = node.InsertBefore(vl.List, vl.List, r)
-	}
-
-	// A table with a <TableHead> can be laid out row by row and continued in
-	// the next frame or on the next page. Detecting it here changes how the
-	// row search below treats a table that is taller than the frame: without
-	// this it would give up, advance the area and start the table on a fresh
-	// frame that it still does not fit into.
-	var splitTable *node.VList
-	if xd.currentSlate == nil {
-		splitTable = splittableTable(vl)
 	}
 
 	if rowInt, ok = getInt(attValues.Row); ok {
@@ -2109,29 +2110,39 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 
 // splittableTable returns the table VList that frontend.BuildTable stamped its
 // header-repeat closure onto, unwrapping the html/body VLists that
-// CSSBuilder.CreateVlist puts around it. It returns nil when the object is not
-// a table with a <TableHead>, so everything else keeps the single-placement
-// path.
+// CSSBuilder.CreateVlist puts around it. The descent only follows wrappers
+// whose sole content is a single VList (glue and kern are tolerated): a table
+// that sits next to other material, e.g. inside mixed <HTML> content, must
+// keep the single-placement path, because splitTable lays out the table alone
+// and would drop its siblings. It returns nil when the object is not such a
+// table with a <TableHead>.
 func splittableTable(vl *node.VList) *node.VList {
-	var find func(n node.Node, depth int) *node.VList
-	find = func(n node.Node, depth int) *node.VList {
-		v, ok := n.(*node.VList)
-		if !ok || depth > 4 {
+	for depth := 0; depth <= 4; depth++ {
+		if vl.Attributes != nil {
+			if _, ok := vl.Attributes["_buildHeaders"]; ok {
+				return vl
+			}
+		}
+		var sole *node.VList
+		for c := vl.List; c != nil; c = c.Next() {
+			switch t := c.(type) {
+			case *node.VList:
+				if sole != nil {
+					return nil
+				}
+				sole = t
+			case *node.Glue, *node.Kern:
+				// spacing between the wrappers carries no content
+			default:
+				return nil
+			}
+		}
+		if sole == nil {
 			return nil
 		}
-		if v.Attributes != nil {
-			if _, ok := v.Attributes["_buildHeaders"]; ok {
-				return v
-			}
-		}
-		for c := v.List; c != nil; c = c.Next() {
-			if hit := find(c, depth+1); hit != nil {
-				return hit
-			}
-		}
-		return nil
+		vl = sole
 	}
-	return find(vl, 0)
+	return nil
 }
 
 // nodeHeight returns the height a table row occupies.
