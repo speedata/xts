@@ -2213,7 +2213,13 @@ func (xd *xtsDocument) splitTable(tableVL *node.VList, areaName string, col, row
 	for i, r := range rows {
 		h := nodeHeight(r)
 		if i >= headerCount && (placed > 0 || mayBreak) && y+h > bottom {
-			if err := flush(); err != nil {
+			if placed == 0 {
+				// Nothing but header rows is pending. Flushing them would
+				// leave a lone table head at the bottom of the frame, so drop
+				// them and let buildHeaders re-create them at the top of the
+				// continuation.
+				pending = pending[:0]
+			} else if err := flush(); err != nil {
 				return err
 			}
 			// Next frame of the area first; nextArea falls through to a new
