@@ -22,6 +22,10 @@ header rows are repeated at the top of every continuation:
 </Table>
 ```
 
+A `<TableFoot>` works the other way around: its rows are placed at the end of
+the table, and when the table breaks, they are repeated at the bottom of every
+fragment.
+
 Two conditions apply. The table needs a `<TableHead>`: without one there is
 nothing to repeat and the table is placed as a single object. And it has to be
 placed on the grid, which is the default. A table placed at an absolute

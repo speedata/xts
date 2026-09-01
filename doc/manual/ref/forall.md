@@ -12,7 +12,7 @@ Executes the given commands for all elements in the data XML file that match the
 
 ##  Parent elements
 
-[AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout), [Case](../case), [Columns](../columns), [Contents](../contents), [DefineMasterPage](../definemasterpage), [ForAll](../forall), [Function](../function), [Loop](../loop), [Ol](../ol), [Otherwise](../otherwise), [Record](../record), [SaveXML](../savexml), [SetVariable](../setvariable), [Table](../table), [TableHead](../tablehead), [Td](../td), [Template](../template), [TextBlock](../textblock), [Tr](../tr), [Ul](../ul), [Until](../until), [While](../while)
+[AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout), [Case](../case), [Columns](../columns), [Contents](../contents), [DefineMasterPage](../definemasterpage), [ForAll](../forall), [Function](../function), [Loop](../loop), [Ol](../ol), [Otherwise](../otherwise), [Record](../record), [SaveXML](../savexml), [SetVariable](../setvariable), [Table](../table), [TableFoot](../tablefoot), [TableHead](../tablehead), [Td](../td), [Template](../template), [TextBlock](../textblock), [Tr](../tr), [Ul](../ul), [Until](../until), [While](../while)
 
 
 ## Attributes

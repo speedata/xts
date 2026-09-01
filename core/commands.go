@@ -107,6 +107,7 @@ func init() {
 		"Span":             cmdSpan,
 		"StyleSheet":       cmdStyleSheet,
 		"Switch":           cmdSwitch,
+		"TableFoot":        cmdTableFoot,
 		"TableHead":        cmdTableHead,
 		"TableRule":        cmdTableRule,
 		"Table":            cmdTable,
@@ -2168,6 +2169,15 @@ func splittableTable(vl *node.VList) *node.VList {
 	return nil
 }
 
+// hlistsAsNodes widens a row slice to the node slice pending uses.
+func hlistsAsNodes(rows []*node.HList) []node.Node {
+	nodes := make([]node.Node, len(rows))
+	for i, r := range rows {
+		nodes[i] = r
+	}
+	return nodes
+}
+
 // nodeHeight returns the height a table row occupies.
 func nodeHeight(n node.Node) bag.ScaledPoint {
 	switch t := n.(type) {
@@ -2202,6 +2212,9 @@ func (xd *xtsDocument) splitTable(tableVL *node.VList, areaName string, col, row
 	}
 	headerCount, _ := tableVL.Attributes["_headerCount"].(int)
 	buildHeaders, _ := tableVL.Attributes["_buildHeaders"].(func() ([]*node.HList, error))
+	footerCount, _ := tableVL.Attributes["_footerCount"].(int)
+	buildFooters, _ := tableVL.Attributes["_buildFooters"].(func() ([]*node.HList, error))
+	footerHeight, _ := tableVL.Attributes["_footerHeight"].(bag.ScaledPoint)
 	tableWidth := tableVL.Width
 
 	var rows []node.Node
@@ -2250,15 +2263,32 @@ func (xd *xtsDocument) splitTable(tableVL *node.VList, areaName string, col, row
 	mayBreak := row > 1
 	for i, r := range rows {
 		h := nodeHeight(r)
-		if i >= headerCount && (placed > 0 || mayBreak) && y+h > bottom {
+		// A <TableFoot> is repeated at the bottom of every fragment, so its
+		// height stays reserved while the body rows are laid out. The final
+		// footer rows are the tail of rows itself: once they are reached, the
+		// reservation is theirs to use.
+		reserve := footerHeight
+		if i >= len(rows)-footerCount {
+			reserve = 0
+		}
+		if i >= headerCount && (placed > 0 || mayBreak) && y+h+reserve > bottom {
 			if placed == 0 {
 				// Nothing but header rows is pending. Flushing them would
 				// leave a lone table head at the bottom of the frame, so drop
 				// them and let buildHeaders re-create them at the top of the
 				// continuation.
 				pending = pending[:0]
-			} else if err := flush(); err != nil {
-				return err
+			} else {
+				if buildFooters != nil {
+					footers, err := buildFooters()
+					if err != nil {
+						return err
+					}
+					pending = append(pending, hlistsAsNodes(footers)...)
+				}
+				if err := flush(); err != nil {
+					return err
+				}
 			}
 			// Next frame of the area first; nextArea falls through to a new
 			// page when this was the last frame, which is the <NextFrame>
@@ -2604,7 +2634,9 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		switch t.Data {
 		case "tr":
 			tableBodyNode.AppendChild(t)
-		case "thead":
+		case "thead", "tfoot":
+			// htmlbag collects thead and tfoot rows in separate passes, so
+			// the source order within the table does not matter.
 			tableNode.AppendChild(t)
 		case "col":
 			tableColgroupNode.AppendChild(t)
@@ -2668,6 +2700,27 @@ func cmdTableHead(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 	}
 
 	return xpath.Sequence{th}, nil
+}
+
+func cmdTableFoot(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	var err error
+
+	seq, err := dispatch(xd, layoutelt)
+	if err != nil {
+		return nil, err
+	}
+	tf := &html.Node{
+		Data: "tfoot",
+		Type: html.ElementNode,
+	}
+
+	for _, itm := range seq {
+		if t, ok := itm.(*html.Node); ok {
+			tf.AppendChild(t)
+		}
+	}
+
+	return xpath.Sequence{tf}, nil
 }
 
 func cmdTableRule(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {

@@ -2411,6 +2411,9 @@
                                 <ref name="e_Loop"></ref>
                             </optional>
                             <optional>
+                                <ref name="e_TableFoot"></ref>
+                            </optional>
+                            <optional>
                                 <ref name="e_TableHead"></ref>
                             </optional>
                             <optional>
@@ -2421,6 +2424,32 @@
                             </optional>
                             <optional>
                                 <ref name="e_Value"></ref>
+                            </optional>
+                        </interleave>
+                    </oneOrMore>
+                </group>
+                <ref name="foreign-nodes"></ref>
+            </interleave>
+        </element>
+    </define>
+    <define name="e_TableFoot">
+        <element name="TableFoot">
+            <a:documentation>Gibt den Tabellenfuß an.</a:documentation>
+            <interleave>
+                <group>
+                    <oneOrMore>
+                        <interleave>
+                            <optional>
+                                <ref name="e_ForAll"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_Switch"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_TableRule"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_Tr"></ref>
                             </optional>
                         </interleave>
                     </oneOrMore>

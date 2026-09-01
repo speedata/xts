@@ -1,0 +1,145 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+
+    <!-- A table taller than the page with a TableHead and a TableFoot: the
+         head is repeated at the top and the foot at the bottom of every
+         fragment the table is broken into. -->
+
+    <Record match="data">
+        <PlaceObject>
+            <Table stretch="max">
+                <TableHead>
+                    <Tr><Td><Paragraph><Value>Head A</Value></Paragraph></Td><Td><Paragraph><Value>Head B</Value></Paragraph></Td></Tr>
+                </TableHead>
+                <TableFoot>
+                    <Tr><Td><Paragraph><Value>Foot A</Value></Paragraph></Td><Td><Paragraph><Value>Foot B</Value></Paragraph></Td></Tr>
+                </TableFoot>
+                    <Tr><Td><Paragraph><Value>row 1</Value></Paragraph></Td><Td><Paragraph><Value>value 1</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 2</Value></Paragraph></Td><Td><Paragraph><Value>value 2</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 3</Value></Paragraph></Td><Td><Paragraph><Value>value 3</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 4</Value></Paragraph></Td><Td><Paragraph><Value>value 4</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 5</Value></Paragraph></Td><Td><Paragraph><Value>value 5</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 6</Value></Paragraph></Td><Td><Paragraph><Value>value 6</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 7</Value></Paragraph></Td><Td><Paragraph><Value>value 7</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 8</Value></Paragraph></Td><Td><Paragraph><Value>value 8</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 9</Value></Paragraph></Td><Td><Paragraph><Value>value 9</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 10</Value></Paragraph></Td><Td><Paragraph><Value>value 10</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 11</Value></Paragraph></Td><Td><Paragraph><Value>value 11</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 12</Value></Paragraph></Td><Td><Paragraph><Value>value 12</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 13</Value></Paragraph></Td><Td><Paragraph><Value>value 13</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 14</Value></Paragraph></Td><Td><Paragraph><Value>value 14</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 15</Value></Paragraph></Td><Td><Paragraph><Value>value 15</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 16</Value></Paragraph></Td><Td><Paragraph><Value>value 16</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 17</Value></Paragraph></Td><Td><Paragraph><Value>value 17</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 18</Value></Paragraph></Td><Td><Paragraph><Value>value 18</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 19</Value></Paragraph></Td><Td><Paragraph><Value>value 19</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 20</Value></Paragraph></Td><Td><Paragraph><Value>value 20</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 21</Value></Paragraph></Td><Td><Paragraph><Value>value 21</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 22</Value></Paragraph></Td><Td><Paragraph><Value>value 22</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 23</Value></Paragraph></Td><Td><Paragraph><Value>value 23</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 24</Value></Paragraph></Td><Td><Paragraph><Value>value 24</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 25</Value></Paragraph></Td><Td><Paragraph><Value>value 25</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 26</Value></Paragraph></Td><Td><Paragraph><Value>value 26</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 27</Value></Paragraph></Td><Td><Paragraph><Value>value 27</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 28</Value></Paragraph></Td><Td><Paragraph><Value>value 28</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 29</Value></Paragraph></Td><Td><Paragraph><Value>value 29</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 30</Value></Paragraph></Td><Td><Paragraph><Value>value 30</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 31</Value></Paragraph></Td><Td><Paragraph><Value>value 31</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 32</Value></Paragraph></Td><Td><Paragraph><Value>value 32</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 33</Value></Paragraph></Td><Td><Paragraph><Value>value 33</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 34</Value></Paragraph></Td><Td><Paragraph><Value>value 34</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 35</Value></Paragraph></Td><Td><Paragraph><Value>value 35</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 36</Value></Paragraph></Td><Td><Paragraph><Value>value 36</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 37</Value></Paragraph></Td><Td><Paragraph><Value>value 37</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 38</Value></Paragraph></Td><Td><Paragraph><Value>value 38</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 39</Value></Paragraph></Td><Td><Paragraph><Value>value 39</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 40</Value></Paragraph></Td><Td><Paragraph><Value>value 40</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 41</Value></Paragraph></Td><Td><Paragraph><Value>value 41</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 42</Value></Paragraph></Td><Td><Paragraph><Value>value 42</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 43</Value></Paragraph></Td><Td><Paragraph><Value>value 43</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 44</Value></Paragraph></Td><Td><Paragraph><Value>value 44</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 45</Value></Paragraph></Td><Td><Paragraph><Value>value 45</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 46</Value></Paragraph></Td><Td><Paragraph><Value>value 46</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 47</Value></Paragraph></Td><Td><Paragraph><Value>value 47</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 48</Value></Paragraph></Td><Td><Paragraph><Value>value 48</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 49</Value></Paragraph></Td><Td><Paragraph><Value>value 49</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 50</Value></Paragraph></Td><Td><Paragraph><Value>value 50</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 51</Value></Paragraph></Td><Td><Paragraph><Value>value 51</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 52</Value></Paragraph></Td><Td><Paragraph><Value>value 52</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 53</Value></Paragraph></Td><Td><Paragraph><Value>value 53</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 54</Value></Paragraph></Td><Td><Paragraph><Value>value 54</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 55</Value></Paragraph></Td><Td><Paragraph><Value>value 55</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 56</Value></Paragraph></Td><Td><Paragraph><Value>value 56</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 57</Value></Paragraph></Td><Td><Paragraph><Value>value 57</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 58</Value></Paragraph></Td><Td><Paragraph><Value>value 58</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 59</Value></Paragraph></Td><Td><Paragraph><Value>value 59</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 60</Value></Paragraph></Td><Td><Paragraph><Value>value 60</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 61</Value></Paragraph></Td><Td><Paragraph><Value>value 61</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 62</Value></Paragraph></Td><Td><Paragraph><Value>value 62</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 63</Value></Paragraph></Td><Td><Paragraph><Value>value 63</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 64</Value></Paragraph></Td><Td><Paragraph><Value>value 64</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 65</Value></Paragraph></Td><Td><Paragraph><Value>value 65</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 66</Value></Paragraph></Td><Td><Paragraph><Value>value 66</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 67</Value></Paragraph></Td><Td><Paragraph><Value>value 67</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 68</Value></Paragraph></Td><Td><Paragraph><Value>value 68</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 69</Value></Paragraph></Td><Td><Paragraph><Value>value 69</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 70</Value></Paragraph></Td><Td><Paragraph><Value>value 70</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 71</Value></Paragraph></Td><Td><Paragraph><Value>value 71</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 72</Value></Paragraph></Td><Td><Paragraph><Value>value 72</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 73</Value></Paragraph></Td><Td><Paragraph><Value>value 73</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 74</Value></Paragraph></Td><Td><Paragraph><Value>value 74</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 75</Value></Paragraph></Td><Td><Paragraph><Value>value 75</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 76</Value></Paragraph></Td><Td><Paragraph><Value>value 76</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 77</Value></Paragraph></Td><Td><Paragraph><Value>value 77</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 78</Value></Paragraph></Td><Td><Paragraph><Value>value 78</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 79</Value></Paragraph></Td><Td><Paragraph><Value>value 79</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 80</Value></Paragraph></Td><Td><Paragraph><Value>value 80</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 81</Value></Paragraph></Td><Td><Paragraph><Value>value 81</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 82</Value></Paragraph></Td><Td><Paragraph><Value>value 82</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 83</Value></Paragraph></Td><Td><Paragraph><Value>value 83</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 84</Value></Paragraph></Td><Td><Paragraph><Value>value 84</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 85</Value></Paragraph></Td><Td><Paragraph><Value>value 85</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 86</Value></Paragraph></Td><Td><Paragraph><Value>value 86</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 87</Value></Paragraph></Td><Td><Paragraph><Value>value 87</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 88</Value></Paragraph></Td><Td><Paragraph><Value>value 88</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 89</Value></Paragraph></Td><Td><Paragraph><Value>value 89</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 90</Value></Paragraph></Td><Td><Paragraph><Value>value 90</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 91</Value></Paragraph></Td><Td><Paragraph><Value>value 91</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 92</Value></Paragraph></Td><Td><Paragraph><Value>value 92</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 93</Value></Paragraph></Td><Td><Paragraph><Value>value 93</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 94</Value></Paragraph></Td><Td><Paragraph><Value>value 94</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 95</Value></Paragraph></Td><Td><Paragraph><Value>value 95</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 96</Value></Paragraph></Td><Td><Paragraph><Value>value 96</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 97</Value></Paragraph></Td><Td><Paragraph><Value>value 97</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 98</Value></Paragraph></Td><Td><Paragraph><Value>value 98</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 99</Value></Paragraph></Td><Td><Paragraph><Value>value 99</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 100</Value></Paragraph></Td><Td><Paragraph><Value>value 100</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 101</Value></Paragraph></Td><Td><Paragraph><Value>value 101</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 102</Value></Paragraph></Td><Td><Paragraph><Value>value 102</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 103</Value></Paragraph></Td><Td><Paragraph><Value>value 103</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 104</Value></Paragraph></Td><Td><Paragraph><Value>value 104</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 105</Value></Paragraph></Td><Td><Paragraph><Value>value 105</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 106</Value></Paragraph></Td><Td><Paragraph><Value>value 106</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 107</Value></Paragraph></Td><Td><Paragraph><Value>value 107</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 108</Value></Paragraph></Td><Td><Paragraph><Value>value 108</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 109</Value></Paragraph></Td><Td><Paragraph><Value>value 109</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 110</Value></Paragraph></Td><Td><Paragraph><Value>value 110</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 111</Value></Paragraph></Td><Td><Paragraph><Value>value 111</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 112</Value></Paragraph></Td><Td><Paragraph><Value>value 112</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 113</Value></Paragraph></Td><Td><Paragraph><Value>value 113</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 114</Value></Paragraph></Td><Td><Paragraph><Value>value 114</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 115</Value></Paragraph></Td><Td><Paragraph><Value>value 115</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 116</Value></Paragraph></Td><Td><Paragraph><Value>value 116</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 117</Value></Paragraph></Td><Td><Paragraph><Value>value 117</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 118</Value></Paragraph></Td><Td><Paragraph><Value>value 118</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 119</Value></Paragraph></Td><Td><Paragraph><Value>value 119</Value></Paragraph></Td></Tr>
+                    <Tr><Td><Paragraph><Value>row 120</Value></Paragraph></Td><Td><Paragraph><Value>value 120</Value></Paragraph></Td></Tr>
+            </Table>
+        </PlaceObject>
+        <PlaceObject>
+            <TextBlock>
+                <Paragraph><Value>After the table.</Value></Paragraph>
+            </TextBlock>
+        </PlaceObject>
+    </Record>
+</Layout>

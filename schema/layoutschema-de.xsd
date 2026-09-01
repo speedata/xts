@@ -1642,6 +1642,7 @@
         <xs:element ref="en:Columns"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:Loop"></xs:element>
+        <xs:element ref="en:TableFoot"></xs:element>
         <xs:element ref="en:TableHead"></xs:element>
         <xs:element ref="en:TableRule"></xs:element>
         <xs:element ref="en:Tr"></xs:element>
@@ -1677,6 +1678,19 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="TableFoot">
+    <xs:annotation>
+      <xs:documentation>Gibt den Tabellenfuß an.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="en:ForAll"></xs:element>
+        <xs:element ref="en:Switch"></xs:element>
+        <xs:element ref="en:TableRule"></xs:element>
+        <xs:element ref="en:Tr"></xs:element>
+      </xs:choice>
     </xs:complexType>
   </xs:element>
   <xs:element name="TableHead">

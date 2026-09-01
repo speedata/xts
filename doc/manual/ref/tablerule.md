@@ -12,7 +12,7 @@ Draw a horizontal rule spanning the full table width. Default thickness is 0.4pt
 
 ##  Parent elements
 
-[Table](../table), [TableHead](../tablehead)
+[Table](../table), [TableFoot](../tablefoot), [TableHead](../tablehead)
 
 
 ## Attributes

@@ -12,7 +12,7 @@ Create an if-then-else construct. The test attribute of each [Case](../case) com
 
 ##  Parent elements
 
-[AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout), [Case](../case), [Columns](../columns), [Contents](../contents), [ForAll](../forall), [Function](../function), [Loop](../loop), [Otherwise](../otherwise), [PositioningArea](../positioningarea), [Record](../record), [TableHead](../tablehead), [Td](../td), [Template](../template), [Tr](../tr), [Until](../until), [While](../while)
+[AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout), [Case](../case), [Columns](../columns), [Contents](../contents), [ForAll](../forall), [Function](../function), [Loop](../loop), [Otherwise](../otherwise), [PositioningArea](../positioningarea), [Record](../record), [TableFoot](../tablefoot), [TableHead](../tablehead), [Td](../td), [Template](../template), [Tr](../tr), [Until](../until), [While](../while)
 
 
 ## Attributes
