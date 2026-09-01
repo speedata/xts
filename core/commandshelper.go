@@ -78,7 +78,7 @@ func hasMixedXHTMLContent(elt *goxml.Element) bool {
 // convertXHTMLElement recursively converts a goxml Element in the XHTML
 // namespace to an *html.Node tree. XTS-namespace children are dispatched
 // and their results inserted into the tree.
-func (xd *xtsDocument) convertXHTMLElement(elt *goxml.Element) (*html.Node, error) {
+func (xd *xtsDocument) convertXHTMLElement(elt *goxml.Element, expandText bool) (*html.Node, error) {
 	n := &html.Node{
 		Type: html.ElementNode,
 		Data: strings.ToLower(elt.Name),
@@ -87,15 +87,26 @@ func (xd *xtsDocument) convertXHTMLElement(elt *goxml.Element) (*html.Node, erro
 		if strings.HasPrefix(attr.Name, "xmlns") {
 			continue
 		}
-		n.Attr = append(n.Attr, html.Attribute{Key: attr.Name, Val: attr.Value})
+		val := attr.Value
+		if expandText {
+			// Mixed content otherwise loses attribute value templates entirely,
+			// so a data-driven style="width:{w}" would reach the CSS engine with
+			// the braces intact.
+			val = expandTextValueTemplates(xd, elt, val)
+		}
+		n.Attr = append(n.Attr, html.Attribute{Key: attr.Name, Val: val})
 	}
 	for _, cld := range elt.Children() {
 		switch t := cld.(type) {
 		case goxml.CharData:
-			n.AppendChild(&html.Node{Type: html.TextNode, Data: t.Contents})
+			data := t.Contents
+			if expandText {
+				data = expandTextValueTemplates(xd, elt, data)
+			}
+			n.AppendChild(&html.Node{Type: html.TextNode, Data: data})
 		case *goxml.Element:
 			if ns := t.Namespaces[t.Prefix]; ns == XHTMLNAMESPACE {
-				child, err := xd.convertXHTMLElement(t)
+				child, err := xd.convertXHTMLElement(t, expandText)
 				if err != nil {
 					return nil, err
 				}
@@ -128,18 +139,22 @@ func (xd *xtsDocument) convertXHTMLElement(elt *goxml.Element) (*html.Node, erro
 
 // buildHTMLFromMixedContent processes <HTML> with mixed XHTML literals
 // and XTS commands, returning a sequence of *html.Node.
-func (xd *xtsDocument) buildHTMLFromMixedContent(layoutelt *goxml.Element) (xpath.Sequence, error) {
+func (xd *xtsDocument) buildHTMLFromMixedContent(layoutelt *goxml.Element, expandText bool) (xpath.Sequence, error) {
 	var result xpath.Sequence
 	for _, cld := range layoutelt.Children() {
 		switch t := cld.(type) {
 		case goxml.CharData:
 			s := strings.TrimSpace(t.Contents)
 			if s != "" {
-				result = append(result, &html.Node{Type: html.TextNode, Data: t.Contents})
+				data := t.Contents
+				if expandText {
+					data = expandTextValueTemplates(xd, layoutelt, data)
+				}
+				result = append(result, &html.Node{Type: html.TextNode, Data: data})
 			}
 		case *goxml.Element:
 			if ns := t.Namespaces[t.Prefix]; ns == XHTMLNAMESPACE {
-				n, err := xd.convertXHTMLElement(t)
+				n, err := xd.convertXHTMLElement(t, expandText)
 				if err != nil {
 					return nil, err
 				}

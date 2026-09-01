@@ -910,7 +910,7 @@ func cmdHTML(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 	if attValues.Select == nil {
 		// Mixed XHTML/XTS content mode
 		if hasMixedXHTMLContent(layoutelt) {
-			return xd.buildHTMLFromMixedContent(layoutelt)
+			return xd.buildHTMLFromMixedContent(layoutelt, attValues.ExpandText == "yes")
 		}
 
 		str := layoutelt.InnerXML()
