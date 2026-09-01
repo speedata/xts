@@ -1980,18 +1980,34 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	if xd.IsTrace(VTraceObjects) {
 		vl = node.Boxit(vl).(*node.VList)
 	}
+	// frame="yes" and background="yes" draw on the whole object. The split
+	// path discards the outer VList and re-applies them to every fragment,
+	// so they are built as a decorator. The insertion order keeps the
+	// background rule at the head of the list, painted below the frame.
+	var decorate func(*node.VList)
 	if attValues.Frame {
-		r := node.NewRule()
-		r.Hide = true
-		r.Pre = pdfdraw.NewStandalone().Rect(0, 0, vl.Width, -vl.Height).Stroke().String()
-		vl.List = node.InsertBefore(vl.List, vl.List, r)
+		decorate = func(v *node.VList) {
+			r := node.NewRule()
+			r.Hide = true
+			r.Pre = pdfdraw.NewStandalone().Rect(0, 0, v.Width, -v.Height).Stroke().String()
+			v.List = node.InsertBefore(v.List, v.List, r)
+		}
 	}
 	if attValues.Background {
-		col := xd.document.GetColor(attValues.BackgroundColor)
-		r := node.NewRule()
-		r.Hide = true
-		r.Pre = pdfdraw.NewStandalone().ColorNonstroking(*col).Rect(0, 0, vl.Width, -vl.Height).Fill().String()
-		vl.List = node.InsertBefore(vl.List, vl.List, r)
+		bgcol := xd.document.GetColor(attValues.BackgroundColor)
+		frameDecorate := decorate
+		decorate = func(v *node.VList) {
+			if frameDecorate != nil {
+				frameDecorate(v)
+			}
+			r := node.NewRule()
+			r.Hide = true
+			r.Pre = pdfdraw.NewStandalone().ColorNonstroking(*bgcol).Rect(0, 0, v.Width, -v.Height).Fill().String()
+			v.List = node.InsertBefore(v.List, v.List, r)
+		}
+	}
+	if decorate != nil {
+		decorate(vl)
 	}
 
 	if rowInt, ok = getInt(attValues.Row); ok {
@@ -2101,7 +2117,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		// Only grid placement splits. An absolutely positioned table is placed
 		// where the layout asked for it and keeps overflowing, as before.
 		if splitTable != nil && xd.currentGrid.posY(row, area)+vl.Height+vl.Depth > xd.currentGrid.frameBottom(area) {
-			return nil, xd.splitTable(splitTable, attValues.Area, col, row, attValues.ID, attValues.Allocate, halign)
+			return nil, xd.splitTable(splitTable, attValues.Area, col, row, attValues.ID, attValues.Allocate, halign, decorate)
 		}
 		xd.OutputAt(vl, col, row, attValues.Allocate, area, origin, halign)
 
@@ -2177,8 +2193,9 @@ func nodeHeight(n node.Node) bag.ScaledPoint {
 //
 // Each continuation goes out as one vpacked VList carrying the PlaceObject id,
 // so the geometry dump records one box per frame the table spans rather than
-// one box for the whole table.
-func (xd *xtsDocument) splitTable(tableVL *node.VList, areaName string, col, row coord, id string, allocate bool, halign frontend.HorizontalAlignment) error {
+// one box for the whole table. decorate, when non-nil, applies the frame and
+// background rules of the PlaceObject to every fragment.
+func (xd *xtsDocument) splitTable(tableVL *node.VList, areaName string, col, row coord, id string, allocate bool, halign frontend.HorizontalAlignment, decorate func(*node.VList)) error {
 	area, ok := xd.currentGrid.areas[areaName]
 	if !ok {
 		return fmt.Errorf("area %s not found", areaName)
@@ -2209,6 +2226,9 @@ func (xd *xtsDocument) splitTable(tableVL *node.VList, areaName string, col, row
 		}
 		wrap := node.Vpack(head)
 		wrap.Width = tableWidth
+		if decorate != nil {
+			decorate(wrap)
+		}
 		if id != "" {
 			if wrap.Attributes == nil {
 				wrap.Attributes = node.H{}
