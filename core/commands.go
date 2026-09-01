@@ -2007,10 +2007,15 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		if !rowSet {
 			wdCols := xd.currentGrid.widthToColumns(vl.Width)
 			htCols := xd.currentGrid.heightToRows(vl.Height + vl.Depth)
-			if splitTable != nil {
-				htCols = 1
-			}
 			row = xd.currentGrid.findSuitableRow(wdCols, htCols, col, area)
+			if row == -1 && splitTable != nil {
+				// The whole table does not fit in this frame. Look again for
+				// a single free row: the splitter starts there and fills the
+				// rest of the frame instead of shipping it half empty. A
+				// table that does fit keeps the full-height search and with
+				// it the check against blocks allocated further down.
+				row = xd.currentGrid.findSuitableRow(wdCols, 1, col, area)
+			}
 			if row == -1 {
 				xd.currentGrid.nextArea(area)
 				row = 1
@@ -2034,10 +2039,12 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		}
 		wdCols := xd.currentGrid.widthToColumns(vl.Width)
 		htCols := xd.currentGrid.heightToRows(vl.Height + vl.Depth)
-		if splitTable != nil {
-			htCols = 1
-		}
 		row = xd.currentGrid.findSuitableRow(wdCols, htCols, startCol, area)
+		if row == -1 && splitTable != nil {
+			// See above: fall back to a single-row search so the splitter
+			// can fill the rest of this frame.
+			row = xd.currentGrid.findSuitableRow(wdCols, 1, startCol, area)
+		}
 		if row == -1 {
 			xd.currentGrid.nextArea(area)
 			row = 1
