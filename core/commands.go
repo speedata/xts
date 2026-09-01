@@ -1842,6 +1842,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		BackgroundColor string
 		Column          string
 		Frame           bool
+		ID              string
 		Row             string
 		Slate           string
 		HAlign          string
@@ -1958,6 +1959,12 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		origin = "html in PlaceObject"
 	default:
 		slog.Error(fmt.Sprintf("PlaceObject: unknown node %T", t))
+	}
+	if attValues.ID != "" && vl != nil {
+		if vl.Attributes == nil {
+			vl.Attributes = node.H{}
+		}
+		vl.Attributes["id"] = attValues.ID
 	}
 	if xd.IsTrace(VTraceObjects) {
 		vl = node.Boxit(vl).(*node.VList)

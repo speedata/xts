@@ -1768,6 +1768,11 @@
                         </attribute>
                     </optional>
                     <optional>
+                        <attribute name="id">
+                            <a:documentation>An identifier for this placement. It is attached to the placed object and written to the XML dump (--dumpoutput) as attr-id, so external tools can map the output boxes back to the layout element that produced them. It is not a CSS id: it cannot be matched in stylesheets and does not create a link target.</a:documentation>
+                        </attribute>
+                    </optional>
+                    <optional>
                         <attribute name="slate">
                             <a:documentation>The name of the slate that gets output. When given, PlaceObject should not contain any objects.</a:documentation>
                         </attribute>

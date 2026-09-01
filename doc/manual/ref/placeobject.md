@@ -102,6 +102,12 @@ Outputs a rectangular object (image, table, box or textblock).
 
 
 
+`id` (text, optional)
+:   An identifier for this placement. It is attached to the placed object and written to the XML dump (`--dumpoutput`) as `attr-id`, so external tools can map the output boxes back to the layout element that produced them. It is not a CSS id: it cannot be matched in stylesheets and does not create a link target.
+
+
+
+
 `row` (number or length, optional)
 :   The row where the object is placed. If none given, the publisher tries to find a row by itself. You can give a number (in grid cells) or an absolute value (from top left).
 

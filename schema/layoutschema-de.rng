@@ -1768,6 +1768,11 @@
                         </attribute>
                     </optional>
                     <optional>
+                        <attribute name="id">
+                            <a:documentation>Ein Bezeichner für diese Platzierung. Er wird dem platzierten Objekt mitgegeben und als attr-id in die XML-Ausgabe (--dumpoutput) geschrieben, damit externe Werkzeuge die ausgegebenen Boxen dem erzeugenden Layoutelement zuordnen können. Es ist keine CSS-id: er kann nicht in Stylesheets angesprochen werden und erzeugt kein Verweisziel.</a:documentation>
+                        </attribute>
+                    </optional>
+                    <optional>
                         <attribute name="slate">
                             <a:documentation>Wenn ein Slate ausgegeben werden soll, muss der Name hier angegeben werden.</a:documentation>
                         </attribute>

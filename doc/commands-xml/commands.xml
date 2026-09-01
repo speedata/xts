@@ -3346,6 +3346,14 @@
         <para>Es wird ein Rahmen um das Objekt gezeichnet.</para>
       </description>
     </attribute>
+    <attribute en="id" type="text" optional="yes">
+      <description xml:lang="en">
+        <para>An identifier for this placement. It is attached to the placed object and written to the XML dump (<tt>--dumpoutput</tt>) as <tt>attr-id</tt>, so external tools can map the output boxes back to the layout element that produced them. It is not a CSS id: it cannot be matched in stylesheets and does not create a link target.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Ein Bezeichner für diese Platzierung. Er wird dem platzierten Objekt mitgegeben und als <tt>attr-id</tt> in die XML-Ausgabe (<tt>--dumpoutput</tt>) geschrieben, damit externe Werkzeuge die ausgegebenen Boxen dem erzeugenden Layoutelement zuordnen können. Es ist keine CSS-id: er kann nicht in Stylesheets angesprochen werden und erzeugt kein Verweisziel.</para>
+      </description>
+    </attribute>
     <attribute en="slate" type="text" optional="yes">
       <description xml:lang="en">
         <para>The name of the slate that gets output. When given, PlaceObject should not contain any objects.</para>
