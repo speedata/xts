@@ -2247,7 +2247,9 @@ func (xd *xtsDocument) splitTable(tableVL *node.VList, areaName string, col, row
 			if area, ok = xd.currentGrid.areas[areaName]; !ok {
 				return fmt.Errorf("area %s not found after page break", areaName)
 			}
-			col, row = 1, 1
+			// Keep the column: a table placed with column="3" continues in
+			// column 3, matching what nextArea does for a single object.
+			row = 1
 			y = xd.currentGrid.posY(row, area)
 			bottom = xd.currentGrid.frameBottom(area)
 			placed, mayBreak = 0, false
