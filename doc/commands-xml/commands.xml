@@ -1189,6 +1189,30 @@
       <para>Beendet die Ausgabe auf der aktuellen Seite.</para>
     </description>
     <childelements/>
+    <attribute en="openon" optional="yes">
+      <description xml:lang="en">
+        <para>Makes sure that the next page opens on the given side by inserting a blank page if necessary. Right pages have odd page numbers.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Sorgt dafür, dass die nächste Seite auf der angegebenen Seite beginnt. Falls nötig, wird eine Leerseite eingefügt. Rechte Seiten haben ungerade Seitenzahlen.</para>
+      </description>
+      <choice en="right">
+        <description xml:lang="en">
+          <para>The next page is a right page (odd page number).</para>
+        </description>
+        <description xml:lang="de">
+          <para>Die nächste Seite ist eine rechte Seite (ungerade Seitenzahl).</para>
+        </description>
+      </choice>
+      <choice en="left">
+        <description xml:lang="en">
+          <para>The next page is a left page (even page number).</para>
+        </description>
+        <description xml:lang="de">
+          <para>Die nächste Seite ist eine linke Seite (gerade Seitenzahl).</para>
+        </description>
+      </choice>
+    </attribute>
     <example xml:lang="en">
       <listing><![CDATA[<Record match="data">
   <PlaceObject>
@@ -1196,7 +1220,7 @@
       <Paragraph><Value>This is page 1</Value></Paragraph>
     </TextBlock>
   </PlaceObject>
-  <ClearPage/>
+  <ClearPage openon="right"/>
   <PlaceObject>
     <TextBlock>
       <Paragraph><Value>And this is page 3</Value></Paragraph>
@@ -1214,7 +1238,7 @@
       </Paragraph>
     </TextBlock>
   </PlaceObject>
-  <ClearPage/>
+  <ClearPage openon="right"/>
   <PlaceObject>
     <TextBlock>
       <Paragraph>
@@ -1240,6 +1264,86 @@
       <para>Gibt die Eigenschaften einer Spalte in einer Tabelle an.</para>
     </description>
     <childelements/>
+    <attribute en="align" optional="yes">
+      <description xml:lang="en">
+        <para>Horizontal alignment of the contents of the cells in this column. A cell can override the alignment with its own align attribute or with CSS.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Horizontale Ausrichtung des Inhalts der Zellen in dieser Spalte. Eine Zelle kann die Ausrichtung mit einem eigenen align-Attribut oder per CSS überschreiben.</para>
+      </description>
+      <choice en="left">
+        <description xml:lang="en">
+          <para>The contents is aligned at the left.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Der Inhalt wird links ausgerichtet.</para>
+        </description>
+      </choice>
+      <choice en="center">
+        <description xml:lang="en">
+          <para>The contents is centered.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Der Inhalt wird zentriert.</para>
+        </description>
+      </choice>
+      <choice en="right">
+        <description xml:lang="en">
+          <para>The contents is aligned at the right.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Der Inhalt wird rechts ausgerichtet.</para>
+        </description>
+      </choice>
+      <choice en="justify">
+        <description xml:lang="en">
+          <para>The contents is justified.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Der Inhalt wird im Blocksatz gesetzt.</para>
+        </description>
+      </choice>
+    </attribute>
+    <attribute en="background-color" type="text" optional="yes" css="background-color">
+      <description xml:lang="en">
+        <para>Background color of the cells in this column. A cell with its own background color takes precedence.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Hintergrundfarbe der Zellen dieser Spalte. Eine eigene Hintergrundfarbe der Zelle hat Vorrang.</para>
+      </description>
+    </attribute>
+    <attribute en="valign" optional="yes">
+      <description xml:lang="en">
+        <para>Vertical alignment of the contents of the cells in this column. A cell can override the alignment with CSS (<tt>vertical-align</tt>).</para>
+      </description>
+      <description xml:lang="de">
+        <para>Vertikale Ausrichtung des Inhalts der Zellen in dieser Spalte. Eine Zelle kann die Ausrichtung per CSS (<tt>vertical-align</tt>) überschreiben.</para>
+      </description>
+      <choice en="top">
+        <description xml:lang="en">
+          <para>The contents is aligned at the top.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Der Inhalt wird oben ausgerichtet.</para>
+        </description>
+      </choice>
+      <choice en="middle">
+        <description xml:lang="en">
+          <para>The contents is centered vertically.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Der Inhalt wird vertikal zentriert.</para>
+        </description>
+      </choice>
+      <choice en="bottom">
+        <description xml:lang="en">
+          <para>The contents is aligned at the bottom.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Der Inhalt wird unten ausgerichtet.</para>
+        </description>
+      </choice>
+    </attribute>
     <attribute en="width" type="numberlengthorstar" optional="yes">
       <description xml:lang="en">
         <para>Width of the column. Argument can be a number (in grid cells) a length (e.g. 2cm) or a *-number (e.g. 4*).</para>
@@ -1854,20 +1958,99 @@
       * Slate
       ****************************************************************************************
   -->
+  <command en="Grid">
+    <description xml:lang="en">
+      <para>Set the grid of the surrounding <cmd name="Slate"/>. Settings not given here keep the value copied from the page grid. The page grid itself is set with <cmd name="SetGrid"/>.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Setzt das Raster des umgebenden <cmd name="Slate"/>. Nicht angegebene Werte behalten die vom Seitenraster kopierte Einstellung. Das Seitenraster selbst wird mit <cmd name="SetGrid"/> gesetzt.</para>
+    </description>
+    <childelements/>
+    <attribute en="width" type="length" optional="yes">
+      <description xml:lang="en">
+        <para>The width of a grid cell in the slate.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Breite einer Rasterzelle im Slate.</para>
+      </description>
+    </attribute>
+    <attribute en="height" type="length" optional="yes">
+      <description xml:lang="en">
+        <para>The height of a grid cell in the slate.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Höhe einer Rasterzelle im Slate.</para>
+      </description>
+    </attribute>
+    <attribute en="nx" type="number" optional="yes">
+      <description xml:lang="en">
+        <para>The number of grid cells of the slate in horizontal direction. It limits the area for the cursor when objects are placed without a column.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Anzahl der Rasterzellen des Slates in horizontaler Richtung. Begrenzt die Fläche für den Cursor, wenn Objekte ohne Spaltenangabe platziert werden.</para>
+      </description>
+    </attribute>
+    <attribute en="ny" type="number" optional="yes">
+      <description xml:lang="en">
+        <para>The number of grid cells of the slate in vertical direction. It limits the area for the cursor when objects are placed without a row.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Anzahl der Rasterzellen des Slates in vertikaler Richtung. Begrenzt die Fläche für den Cursor, wenn Objekte ohne Zeilenangabe platziert werden.</para>
+      </description>
+    </attribute>
+    <attribute en="dx" optional="yes">
+      <description xml:lang="en">
+        <para>Gap between two grid cells (horizontal).</para>
+      </description>
+      <description xml:lang="de">
+        <para>Abstand zwischen zwei Rasterzellen (horizontal).</para>
+      </description>
+    </attribute>
+    <attribute en="dy" optional="yes">
+      <description xml:lang="en">
+        <para>Gap between two grid cells (vertical).</para>
+      </description>
+      <description xml:lang="de">
+        <para>Abstand zwischen zwei Rasterzellen (vertikal).</para>
+      </description>
+    </attribute>
+    <example xml:lang="en">
+      <listing><![CDATA[<Slate name="calendar">
+  <Grid width="5mm" height="5mm"/>
+  <Contents>
+    <PlaceObject column="3" row="2">
+      <TextBlock width="10">
+        <Paragraph><Value>Positioned on the 5mm slate grid</Value></Paragraph>
+      </TextBlock>
+    </PlaceObject>
+  </Contents>
+</Slate>]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<Slate name="kalender">
+  <Grid width="5mm" height="5mm"/>
+  <Contents>
+    <PlaceObject column="3" row="2">
+      <TextBlock width="10">
+        <Paragraph><Value>Auf dem 5mm-Raster des Slates platziert</Value></Paragraph>
+      </TextBlock>
+    </PlaceObject>
+  </Contents>
+</Slate>]]></listing>
+    </example>
+  </command>
   <command en="Slate">
     <description xml:lang="en">
       <para>Create a virtual page (a slate) that behaves like a real page but is not placed into the PDF. Think of it as a magic slate — you draw on it, inspect the result, and then place it on the page.</para>
+      <para>The slate starts with a copy of the page grid. With a <cmd name="Grid"/> child element the slate can use its own grid independent of the page.</para>
     </description>
     <description xml:lang="de">
       <para>Erzeugt einen virtuellen Bereich (Slate), in dem Elemente platziert werden können. Wie bei einer Zaubertafel wird der Inhalt zunächst unsichtbar aufgebaut und dann mit <cmd name="PlaceObject"/> auf der Seite platziert.</para>
+      <para>Das Slate beginnt mit einer Kopie des Seitenrasters. Mit einem <cmd name="Grid"/>-Kindelement kann das Slate ein eigenes, von der Seite unabhängiges Raster verwenden.</para>
     </description>
     <childelements>
-        <cmd name="Contents"/>
-        <!--
-      <interleave>
         <optional><cmd name="Grid"/></optional>
-      </interleave>
-        -->
+        <cmd name="Contents"/>
     </childelements>
     <attribute en="name" type="text" optional="no">
       <description xml:lang="en">
@@ -3501,9 +3684,11 @@
   <command en="PositioningArea">
     <description xml:lang="en">
       <para>Describes an area which contains one or more frames. Elements can be placed within these frames.</para>
+      <para>The frames can be wrapped in a <cmd name="Switch"/> element. The Switch is evaluated each time a new page is created, so a Case test can use <tt>sd:current-page()</tt> to select different frames for even and odd pages. If no branch matches, the area does not exist on that page.</para>
     </description>
     <description xml:lang="de">
       <para>Beschreibt einen Platzierungsbereich, der mehrere Platzierungsrahmen beinhalten kann. In diesen Rahmen können Elemente platziert werden</para>
+      <para>Die Rahmen können in ein <cmd name="Switch"/>-Element eingefasst werden. Der Switch wird bei jeder Seitenerzeugung neu ausgewertet, daher kann ein Case-Test mit <tt>sd:current-page()</tt> unterschiedliche Rahmen für gerade und ungerade Seiten auswählen. Trifft kein Zweig zu, existiert der Bereich auf der betreffenden Seite nicht.</para>
     </description>
     <childelements>
       <oneOrMore>
@@ -3528,11 +3713,31 @@
     <PositioningFrame width="12" height="30" column="16" row="2"/>
   </PositioningArea>
 </DefineMasterPage>]]></listing>
+      <listing><![CDATA[<PositioningArea name="text">
+  <Switch>
+    <Case test="sd:odd(sd:current-page())">
+      <PositioningFrame width="12" height="30" column="2" row="2"/>
+    </Case>
+    <Otherwise>
+      <PositioningFrame width="12" height="30" column="16" row="2"/>
+    </Otherwise>
+  </Switch>
+</PositioningArea>]]></listing>
     </example>
     <example xml:lang="de">
       <listing><![CDATA[<PositioningArea name="rahmen1">
   <PositioningFrame width="12" height="30" column="2" row="2"/>
   <PositioningFrame width="12" height="30" column="16" row="2"/>
+</PositioningArea>]]></listing>
+      <listing><![CDATA[<PositioningArea name="text">
+  <Switch>
+    <Case test="sd:odd(sd:current-page())">
+      <PositioningFrame width="12" height="30" column="2" row="2"/>
+    </Case>
+    <Otherwise>
+      <PositioningFrame width="12" height="30" column="16" row="2"/>
+    </Otherwise>
+  </Switch>
 </PositioningArea>]]></listing>
     </example>
   </command>
@@ -3910,10 +4115,10 @@
     </attribute>
     <attribute en="dy" optional="yes">
       <description xml:lang="en">
-        <para>Gap between two grid cells (horizontal)</para>
+        <para>Gap between two grid cells (vertical)</para>
       </description>
       <description xml:lang="de">
-        <para>Abstand zwischen zwei Rasterzellen (horizontal)</para>
+        <para>Abstand zwischen zwei Rasterzellen (vertikal)</para>
       </description>
     </attribute>
     <example xml:lang="en">
@@ -4730,6 +4935,46 @@
         </choice>
       </zeroOrMore>
     </childelements>
+    <attribute en="align" optional="yes">
+      <description xml:lang="en">
+        <para>Horizontal alignment of the cell contents. Overrides the alignment set on the column.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Horizontale Ausrichtung des Zelleninhalts. Überschreibt die Ausrichtung der Spalte.</para>
+      </description>
+      <choice en="left">
+        <description xml:lang="en">
+          <para>The contents is aligned at the left.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Der Inhalt wird links ausgerichtet.</para>
+        </description>
+      </choice>
+      <choice en="center">
+        <description xml:lang="en">
+          <para>The contents is centered.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Der Inhalt wird zentriert.</para>
+        </description>
+      </choice>
+      <choice en="right">
+        <description xml:lang="en">
+          <para>The contents is aligned at the right.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Der Inhalt wird rechts ausgerichtet.</para>
+        </description>
+      </choice>
+      <choice en="justify">
+        <description xml:lang="en">
+          <para>The contents is justified.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Der Inhalt wird im Blocksatz gesetzt.</para>
+        </description>
+      </choice>
+    </attribute>
     <attribute en="class" type="text" optional="yes">
       <description xml:lang="en">
         <para>The css class to be used for formatting the table cell.</para>

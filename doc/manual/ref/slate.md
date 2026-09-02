@@ -4,11 +4,13 @@
 
 Create a virtual page (a slate) that behaves like a real page but is not placed into the PDF. Think of it as a magic slate — you draw on it, inspect the result, and then place it on the page.
 
+The slate starts with a copy of the page grid. With a [Grid](../grid) child element the slate can use its own grid independent of the page.
+
 
 
 ##  Child elements
 
-[Contents](../contents)
+[Contents](../contents), [Grid](../grid)
 
 ##  Parent elements
 

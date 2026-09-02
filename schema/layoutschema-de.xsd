@@ -335,13 +335,55 @@
     <xs:annotation>
       <xs:documentation>Beendet die Ausgabe auf der aktuellen Seite.</xs:documentation>
     </xs:annotation>
-    <xs:complexType></xs:complexType>
+    <xs:complexType>
+      <xs:attribute name="openon">
+        <xs:annotation>
+          <xs:documentation>Sorgt dafür, dass die nächste Seite auf der angegebenen Seite beginnt. Falls nötig, wird eine Leerseite eingefügt. Rechte Seiten haben ungerade Seitenzahlen.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="right"></xs:enumeration>
+            <xs:enumeration value="left"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
   </xs:element>
   <xs:element name="Column">
     <xs:annotation>
       <xs:documentation>Gibt die Eigenschaften einer Spalte in einer Tabelle an.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
+      <xs:attribute name="align">
+        <xs:annotation>
+          <xs:documentation>Horizontale Ausrichtung des Inhalts der Zellen in dieser Spalte. Eine Zelle kann die Ausrichtung mit einem eigenen align-Attribut oder per CSS überschreiben.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="left"></xs:enumeration>
+            <xs:enumeration value="center"></xs:enumeration>
+            <xs:enumeration value="right"></xs:enumeration>
+            <xs:enumeration value="justify"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="background-color">
+        <xs:annotation>
+          <xs:documentation>Hintergrundfarbe der Zellen dieser Spalte. Eine eigene Hintergrundfarbe der Zelle hat Vorrang.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="valign">
+        <xs:annotation>
+          <xs:documentation>Vertikale Ausrichtung des Inhalts der Zellen in dieser Spalte. Eine Zelle kann die Ausrichtung per CSS (vertical-align) überschreiben.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="top"></xs:enumeration>
+            <xs:enumeration value="middle"></xs:enumeration>
+            <xs:enumeration value="bottom"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
       <xs:attribute name="width">
         <xs:annotation>
           <xs:documentation>Breite der Spalte. Kann entweder in Rasterzellen (Zahl), absoluten Maßangaben (z.B. 1cm) oder in *-Angaben (z.B. 4*) angegeben werden.</xs:documentation>
@@ -585,12 +627,51 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
+  <xs:element name="Grid">
+    <xs:annotation>
+      <xs:documentation>Setzt das Raster des umgebenden Slate. Nicht angegebene Werte behalten die vom Seitenraster kopierte Einstellung. Das Seitenraster selbst wird mit SetGrid gesetzt.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="width">
+        <xs:annotation>
+          <xs:documentation>Breite einer Rasterzelle im Slate.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="height">
+        <xs:annotation>
+          <xs:documentation>Höhe einer Rasterzelle im Slate.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="nx">
+        <xs:annotation>
+          <xs:documentation>Anzahl der Rasterzellen des Slates in horizontaler Richtung. Begrenzt die Fläche für den Cursor, wenn Objekte ohne Spaltenangabe platziert werden.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="ny">
+        <xs:annotation>
+          <xs:documentation>Anzahl der Rasterzellen des Slates in vertikaler Richtung. Begrenzt die Fläche für den Cursor, wenn Objekte ohne Zeilenangabe platziert werden.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="dx">
+        <xs:annotation>
+          <xs:documentation>Abstand zwischen zwei Rasterzellen (horizontal).</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="dy">
+        <xs:annotation>
+          <xs:documentation>Abstand zwischen zwei Rasterzellen (vertikal).</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="Slate">
     <xs:annotation>
-      <xs:documentation>Erzeugt einen virtuellen Bereich (Slate), in dem Elemente platziert werden können. Wie bei einer Zaubertafel wird der Inhalt zunächst unsichtbar aufgebaut und dann mit PlaceObject auf der Seite platziert.</xs:documentation>
+      <xs:documentation>Erzeugt einen virtuellen Bereich (Slate), in dem Elemente platziert werden können. Wie bei einer Zaubertafel wird der Inhalt zunächst unsichtbar aufgebaut und dann mit PlaceObject auf der Seite platziert.
+      Das Slate beginnt mit einer Kopie des Seitenrasters. Mit einem Grid-Kindelement kann das Slate ein eigenes, von der Seite unabhängiges Raster verwenden.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="en:Grid"></xs:element>
         <xs:element ref="en:Contents"></xs:element>
       </xs:choice>
       <xs:attribute name="name" use="required">
@@ -1287,7 +1368,8 @@
   </xs:element>
   <xs:element name="PositioningArea">
     <xs:annotation>
-      <xs:documentation>Beschreibt einen Platzierungsbereich, der mehrere Platzierungsrahmen beinhalten kann. In diesen Rahmen können Elemente platziert werden</xs:documentation>
+      <xs:documentation>Beschreibt einen Platzierungsbereich, der mehrere Platzierungsrahmen beinhalten kann. In diesen Rahmen können Elemente platziert werden
+      Die Rahmen können in ein Switch-Element eingefasst werden. Der Switch wird bei jeder Seitenerzeugung neu ausgewertet, daher kann ein Case-Test mit sd:current-page() unterschiedliche Rahmen für gerade und ungerade Seiten auswählen. Trifft kein Zweig zu, existiert der Bereich auf der betreffenden Seite nicht.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -1481,7 +1563,7 @@
       </xs:attribute>
       <xs:attribute name="dy">
         <xs:annotation>
-          <xs:documentation>Abstand zwischen zwei Rasterzellen (horizontal)</xs:documentation>
+          <xs:documentation>Abstand zwischen zwei Rasterzellen (vertikal)</xs:documentation>
         </xs:annotation>
       </xs:attribute>
     </xs:complexType>
@@ -1766,6 +1848,19 @@
         <xs:element ref="en:Ul"></xs:element>
         <xs:element ref="en:Value"></xs:element>
       </xs:choice>
+      <xs:attribute name="align">
+        <xs:annotation>
+          <xs:documentation>Horizontale Ausrichtung des Zelleninhalts. Überschreibt die Ausrichtung der Spalte.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="left"></xs:enumeration>
+            <xs:enumeration value="center"></xs:enumeration>
+            <xs:enumeration value="right"></xs:enumeration>
+            <xs:enumeration value="justify"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
       <xs:attribute name="class">
         <xs:annotation>
           <xs:documentation>Die CSS-Klasse für die Formtierung.</xs:documentation>

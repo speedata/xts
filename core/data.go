@@ -228,11 +228,16 @@ func goxmlToHTMLNode(elt *goxml.Element) *html.Node {
 	case "Column":
 		n := &html.Node{Data: "col", Type: html.ElementNode}
 		for _, attr := range elt.Attributes() {
-			if attr.Name == "width" {
+			switch attr.Name {
+			case "width":
 				// htmlbag reads the column width from the data-width attribute.
 				// This handles both fixed widths (e.g. "3cm") and flexible
 				// widths (e.g. "*", "2*").
 				n.Attr = append(n.Attr, html.Attribute{Key: "data-width", Val: attr.Value})
+			case "align", "valign", "background-color":
+				// Consumed in cmdTable which distributes these onto the cells
+				// of the column. htmlbag ignores unknown data attributes.
+				n.Attr = append(n.Attr, html.Attribute{Key: "data-" + attr.Name, Val: attr.Value})
 			}
 		}
 		return n

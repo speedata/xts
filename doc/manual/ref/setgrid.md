@@ -26,7 +26,7 @@ Set size of the grid cells. All objects are placed in the grid.
 
 
 `dy` (optional)
-:   Gap between two grid cells (horizontal)
+:   Gap between two grid cells (vertical)
 
 
 

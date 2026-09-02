@@ -153,27 +153,12 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 						return nil, nil, err
 					}
 					var rects []*gridRect
-					for _, cld := range t.Children() {
-						if c, ok := cld.(*goxml.Element); ok {
-							attValues := &struct {
-								Width  int `sdxml:"mustexist"`
-								Height int `sdxml:"mustexist"`
-								Column int `sdxml:"mustexist"`
-								Row    int `sdxml:"mustexist"`
-							}{}
-							if err = getXMLAttributes(xd, c, attValues); err != nil {
-								return nil, nil, err
-							}
-							rect := gridRect{
-								row:        coord(attValues.Row),
-								col:        coord(attValues.Column),
-								width:      coord(attValues.Width),
-								height:     coord(attValues.Height),
-								currentCol: 1,
-								currentRow: 1,
-							}
-							rects = append(rects, &rect)
-						}
+					if rects, err = parsePositioningFrames(xd, t); err != nil {
+						return nil, nil, err
+					}
+					if len(rects) == 0 {
+						slog.Info(fmt.Sprintf("PositioningArea %s has no frames on page %d, area not created", attValues.Name, xd.currentPagenumber))
+						continue
 					}
 					xd.currentGrid.areas[attValues.Name] = &area{
 						name:  attValues.Name,
@@ -193,6 +178,54 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 	docPage.Userdata = make(map[any]any)
 	docPage.Userdata["xtspage"] = pg
 	return pg, atPageCreation, nil
+}
+
+// parsePositioningFrames parses the children of a PositioningArea (or of a
+// matching Switch branch within) into grid rectangles. Switch is evaluated at
+// page creation time, so a Case test can use sd:current-page() to select
+// different frames for example for even and odd pages.
+func parsePositioningFrames(xd *xtsDocument, elt *goxml.Element) ([]*gridRect, error) {
+	var rects []*gridRect
+	for _, cld := range elt.Children() {
+		c, ok := cld.(*goxml.Element)
+		if !ok {
+			continue
+		}
+		if c.Name == "Switch" {
+			branch, err := selectSwitchBranch(xd, c)
+			if err != nil {
+				return nil, err
+			}
+			if branch == nil {
+				continue
+			}
+			branchRects, err := parsePositioningFrames(xd, branch)
+			if err != nil {
+				return nil, err
+			}
+			rects = append(rects, branchRects...)
+			continue
+		}
+		attValues := &struct {
+			Width  int `sdxml:"mustexist"`
+			Height int `sdxml:"mustexist"`
+			Column int `sdxml:"mustexist"`
+			Row    int `sdxml:"mustexist"`
+		}{}
+		if err := getXMLAttributes(xd, c, attValues); err != nil {
+			return nil, err
+		}
+		rect := gridRect{
+			row:        coord(attValues.Row),
+			col:        coord(attValues.Column),
+			width:      coord(attValues.Width),
+			height:     coord(attValues.Height),
+			currentCol: 1,
+			currentRow: 1,
+		}
+		rects = append(rects, &rect)
+	}
+	return rects, nil
 }
 
 func (p *page) genMarkerIDs(ids chan int) {
@@ -217,12 +250,17 @@ func (xd *xtsDocument) OutputAt(vl *node.VList, col coord, row coord, allocate b
 		if area.name != pageAreaName {
 			slog.Error(fmt.Sprintf("Cannot use area (%s) within a slate (%s)", area.name, currentSlate.name))
 		}
-		if currentSlate.contents == nil {
-			currentSlate.contents = vl
-		} else {
-			currentSlate.contents.List = node.InsertAfter(currentSlate.contents.List, node.Tail(currentSlate.contents.List), vl)
-			currentSlate.contents.Height += vl.Height + vl.Depth
+		g := xd.currentGrid
+		shiftRight := bag.ScaledPoint(0)
+		if halign == frontend.HAlignRight {
+			f := area.frame[area.currentFrame]
+			shiftRight = g.width(f.col+f.width-col) - vl.Width
 		}
+		// The slate's own coordinate space starts at its top left corner, so
+		// the page margins built into posX/posY are removed again.
+		x := g.posX(col, area) - g.marginLeft + shiftRight
+		y := g.posY(row, area) - g.marginTop
+		currentSlate.appendItem(x, y, vl)
 	} else {
 		slog.Info("PlaceObject", "obj", what, "col", col, "row", row, "area", area.name)
 

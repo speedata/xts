@@ -4,6 +4,8 @@
 
 Describes an area which contains one or more frames. Elements can be placed within these frames.
 
+The frames can be wrapped in a [Switch](../switch) element. The Switch is evaluated each time a new page is created, so a Case test can use `sd:current-page()` to select different frames for even and odd pages. If no branch matches, the area does not exist on that page.
+
 
 
 ##  Child elements
@@ -34,6 +36,18 @@ Describes an area which contains one or more frames. Elements can be placed with
     <PositioningFrame width="12" height="30" column="16" row="2"/>
   </PositioningArea>
 </DefineMasterPage>
+```
+```xml
+<PositioningArea name="text">
+  <Switch>
+    <Case test="sd:odd(sd:current-page())">
+      <PositioningFrame width="12" height="30" column="2" row="2"/>
+    </Case>
+    <Otherwise>
+      <PositioningFrame width="12" height="30" column="16" row="2"/>
+    </Otherwise>
+  </Switch>
+</PositioningArea>
 ```
 
 

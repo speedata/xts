@@ -78,6 +78,7 @@ func init() {
 		"DefineMasterPage": cmdDefineMasterPage,
 		"Element":          cmdElement,
 		"ForAll":           cmdForall,
+		"Grid":             cmdGrid,
 		"Function":         cmdFunction,
 		"Slate":            cmdSlate,
 		"SlateContents":    cmdSlateContents,
@@ -133,6 +134,7 @@ func init() {
 		"ClearPage":        kindAction,
 		"DefineColor":      kindAction,
 		"DefineMasterPage": kindAction,
+		"Grid":             kindAction,
 		"LoadXML":          kindAction,
 		"Mark":             kindAction,
 		"Message":          kindAction,
@@ -476,7 +478,10 @@ func cmdCircle(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 func cmdColumn(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
-		Width string
+		Align           string
+		Backgroundcolor string
+		Valign          string
+		Width           string
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -489,6 +494,15 @@ func cmdColumn(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 	col := goxml.NewElement()
 	col.Name = "Column"
 	col.SetAttribute(xml.Attr{Name: xml.Name{Local: "width"}, Value: attValues.Width})
+	if attValues.Align != "" {
+		col.SetAttribute(xml.Attr{Name: xml.Name{Local: "align"}, Value: attValues.Align})
+	}
+	if attValues.Valign != "" {
+		col.SetAttribute(xml.Attr{Name: xml.Name{Local: "valign"}, Value: attValues.Valign})
+	}
+	if attValues.Backgroundcolor != "" {
+		col.SetAttribute(xml.Attr{Name: xml.Name{Local: "background-color"}, Value: attValues.Backgroundcolor})
+	}
 	return xpath.Sequence{col}, nil
 }
 
@@ -501,7 +515,27 @@ func cmdColumns(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 }
 
 func cmdClearpage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	attValues := &struct {
+		Openon string
+	}{}
+	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
 	clearPage(xd)
+	// The next page to be created gets the number currentPagenumber + 1.
+	// Insert a blank page if its parity does not match the requested side.
+	// Right pages have odd page numbers.
+	needBlank := false
+	switch attValues.Openon {
+	case "right":
+		needBlank = (xd.currentPagenumber+1)%2 == 0
+	case "left":
+		needBlank = (xd.currentPagenumber+1)%2 == 1
+	}
+	if needBlank {
+		xd.setupPage()
+		clearPage(xd)
+	}
 	return nil, nil
 }
 
@@ -861,6 +895,27 @@ func cmdCallTemplate(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence,
 	return nil, nil
 }
 
+// cmdGrid sets the grid of the surrounding slate. The page grid is set with
+// SetGrid instead.
+func cmdGrid(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	attValues := &struct {
+		Width  bag.ScaledPoint
+		Height bag.ScaledPoint
+		Dx     bag.ScaledPoint
+		Dy     bag.ScaledPoint
+		Nx     int
+		Ny     int
+	}{}
+	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
+	if xd.currentSlate == nil {
+		return nil, newTypesettingErrorf("Grid", layoutelt.Line, "Grid can only be used inside a Slate")
+	}
+	xd.currentSlate.setGrid(attValues.Width, attValues.Height, attValues.Dx, attValues.Dy, attValues.Nx, attValues.Ny)
+	return nil, nil
+}
+
 func cmdSlate(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
@@ -892,10 +947,11 @@ func cmdSlateContents(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence
 	if !ok {
 		return nil, newTypesettingErrorf("SlateContents", layoutelt.Line, "slate %q not found", attValues.Name)
 	}
-	if sl.contents == nil {
+	contents := sl.buildContents()
+	if contents == nil {
 		return nil, nil
 	}
-	return xpath.Sequence{sl.contents}, nil
+	return xpath.Sequence{contents}, nil
 }
 
 func cmdHTML(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -1888,7 +1944,13 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 
 	var seq xpath.Sequence
 	if attValues.Slate != "" {
-		seq = xpath.Sequence{xd.slates[attValues.Slate].contents}
+		sl, ok := xd.slates[attValues.Slate]
+		if !ok {
+			return nil, newTypesettingErrorf("PlaceObject", layoutelt.Line, "slate %q not found", attValues.Slate)
+		}
+		if contents := sl.buildContents(); contents != nil {
+			seq = xpath.Sequence{contents}
+		}
 	} else {
 		seq, err = dispatch(xd, layoutelt)
 		if err != nil {
@@ -2543,7 +2605,10 @@ func cmdStyleSheet(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 	return xpath.Sequence{nil}, nil
 }
 
-func cmdSwitch(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+// selectSwitchBranch evaluates the Case and Otherwise children of a Switch
+// element and returns the first Case whose test attribute evaluates to true
+// (or the Otherwise element). It returns nil if no branch matches.
+func selectSwitchBranch(xd *xtsDocument, layoutelt *goxml.Element) (*goxml.Element, error) {
 	var err error
 
 	for _, cld := range layoutelt.Children() {
@@ -2567,7 +2632,7 @@ func cmdSwitch(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 						return nil, err
 					}
 					if ok {
-						return dispatch(xd, c)
+						return c, nil
 					}
 
 				}
@@ -2575,11 +2640,113 @@ func cmdSwitch(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 					return nil, newTypesettingErrorf("Case", c.Line, "attribute test on element Case not found")
 				}
 			case "Otherwise":
-				return dispatch(xd, c)
+				return c, nil
 			}
 		}
 	}
 	return nil, nil
+}
+
+func cmdSwitch(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	branch, err := selectSwitchBranch(xd, layoutelt)
+	if err != nil || branch == nil {
+		return nil, err
+	}
+	return dispatch(xd, branch)
+}
+
+// columnStyles returns the CSS declarations defined by the Column elements of
+// a table, one entry per column. Columns without align, valign or
+// background-color get an empty string.
+func columnStyles(colgroup *html.Node) []string {
+	var styles []string
+	anyStyle := false
+	for col := colgroup.FirstChild; col != nil; col = col.NextSibling {
+		var decl []string
+		for _, attr := range col.Attr {
+			switch attr.Key {
+			case "data-align":
+				decl = append(decl, "text-align: "+attr.Val)
+			case "data-valign":
+				decl = append(decl, "vertical-align: "+attr.Val)
+			case "data-background-color":
+				decl = append(decl, "background-color: "+attr.Val)
+			}
+		}
+		if len(decl) > 0 {
+			anyStyle = true
+		}
+		styles = append(styles, strings.Join(decl, "; "))
+	}
+	if !anyStyle {
+		return nil
+	}
+	return styles
+}
+
+// prependStyle inserts the CSS declarations before the existing style
+// attribute of the cell, so the cell's own declarations win.
+func prependStyle(n *html.Node, css string) {
+	for i, attr := range n.Attr {
+		if attr.Key == "style" {
+			if attr.Val == "" {
+				n.Attr[i].Val = css
+			} else {
+				n.Attr[i].Val = css + "; " + attr.Val
+			}
+			return
+		}
+	}
+	n.Attr = append(n.Attr, html.Attribute{Key: "style", Val: css})
+}
+
+// applyColumnStyles distributes the per-column CSS declarations onto the cells
+// of a table section (tbody, thead or tfoot). Cells spanning several columns
+// get the style of their first column. The occupied map tracks columns blocked
+// by row spanning cells from previous rows of the same section.
+func applyColumnStyles(styles []string, section *html.Node) {
+	occupied := map[int]int{}
+	for tr := section.FirstChild; tr != nil; tr = tr.NextSibling {
+		if tr.Type != html.ElementNode || tr.Data != "tr" {
+			continue
+		}
+		col := 0
+		for cell := tr.FirstChild; cell != nil; cell = cell.NextSibling {
+			if cell.Type != html.ElementNode || (cell.Data != "td" && cell.Data != "th") {
+				continue
+			}
+			for occupied[col] > 0 {
+				col++
+			}
+			colspan, rowspan := 1, 1
+			for _, attr := range cell.Attr {
+				switch attr.Key {
+				case "colspan":
+					if n, err := strconv.Atoi(attr.Val); err == nil && n > 1 {
+						colspan = n
+					}
+				case "rowspan":
+					if n, err := strconv.Atoi(attr.Val); err == nil && n > 1 {
+						rowspan = n
+					}
+				}
+			}
+			if col < len(styles) && styles[col] != "" {
+				prependStyle(cell, styles[col])
+			}
+			if rowspan > 1 {
+				for i := col; i < col+colspan; i++ {
+					occupied[i] = rowspan
+				}
+			}
+			col += colspan
+		}
+		for k := range occupied {
+			if occupied[k] > 0 {
+				occupied[k]--
+			}
+		}
+	}
 }
 
 func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
@@ -2660,6 +2827,18 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		default:
 			slog.Error(fmt.Sprintf("cmdTable: unknown html node %s", t.Data))
 		}
+	}
+
+	// Distribute Column align/valign/background-color onto the cells of each
+	// section. Row spans do not cross section boundaries, so every section is
+	// processed on its own.
+	if colStyles := columnStyles(tableColgroupNode); colStyles != nil {
+		for sec := tableNode.FirstChild; sec != nil; sec = sec.NextSibling {
+			if sec.Type == html.ElementNode && (sec.Data == "thead" || sec.Data == "tfoot") {
+				applyColumnStyles(colStyles, sec)
+			}
+		}
+		applyColumnStyles(colStyles, tableBodyNode)
 	}
 
 	if tableColgroupNode.FirstChild != nil {
@@ -2914,6 +3093,7 @@ func cmdTr(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
+		Align   string
 		Colspan int `sdxml:"default:1"`
 		Rowspan int `sdxml:"default:1"`
 		Class   string
@@ -2927,6 +3107,16 @@ func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	if err != nil {
 		return nil, err
 	}
+	// The align attribute is turned into a CSS declaration before the style
+	// attribute, so declarations in style win.
+	style := attValues.Style
+	if attValues.Align != "" {
+		if style == "" {
+			style = "text-align: " + attValues.Align
+		} else {
+			style = "text-align: " + attValues.Align + "; " + style
+		}
+	}
 	// FIXME: colspan/rowspan
 	td := &html.Node{
 		Data: "td",
@@ -2935,7 +3125,7 @@ func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	td.Attr = append(td.Attr,
 		html.Attribute{Key: "colspan", Val: fmt.Sprintf("%d", attValues.Colspan)},
 		html.Attribute{Key: "rowspan", Val: fmt.Sprintf("%d", attValues.Rowspan)},
-		html.Attribute{Key: "style", Val: attValues.Style},
+		html.Attribute{Key: "style", Val: style},
 		html.Attribute{Key: "class", Val: attValues.Class},
 		html.Attribute{Key: "id", Val: attValues.ID})
 	for _, itm := range seq {

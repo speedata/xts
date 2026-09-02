@@ -463,12 +463,56 @@
     <define name="e_ClearPage">
         <element name="ClearPage">
             <a:documentation>Finishes the current page.</a:documentation>
+            <optional>
+                <attribute name="openon">
+                    <a:documentation>Makes sure that the next page opens on the given side by inserting a blank page if necessary. Right pages have odd page numbers.</a:documentation>
+                    <choice>
+                        <value>right</value>
+                        <a:documentation>The next page is a right page (odd page number).</a:documentation>
+                        <value>left</value>
+                        <a:documentation>The next page is a left page (even page number).</a:documentation>
+                    </choice>
+                </attribute>
+            </optional>
             <empty></empty>
         </element>
     </define>
     <define name="e_Column">
         <element name="Column">
             <a:documentation>Set the properties of a column in the table.</a:documentation>
+            <optional>
+                <attribute name="align">
+                    <a:documentation>Horizontal alignment of the contents of the cells in this column. A cell can override the alignment with its own align attribute or with CSS.</a:documentation>
+                    <choice>
+                        <value>left</value>
+                        <a:documentation>The contents is aligned at the left.</a:documentation>
+                        <value>center</value>
+                        <a:documentation>The contents is centered.</a:documentation>
+                        <value>right</value>
+                        <a:documentation>The contents is aligned at the right.</a:documentation>
+                        <value>justify</value>
+                        <a:documentation>The contents is justified.</a:documentation>
+                    </choice>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="background-color">
+                    <a:documentation>Background color of the cells in this column. A cell with its own background color takes precedence.</a:documentation>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="valign">
+                    <a:documentation>Vertical alignment of the contents of the cells in this column. A cell can override the alignment with CSS (vertical-align).</a:documentation>
+                    <choice>
+                        <value>top</value>
+                        <a:documentation>The contents is aligned at the top.</a:documentation>
+                        <value>middle</value>
+                        <a:documentation>The contents is centered vertically.</a:documentation>
+                        <value>bottom</value>
+                        <a:documentation>The contents is aligned at the bottom.</a:documentation>
+                    </choice>
+                </attribute>
+            </optional>
             <optional>
                 <attribute name="width">
                     <a:documentation>Width of the column. Argument can be a number (in grid cells) a length (e.g. 2cm) or a *-number (e.g. 4*).</a:documentation>
@@ -850,14 +894,54 @@
             </interleave>
         </element>
     </define>
+    <define name="e_Grid">
+        <element name="Grid">
+            <a:documentation>Set the grid of the surrounding Slate. Settings not given here keep the value copied from the page grid. The page grid itself is set with SetGrid.</a:documentation>
+            <optional>
+                <attribute name="width">
+                    <a:documentation>The width of a grid cell in the slate.</a:documentation>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="height">
+                    <a:documentation>The height of a grid cell in the slate.</a:documentation>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="nx">
+                    <a:documentation>The number of grid cells of the slate in horizontal direction. It limits the area for the cursor when objects are placed without a column.</a:documentation>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="ny">
+                    <a:documentation>The number of grid cells of the slate in vertical direction. It limits the area for the cursor when objects are placed without a row.</a:documentation>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="dx">
+                    <a:documentation>Gap between two grid cells (horizontal).</a:documentation>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="dy">
+                    <a:documentation>Gap between two grid cells (vertical).</a:documentation>
+                </attribute>
+            </optional>
+            <empty></empty>
+        </element>
+    </define>
     <define name="e_Slate">
         <element name="Slate">
-            <a:documentation>Create a virtual page (a slate) that behaves like a real page but is not placed into the PDF. Think of it as a magic slate — you draw on it, inspect the result, and then place it on the page.</a:documentation>
+            <a:documentation>Create a virtual page (a slate) that behaves like a real page but is not placed into the PDF. Think of it as a magic slate — you draw on it, inspect the result, and then place it on the page.
+      The slate starts with a copy of the page grid. With a Grid child element the slate can use its own grid independent of the page.</a:documentation>
             <interleave>
                 <group>
                     <attribute name="name">
                         <a:documentation>Name of the slate that is created.</a:documentation>
                     </attribute>
+                    <optional>
+                        <ref name="e_Grid"></ref>
+                    </optional>
                     <ref name="e_Contents"></ref>
                 </group>
                 <ref name="foreign-nodes"></ref>
@@ -1858,7 +1942,8 @@
     </define>
     <define name="e_PositioningArea">
         <element name="PositioningArea">
-            <a:documentation>Describes an area which contains one or more frames. Elements can be placed within these frames.</a:documentation>
+            <a:documentation>Describes an area which contains one or more frames. Elements can be placed within these frames.
+      The frames can be wrapped in a Switch element. The Switch is evaluated each time a new page is created, so a Case test can use sd:current-page() to select different frames for even and odd pages. If no branch matches, the area does not exist on that page.</a:documentation>
             <interleave>
                 <group>
                     <attribute name="name">
@@ -2122,7 +2207,7 @@
             </optional>
             <optional>
                 <attribute name="dy">
-                    <a:documentation>Gap between two grid cells (horizontal)</a:documentation>
+                    <a:documentation>Gap between two grid cells (vertical)</a:documentation>
                 </attribute>
             </optional>
             <empty></empty>
@@ -2530,6 +2615,21 @@
             <a:documentation>Td wraps a table cell, just like HTML.</a:documentation>
             <interleave>
                 <group>
+                    <optional>
+                        <attribute name="align">
+                            <a:documentation>Horizontal alignment of the cell contents. Overrides the alignment set on the column.</a:documentation>
+                            <choice>
+                                <value>left</value>
+                                <a:documentation>The contents is aligned at the left.</a:documentation>
+                                <value>center</value>
+                                <a:documentation>The contents is centered.</a:documentation>
+                                <value>right</value>
+                                <a:documentation>The contents is aligned at the right.</a:documentation>
+                                <value>justify</value>
+                                <a:documentation>The contents is justified.</a:documentation>
+                            </choice>
+                        </attribute>
+                    </optional>
                     <optional>
                         <attribute name="class">
                             <a:documentation>The css class to be used for formatting the table cell.</a:documentation>

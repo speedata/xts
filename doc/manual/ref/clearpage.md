@@ -16,7 +16,24 @@ Finishes the current page.
 
 
 ## Attributes
-(none)
+
+
+
+`openon` (optional)
+:   Makes sure that the next page opens on the given side by inserting a blank page if necessary. Right pages have odd page numbers.
+
+
+
+    `right`
+    :    The next page is a right page (odd page number).
+
+
+
+    `left`
+    :    The next page is a left page (even page number).
+
+
+
 
 ## Example
 
@@ -27,7 +44,7 @@ Finishes the current page.
       <Paragraph><Value>This is page 1</Value></Paragraph>
     </TextBlock>
   </PlaceObject>
-  <ClearPage/>
+  <ClearPage openon="right"/>
   <PlaceObject>
     <TextBlock>
       <Paragraph><Value>And this is page 3</Value></Paragraph>

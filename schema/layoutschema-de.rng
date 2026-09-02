@@ -463,12 +463,56 @@
     <define name="e_ClearPage">
         <element name="ClearPage">
             <a:documentation>Beendet die Ausgabe auf der aktuellen Seite.</a:documentation>
+            <optional>
+                <attribute name="openon">
+                    <a:documentation>Sorgt dafür, dass die nächste Seite auf der angegebenen Seite beginnt. Falls nötig, wird eine Leerseite eingefügt. Rechte Seiten haben ungerade Seitenzahlen.</a:documentation>
+                    <choice>
+                        <value>right</value>
+                        <a:documentation>Die nächste Seite ist eine rechte Seite (ungerade Seitenzahl).</a:documentation>
+                        <value>left</value>
+                        <a:documentation>Die nächste Seite ist eine linke Seite (gerade Seitenzahl).</a:documentation>
+                    </choice>
+                </attribute>
+            </optional>
             <empty></empty>
         </element>
     </define>
     <define name="e_Column">
         <element name="Column">
             <a:documentation>Gibt die Eigenschaften einer Spalte in einer Tabelle an.</a:documentation>
+            <optional>
+                <attribute name="align">
+                    <a:documentation>Horizontale Ausrichtung des Inhalts der Zellen in dieser Spalte. Eine Zelle kann die Ausrichtung mit einem eigenen align-Attribut oder per CSS überschreiben.</a:documentation>
+                    <choice>
+                        <value>left</value>
+                        <a:documentation>Der Inhalt wird links ausgerichtet.</a:documentation>
+                        <value>center</value>
+                        <a:documentation>Der Inhalt wird zentriert.</a:documentation>
+                        <value>right</value>
+                        <a:documentation>Der Inhalt wird rechts ausgerichtet.</a:documentation>
+                        <value>justify</value>
+                        <a:documentation>Der Inhalt wird im Blocksatz gesetzt.</a:documentation>
+                    </choice>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="background-color">
+                    <a:documentation>Hintergrundfarbe der Zellen dieser Spalte. Eine eigene Hintergrundfarbe der Zelle hat Vorrang.</a:documentation>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="valign">
+                    <a:documentation>Vertikale Ausrichtung des Inhalts der Zellen in dieser Spalte. Eine Zelle kann die Ausrichtung per CSS (vertical-align) überschreiben.</a:documentation>
+                    <choice>
+                        <value>top</value>
+                        <a:documentation>Der Inhalt wird oben ausgerichtet.</a:documentation>
+                        <value>middle</value>
+                        <a:documentation>Der Inhalt wird vertikal zentriert.</a:documentation>
+                        <value>bottom</value>
+                        <a:documentation>Der Inhalt wird unten ausgerichtet.</a:documentation>
+                    </choice>
+                </attribute>
+            </optional>
             <optional>
                 <attribute name="width">
                     <a:documentation>Breite der Spalte. Kann entweder in Rasterzellen (Zahl), absoluten Maßangaben (z.B. 1cm) oder in *-Angaben (z.B. 4*) angegeben werden.</a:documentation>
@@ -850,14 +894,54 @@
             </interleave>
         </element>
     </define>
+    <define name="e_Grid">
+        <element name="Grid">
+            <a:documentation>Setzt das Raster des umgebenden Slate. Nicht angegebene Werte behalten die vom Seitenraster kopierte Einstellung. Das Seitenraster selbst wird mit SetGrid gesetzt.</a:documentation>
+            <optional>
+                <attribute name="width">
+                    <a:documentation>Breite einer Rasterzelle im Slate.</a:documentation>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="height">
+                    <a:documentation>Höhe einer Rasterzelle im Slate.</a:documentation>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="nx">
+                    <a:documentation>Anzahl der Rasterzellen des Slates in horizontaler Richtung. Begrenzt die Fläche für den Cursor, wenn Objekte ohne Spaltenangabe platziert werden.</a:documentation>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="ny">
+                    <a:documentation>Anzahl der Rasterzellen des Slates in vertikaler Richtung. Begrenzt die Fläche für den Cursor, wenn Objekte ohne Zeilenangabe platziert werden.</a:documentation>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="dx">
+                    <a:documentation>Abstand zwischen zwei Rasterzellen (horizontal).</a:documentation>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="dy">
+                    <a:documentation>Abstand zwischen zwei Rasterzellen (vertikal).</a:documentation>
+                </attribute>
+            </optional>
+            <empty></empty>
+        </element>
+    </define>
     <define name="e_Slate">
         <element name="Slate">
-            <a:documentation>Erzeugt einen virtuellen Bereich (Slate), in dem Elemente platziert werden können. Wie bei einer Zaubertafel wird der Inhalt zunächst unsichtbar aufgebaut und dann mit PlaceObject auf der Seite platziert.</a:documentation>
+            <a:documentation>Erzeugt einen virtuellen Bereich (Slate), in dem Elemente platziert werden können. Wie bei einer Zaubertafel wird der Inhalt zunächst unsichtbar aufgebaut und dann mit PlaceObject auf der Seite platziert.
+      Das Slate beginnt mit einer Kopie des Seitenrasters. Mit einem Grid-Kindelement kann das Slate ein eigenes, von der Seite unabhängiges Raster verwenden.</a:documentation>
             <interleave>
                 <group>
                     <attribute name="name">
                         <a:documentation>Der Name des anzulegenden Slates.</a:documentation>
                     </attribute>
+                    <optional>
+                        <ref name="e_Grid"></ref>
+                    </optional>
                     <ref name="e_Contents"></ref>
                 </group>
                 <ref name="foreign-nodes"></ref>
@@ -1858,7 +1942,8 @@
     </define>
     <define name="e_PositioningArea">
         <element name="PositioningArea">
-            <a:documentation>Beschreibt einen Platzierungsbereich, der mehrere Platzierungsrahmen beinhalten kann. In diesen Rahmen können Elemente platziert werden</a:documentation>
+            <a:documentation>Beschreibt einen Platzierungsbereich, der mehrere Platzierungsrahmen beinhalten kann. In diesen Rahmen können Elemente platziert werden
+      Die Rahmen können in ein Switch-Element eingefasst werden. Der Switch wird bei jeder Seitenerzeugung neu ausgewertet, daher kann ein Case-Test mit sd:current-page() unterschiedliche Rahmen für gerade und ungerade Seiten auswählen. Trifft kein Zweig zu, existiert der Bereich auf der betreffenden Seite nicht.</a:documentation>
             <interleave>
                 <group>
                     <attribute name="name">
@@ -2122,7 +2207,7 @@
             </optional>
             <optional>
                 <attribute name="dy">
-                    <a:documentation>Abstand zwischen zwei Rasterzellen (horizontal)</a:documentation>
+                    <a:documentation>Abstand zwischen zwei Rasterzellen (vertikal)</a:documentation>
                 </attribute>
             </optional>
             <empty></empty>
@@ -2530,6 +2615,21 @@
             <a:documentation>Erstellt eine Tabellenzelle, wie in HTML</a:documentation>
             <interleave>
                 <group>
+                    <optional>
+                        <attribute name="align">
+                            <a:documentation>Horizontale Ausrichtung des Zelleninhalts. Überschreibt die Ausrichtung der Spalte.</a:documentation>
+                            <choice>
+                                <value>left</value>
+                                <a:documentation>Der Inhalt wird links ausgerichtet.</a:documentation>
+                                <value>center</value>
+                                <a:documentation>Der Inhalt wird zentriert.</a:documentation>
+                                <value>right</value>
+                                <a:documentation>Der Inhalt wird rechts ausgerichtet.</a:documentation>
+                                <value>justify</value>
+                                <a:documentation>Der Inhalt wird im Blocksatz gesetzt.</a:documentation>
+                            </choice>
+                        </attribute>
+                    </optional>
                     <optional>
                         <attribute name="class">
                             <a:documentation>Die CSS-Klasse für die Formtierung.</a:documentation>

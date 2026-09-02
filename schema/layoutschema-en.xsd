@@ -335,13 +335,55 @@
     <xs:annotation>
       <xs:documentation>Finishes the current page.</xs:documentation>
     </xs:annotation>
-    <xs:complexType></xs:complexType>
+    <xs:complexType>
+      <xs:attribute name="openon">
+        <xs:annotation>
+          <xs:documentation>Makes sure that the next page opens on the given side by inserting a blank page if necessary. Right pages have odd page numbers.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="right"></xs:enumeration>
+            <xs:enumeration value="left"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
   </xs:element>
   <xs:element name="Column">
     <xs:annotation>
       <xs:documentation>Set the properties of a column in the table.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
+      <xs:attribute name="align">
+        <xs:annotation>
+          <xs:documentation>Horizontal alignment of the contents of the cells in this column. A cell can override the alignment with its own align attribute or with CSS.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="left"></xs:enumeration>
+            <xs:enumeration value="center"></xs:enumeration>
+            <xs:enumeration value="right"></xs:enumeration>
+            <xs:enumeration value="justify"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="background-color">
+        <xs:annotation>
+          <xs:documentation>Background color of the cells in this column. A cell with its own background color takes precedence.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="valign">
+        <xs:annotation>
+          <xs:documentation>Vertical alignment of the contents of the cells in this column. A cell can override the alignment with CSS (vertical-align).</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="top"></xs:enumeration>
+            <xs:enumeration value="middle"></xs:enumeration>
+            <xs:enumeration value="bottom"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
       <xs:attribute name="width">
         <xs:annotation>
           <xs:documentation>Width of the column. Argument can be a number (in grid cells) a length (e.g. 2cm) or a *-number (e.g. 4*).</xs:documentation>
@@ -585,12 +627,51 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
+  <xs:element name="Grid">
+    <xs:annotation>
+      <xs:documentation>Set the grid of the surrounding Slate. Settings not given here keep the value copied from the page grid. The page grid itself is set with SetGrid.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="width">
+        <xs:annotation>
+          <xs:documentation>The width of a grid cell in the slate.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="height">
+        <xs:annotation>
+          <xs:documentation>The height of a grid cell in the slate.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="nx">
+        <xs:annotation>
+          <xs:documentation>The number of grid cells of the slate in horizontal direction. It limits the area for the cursor when objects are placed without a column.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="ny">
+        <xs:annotation>
+          <xs:documentation>The number of grid cells of the slate in vertical direction. It limits the area for the cursor when objects are placed without a row.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="dx">
+        <xs:annotation>
+          <xs:documentation>Gap between two grid cells (horizontal).</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="dy">
+        <xs:annotation>
+          <xs:documentation>Gap between two grid cells (vertical).</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="Slate">
     <xs:annotation>
-      <xs:documentation>Create a virtual page (a slate) that behaves like a real page but is not placed into the PDF. Think of it as a magic slate — you draw on it, inspect the result, and then place it on the page.</xs:documentation>
+      <xs:documentation>Create a virtual page (a slate) that behaves like a real page but is not placed into the PDF. Think of it as a magic slate — you draw on it, inspect the result, and then place it on the page.
+      The slate starts with a copy of the page grid. With a Grid child element the slate can use its own grid independent of the page.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="en:Grid"></xs:element>
         <xs:element ref="en:Contents"></xs:element>
       </xs:choice>
       <xs:attribute name="name" use="required">
@@ -1287,7 +1368,8 @@
   </xs:element>
   <xs:element name="PositioningArea">
     <xs:annotation>
-      <xs:documentation>Describes an area which contains one or more frames. Elements can be placed within these frames.</xs:documentation>
+      <xs:documentation>Describes an area which contains one or more frames. Elements can be placed within these frames.
+      The frames can be wrapped in a Switch element. The Switch is evaluated each time a new page is created, so a Case test can use sd:current-page() to select different frames for even and odd pages. If no branch matches, the area does not exist on that page.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -1481,7 +1563,7 @@
       </xs:attribute>
       <xs:attribute name="dy">
         <xs:annotation>
-          <xs:documentation>Gap between two grid cells (horizontal)</xs:documentation>
+          <xs:documentation>Gap between two grid cells (vertical)</xs:documentation>
         </xs:annotation>
       </xs:attribute>
     </xs:complexType>
@@ -1766,6 +1848,19 @@
         <xs:element ref="en:Ul"></xs:element>
         <xs:element ref="en:Value"></xs:element>
       </xs:choice>
+      <xs:attribute name="align">
+        <xs:annotation>
+          <xs:documentation>Horizontal alignment of the cell contents. Overrides the alignment set on the column.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="left"></xs:enumeration>
+            <xs:enumeration value="center"></xs:enumeration>
+            <xs:enumeration value="right"></xs:enumeration>
+            <xs:enumeration value="justify"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
       <xs:attribute name="class">
         <xs:annotation>
           <xs:documentation>The css class to be used for formatting the table cell.</xs:documentation>

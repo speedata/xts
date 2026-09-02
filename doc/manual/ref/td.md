@@ -19,6 +19,32 @@ Td wraps a table cell, just like HTML.
 
 
 
+`align` (optional)
+:   Horizontal alignment of the cell contents. Overrides the alignment set on the column.
+
+
+
+    `left`
+    :    The contents is aligned at the left.
+
+
+
+    `center`
+    :    The contents is centered.
+
+
+
+    `right`
+    :    The contents is aligned at the right.
+
+
+
+    `justify`
+    :    The contents is justified.
+
+
+
+
 `class` (text, optional)
 :   The css class to be used for formatting the table cell.
 

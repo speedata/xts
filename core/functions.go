@@ -507,7 +507,10 @@ func fnSlateheight(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Seque
 	xd := ctx.Store["xd"].(*xtsDocument)
 	xd.setupPage()
 	if sl, ok := xd.slates[slatename]; ok {
-		slateheight := sl.contents.Height
+		var slateheight bag.ScaledPoint
+		if contents := sl.buildContents(); contents != nil {
+			slateheight = contents.Height
+		}
 		if len(args) == 1 {
 			return goxpath.Sequence{xd.currentGrid.heightToRows(slateheight)}, nil
 		}
@@ -527,7 +530,10 @@ func fnSlatewidth(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequen
 	xd := ctx.Store["xd"].(*xtsDocument)
 	xd.setupPage()
 	if sl, ok := xd.slates[slatename]; ok {
-		slatewidth := sl.contents.Width
+		var slatewidth bag.ScaledPoint
+		if contents := sl.buildContents(); contents != nil {
+			slatewidth = contents.Width
+		}
 		if len(args) == 1 {
 			return goxpath.Sequence{xd.currentGrid.widthToColumns(slatewidth)}, nil
 		}
