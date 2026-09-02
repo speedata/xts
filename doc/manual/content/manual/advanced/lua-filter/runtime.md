@@ -25,7 +25,7 @@ print(runtime.projectdir)
 
 ### variables
 
-A table of variables passed via the `-v` command line flag. Supports read and write.
+Access to the variables passed via the `-v` command line flag or the `[variables]` section of the configuration file. Individual keys can be read and written; the table cannot be iterated with `pairs()`.
 
 ```lua
 -- xts -v myvar=hello
@@ -36,11 +36,11 @@ runtime.variables.output = "draft"
 
 ### options
 
-Configuration settings (read/write). These correspond to entries in the configuration file.
+Configuration settings (read/write). These correspond to entries in the
+configuration file. Values read back as their string rendering, so this is
+mainly useful for writing:
 
 ```lua
-print(runtime.options.mode)
-
 runtime.options.runs = "2"
 ```
 

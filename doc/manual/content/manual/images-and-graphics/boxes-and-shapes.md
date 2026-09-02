@@ -12,7 +12,7 @@ Rectangular colored areas are created with `<Box>`:
 
 ```xml
 <PlaceObject>
-  <Box width="4" height="3" backgroundcolor="limegreen"/>
+  <Box width="4" height="3" background-color="limegreen"/>
 </PlaceObject>
 ```
 
@@ -23,7 +23,7 @@ Boxes are commonly used as colored backgrounds behind other content. Place the b
 ```xml
 <!-- Background -->
 <PlaceObject row="1" column="1" allocate="no">
-    <Box width="10" height="3" backgroundcolor="lightyellow"/>
+    <Box width="10" height="3" background-color="lightyellow"/>
 </PlaceObject>
 <!-- Content on top -->
 <PlaceObject row="1" column="1">
@@ -39,19 +39,19 @@ Circles are created with `<Circle>`:
 
 ```xml
 <PlaceObject column="5" row="5">
-  <Circle radiusx="3" backgroundcolor="goldenrod"/>
+  <Circle radius-x="3" background-color="goldenrod"/>
 </PlaceObject>
 <PlaceObject column="5" row="5">
-  <Circle radiusx="1pt" backgroundcolor="black"/>
+  <Circle radius-x="1pt" background-color="black"/>
 </PlaceObject>
 ```
 
 ![circle with center](/manual/img/kreismitmittelpunkt.png)
 <figcaption>A circle with radius 3 grid cells. The center is at the top-left corner of grid cell (5,5).</figcaption>
 
-For ellipses, use both `radiusx` and `radiusy`. The radius can be in grid cells or absolute units (`3cm`, `1pt`).
+For ellipses, use both `radius-x` and `radius-y`. The radius can be in grid cells or absolute units (`3cm`, `1pt`).
 
-Circles don't allocate grid cells by default, so they won't block other content from being placed.
+Like every object, a circle allocates the grid cells of its bounding box; use `allocate="no"` on `<PlaceObject>` if it should not block other content.
 
 ## See also
 

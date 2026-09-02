@@ -89,11 +89,12 @@ func indexWorksheet(l *lua.State) int {
 	return 0
 }
 
+// The worksheet is called with (row, column), goxlsx expects (column, row).
 func callWorksheet(l *lua.State) int {
 	ws := checkWorksheet(l)
-	y, _ := l.ToInteger(-1)
-	x, _ := l.ToInteger(-2)
-	str := ws.Cell(x, y)
+	col, _ := l.ToInteger(-1)
+	row, _ := l.ToInteger(-2)
+	str := ws.Cell(col, row)
 	l.PushString(str)
 	return 1
 }

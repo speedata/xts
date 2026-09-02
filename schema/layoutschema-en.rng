@@ -42,6 +42,7 @@
                                     <ref name="e_Value"></ref>
                                     <ref name="e_CopyOf"></ref>
                                     <ref name="e_Span"></ref>
+                                    <text></text>
                                 </choice>
                             </zeroOrMore>
                             <optional>
@@ -255,6 +256,7 @@
                             <ref name="e_Value"></ref>
                             <ref name="e_CopyOf"></ref>
                             <ref name="e_Span"></ref>
+                            <text></text>
                         </choice>
                     </zeroOrMore>
                 </group>
@@ -310,7 +312,7 @@
                 </attribute>
             </optional>
             <optional>
-                <attribute name="backgroundcolor">
+                <attribute name="background-color">
                     <a:documentation>Color of the box. If the color name is a dash (-), a transparent background is used.</a:documentation>
                 </attribute>
             </optional>
@@ -483,6 +485,7 @@
                     <oneOrMore>
                         <choice>
                             <ref name="e_Column"></ref>
+                            <ref name="e_CopyOf"></ref>
                             <ref name="e_ForAll"></ref>
                             <ref name="e_Loop"></ref>
                             <ref name="e_Switch"></ref>
@@ -645,11 +648,9 @@
             <a:documentation>Define a master page. A master page is chosen depending on the criterion given with the attribute “test”.</a:documentation>
             <interleave>
                 <group>
-                    <optional>
-                        <attribute name="margin">
-                            <a:documentation>Set the margin of the page (defaults to 1cm for each margin). One to four values can be provided, similar to CSS.</a:documentation>
-                        </attribute>
-                    </optional>
+                    <attribute name="margin">
+                        <a:documentation>Set the margin of the page. One to four values can be provided, similar to CSS.</a:documentation>
+                    </attribute>
                     <attribute name="name">
                         <a:documentation>Name of the master page. It is for informational purpose and as a selection for ClearPage.</a:documentation>
                     </attribute>
@@ -788,11 +789,9 @@
             <a:documentation>Define a function</a:documentation>
             <interleave>
                 <group>
-                    <optional>
-                        <attribute name="name">
-                            <a:documentation>The name of the function (with namespace prefix).</a:documentation>
-                        </attribute>
-                    </optional>
+                    <attribute name="name">
+                        <a:documentation>The name of the function (with namespace prefix).</a:documentation>
+                    </attribute>
                     <zeroOrMore>
                         <ref name="e_Param"></ref>
                     </zeroOrMore>
@@ -893,6 +892,7 @@
                             <ref name="e_Value"></ref>
                             <ref name="e_CopyOf"></ref>
                             <ref name="e_Span"></ref>
+                            <text></text>
                         </choice>
                     </zeroOrMore>
                 </group>
@@ -903,11 +903,9 @@
     <define name="e_Image">
         <element name="Image">
             <a:documentation>Includes an external Graphic. Allowed graphic formats are PDF (.pdf), PNG (.png) and JPEG (.jpg). See below for a limitation on the number of included PDF files.</a:documentation>
-            <optional>
-                <attribute name="href">
-                    <a:documentation>Filename of the image. Can be a file in the search path, an absolute file name, a file-URI for absolute paths (e.g. file:///path/to/image.pdf) or a location on the web (http, https). Use placeholder://WxH (e.g. placeholder://200x150) to generate a placeholder image with the given dimensions in PDF points.</a:documentation>
-                </attribute>
-            </optional>
+            <attribute name="href">
+                <a:documentation>Filename of the image. Can be a file in the search path, an absolute file name, a file-URI for absolute paths (e.g. file:///path/to/image.pdf) or a location on the web (http, https). Use placeholder://WxH (e.g. placeholder://200x150) to generate a placeholder image with the given dimensions in PDF points.</a:documentation>
+            </attribute>
             <optional>
                 <attribute name="height">
                     <a:documentation>Image height. One of &#39;auto&#39; (default, take image width), length (such as &#39;3cm&#39;) or number (in grid cells).</a:documentation>
@@ -919,22 +917,22 @@
                 </attribute>
             </optional>
             <optional>
-                <attribute name="maxwidth">
+                <attribute name="max-width">
                     <a:documentation>The maximum width of the image. Only used when clip=&#34;no&#34;. Value is a number (grid cells), a length or the value “100%” for full width image.</a:documentation>
                 </attribute>
             </optional>
             <optional>
-                <attribute name="maxheight">
+                <attribute name="max-height">
                     <a:documentation>The maximum height of the image. Only used when clip=&#34;no&#34;. Value is a number (grid cells) or a length.</a:documentation>
                 </attribute>
             </optional>
             <optional>
-                <attribute name="minwidth">
+                <attribute name="min-width">
                     <a:documentation>The minimum width of the image. Only used when clip=&#34;no&#34;. Value is a number (grid cells), a length or the value “100%” for full width image.</a:documentation>
                 </attribute>
             </optional>
             <optional>
-                <attribute name="minheight">
+                <attribute name="min-height">
                     <a:documentation>The minimum height of the image. Only used when clip=&#34;no&#34;. Value is a number (grid cells) or a length.</a:documentation>
                 </attribute>
             </optional>
@@ -1025,6 +1023,7 @@
                             <ref name="e_Value"></ref>
                             <ref name="e_CopyOf"></ref>
                             <ref name="e_Span"></ref>
+                            <text></text>
                         </choice>
                     </zeroOrMore>
                 </group>
@@ -1608,6 +1607,7 @@
                             <ref name="e_Value"></ref>
                             <ref name="e_CopyOf"></ref>
                             <ref name="e_Span"></ref>
+                            <text></text>
                         </choice>
                     </zeroOrMore>
                 </group>
@@ -1618,11 +1618,9 @@
     <define name="e_Param">
         <element name="Param">
             <a:documentation>Specify a parameter for a Function or Template definition, or pass an argument in a CallTemplate.</a:documentation>
-            <optional>
-                <attribute name="name">
-                    <a:documentation>The name of the parameter.</a:documentation>
-                </attribute>
-            </optional>
+            <attribute name="name">
+                <a:documentation>The name of the parameter.</a:documentation>
+            </attribute>
             <optional>
                 <attribute name="select">
                     <a:documentation>The value of the parameter. On a CallTemplate it is the argument passed to the template; on a Template definition it is the default value used when the caller omits the parameter.</a:documentation>
@@ -1741,7 +1739,7 @@
                     </optional>
                     <optional>
                         <attribute name="background">
-                            <a:documentation>Fill the background of the object with a color, given by backgroundcolor.</a:documentation>
+                            <a:documentation>Fill the background of the object with a color, given by background-color.</a:documentation>
                             <choice>
                                 <value>yes</value>
                                 <value>no</value>
@@ -1749,7 +1747,7 @@
                         </attribute>
                     </optional>
                     <optional>
-                        <attribute name="backgroundcolor">
+                        <attribute name="background-color">
                             <a:documentation>Color of the background if “background” is set to “yes”.</a:documentation>
                         </attribute>
                     </optional>
@@ -2010,6 +2008,11 @@
                             <a:documentation>Alternative to giving the data structure in the child elements.</a:documentation>
                         </attribute>
                     </optional>
+                    <optional>
+                        <attribute name="attributes">
+                            <a:documentation>A sequence of attributes (created with Attribute) that is set on the root element. Example: $attributesvar</a:documentation>
+                        </attribute>
+                    </optional>
                     <oneOrMore>
                         <optional>
                             <ref name="e_Element"></ref>
@@ -2253,6 +2256,9 @@
                     <oneOrMore>
                         <interleave>
                             <optional>
+                                <ref name="e_Attribute"></ref>
+                            </optional>
+                            <optional>
                                 <ref name="e_Column"></ref>
                             </optional>
                             <optional>
@@ -2326,6 +2332,7 @@
                             <ref name="e_Value"></ref>
                             <ref name="e_CopyOf"></ref>
                             <ref name="e_Span"></ref>
+                            <text></text>
                         </choice>
                     </zeroOrMore>
                 </group>
@@ -2403,6 +2410,9 @@
                         <interleave>
                             <optional>
                                 <ref name="e_Columns"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_CopyOf"></ref>
                             </optional>
                             <optional>
                                 <ref name="e_ForAll"></ref>
@@ -2585,6 +2595,7 @@
                     <oneOrMore>
                         <choice>
                             <ref name="e_Action"></ref>
+                            <ref name="e_CopyOf"></ref>
                             <ref name="e_ForAll"></ref>
                             <ref name="e_Bookmark"></ref>
                             <ref name="e_HTML"></ref>
@@ -2785,6 +2796,7 @@
                             <ref name="e_Value"></ref>
                             <ref name="e_CopyOf"></ref>
                             <ref name="e_Span"></ref>
+                            <text></text>
                         </choice>
                     </zeroOrMore>
                 </group>
@@ -2798,7 +2810,7 @@
             <interleave>
                 <group>
                     <attribute name="test">
-                        <a:documentation>Every time after the the loop is executed, the condition is evaluated. If it is true, the loop exits.</a:documentation>
+                        <a:documentation>Every time after the loop is executed, the condition is evaluated. If it is true, the loop exits.</a:documentation>
                     </attribute>
                     <oneOrMore>
                         <interleave>

@@ -46,13 +46,12 @@ Defines a rectangular area for objects.
 ## Example
 
 ```xml
-<Masterpage name="right page" test="sd:odd( sd:current-page() )">
-  <Margin left="1cm" right="1cm" top="1cm" bottom="1cm"/>
+<DefineMasterPage name="right page" margin="1cm" test="sd:odd( sd:current-page() )">
   <PositioningArea name="frame1">
     <PositioningFrame width="12" height="30" column="2" row="2"/>
     <PositioningFrame width="12" height="30" column="16" row="2"/>
   </PositioningArea>
-</Masterpage>
+</DefineMasterPage>
 ```
 
 

@@ -17,7 +17,7 @@ XTS ships with XML schema files (RELAX NG and XSD) that describe the layout lang
 
 ## Schema files
 
-The schema files are in the `share/schema/` directory of your XTS installation:
+The schema files are in the `schema/` directory of your XTS installation:
 
 | File | Description |
 |------|-------------|

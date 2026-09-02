@@ -50,7 +50,7 @@ Use `<ProcessNode>` when different elements need different treatment. Use `<ForA
 ```xml
 <Loop select="10">
     <!-- runs 10 times -->
-    <!-- $loopcounter is 1, 2, ..., 10 -->
+    <!-- $_loopcounter is 1, 2, ..., 10 -->
 </Loop>
 ```
 
@@ -76,7 +76,7 @@ This outputs 1, 2, 3, 4. Don't forget to increment the variable, or you'll get a
 In XML, `<` must be written as `&lt;` inside attribute values. So `$i <= 4` becomes `$i &lt;= 4`.
 {{< /callout >}}
 
-`<Until>` is the inverse -- it runs *until* the condition becomes true:
+`<Until>` checks the condition *after* each iteration and runs until it becomes true -- so the body always runs at least once:
 
 ```xml
 <SetVariable variable="i" select="1"/>

@@ -27,7 +27,7 @@ A table is built from `<Table>`, `<Tr>` (rows), and `<Td>` (cells):
 
 ## Defining column widths
 
-Without explicit widths, columns share the available space equally. Use `<Columns>` for control:
+Without explicit widths, column widths are computed from their content, and the table shrinks to its content width. Use `<Columns>` for control:
 
 ```xml
 <Table>
@@ -151,7 +151,7 @@ Table cells can hold more than just text:
 
 <!-- Images -->
 <Td>
-    <Image file="logo.pdf" width="2cm"/>
+    <Image href="logo.pdf" width="2cm"/>
 </Td>
 
 <!-- Nested tables -->
@@ -258,10 +258,10 @@ Or use `<Switch>/<Case>` inside cells for more complex logic:
 
 ```xml
 <!-- Fixed width -->
-<Table width="15cm">...</Table>
+<Table width="15cm"><!-- ... --></Table>
 
 <!-- Grid cells -->
-<Table width="10">...</Table>
+<Table width="10"><!-- ... --></Table>
 
 <!-- Full available width via CSS -->
 <StyleSheet>

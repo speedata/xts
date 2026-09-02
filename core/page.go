@@ -228,7 +228,8 @@ func (xd *xtsDocument) OutputAt(vl *node.VList, col coord, row coord, allocate b
 
 		shiftRight := bag.ScaledPoint(0)
 		if halign == frontend.HAlignRight {
-			shiftRight = xd.currentGrid.width(6) - vl.Width
+			f := area.frame[area.currentFrame]
+			shiftRight = xd.currentGrid.width(f.col+f.width-col) - vl.Width
 		}
 
 		columnLength := xd.currentGrid.posX(col, area)

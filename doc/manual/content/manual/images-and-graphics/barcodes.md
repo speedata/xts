@@ -53,6 +53,6 @@ Combine the barcode with HTML text for labels and styling:
 |-----------|-------------|
 | `type` | Barcode type: `QRCode`, `EAN13`, or `Code128` |
 | `value` | The data to encode |
-| `width` | Width of the barcode |
-| `height` | Height of the barcode (optional for QR codes) |
-| `color` | Color of the barcode (optional) |
+| `width` | Width of the barcode (optional, default 3cm) |
+| `height` | Height of the barcode (optional, defaults to the width; ignored for QR codes, which are always square) |
+| `eclevel` | QR code error correction level: `L`, `M`, `Q`, or `H` (optional, default `M`) |

@@ -19,7 +19,7 @@ Specify a parameter for a [Function](../function) or [Template](../template) def
 
 
 
-`name` (text, optional)
+`name` (text)
 :   The name of the parameter.
 
 

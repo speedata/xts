@@ -21,13 +21,12 @@ linktitle: Slates
 </figcaption>
 </figure>
 
-A Slate is a virtual layout surface -- like a magic drawing tablet, you sketch content on it without it appearing on the page, inspect the result, and then place it wherever you want. A slate has its own grid and cursor, independent of the page.
+A Slate is a virtual layout surface -- like a magic drawing tablet, you sketch content on it without it appearing on the page, inspect the result, and then place it wherever you want. A slate has its own cursor and its own copy of the page grid, so sketching content on it does not move the page cursor.
 
 ## Creating and placing a slate
 
 ```xml
 <Slate name="sidebar">
-    <Grid width="5mm" height="12pt"/>
     <Contents>
         <PlaceObject>
             <TextBlock>
@@ -43,7 +42,7 @@ A Slate is a virtual layout surface -- like a magic drawing tablet, you sketch c
 
 ## Why use slates?
 
-- **Independent grid**: A slate can use a finer or coarser grid than the page.
+- **Independent cursor**: A slate works on its own copy of the page grid, so sketching content does not move the page cursor.
 - **Measure before placing**: Use `sd:slate-width('name')` and `sd:slate-height('name')` to query a slate's dimensions before deciding where to put it.
 - **Reuse**: Place the same slate multiple times.
 - **Discard**: If the content doesn't fit or isn't needed, simply don't place it -- nothing ends up in the PDF.

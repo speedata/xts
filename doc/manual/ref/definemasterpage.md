@@ -19,8 +19,8 @@ Define a master page. A master page is chosen depending on the criterion given w
 
 
 
-`margin` (text, optional)
-:   Set the margin of the page (defaults to 1cm for each margin). One to four values can be provided, similar to CSS.
+`margin` (text)
+:   Set the margin of the page. One to four values can be provided, similar to CSS.
 
 
 
@@ -46,17 +46,16 @@ When creating a new page, all page types are tried in reversed order. That means
 ## Example
 
 ```xml
-<DefineMasterPage name="right page" test=" sd:odd( sd:current-page() ) "/>
+<DefineMasterPage name="right page" margin="1cm" test=" sd:odd( sd:current-page() ) "/>
 ```
 ```xml
-<DefineMasterPage name="left page" test=" sd:even( sd:current-page() ) "/>
+<DefineMasterPage name="left page" margin="1cm" test=" sd:even( sd:current-page() ) "/>
 ```
 ```xml
-<DefineMasterPage name="main part right" test=" sd:odd( sd:current-page() ) and $chapter='main' "/>
+<DefineMasterPage name="main part right" margin="1cm" test=" sd:odd( sd:current-page() ) and $chapter='main' "/>
 ```
 ```xml
-<DefineMasterPage name="right page" test="sd:odd( sd:current-page() )">
-  <Margin left="1cm" right="1cm" top="1cm" bottom="1cm"/>
+<DefineMasterPage name="right page" margin="1cm" test="sd:odd( sd:current-page() )">
   <PositioningArea name="frame1">
     <PositioningFrame width="12" height="30" column="2" row="2"/>
     <PositioningFrame width="12" height="30" column="16" row="2"/>

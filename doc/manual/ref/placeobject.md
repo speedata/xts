@@ -42,12 +42,12 @@ Outputs a rectangular object (image, table, box or textblock).
 
 
 `background` (yes or no, optional)
-:   Fill the background of the object with a color, given by backgroundcolor.
+:   Fill the background of the object with a color, given by background-color.
 
 
 
 
-`backgroundcolor` (text, optional)
+`background-color` (text, optional)
 :   Color of the background if “background” is set to “yes”.
 
 
@@ -149,7 +149,7 @@ Positioning inside the grid:
 
 ```xml
 <Record match="image">
-  <PlaceObject column="12" frame="solid" framecolor="red">
+  <PlaceObject column="12" frame="yes">
     <Image width="10" href="_samplea.pdf"/>
   </PlaceObject>
 </Record>
@@ -160,7 +160,7 @@ Absolute positioning (from top left edge):
 
 ```xml
 <Record match="image">
-  <PlaceObject column="1cm" row="4cm" frame="solid" framecolor="red">
+  <PlaceObject column="1cm" row="4cm" frame="yes">
     <Image width="10" href="_samplea.pdf"/>
   </PlaceObject>
 </Record>

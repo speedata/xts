@@ -19,6 +19,12 @@ Saves an element/attribute structure to be used in the next publisher run. The c
 
 
 
+`attributes` ([XPath expressions](/manual/data-processing/xpath), optional)
+:   A sequence of attributes (created with [Attribute](../attribute)) that is set on the root element. Example: `$attributesvar`
+
+
+
+
 `elementname` (text)
 :   Name of the root element that surrounds the elements given by the child elements.
 

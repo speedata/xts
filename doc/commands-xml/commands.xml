@@ -84,6 +84,7 @@
         <cmd name="Value"/>
         <cmd name="CopyOf"/>
         <cmd name="Span"/>
+        <text/>
       </choice>
     </zeroOrMore>
   </define>
@@ -642,7 +643,7 @@
     </TextBlock>
   </PlaceObject>
   <ClearPage/>
-  <Message select="sd:pagenumber('textstart')"></Message>
+  <Message select="sd:page-number('textstart')"></Message>
 </Record>
 ]]></listing>
     </example>
@@ -675,7 +676,7 @@
     </TextBlock>
   </PlaceObject>
   <ClearPage/>
-  <Message select="sd:pagenumber('Textanfang')"/>
+  <Message select="sd:page-number('Textanfang')"/>
 </Record>
 ]]></listing>
     </example>
@@ -984,7 +985,7 @@
         <para>CSS Stil für dieses Element.</para>
       </description>
     </attribute>
-    <attribute en="backgroundcolor" type="text" optional="yes" css="background-color">
+    <attribute en="background-color" type="text" optional="yes" css="background-color">
       <description xml:lang="en">
         <para>Color of the box. If the color name is a dash (<tt>-</tt>), a transparent background is used.</para>
       </description>
@@ -1011,7 +1012,7 @@
     <example xml:lang="en">
       <listing><![CDATA[<DefineColor name="mygreen" model="cmyk" c="22" m="0" y="55" k="0"/>
 <PlaceObject>
-  <Box width="10" height="5" backgroundcolor="mygreen"/>
+  <Box width="10" height="5" background-color="mygreen"/>
 </PlaceObject>
 ]]></listing>
       <para>looks like</para>
@@ -1020,7 +1021,7 @@
     <example xml:lang="de">
       <listing><![CDATA[<DefineColor name="meingrün" model="cmyk" c="22" m="0" y="55" k="0"/>
 <PlaceObject>
-  <Box width="10" height="5" backgroundcolor="meingrün" />
+  <Box width="10" height="5" background-color="meingrün" />
 </PlaceObject>
 ]]></listing>
       <para>erzeugt ein farbiges Rechteck</para>
@@ -1195,7 +1196,7 @@
       <Paragraph><Value>This is page 1</Value></Paragraph>
     </TextBlock>
   </PlaceObject>
-  <ClearPage openon="right"/>
+  <ClearPage/>
   <PlaceObject>
     <TextBlock>
       <Paragraph><Value>And this is page 3</Value></Paragraph>
@@ -1213,7 +1214,7 @@
       </Paragraph>
     </TextBlock>
   </PlaceObject>
-  <ClearPage openon="right"/>
+  <ClearPage/>
   <PlaceObject>
     <TextBlock>
       <Paragraph>
@@ -1272,6 +1273,7 @@
       <oneOrMore>
         <choice>
           <cmd name="Column"/>
+          <cmd name="CopyOf"/>
           <cmd name="ForAll"/>
           <cmd name="Loop"/>
           <cmd name="Switch"/>
@@ -1280,12 +1282,12 @@
       </oneOrMore>
     </childelements>
     <remark xml:lang="en">
-      <para>The <tt>*</tt> widths in the command “Column” allow dynamic cell widths. For that the total width of the table must be set and the attribute (on <cmd name="Table"/>) <tt>stretch</tt> must be set to <tt>yes</tt>.
+      <para>The <tt>*</tt> widths in the command “Column” allow dynamic cell widths. For that the total width of the table must be set and the attribute (on <cmd name="Table"/>) <tt>stretch</tt> must be set to <tt>max</tt>.
         The widths of the columns are calculated as follows: first the absolute widths are taken into account. After that, the <tt>*</tt> columns are distributed across the remaining space. The
         numbers before the <tt>*</tt> denote the fraction of the space. In the example below the third column gets 1/6 of the remaining width, the fourth column get 5/6.</para>
     </remark>
     <remark xml:lang="de">
-      <para>Die <tt>*</tt>-Breitenangaben im Element »Column« ermöglicht eine dynamische Aufteilung der Spaltenbreite. Dazu muss die Tabellenbreite vorgegeben sein und das Attribut <tt>stretch</tt> bei <cmd name="Table"/> auf <tt>yes</tt>
+      <para>Die <tt>*</tt>-Breitenangaben im Element »Column« ermöglicht eine dynamische Aufteilung der Spaltenbreite. Dazu muss die Tabellenbreite vorgegeben sein und das Attribut <tt>stretch</tt> bei <cmd name="Table"/> auf <tt>max</tt>
         stehen. Die Spaltenbreiten berechnen sich wie folgt: erst werden die fixen Breitenangaben berücksichtigt. Anschließend werden die <tt>*</tt>-Spalten auf den verbleibenden Platz verteilt. Die Angaben
         vor den Sternchen dienen der Verteilung innerhalb der <tt>*</tt>-Spalten. Im Beispiel unten nimmt die vierte Spalte in etwa den fünffachen Platz der dritten Spalte ein. Angenommen die Tabelle sollte
         32mm breit werden. Die fixen Spalten nehmen davon 20mm in Anspruch, übrig bleiben 12 mm. Diese 12mm werden auf die beiden Spalten verteilt, 2mm entfallen auf die <tt>1*</tt>-Spalte (1/6 von 12mm), 10mm
@@ -1295,13 +1297,13 @@
   <Columns>
     <Column width="14mm" />
     <Column width="2" />
-    <Column width="1*" align="right" valign="top" />
+    <Column width="1*" />
     <Column width="5*" />
-    <Column width="5mm" backgroundcolor="gray" />
-    <Tr>
-       ....
-    </Tr>
+    <Column width="5mm" />
   </Columns>
+  <Tr>
+    <!-- ... -->
+  </Tr>
 </Table>
 ]]></listing>
     </example>
@@ -1310,9 +1312,9 @@
   <Columns>
     <Column width="14mm" />
     <Column width="2" />
-    <Column width="1*" align="right" valign="top" />
+    <Column width="1*" />
     <Column width="5*" />
-    <Column width="5mm" backgroundcolor="grau" />
+    <Column width="5mm" />
   </Columns>
 </Table>]]></listing>
     </example>
@@ -1562,12 +1564,12 @@
         <!-- <optional><cmd name="Grid"/></optional> -->
       </interleave>
     </childelements>
-    <attribute en="margin" type="text" optional="yes" allowxpath="yes">
+    <attribute en="margin" type="text" optional="no" allowxpath="yes">
       <description xml:lang="en">
-        <para>Set the margin of the page (defaults to 1cm for each margin). One to four values can be provided, similar to CSS.</para>
+        <para>Set the margin of the page. One to four values can be provided, similar to CSS.</para>
       </description>
       <description xml:lang="de">
-        <para>Setzt den Rand der Seite (Voreinstellung 1cm). Ein bis vier Werte können übergeben werden, wie bei CSS.</para>
+        <para>Setzt den Rand der Seite. Ein bis vier Werte können übergeben werden, wie bei CSS.</para>
       </description>
     </attribute>
     <attribute en="name" type="text" optional="no">
@@ -1597,11 +1599,10 @@
         speziellen. Das ist nur dann wichtig, wenn mehrere Bedingungen »wahr« ergeben würden. </para>
     </remark>
     <example xml:lang="en">
-      <listing><![CDATA[<DefineMasterPage name="right page" test=" sd:odd( sd:current-page() ) "/>]]></listing>
-      <listing><![CDATA[<DefineMasterPage name="left page" test=" sd:even( sd:current-page() ) "/>]]></listing>
-      <listing><![CDATA[<DefineMasterPage name="main part right" test=" sd:odd( sd:current-page() ) and $chapter='main' "/>]]></listing>
-      <listing><![CDATA[<DefineMasterPage name="right page" test="sd:odd( sd:current-page() )">
-  <Margin left="1cm" right="1cm" top="1cm" bottom="1cm"/>
+      <listing><![CDATA[<DefineMasterPage name="right page" margin="1cm" test=" sd:odd( sd:current-page() ) "/>]]></listing>
+      <listing><![CDATA[<DefineMasterPage name="left page" margin="1cm" test=" sd:even( sd:current-page() ) "/>]]></listing>
+      <listing><![CDATA[<DefineMasterPage name="main part right" margin="1cm" test=" sd:odd( sd:current-page() ) and $chapter='main' "/>]]></listing>
+      <listing><![CDATA[<DefineMasterPage name="right page" margin="1cm" test="sd:odd( sd:current-page() )">
   <PositioningArea name="frame1">
     <PositioningFrame width="12" height="30" column="2" row="2"/>
     <PositioningFrame width="12" height="30" column="16" row="2"/>
@@ -1619,26 +1620,25 @@
 </DefineMasterPage>]]></listing>
     </example>
     <example xml:lang="de">
-      <listing><![CDATA[<DefineMasterPage name="rechte Seite" test=" sd:odd( sd:current-page() ) ">]]></listing>
-      <listing><![CDATA[<DefineMasterPage name="linke Seite" test=" sd:even( sd:current-page() ) ">]]></listing>
-      <listing><![CDATA[<DefineMasterPage name="Hauptteil rechte Seite" test=" sd:odd( sd:current-page() )  and $kapitel='hauptteil' ">]]></listing>
-      <listing><![CDATA[<DefineMasterPage name="rechte Seite" test="sd:odd( sd:current-page() )">
-  <Margin left="1cm" right="1cm" top="1cm" bottom="1cm"/>
+      <listing><![CDATA[<DefineMasterPage name="rechte Seite" margin="1cm" test=" sd:odd( sd:current-page() ) "/>]]></listing>
+      <listing><![CDATA[<DefineMasterPage name="linke Seite" margin="1cm" test=" sd:even( sd:current-page() ) "/>]]></listing>
+      <listing><![CDATA[<DefineMasterPage name="Hauptteil rechte Seite" margin="1cm" test=" sd:odd( sd:current-page() )  and $kapitel='hauptteil' "/>]]></listing>
+      <listing><![CDATA[<DefineMasterPage name="rechte Seite" margin="1cm" test="sd:odd( sd:current-page() )">
   <AtPageCreation>
     <PlaceObject>
-      ...
+      <!-- Kopfzeile -->
     </PlaceObject>
   </AtPageCreation>
   <AtPageShipout>
     <PlaceObject>
-      ....
+      <!-- Fußzeile -->
     </PlaceObject>
   </AtPageShipout>
   <PositioningArea name="rahmen1">
     <PositioningFrame width="12" height="30" column="2" row="2"/>
     <PositioningFrame width="12" height="30" column="16" row="2"/>
   </PositioningArea>
-</Masterpage>]]></listing>
+</DefineMasterPage>]]></listing>
     </example>
   </command>
 
@@ -1786,7 +1786,7 @@
         <optional><cmd name="Value"/></optional>
       </oneOrMore>
     </childelements>
-    <attribute en="name" optional="yes" type="text">
+    <attribute en="name" optional="no" type="text">
       <description xml:lang="en">
         <para>The name of the function (with namespace prefix).</para>
       </description>
@@ -1810,13 +1810,13 @@
     </PlaceObject>
 </Record>
 
-...
-
 <Function name="fn:add">
     <Param name="a" />
     <Param name="b" />
     <Value select="$a + $b" />
 </Function>
+
+</Layout>
 ]]></listing>
       <para>Print out the number 7.</para>
     </example>
@@ -1836,13 +1836,13 @@
     </PlaceObject>
 </Record>
 
-...
-
 <Function name="fn:add">
     <Param name="a" />
     <Param name="b" />
     <Value select="$a + $b" />
 </Function>
+
+</Layout>
 ]]></listing>
       <para>Gibt die Zahl 7 aus.</para>
     </example>
@@ -1879,8 +1879,6 @@
     </attribute>
     <example xml:lang="en"><listing><![CDATA[<Record match="data">
   <Slate name="sidebar">
-    <!-- Optional, taken from the current page -->
-    <Grid width="10mm" height="10mm"/>
     <Contents>
       <PlaceObject column="3" row="2">
         <TextBlock width="14">
@@ -1995,7 +1993,7 @@
       <para>Bindet eine externe Grafik ein. Erlaubte Grafikformate sind PDF (.pdf), PNG (.png) und JPEG (.jpg). Siehe unten für die Einschränkung eingebundener PDF-Dateien.</para>
     </description>
     <childelements/>
-    <attribute en="href" type="text" optional="yes">
+    <attribute en="href" type="text" optional="no">
       <description xml:lang="en">
         <para>Filename of the image. Can be a file in the search path, an absolute file name, a file-URI for absolute paths (e.g. <tt>file:///path/to/image.pdf</tt>) or a location on the web (http, https). Use <tt>placeholder://WxH</tt> (e.g. <tt>placeholder://200x150</tt>) to generate a placeholder image with the given dimensions in PDF points.</para>
       </description>
@@ -2019,7 +2017,7 @@
         <para>Die Seitenzahl aus dem PDF. Voreinstellung ist 1.</para>
       </description>
     </attribute>
-    <attribute en="maxwidth" type="numberorlength" optional="yes">
+    <attribute en="max-width" type="numberorlength" optional="yes">
       <description xml:lang="en">
         <para>The maximum width of the image. Only used when clip="no". Value is a number (grid cells), a length or the value “100%” for full width image.</para>
       </description>
@@ -2027,7 +2025,7 @@
         <para>Die maximale Breite des Bilds. Nur, wenn clip="no". Angabe in absoluten Längen, Rasterzellen oder »100%« für volle Breite.</para>
       </description>
     </attribute>
-    <attribute en="maxheight" type="numberorlength" optional="yes">
+    <attribute en="max-height" type="numberorlength" optional="yes">
       <description xml:lang="en">
         <para>The maximum height of the image. Only used when clip="no". Value is a number (grid cells) or a length.</para>
       </description>
@@ -2035,7 +2033,7 @@
         <para>Die maximale Breite des Bilds. Nur, wenn clip="no". Angabe in absoluten Längen oder Anzahl Rasterzellen.</para>
       </description>
     </attribute>
-    <attribute en="minwidth" type="numberorlength" optional="yes">
+    <attribute en="min-width" type="numberorlength" optional="yes">
       <description xml:lang="en">
         <para>The minimum width of the image. Only used when clip="no". Value is a number (grid cells), a length or the value “100%” for full width image.</para>
       </description>
@@ -2043,7 +2041,7 @@
         <para>Die minimale Breite des Bilds. Nur, wenn clip="no". Angabe in absoluten Längen, Rasterzellen oder »100%« für volle Breite.</para>
       </description>
     </attribute>
-    <attribute en="minheight" type="numberorlength" optional="yes">
+    <attribute en="min-height" type="numberorlength" optional="yes">
       <description xml:lang="en">
         <para>The minimum height of the image. Only used when clip="no". Value is a number (grid cells) or a length.</para>
       </description>
@@ -2056,7 +2054,7 @@
         <para>Stretch image until one of maximum width and maximum height is reached. Useful if images should be as large as possible but should not use more than the given space.</para>
       </description>
       <description xml:lang="de">
-        <para>Dehnt das Bild bis eine der Angaben von maxheight und maxwidth erreich ist. Hilfreich um Bilder so groß wie möglich aber innerhalb gewisser Grenzen anzeigen zu lassen.</para>
+        <para>Dehnt das Bild bis eine der Angaben von max-height und max-width erreicht ist. Hilfreich um Bilder so groß wie möglich aber innerhalb gewisser Grenzen anzeigen zu lassen.</para>
       </description>
     </attribute>
     <attribute en="visiblebox" optional="yes" allowxpath="yes">
@@ -2384,15 +2382,15 @@
       </choice>
 
     </attribute>
-    <example xml:lang="de">
-      <listing><![CDATA[<Message select="concat('Price: ',@price)" error="no"/>]]></listing>
+    <example xml:lang="en">
+      <listing><![CDATA[<Message select="concat('Price: ',@price)"/>]]></listing>
     </example>
     <example xml:lang="de">
       <listing><![CDATA[<Record match="Datensatz">
   <Message>
     <Value>Attribut Preis: </Value>
     <Value select="@Preis"></Value>
-  </Nachricht>
+  </Message>
 </Record>]]></listing>
     </example>
   </command>
@@ -2566,7 +2564,7 @@
     </TextBlock>
   </PlaceObject>
   <ClearPage/>
-  <Message select="sd:pagenumber('textstart')"></Message>
+  <Message select="sd:page-number('textstart')"></Message>
 </Record>
 ]]></listing>
     </example>
@@ -2599,7 +2597,7 @@
     </TextBlock>
   </PlaceObject>
   <ClearPage/>
-  <Message select="sd:pagenumber('Textanfang')"/>
+  <Message select="sd:page-number('Textanfang')"/>
 </Record>
 ]]></listing>
     </example>
@@ -2691,7 +2689,7 @@
     </example>
     <example xml:lang="de">
       <listing><![CDATA[<Record match="bild">
-  <NeueZeile row="5" />
+  <NextRow row="5" />
   <PlaceObject column="{$spalte}">
     <Image width="10" href="{.}" />
   </PlaceObject>
@@ -3043,7 +3041,7 @@
       <para>Lege einen Parameter für eine <cmd name="Function"/>- oder <cmd name="Template"/>-Definition fest oder übergebe ein Argument bei <cmd name="CallTemplate"/>.</para>
     </description>
     <childelements></childelements>
-    <attribute en="name" optional="yes" type="text">
+    <attribute en="name" optional="no" type="text">
       <description xml:lang="en">
         <para>The name of the parameter.</para>
       </description>
@@ -3316,13 +3314,13 @@
     </attribute>
     <attribute en="background" optional="yes" type="boolean">
       <description xml:lang="en">
-        <para>Fill the background of the object with a color, given by backgroundcolor.</para>
+        <para>Fill the background of the object with a color, given by background-color.</para>
       </description>
       <description xml:lang="de">
-        <para>Erzeugt einen farbigen Hintergrund für das Objekt. Das Attribut »backgroundcolor« gibt die Farbe an.</para>
+        <para>Erzeugt einen farbigen Hintergrund für das Objekt. Das Attribut »background-color« gibt die Farbe an.</para>
       </description>
     </attribute>
-    <attribute en="backgroundcolor" type="text" optional="yes">
+    <attribute en="background-color" type="text" optional="yes">
       <description xml:lang="en">
         <para>Color of the background if “background” is set to “yes”.</para>
       </description>
@@ -3461,13 +3459,13 @@
     <example xml:lang="en">
       <para>Positioning inside the grid:</para>
       <listing><![CDATA[<Record match="image">
-  <PlaceObject column="12" frame="solid" framecolor="red">
+  <PlaceObject column="12" frame="yes">
     <Image width="10" href="_samplea.pdf"/>
   </PlaceObject>
 </Record>]]></listing>
       <para>Absolute positioning (from top left edge):</para>
       <listing><![CDATA[<Record match="image">
-  <PlaceObject column="1cm" row="4cm" frame="solid" framecolor="red">
+  <PlaceObject column="1cm" row="4cm" frame="yes">
     <Image width="10" href="_samplea.pdf"/>
   </PlaceObject>
 </Record>
@@ -3475,13 +3473,13 @@
     </example>
     <example xml:lang="de">
       <listing><![CDATA[<Record match="bild">
-  <PlaceObject column="12" frame="solid" framecolor="red">
+  <PlaceObject column="12" frame="yes">
     <Image width="10" href="_samplea.pdf" />
   </PlaceObject>
 </Record>]]></listing>
       <para>Absolute Platzierung:</para>
       <listing><![CDATA[<Record match="bild">
-  <PlaceObject column="1cm" row="4cm" frame="solid" framecolor="red">
+  <PlaceObject column="1cm" row="4cm" frame="yes">
     <Image width="10" href="_samplea.pdf" />
   </PlaceObject>
 </Record>]]></listing>
@@ -3524,13 +3522,12 @@
       </description>
     </attribute>
     <example xml:lang="en">
-      <listing><![CDATA[<Masterpage name="right page" test="sd:odd( sd:current-page() )">
-  <Margin left="1cm" right="1cm" top="1cm" bottom="1cm"/>
+      <listing><![CDATA[<DefineMasterPage name="right page" margin="1cm" test="sd:odd( sd:current-page() )">
   <PositioningArea name="frame1">
     <PositioningFrame width="12" height="30" column="2" row="2"/>
     <PositioningFrame width="12" height="30" column="16" row="2"/>
   </PositioningArea>
-</Masterpage>]]></listing>
+</DefineMasterPage>]]></listing>
     </example>
     <example xml:lang="de">
       <listing><![CDATA[<PositioningArea name="rahmen1">
@@ -3587,13 +3584,12 @@
       </description>
     </attribute>
     <example xml:lang="en">
-      <listing><![CDATA[<Masterpage name="right page" test="sd:odd( sd:current-page() )">
-  <Margin left="1cm" right="1cm" top="1cm" bottom="1cm"/>
+      <listing><![CDATA[<DefineMasterPage name="right page" margin="1cm" test="sd:odd( sd:current-page() )">
   <PositioningArea name="frame1">
     <PositioningFrame width="12" height="30" column="2" row="2"/>
     <PositioningFrame width="12" height="30" column="16" row="2"/>
   </PositioningArea>
-</Masterpage>]]></listing>
+</DefineMasterPage>]]></listing>
     </example>
     <example xml:lang="de">
       <listing><![CDATA[<PositioningArea name="rahmen1">
@@ -3786,6 +3782,14 @@
       </description>
       <description xml:lang="de">
         <para>Alternativ zur Angabe des Datensatzes im Kindelement.</para>
+      </description>
+    </attribute>
+    <attribute en="attributes" type="xpath" optional="yes">
+      <description xml:lang="en">
+        <para>A sequence of attributes (created with <cmd name="Attribute"/>) that is set on the root element. Example: <tt>$attributesvar</tt></para>
+      </description>
+      <description xml:lang="de">
+        <para>Eine Sequenz von Attributen (erzeugt mit <cmd name="Attribute"/>), die am Wurzelelement gesetzt wird. Beispiel: <tt>$attributesvar</tt></para>
       </description>
     </attribute>
     <example xml:lang="en">
@@ -4034,6 +4038,7 @@
     <childelements>
       <oneOrMore>
         <interleave>
+          <optional><cmd name="Attribute"/></optional>
           <optional><cmd name="Column"/></optional>
           <optional><cmd name="Columns"/></optional>
           <optional><cmd name="CopyOf"/></optional>
@@ -4296,7 +4301,7 @@
 </Record>]]></listing>
     </example>
     <example xml:lang="de">
-      <listing><![CDATA[<Record match="...">
+      <listing><![CDATA[<Record match="data">
   <SetVariable variable="zähler" select="3"/>
   <Switch>
     <Case test=" $zähler &lt; 5">
@@ -4397,7 +4402,7 @@
 </StyleSheet>]]></listing>
     </example>
     <example xml:lang="de">
-      <listing><![CDATA[<StyleSheet filename="style.css" />]]></listing>
+      <listing><![CDATA[<StyleSheet href="style.css" />]]></listing>
       <listing><![CDATA[<StyleSheet>
   frame {
     border-bottom-right-radius: 1cm;
@@ -4429,6 +4434,7 @@
       <oneOrMore>
         <interleave>
           <optional><cmd name="Columns"/></optional>
+          <optional><cmd name="CopyOf"/></optional>
           <optional><cmd name="ForAll"/></optional>
           <optional><cmd name="Loop"/></optional>
           <optional><cmd name="TableFoot"/></optional>
@@ -4774,7 +4780,7 @@
     </remark>
     <example xml:lang="de">
       <listing><![CDATA[<Tr>
-  <Td colspan="2" align="right"><Paragraph><Value>Text</Value></Paragraph></Td>
+  <Td colspan="2"><Paragraph><Value>Text</Value></Paragraph></Td>
   <Td rowspan="3"><Image width="3" href="bildname.jpg"/></Td>
 </Tr>]]></listing>
     </example>
@@ -4783,7 +4789,7 @@
       <listing><![CDATA[
 <Record match="data">
    <PlaceObject>
-     <Table stretch="yes">
+     <Table stretch="max">
        <Columns>
          <Column width="5cm"/>
        </Columns>
@@ -4818,6 +4824,7 @@
       <oneOrMore>
         <choice>
           <cmd name="Action"/>
+          <cmd name="CopyOf"/>
           <cmd name="ForAll"/>
           <cmd name="Bookmark"/>
           <cmd name="HTML"/>
@@ -5260,7 +5267,7 @@
     </childelements>
     <attribute en="test" type="xpath" optional="no">
       <description xml:lang="en">
-        <para>Every time after the the loop is executed, the condition is evaluated. If it is true, the loop exits.</para>
+        <para>Every time after the loop is executed, the condition is evaluated. If it is true, the loop exits.</para>
       </description>
       <description xml:lang="de">
         <para>Nach jedem Schleifendurchlauf wird die Bedingung überprüft. Wenn sie »wahr« ergibt, wird die Schleife verlassen.</para>
@@ -5276,10 +5283,10 @@
 </Record>
 ]]></listing>
       <para>Gives the following output (in the protocol file)</para>
-      <listing><![CDATA[Message: "$i is: 0.000000"
-Message: "$i is: 1.000000"
-Message: "$i is: 2.000000"
-Message: "$i is: 3.000000"]]></listing>
+      <listing><![CDATA[Message: "$i is: 0"
+Message: "$i is: 1"
+Message: "$i is: 2"
+Message: "$i is: 3"]]></listing>
     </example>
     <example xml:lang="de">
       <listing><![CDATA[<Record match="data">
@@ -5290,10 +5297,10 @@ Message: "$i is: 3.000000"]]></listing>
   </Until>
 </Record>]]></listing>
     <para>Erzeugt die folgende Ausgabe:</para>
-    <listing><![CDATA[Message: "$i is: 0.000000"
-      Message: "$i is: 1.000000"
-      Message: "$i is: 2.000000"
-      Message: "$i is: 3.000000"]]></listing>
+    <listing><![CDATA[Message: "$i ist: 0"
+Message: "$i ist: 1"
+Message: "$i ist: 2"
+Message: "$i ist: 3"]]></listing>
     </example>
   </command>
 

@@ -84,7 +84,7 @@ Sets an invisible mark into the output. This is helpful when you want to know on
     </TextBlock>
   </PlaceObject>
   <ClearPage/>
-  <Message select="sd:pagenumber('textstart')"></Message>
+  <Message select="sd:page-number('textstart')"></Message>
 </Record>
 
 ```

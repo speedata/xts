@@ -67,7 +67,7 @@ produce?" has no sensible answer, so:
 ```xml
 <!-- error: an action cannot be bound to a variable -->
 <SetVariable variable="x" as="item()*">
-  <PlaceObject>…</PlaceObject>
+  <PlaceObject><!-- … --></PlaceObject>
 </SetVariable>
 ```
 
@@ -122,7 +122,7 @@ goes into a consuming command as an argument:
 <PlaceObject>
   <Table>
     <Columns><CopyOf select="$head"/></Columns>
-    <Tr><Td>…</Td><Td>…</Td></Tr>
+    <Tr><Td><!-- … --></Td><Td><!-- … --></Td></Tr>
   </Table>
 </PlaceObject>
 ```

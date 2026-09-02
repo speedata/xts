@@ -30,8 +30,6 @@ Create a virtual page (a slate) that behaves like a real page but is not placed 
 ```xml
 <Record match="data">
   <Slate name="sidebar">
-    <!-- Optional, taken from the current page -->
-    <Grid width="10mm" height="10mm"/>
     <Contents>
       <PlaceObject column="3" row="2">
         <TextBlock width="14">

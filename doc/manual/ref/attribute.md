@@ -12,7 +12,7 @@ Create an attribute for the [Element](../element) data structure that can be sav
 
 ##  Parent elements
 
-[Element](../element)
+[Element](../element), [SetVariable](../setvariable)
 
 
 ## Attributes

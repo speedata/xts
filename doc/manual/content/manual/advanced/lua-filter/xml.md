@@ -93,7 +93,8 @@ tbl = {
 ok, msg = xml.encode_table(tbl, "catalog.xml")
 ```
 
-This produces:
+This produces (the order of the attributes within an element is not
+deterministic):
 
 ```xml
 <catalog version="2.0"><product id="42" category="books">The Art of Typesetting</product><product id="43" category="tools">Layout Grid</product><!-- end of catalog --></catalog>
@@ -114,7 +115,12 @@ Attribute names can contain any characters, including namespace prefixes:
 
 ### decode_xml(filename)
 
-Reads an XML file and returns a Lua table with the same structure as described above.
+Reads an XML file and returns two values: a boolean status and a Lua table
+with the structure described above (or an error message if the status is
+`false`). Two differences to the encoding direction: comments in the source
+file are dropped, and namespace prefixes are resolved -- element names lose
+their prefix and attribute keys carry the namespace URI instead of the
+prefix.
 
 ```lua
 xml = require("xml")

@@ -53,6 +53,9 @@ Writes a message onto the console and to the protocol file.
 
 ## Example
 
+```xml
+<Message select="concat('Price: ',@price)"/>
+```
 
 
 

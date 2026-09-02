@@ -54,20 +54,20 @@ The origin is the top-left corner at position (1, 1). When you specify `row` and
 ```xml
 <!-- Grid-based: column 5, row 4 -->
 <PlaceObject row="4" column="5">
-    <Image file="_samplea.pdf" width="5"/>
+    <Image href="_samplea.pdf" width="5"/>
 </PlaceObject>
 
 <!-- Absolute: 5cm from left, 12mm from top -->
 <PlaceObject row="12mm" column="5cm">
-    <Image file="_samplea.pdf" width="5"/>
+    <Image href="_samplea.pdf" width="5"/>
 </PlaceObject>
 ```
 
-As soon as one value is a length (like `5cm` or `12mm`), XTS switches to absolute positioning. You can't mix grid and absolute in a single `<PlaceObject>`.
+As soon as *both* values are lengths (like `5cm` or `12mm`), XTS switches to absolute positioning. Don't mix grid and absolute coordinates in a single `<PlaceObject>`: a length in only one of the two attributes is silently ignored and the coordinate is chosen automatically.
 
 ## Grid allocation
 
-The grid doesn't just help you position things -- it tracks what's occupied. When you place an object, its cells are marked as "allocated." If you try to place another object in the same spot, you'll get a warning.
+The grid doesn't just help you position things -- it tracks what's occupied. When you place an object, its cells are marked as "allocated", and the cursor and automatic placement skip these cells. Placing an object with explicit coordinates over occupied cells is not reported; only objects that protrude into the page margins produce a warning.
 
 Turn on allocation tracing to see it visually:
 
@@ -76,13 +76,13 @@ Turn on allocation tracing to see it visually:
 ```
 
 ![grid with allocation](/manual/img/08-raster2.png)
-<figcaption>Yellow cells are allocated. Red cells indicate a conflict (two objects overlap).</figcaption>
+<figcaption>Yellow cells are allocated.</figcaption>
 
 If you *want* objects to overlap (say, a background image behind text), use `allocate="no"`:
 
 ```xml
 <PlaceObject allocate="no">
-    <Box width="4" height="3" backgroundcolor="lightyellow"/>
+    <Box width="4" height="3" background-color="lightyellow"/>
 </PlaceObject>
 ```
 
@@ -114,7 +114,7 @@ Objects don't always fit the grid perfectly. An image might be 3.7 grid cells wi
 <!-- Right-align an object at the last column -->
 <PlaceObject column="{sd:number-of-columns()}" row="1"
     hreference="right" halign="right">
-  <Image file="logo.pdf" width="2.5"/>
+  <Image href="logo.pdf" width="2.5cm"/>
 </PlaceObject>
 ```
 
@@ -123,11 +123,10 @@ Objects don't always fit the grid perfectly. An image might be 3.7 grid cells wi
 
 ## Grids in slates
 
-Slates can have their own grid, independent of the page grid:
+A slate works on its own copy of the current page grid: the grid dimensions and margins are taken from the page, but the slate has its own cursor:
 
 ```xml
 <Slate name="table">
-    <Grid width="1cm" height="12pt"/>
     <Contents>
         <PlaceObject>
             <Table width="4" stretch="max">
@@ -141,7 +140,7 @@ Slates can have their own grid, independent of the page grid:
 ```
 
 ![independent grid in slate](/manual/img/08-raster4.png)
-<figcaption>The slate has a finer grid than the page.</figcaption>
+<figcaption>The slate works on its own copy of the page grid.</figcaption>
 
 This is useful when you need different grid resolutions for different parts of your layout.
 

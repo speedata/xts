@@ -192,7 +192,7 @@ func dothings() error {
 	op.On("--runs N", "Run XTS N times", cmdline)
 	op.On("--suppressinfo", "Create a reproducible document", cmdline)
 	op.On("--systemfonts", "Use system fonts", cmdline)
-	op.On("--trace NAMES", "Set the trace to one or more of grid, allocation", cmdline)
+	op.On("--trace NAMES", "Set the trace to one or more of grid, gridallocation", cmdline)
 	op.On("--verbose", "Show log output in the terminal window (STDOUT)", cmdline)
 	op.On("-v", "--var=VALUE", "Set a variable for the publishing run", cmdline)
 	op.Command("clean", "Remove auxiliary and protocol files")
@@ -394,7 +394,11 @@ func dothings() error {
 		}
 
 		if luafile := configuration.Filter; luafile != "" {
-			if err = runLuaScript(luafile); err != nil {
+			var filterpath string
+			if filterpath, err = core.FindFile(luafile); err != nil {
+				return err
+			}
+			if err = runLuaScript(filterpath); err != nil {
 				return err
 			}
 		}
@@ -470,6 +474,9 @@ func dothings() error {
 			}
 		}
 	finished:
+		if l != nil {
+			runFinalizerCallback()
+		}
 		if err != nil {
 			if terr, ok := err.(core.TypesettingError); ok {
 				if !terr.Logged {

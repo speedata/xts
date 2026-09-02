@@ -48,7 +48,7 @@ If you can influence the data structure, here are some practical tips:
 
 ## Accessing data from the layout
 
-XTS uses `<Record>` to match elements from the data file. When XTS encounters an element, it looks for a `<Record>` with a matching `element` attribute and executes the commands inside.
+XTS uses `<Record>` to match elements from the data file. When XTS encounters an element, it looks for a `<Record>` with a matching `match` attribute and executes the commands inside.
 
 Within a record, you use XPath expressions to access attributes and child elements:
 

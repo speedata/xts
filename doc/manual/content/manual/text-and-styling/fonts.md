@@ -6,7 +6,7 @@ linktitle: Fonts
 
 # Using Fonts
 
-XTS supports TrueType (`.ttf`), OpenType (`.otf`), and Type 1 (`.pfb`/`.afm`) fonts. Loading them is done through CSS `@font-face` rules -- the same syntax you'd use on the web.
+XTS supports TrueType (`.ttf`), OpenType (`.otf`) and TrueType/OpenType collections (`.ttc`) fonts. Loading them is done through CSS `@font-face` rules -- the same syntax you'd use on the web.
 
 ## Loading font families
 
@@ -72,7 +72,7 @@ XTS ships with three built-in font families that you can use without loading any
 | `serif` | CrimsonPro | Elegant book font |
 | `monospace` | CamingoCode | Coding font |
 
-If you don't specify a font, XTS uses `sans` (set in the CSS defaults as the `html` element's `font-family`).
+If you don't specify a font, XTS uses `serif` (set in the CSS defaults as the `html` element's `font-family`).
 
 ## Where to put font files
 
@@ -124,4 +124,4 @@ You can also set features inline:
 ![fraction feature](/manual/img/frac-feature-hb.png)
 <figcaption>The <code>frac</code> feature turns "1/4" into a proper fraction glyph.</figcaption>
 
-The full list of OpenType feature tags is in the [OpenType spec](https://docs.microsoft.com/en-us/typography/opentype/spec/featurelist). XTS enables the same default features as [HarfBuzz](https://harfbuzz.github.io/shaping-opentype-features.html), minus `liga`.
+The full list of OpenType feature tags is in the [OpenType spec](https://docs.microsoft.com/en-us/typography/opentype/spec/featurelist). XTS enables the same default features as [HarfBuzz](https://harfbuzz.github.io/shaping-opentype-features.html), including `liga`.

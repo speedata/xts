@@ -8,7 +8,7 @@ Associates a value with a variable name. The value can be a simple value or a mo
 
 ##  Child elements
 
-[Column](../column), [Columns](../columns), [CopyOf](../copyof), [Element](../element), [ForAll](../forall), [Paragraph](../paragraph), [Table](../table), [TextBlock](../textblock), [Until](../until), [Value](../value), [While](../while)
+[Attribute](../attribute), [Column](../column), [Columns](../columns), [CopyOf](../copyof), [Element](../element), [ForAll](../forall), [Paragraph](../paragraph), [Table](../table), [TextBlock](../textblock), [Until](../until), [Value](../value), [While](../while)
 
 ##  Parent elements
 

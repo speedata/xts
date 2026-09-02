@@ -64,7 +64,7 @@ The following example places a background text behind the Td cell.
 
 <Record match="data">
    <PlaceObject>
-     <Table stretch="yes">
+     <Table stretch="max">
        <Columns>
          <Column width="5cm"/>
        </Columns>

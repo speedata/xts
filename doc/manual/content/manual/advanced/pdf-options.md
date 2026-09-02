@@ -30,9 +30,11 @@ Create clickable links with `<A>`:
 </Paragraph>
 
 <!-- Internal link (to a mark) -->
-<Mark select="'chapter1'"/>
+<Action><Mark select="'chapter1'"/></Action>
 <!-- ... later ... -->
-<A link="chapter1"><Value>See Chapter 1</Value></A>
+<Paragraph>
+    <A link="chapter1"><Value>See Chapter 1</Value></A>
+</Paragraph>
 ```
 
 ### Page destinations
@@ -64,9 +66,9 @@ Control how the PDF opens:
 ```xml
 <PDFOptions
     displaymode="fullscreen"
-    duplex="DuplexFlipLongEdge"
-    printscaling="None"
-    showhyperlinks="false"/>
+    duplex="duplexfliplongedge"
+    printscaling="none"
+    showhyperlinks="no"/>
 ```
 
 ## Conformance (PDF/UA, PDF/A, PDF/X)

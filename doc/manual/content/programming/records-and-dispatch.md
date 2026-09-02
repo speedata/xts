@@ -47,8 +47,8 @@ different child elements need different treatment:
   <ProcessNode select="*"/>
 </Record>
 
-<Record match="article">…</Record>
-<Record match="category-header">…</Record>
+<Record match="article"><!-- … --></Record>
+<Record match="category-header"><!-- … --></Record>
 ```
 
 This is recursive: a record reached via `<ProcessNode>` can itself call
@@ -90,9 +90,9 @@ The `match` attribute supports XPath predicates, so you can route the same
 element to different records based on its attributes or content:
 
 ```xml
-<Record match="item[@type='invoice']">…</Record>
-<Record match="item[@type='credit']">…</Record>
-<Record match="item">…</Record>   <!-- fallback for any other item -->
+<Record match="item[@type='invoice']"><!-- … --></Record>
+<Record match="item[@type='credit']"><!-- … --></Record>
+<Record match="item"><!-- … --></Record>   <!-- fallback for any other item -->
 ```
 
 ## Priority {#priority}
@@ -104,6 +104,11 @@ rules:
    wins).
 2. Among records of equal specificity, the **last one defined** wins.
 
+These rules apply to `<ProcessNode>` dispatch. The record for the **data root
+element** (and for the root of a `<LoadXML>` document) is looked up by plain
+element name only: predicates are ignored there, so the root record must be
+defined without a predicate and without a mode.
+
 So in the example above, an `<item type="invoice">` is handled by the first
 record; an `<item type="other">` falls through to the plain `item` record.
 
@@ -114,8 +119,8 @@ element can be processed differently in different phases (for instance, once to
 build a table of contents and once to render the body):
 
 ```xml
-<Record match="chapter" mode="toc">…</Record>
-<Record match="chapter">…</Record>   <!-- default mode -->
+<Record match="chapter" mode="toc"><!-- … --></Record>
+<Record match="chapter"><!-- … --></Record>   <!-- default mode -->
 
 <ProcessNode select="chapter" mode="toc"/>
 <ProcessNode select="chapter"/>

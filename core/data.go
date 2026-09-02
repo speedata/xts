@@ -322,7 +322,7 @@ func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 			}
 		} else {
 			if mustexist {
-				slog.Error(fmt.Sprintf("Layout line %d: attribute %s on element %s not) found", layoutelt.Line, fieldName, layoutelt.Name))
+				slog.Error(fmt.Sprintf("Layout line %d: attribute %s on element %s not found", layoutelt.Line, fieldName, layoutelt.Name))
 				return fmt.Errorf("line %d: attribute %s on element %s not found", layoutelt.Line, fieldName, layoutelt.Name)
 			}
 			if dflt != "" {

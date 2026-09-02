@@ -51,11 +51,11 @@ Parameters are passed with [`<Param>`](/reference/commands/param) children:
   <Param name="title"/>
   <Param name="color" select="'black'"/>   <!-- default -->
   <PlaceObject>
-    <Textblock>
+    <TextBlock>
       <Paragraph style="color: { $color }">
         <Value select="$title"/>
       </Paragraph>
-    </Textblock>
+    </TextBlock>
   </PlaceObject>
 </Template>
 

@@ -19,7 +19,7 @@ Create a rectangular colored area. The area must fit the grid cells.
 
 
 
-`backgroundcolor` (text, optional, "CSS property": background-color)
+`background-color` (text, optional, "CSS property": background-color)
 :   Color of the box. If the color name is a dash (`-`), a transparent background is used.
 
 
@@ -60,7 +60,7 @@ Create a rectangular colored area. The area must fit the grid cells.
 ```xml
 <DefineColor name="mygreen" model="cmyk" c="22" m="0" y="55" k="0"/>
 <PlaceObject>
-  <Box width="10" height="5" backgroundcolor="mygreen"/>
+  <Box width="10" height="5" background-color="mygreen"/>
 </PlaceObject>
 
 ```

@@ -44,7 +44,7 @@ cd xts
 rake build
 ```
 
-The `xts` binary ends up in `bin/`. You'll need Go 1.21+ and Ruby/rake (or check the `Rakefile` for the raw `go build` command).
+The `xts` binary ends up in `bin/`. You'll need Go 1.25+ and Ruby/rake (or check the `Rakefile` for the raw `go build` command).
 
 ## Hello, World!
 
@@ -56,14 +56,14 @@ cd helloworld
 xts
 ```
 
-This creates a directory with two files and runs XTS on them. Open `xts.pdf` and you should see "Hello, user!". But let's look at what's inside.
+This creates a directory with two files and runs XTS on them. Open `xts.pdf` and you should see "Hello, world!". But let's look at what's inside.
 
 **data.xml** -- the data:
 ```xml
-<data name="user"></data>
+<data>Hello, world!</data>
 ```
 
-Just a root element with a `name` attribute. In a real project, this would be your product data, article list, or whatever you're typesetting.
+Just a root element with some text content. In a real project, this would be your product data, article list, or whatever you're typesetting.
 
 **layout.xml** -- the layout:
 ```xml
@@ -74,7 +74,7 @@ Just a root element with a `name` attribute. In a real project, this would be yo
         <PlaceObject>
             <TextBlock>
                 <Paragraph>
-                    <Value select="concat('Hello, ', @name, '!')" />
+                    <Value select="." />
                 </Paragraph>
             </TextBlock>
         </PlaceObject>
@@ -89,7 +89,7 @@ Here's what's happening:
 3. `<PlaceObject>` places something on the page.
 4. `<TextBlock>` is a rectangular text area (no page breaks).
 5. `<Paragraph>` holds one paragraph of text.
-6. `<Value select="...">` evaluates an XPath expression -- here it concatenates "Hello, " with the `name` attribute and "!".
+6. `<Value select="...">` evaluates an XPath expression -- here `.` is the current element, so its text content "Hello, world!" is printed. Try `concat('Hello, ', @name, '!')` with `<data name="user"/>` as the data to see XPath at work.
 
 Run `xts` in the directory, and you get your PDF:
 

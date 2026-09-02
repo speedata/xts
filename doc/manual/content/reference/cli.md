@@ -24,6 +24,7 @@ If no command is given, `run` is assumed.
 | `compare <dir>` | Recursively compare generated PDFs against `reference.pdf` files |
 | `doc` | Open the documentation website in the default browser |
 | `new [dir]` | Create a starter project with `data.xml` and `layout.xml` |
+| `help` | Show help and exit |
 | `version` | Print the version number and exit |
 
 ## Flags
@@ -34,16 +35,21 @@ If no command is given, `run` is assumed.
 | `--data` | string | `data.xml` | Data file name |
 | `--dummy` | boolean | `false` | Ignore data file, use `<data/>` |
 | `--dumpoutput` | string | | Write XML dump of PDF structure to this file |
-| `--extradir` | string | | Additional directory for file lookups (recursive) |
+| `--extradir` | string | | Additional directory for file lookups (recursive); can be given multiple times |
 | `--filter` | string | | Lua script to run before publishing |
 | `--jobname` | string | `xts` | Output file name (without `.pdf`) |
 | `--layout` | string | `layout.xml` | Layout file name |
-| `--loglevel` | string | `info` | Log level: `debug`, `info`, `warn`, `error` |
+| `--loglevel` | string | `info` | Log level: `trace`, `debug`, `info`, `notice`, `warn`, `error` |
+| `--mode` | string | | Set one or more modes (comma separated list) |
+| `--pdfa` | string | | Claim PDF/A archival conformance: `none` or `3b` |
+| `--pdfua` | string | | Claim PDF/UA accessibility conformance: `none`, `1`, or `2` |
+| `--pdfx` | string | | Claim PDF/X print conformance: `none`, `X-3`, or `X-4` |
 | `--runs` | integer | `1` | Number of publishing runs |
-| `--quiet` | boolean | `false` | Suppress all console output |
+| `--quiet` | boolean | `false` | Suppress output on STDOUT |
 | `--suppressinfo` | boolean | `false` | Produce reproducible PDF (no timestamps) |
 | `--systemfonts` | boolean | `false` | Include system-installed fonts in search |
 | `--trace` | string | | Comma-separated traces: `grid`, `gridallocation` |
+| `-v`, `--var=VALUE` | string | | Set a variable for the publishing run (`name=value`); can be given multiple times |
 | `--verbose` | boolean | `false` | Extra debug output |
 
 ## Examples

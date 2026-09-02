@@ -31,12 +31,13 @@ instead.
 </Layout>
 ```
 
-Output: `7.000000`
+Output: `7`
 
 Key points:
 
 - The function name needs a **namespace prefix** (`fn:` here), and that namespace
-  must be declared on the root element.
+  must be declared on the `<Function>` element or one of its ancestors (usually
+  the root element).
 - Parameters are accessed as local variables (`$first`, `$second`).
 - Parameter variables have **local scope** -- unlike ordinary XTS variables, they
   do not leak out of the function body.

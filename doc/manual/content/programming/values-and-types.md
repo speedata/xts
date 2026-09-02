@@ -99,7 +99,7 @@ Once you have a typed value, splice it into a consuming command with
 ```xml
 <Table>
   <Columns><CopyOf select="$head"/></Columns>
-  …
+  <!-- … -->
 </Table>
 ```
 

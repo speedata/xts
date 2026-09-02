@@ -132,7 +132,7 @@ context node taken as a string yields its text content:
 
 For the complete list of supported functions see the
 [XPath Functions Reference](/reference/xpath-functions) and the
-[goxml XPath documentation](https://doc.speedata.de/goxml/xpath/).
+[goxpath documentation](https://github.com/speedata/goxpath).
 
 ## Sequences, iteration, and conditionals
 
@@ -154,7 +154,7 @@ A few rules trip up XPath newcomers in XTS specifically:
 
 - **The context changes.** Inside `<ForAll>` or a matched `<Record>`, `.` is the current element, `@id` is its attribute, and `..` is its parent. Paths are always relative to *here*.
 - **Escape `<` and `&`.** XPath lives inside XML attributes, so `<` must be written `&lt;` and `&` as `&amp;` (`>` is allowed as-is, but `&gt;` is fine too).
-- **Braces switch into XPath.** In attributes that take literal text, `{ … }` evaluates an XPath expression: `width="{ $wd }"`. See [Variables](/programming/variables).
+- **Braces switch into XPath.** In almost every attribute, `{ … }` evaluates an XPath expression: `width="{ $wd }"`. Only a few attributes that are XPath expressions themselves are exempt (`select` on `<SetVariable>`, `<ForAll>`, `<Loop>` and `<Attribute>`, `test` on `<Case>`, `<While>` and `<Until>`). See [Variables](/programming/variables).
 - **Bodies are evaluated eagerly.** A `<SetVariable>` body is computed when the command runs, with the context frozen at that point. See [Values and types](/programming/values-and-types).
 
 For example, inside a `<ForAll>` the context node is each element in turn, so `.`,

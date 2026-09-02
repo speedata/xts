@@ -33,7 +33,9 @@ xts <command> <parameters>
 | `--filter=NAME` | Run a [Lua script](../../advanced/lua-filter) before publishing |
 | `--jobname=NAME` | Output PDF name without extension (default: `xts`) |
 | `--layout=NAME` | Layout file (default: `layout.xml`) |
-| `--loglevel=LVL` | Console log level: `debug`, `info`, `warn`, `error` |
+| `--loglevel=LVL` | Console log level: `trace`, `debug`, `info`, `notice`, `warn`, `error` |
+| `--mode NAME` | Set one or more modes (comma separated list) |
+| `-v`, `--var=VALUE` | Set a variable for the publishing run (`name=value`) |
 | `--pdfua=VAL` | Claim PDF/UA accessibility conformance: `none`, `1`, `2` (see [Accessible PDF](../../accessibility)) |
 | `--pdfa=VAL` | Claim PDF/A archival conformance: `none`, `3b` |
 | `--pdfx=VAL` | Claim PDF/X print conformance: `none`, `X-3`, `X-4` |

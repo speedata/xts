@@ -21,17 +21,17 @@ This creates a master page called "default" that matches all pages (the test is 
 You can have different layouts for different pages:
 
 ```xml
-<!-- First page: extra top margin for a header -->
-<DefineMasterPage name="first" test="sd:current-page() = 1" margin="1cm 1cm 3cm 1cm"/>
+<!-- Fallback for all pages -->
+<DefineMasterPage name="default" test="true()" margin="1cm"/>
 
 <!-- Even pages: wider left margin for binding -->
-<DefineMasterPage name="even" test="sd:even(sd:current-page())" margin="1cm 2cm 1cm 1cm"/>
+<DefineMasterPage name="even" test="sd:even(sd:current-page())" margin="1cm 1cm 1cm 2cm"/>
 
-<!-- Everything else -->
-<DefineMasterPage name="default" test="true()" margin="1cm"/>
+<!-- First page: extra top margin for a header -->
+<DefineMasterPage name="first" test="sd:current-page() = 1" margin="3cm 1cm 1cm 1cm"/>
 ```
 
-XTS evaluates the tests **in order** and uses the first match. Put your most specific conditions first and the catch-all `true()` last.
+XTS evaluates the tests in **reverse order of definition**: the master page defined **last** whose test matches wins. Put the catch-all `true()` first and your most specific conditions last. The four margin values follow the CSS order top, right, bottom, left.
 
 ## Master pages with areas
 

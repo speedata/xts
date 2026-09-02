@@ -12,7 +12,7 @@ Copies the result of an XPath expression as-is, preserving node structure. Analo
 
 ##  Parent elements
 
-[A](../a), [B](../b), [I](../i), [Li](../li), [Paragraph](../paragraph), [SetVariable](../setvariable), [Span](../span), [U](../u)
+[A](../a), [B](../b), [Columns](../columns), [I](../i), [Li](../li), [Paragraph](../paragraph), [SetVariable](../setvariable), [Span](../span), [Table](../table), [TextBlock](../textblock), [U](../u)
 
 
 ## Attributes

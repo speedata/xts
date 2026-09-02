@@ -668,7 +668,7 @@ func fnOdd(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, err
 	if err != nil {
 		return nil, err
 	}
-	return goxpath.Sequence{int(nv)%2 == 1}, nil
+	return goxpath.Sequence{int(nv)%2 != 0}, nil
 }
 
 func fnShaOne(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {

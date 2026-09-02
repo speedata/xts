@@ -8,7 +8,7 @@ Create a rectangular piece of text.
 
 ##  Child elements
 
-[Action](../action), [Bookmark](../bookmark), [ForAll](../forall), [HTML](../html), [Ol](../ol), [Paragraph](../paragraph), [Ul](../ul), [Value](../value)
+[Action](../action), [Bookmark](../bookmark), [CopyOf](../copyof), [ForAll](../forall), [HTML](../html), [Ol](../ol), [Paragraph](../paragraph), [Ul](../ul), [Value](../value)
 
 ##  Parent elements
 

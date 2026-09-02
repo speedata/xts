@@ -27,7 +27,7 @@ Finishes the current page.
       <Paragraph><Value>This is page 1</Value></Paragraph>
     </TextBlock>
   </PlaceObject>
-  <ClearPage openon="right"/>
+  <ClearPage/>
   <PlaceObject>
     <TextBlock>
       <Paragraph><Value>And this is page 3</Value></Paragraph>

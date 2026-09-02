@@ -8,12 +8,12 @@ linktitle: Colors
 
 ## Using colors
 
-Colors can be used anywhere a `color` or `backgroundcolor` attribute is accepted:
+Colors can be used anywhere a `color` or `background-color` attribute is accepted:
 
 ```xml
-<Box width="4" height="2" backgroundcolor="limegreen"/>
+<Box width="4" height="2" background-color="limegreen"/>
 <Paragraph style="color: #336699;">...</Paragraph>
-<Circle radiusx="2" backgroundcolor="rgb(255, 128, 0)"/>
+<Circle radius-x="2" background-color="rgb(255, 128, 0)"/>
 ```
 
 ## CSS color values
@@ -22,7 +22,8 @@ XTS supports the standard CSS color formats:
 
 - Named colors: `red`, `darkblue`, `limegreen`, ...
 - Hex: `#ff0000`, `#369`
-- RGB: `rgb(255, 0, 0)`
+- RGB: `rgb(255, 0, 0)`, `rgba(255, 0, 0, 0.5)`
+- CMYK: `cmyk(0%, 20%, 100%, 5%)` or `device-cmyk(0, 0.2, 1, 0.05)`
 
 ## Defining custom colors
 
@@ -36,15 +37,15 @@ Create named colors with `<DefineColor>`:
 Then use them by name:
 
 ```xml
-<Box width="4" height="2" backgroundcolor="brandblue"/>
+<Box width="4" height="2" background-color="brandblue"/>
 ```
 
 ## Pre-defined colors
 
 XTS comes with all standard CSS named colors plus:
 
-- **HKS 1-97** -- defined in CMYK
-- **Many Pantone colors** -- defined in CMYK
+- **HKS** (86 colors) -- spot colors with CMYK alternate values
+- **Many Pantone colors** -- spot colors with CMYK alternate values
 
 The colors `black` and `white` are in the grayscale color space. All other CSS colors are in RGB.
 

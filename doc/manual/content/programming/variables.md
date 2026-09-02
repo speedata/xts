@@ -39,7 +39,7 @@ Variables can hold not just simple values but entire XML structures:
 
 <PlaceObject>
     <TextBlock>
-        <Value select="$greeting"/>
+        <CopyOf select="$greeting"/>
     </TextBlock>
 </PlaceObject>
 ```
@@ -56,8 +56,8 @@ A practical use case is storing table column definitions for reuse:
 </SetVariable>
 
 <Table>
-    <Value select="$tablecolumns"/>
-    <Tr>...</Tr>
+    <CopyOf select="$tablecolumns"/>
+    <Tr><!-- ... --></Tr>
 </Table>
 ```
 
@@ -77,11 +77,12 @@ Build up content incrementally:
 <!-- $foo is now "Hello, world!" -->
 ```
 
-This also works for building XML structures:
+This also works for building XML structures -- use `<CopyOf>` to keep the
+collected nodes intact (`<Value select>` would flatten them to text):
 
 ```xml
 <SetVariable variable="toc">
-    <Value select="$toc"/>
+    <CopyOf select="$toc"/>
     <Element name="entry">
         <Attribute name="title" select="@name"/>
         <Attribute name="page" select="sd:current-page()"/>
@@ -95,7 +96,7 @@ Variable contents with child elements are evaluated **immediately** when `<SetVa
 
 ```xml
 <SetVariable variable="greeting"><Value>nice</Value></SetVariable>
-<SetVariable variable="tmp"><Value select="$greeting"/></SetVariable>
+<SetVariable variable="tmp"><CopyOf select="$greeting"/></SetVariable>
 <SetVariable variable="greeting"><Value>cruel</Value></SetVariable>
 <!-- $tmp is still "nice" -->
 ```

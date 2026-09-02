@@ -19,7 +19,7 @@ Define a function
 
 
 
-`name` (text, optional)
+`name` (text)
 :   The name of the function (with namespace prefix).
 
 
@@ -43,13 +43,13 @@ Define a function
     </PlaceObject>
 </Record>
 
-...
-
 <Function name="fn:add">
     <Param name="a" />
     <Param name="b" />
     <Value select="$a + $b" />
 </Function>
+
+</Layout>
 
 ```
 

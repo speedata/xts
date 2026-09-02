@@ -90,6 +90,9 @@ func FindFile(filename string) (string, error) {
 }
 
 func fileexists(fn string) bool {
-	_, ok := filelist[fn]
-	return ok
+	if _, ok := filelist[fn]; ok {
+		return true
+	}
+	_, err := os.Stat(fn)
+	return err == nil
 }

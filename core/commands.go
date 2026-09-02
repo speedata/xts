@@ -276,7 +276,7 @@ func cmdAction(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 
 func cmdAttribute(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	attValues := &struct {
-		Select string `sdxml:"noescape"`
+		Select string `sdxml:"noescape,mustexist"`
 		Name   string `sdxml:"mustexist"`
 	}{}
 	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
@@ -289,7 +289,7 @@ func cmdAttribute(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		return nil, newTypesettingErrorf("Attribute", layoutelt.Line, "error parsing select XPath expression %s", err)
 	}
 
-	attr := goxml.Attribute{
+	attr := &goxml.Attribute{
 		Name:  attValues.Name,
 		Value: eval.Stringvalue(),
 	}
@@ -314,7 +314,7 @@ func cmdBookmark(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, err
 	var err error
 	attValues := &struct {
 		Select string `sdxml:"mustexist"`
-		Level  int
+		Level  int    `sdxml:"mustexist"`
 		Open   bool
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
@@ -533,7 +533,7 @@ func cmdCopyOf(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 func cmdDefineColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
-		Name                string
+		Name                string `sdxml:"mustexist"`
 		Colorname           string
 		Model               string
 		Value               string
@@ -663,7 +663,7 @@ func cmdElement(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 		return nil, err
 	}
 
-	elt := goxml.Element{}
+	elt := goxml.NewElement()
 	elt.Name = attValues.Name
 
 	seq, err := dispatch(xd, layoutelt)
@@ -684,7 +684,7 @@ func cmdElement(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 func cmdForall(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
-		Select string `sdxml:"noescape"`
+		Select string `sdxml:"noescape,mustexist"`
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -1395,7 +1395,7 @@ func cmdLoop(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 func cmdMark(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
-		Select    string `sdxml:"noescape"`
+		Select    string `sdxml:"noescape,mustexist"`
 		Append    bool
 		PDFTarget bool
 		ShiftUP   bag.ScaledPoint
@@ -2335,9 +2335,10 @@ func (xd *xtsDocument) splitTable(tableVL *node.VList, areaName string, col, row
 
 func cmdSaveXML(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	attValues := &struct {
+		Attributes  *string `sdxml:"noescape"`
 		Href        *string
 		Name        *string
-		Elementname string
+		Elementname string `sdxml:"mustexist"`
 		Select      *string
 	}{}
 	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
@@ -2358,9 +2359,20 @@ func cmdSaveXML(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	}
 	root := goxml.NewElement()
 	root.Name = attValues.Elementname
+	if attValues.Attributes != nil {
+		attrEval, err := evaluateXPath(xd, layoutelt.Namespaces, *attValues.Attributes)
+		if err != nil {
+			return nil, newTypesettingErrorf("SaveXML", layoutelt.Line, "error parsing attributes XPath expression %s", err)
+		}
+		for _, itm := range attrEval {
+			if attr, ok := itm.(*goxml.Attribute); ok {
+				root.SetAttribute(xml.Attr{Name: xml.Name{Local: attr.Name}, Value: attr.Value})
+			}
+		}
+	}
 	for _, itm := range eval {
-		if elt, ok := itm.(goxml.Element); ok {
-			root.Append(&elt)
+		if elt, ok := itm.(*goxml.Element); ok {
+			root.Append(elt)
 		}
 	}
 
@@ -2538,11 +2550,13 @@ func cmdSwitch(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 		if c, ok := cld.(*goxml.Element); ok {
 			switch c.Name {
 			case "Case":
+				hasTest := false
 				attrs := c.Attributes()
 				for _, attr := range attrs {
 					if attr.Name != "test" {
 						continue
 					}
+					hasTest = true
 					var eval xpath.Sequence
 					eval, err = evaluateXPath(xd, layoutelt.Namespaces, attr.Value)
 					if err != nil {
@@ -2556,6 +2570,9 @@ func cmdSwitch(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 						return dispatch(xd, c)
 					}
 
+				}
+				if !hasTest {
+					return nil, newTypesettingErrorf("Case", c.Line, "attribute test on element Case not found")
 				}
 			case "Otherwise":
 				return dispatch(xd, c)

@@ -12,13 +12,11 @@ XTS recognizes the following units for length values.
 | `pt` | Point | 1/72 inch (0.3528 mm) |
 | `mm` | Millimeter | 1 mm |
 | `cm` | Centimeter | 10 mm |
+| `m` | Meter | 1000 mm |
 | `in` | Inch | 25.4 mm |
 | `pc` | Pica | 12 pt |
-| `pp` | PostScript point | 1/72 inch (same as `pt`) |
-| `dd` | Didot point | 0.376 mm |
-| `cc` | Cicero | 12 dd |
-| `sp` | Scaled point | 1/65536 pt (internal unit) |
-| `em` | Em | Relative to current font size |
+| `px` | Pixel | 1/96 inch |
+| `sp` | Scaled point | 1/65535 pt (internal unit) |
 
 ## Usage in attributes
 
@@ -47,5 +45,5 @@ In some attributes (like `row`, `column`, `width` on `<PlaceObject>` and `<Image
 Use `sd:to-unit()` to convert between units:
 
 ```xml
-<Value select="sd:to-unit('12pt', 'pt', 'mm')"/>
+<Value select="sd:to-unit('12pt', 'mm')"/>
 ```

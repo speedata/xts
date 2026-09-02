@@ -85,7 +85,7 @@ live state -- for example `sd:current-page()`, `sd:current-row()`, or
 This is what makes "observe, then decide" possible:
 
 ```xml
-<PlaceObject><TextBlock>…</TextBlock></PlaceObject>
+<PlaceObject><TextBlock><!-- … --></TextBlock></PlaceObject>
 <Message select="concat('now on page ', sd:current-page())"/>
 ```
 

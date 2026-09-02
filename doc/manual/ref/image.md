@@ -25,31 +25,31 @@ Includes an external Graphic. Allowed graphic formats are PDF (.pdf), PNG (.png)
 
 
 
-`href` (text, optional)
+`href` (text)
 :   Filename of the image. Can be a file in the search path, an absolute file name, a file-URI for absolute paths (e.g. `file:///path/to/image.pdf`) or a location on the web (http, https). Use `placeholder://WxH` (e.g. `placeholder://200x150`) to generate a placeholder image with the given dimensions in PDF points.
 
 
 
 
-`maxheight` (number or length, optional)
+`max-height` (number or length, optional)
 :   The maximum height of the image. Only used when clip="no". Value is a number (grid cells) or a length.
 
 
 
 
-`maxwidth` (number or length, optional)
+`max-width` (number or length, optional)
 :   The maximum width of the image. Only used when clip="no". Value is a number (grid cells), a length or the value “100%” for full width image.
 
 
 
 
-`minheight` (number or length, optional)
+`min-height` (number or length, optional)
 :   The minimum height of the image. Only used when clip="no". Value is a number (grid cells) or a length.
 
 
 
 
-`minwidth` (number or length, optional)
+`min-width` (number or length, optional)
 :   The minimum width of the image. Only used when clip="no". Value is a number (grid cells), a length or the value “100%” for full width image.
 
 

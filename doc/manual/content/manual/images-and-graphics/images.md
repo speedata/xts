@@ -16,7 +16,7 @@ Including images in XTS is straightforward. The `<Image>` command supports **PDF
 </PlaceObject>
 ```
 
-The `href` (or `file`) attribute points to the image file. Width can be in absolute units or grid cells.
+The `href` attribute points to the image file. Width can be in absolute units or grid cells.
 
 ## Sizing
 
@@ -36,10 +36,10 @@ You can control dimensions in several ways:
 <Image href="photo.jpg" width="4"/>
 
 <!-- Minimum / maximum constraints -->
-<Image href="photo.jpg" minwidth="3cm" maxwidth="10cm"/>
+<Image href="photo.jpg" min-width="3cm" max-width="10cm"/>
 ```
 
-Use `stretch="max"` to fill the available space while maintaining the aspect ratio.
+Use `stretch="yes"` together with `max-width` and `max-height` to enlarge the image up to those limits while maintaining the aspect ratio.
 
 ## Multi-page PDFs
 
@@ -49,7 +49,7 @@ When including a PDF file, you can select a specific page:
 <Image href="document.pdf" page="3" width="10cm"/>
 ```
 
-You can also choose which PDF box to use for sizing: `mediabox`, `cropbox`, `bleedbox`, `trimbox`, or `artbox`:
+You can also choose which PDF box determines the visible part of the page (`mediabox`, `cropbox`, `bleedbox`, `trimbox`, or `artbox`); the natural size for the width/height computation always comes from the media box:
 
 ```xml
 <Image href="document.pdf" visiblebox="cropbox" width="10cm"/>

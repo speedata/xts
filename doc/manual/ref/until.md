@@ -20,7 +20,7 @@ Create a loop. All child elements are executed repeatedly until the given condit
 
 
 `test` ([XPath expressions](/manual/data-processing/xpath))
-:   Every time after the the loop is executed, the condition is evaluated. If it is true, the loop exits.
+:   Every time after the loop is executed, the condition is evaluated. If it is true, the loop exits.
 
 
 
@@ -42,10 +42,10 @@ Gives the following output (in the protocol file)
 
 
 ```xml
-Message: "$i is: 0.000000"
-Message: "$i is: 1.000000"
-Message: "$i is: 2.000000"
-Message: "$i is: 3.000000"
+Message: "$i is: 0"
+Message: "$i is: 1"
+Message: "$i is: 2"
+Message: "$i is: 3"
 ```
 
 

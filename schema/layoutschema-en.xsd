@@ -4,7 +4,7 @@
     <xs:annotation>
       <xs:documentation>Insert hyperlink to a URL.</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
@@ -150,7 +150,7 @@
     <xs:annotation>
       <xs:documentation>Switch to font weight “bold”</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
@@ -221,7 +221,7 @@
           <xs:documentation>CSS style for this element.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="backgroundcolor">
+      <xs:attribute name="background-color">
         <xs:annotation>
           <xs:documentation>Color of the box. If the color name is a dash (-), a transparent background is used.</xs:documentation>
         </xs:annotation>
@@ -356,6 +356,7 @@
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:Column"></xs:element>
+        <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:Loop"></xs:element>
         <xs:element ref="en:Switch"></xs:element>
@@ -484,9 +485,9 @@
         <xs:element ref="en:AtPageShipout"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
       </xs:choice>
-      <xs:attribute name="margin">
+      <xs:attribute name="margin" use="required">
         <xs:annotation>
-          <xs:documentation>Set the margin of the page (defaults to 1cm for each margin). One to four values can be provided, similar to CSS.</xs:documentation>
+          <xs:documentation>Set the margin of the page. One to four values can be provided, similar to CSS.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="name" use="required">
@@ -577,7 +578,7 @@
         <xs:element ref="en:Switch"></xs:element>
         <xs:element ref="en:Value"></xs:element>
       </xs:choice>
-      <xs:attribute name="name">
+      <xs:attribute name="name" use="required">
         <xs:annotation>
           <xs:documentation>The name of the function (with namespace prefix).</xs:documentation>
         </xs:annotation>
@@ -615,7 +616,7 @@
     <xs:annotation>
       <xs:documentation>Switch to italic text.</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
@@ -637,7 +638,7 @@
       <xs:documentation>Includes an external Graphic. Allowed graphic formats are PDF (.pdf), PNG (.png) and JPEG (.jpg). See below for a limitation on the number of included PDF files.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
-      <xs:attribute name="href">
+      <xs:attribute name="href" use="required">
         <xs:annotation>
           <xs:documentation>Filename of the image. Can be a file in the search path, an absolute file name, a file-URI for absolute paths (e.g. file:///path/to/image.pdf) or a location on the web (http, https). Use placeholder://WxH (e.g. placeholder://200x150) to generate a placeholder image with the given dimensions in PDF points.</xs:documentation>
         </xs:annotation>
@@ -652,22 +653,22 @@
           <xs:documentation>The page number from the PDF. Default is 1 (include the first page).</xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="maxwidth">
+      <xs:attribute name="max-width">
         <xs:annotation>
           <xs:documentation>The maximum width of the image. Only used when clip=&#34;no&#34;. Value is a number (grid cells), a length or the value “100%” for full width image.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="maxheight">
+      <xs:attribute name="max-height">
         <xs:annotation>
           <xs:documentation>The maximum height of the image. Only used when clip=&#34;no&#34;. Value is a number (grid cells) or a length.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="minwidth">
+      <xs:attribute name="min-width">
         <xs:annotation>
           <xs:documentation>The minimum width of the image. Only used when clip=&#34;no&#34;. Value is a number (grid cells), a length or the value “100%” for full width image.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="minheight">
+      <xs:attribute name="min-height">
         <xs:annotation>
           <xs:documentation>The minimum height of the image. Only used when clip=&#34;no&#34;. Value is a number (grid cells) or a length.</xs:documentation>
         </xs:annotation>
@@ -716,7 +717,7 @@
     <xs:annotation>
       <xs:documentation>List item in an ordered or unordered list.</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
@@ -1055,7 +1056,7 @@
     <xs:annotation>
       <xs:documentation>Insert a paragraph of text. The width of the paragraph is inherited from the surrounding element.</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
@@ -1092,7 +1093,7 @@
       <xs:documentation>Specify a parameter for a Function or Template definition, or pass an argument in a CallTemplate.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
-      <xs:attribute name="name">
+      <xs:attribute name="name" use="required">
         <xs:annotation>
           <xs:documentation>The name of the parameter.</xs:documentation>
         </xs:annotation>
@@ -1222,7 +1223,7 @@
       </xs:attribute>
       <xs:attribute name="background">
         <xs:annotation>
-          <xs:documentation>Fill the background of the object with a color, given by backgroundcolor.</xs:documentation>
+          <xs:documentation>Fill the background of the object with a color, given by background-color.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
           <xs:restriction base="xs:string">
@@ -1231,7 +1232,7 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
-      <xs:attribute name="backgroundcolor">
+      <xs:attribute name="background-color">
         <xs:annotation>
           <xs:documentation>Color of the background if “background” is set to “yes”.</xs:documentation>
         </xs:annotation>
@@ -1412,6 +1413,11 @@
           <xs:documentation>Alternative to giving the data structure in the child elements.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="attributes">
+        <xs:annotation>
+          <xs:documentation>A sequence of attributes (created with Attribute) that is set on the root element. Example: $attributesvar</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
   <xs:element name="Section">
@@ -1534,6 +1540,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="en:Attribute"></xs:element>
         <xs:element ref="en:Column"></xs:element>
         <xs:element ref="en:Columns"></xs:element>
         <xs:element ref="en:CopyOf"></xs:element>
@@ -1578,7 +1585,7 @@
     <xs:annotation>
       <xs:documentation>Surround text by styling options.</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
@@ -1640,6 +1647,7 @@
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:Columns"></xs:element>
+        <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:Loop"></xs:element>
         <xs:element ref="en:TableFoot"></xs:element>
@@ -1792,6 +1800,7 @@
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:Action"></xs:element>
+        <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
@@ -1945,7 +1954,7 @@
     <xs:annotation>
       <xs:documentation>Underline text.</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
@@ -2008,7 +2017,7 @@
       </xs:choice>
       <xs:attribute name="test" use="required">
         <xs:annotation>
-          <xs:documentation>Every time after the the loop is executed, the condition is evaluated. If it is true, the loop exits.</xs:documentation>
+          <xs:documentation>Every time after the loop is executed, the condition is evaluated. If it is true, the loop exits.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
     </xs:complexType>

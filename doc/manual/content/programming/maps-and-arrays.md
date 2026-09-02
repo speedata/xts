@@ -57,7 +57,7 @@ colon, pairs by commas:
 <SetVariable variable="prices" select="map { 'apple': 30, 'pear': 45 }"/>
 ```
 
-Look up a value by key with `?`. If the key is not a simple name (a number, a
+Look up a value by key with `?`. If the key is not a simple name or a number (a
 string with spaces, a computed value), put it in parentheses:
 
 ```xml
@@ -117,7 +117,7 @@ Common array functions: `array:get`, `array:size`, `array:head`, `array:tail`,
 ```
 
 These are the standard XPath 3.1 `map:` and `array:` functions; see the
-[goxml XPath documentation](https://doc.speedata.de/goxml/xpath/) for the full
+[goxpath documentation](https://github.com/speedata/goxpath) for the full
 signatures.
 
 {{< callout type="info" >}}

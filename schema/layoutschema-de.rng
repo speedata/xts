@@ -42,6 +42,7 @@
                                     <ref name="e_Value"></ref>
                                     <ref name="e_CopyOf"></ref>
                                     <ref name="e_Span"></ref>
+                                    <text></text>
                                 </choice>
                             </zeroOrMore>
                             <optional>
@@ -255,6 +256,7 @@
                             <ref name="e_Value"></ref>
                             <ref name="e_CopyOf"></ref>
                             <ref name="e_Span"></ref>
+                            <text></text>
                         </choice>
                     </zeroOrMore>
                 </group>
@@ -310,7 +312,7 @@
                 </attribute>
             </optional>
             <optional>
-                <attribute name="backgroundcolor">
+                <attribute name="background-color">
                     <a:documentation>Farbe der Box. Wird für die Farbe ein Strich angegeben (-), ist der Hintergrund transparent.</a:documentation>
                 </attribute>
             </optional>
@@ -483,6 +485,7 @@
                     <oneOrMore>
                         <choice>
                             <ref name="e_Column"></ref>
+                            <ref name="e_CopyOf"></ref>
                             <ref name="e_ForAll"></ref>
                             <ref name="e_Loop"></ref>
                             <ref name="e_Switch"></ref>
@@ -645,11 +648,9 @@
             <a:documentation>Definiert eine Seitenvorlage. Anhand der Kriterien, die im Attribut test angegeben werden, wählt das System eine Seitenvorlage aus.</a:documentation>
             <interleave>
                 <group>
-                    <optional>
-                        <attribute name="margin">
-                            <a:documentation>Setzt den Rand der Seite (Voreinstellung 1cm). Ein bis vier Werte können übergeben werden, wie bei CSS.</a:documentation>
-                        </attribute>
-                    </optional>
+                    <attribute name="margin">
+                        <a:documentation>Setzt den Rand der Seite. Ein bis vier Werte können übergeben werden, wie bei CSS.</a:documentation>
+                    </attribute>
                     <attribute name="name">
                         <a:documentation>Name der Seitenvorlage. Der Name ist zu Informationszwecken und zur Auswahl bei ClearPage.</a:documentation>
                     </attribute>
@@ -788,11 +789,9 @@
             <a:documentation>Definiere eine Funktion</a:documentation>
             <interleave>
                 <group>
-                    <optional>
-                        <attribute name="name">
-                            <a:documentation>Der Name der Funktion (mit Namensraum-Präfix)</a:documentation>
-                        </attribute>
-                    </optional>
+                    <attribute name="name">
+                        <a:documentation>Der Name der Funktion (mit Namensraum-Präfix)</a:documentation>
+                    </attribute>
                     <zeroOrMore>
                         <ref name="e_Param"></ref>
                     </zeroOrMore>
@@ -893,6 +892,7 @@
                             <ref name="e_Value"></ref>
                             <ref name="e_CopyOf"></ref>
                             <ref name="e_Span"></ref>
+                            <text></text>
                         </choice>
                     </zeroOrMore>
                 </group>
@@ -903,11 +903,9 @@
     <define name="e_Image">
         <element name="Image">
             <a:documentation>Bindet eine externe Grafik ein. Erlaubte Grafikformate sind PDF (.pdf), PNG (.png) und JPEG (.jpg). Siehe unten für die Einschränkung eingebundener PDF-Dateien.</a:documentation>
-            <optional>
-                <attribute name="href">
-                    <a:documentation>Dateiname des Bildes. Kann entweder eine Datei im Suchpfad sein, ein absoluter Dateiname, ein file-URI-Schema (z.B. file:///pfad/zum/bild.pdf) oder eine Quelle im Web (http/https). Mit placeholder://BxH (z.B. placeholder://200x150) wird ein Platzhalterbild mit den angegebenen Maßen in PDF-Punkten erzeugt.</a:documentation>
-                </attribute>
-            </optional>
+            <attribute name="href">
+                <a:documentation>Dateiname des Bildes. Kann entweder eine Datei im Suchpfad sein, ein absoluter Dateiname, ein file-URI-Schema (z.B. file:///pfad/zum/bild.pdf) oder eine Quelle im Web (http/https). Mit placeholder://BxH (z.B. placeholder://200x150) wird ein Platzhalterbild mit den angegebenen Maßen in PDF-Punkten erzeugt.</a:documentation>
+            </attribute>
             <optional>
                 <attribute name="height">
                     <a:documentation>Bildhöhe. Angabe in der Form &#39;auto&#39; (Voreinstellung, natürliche Bildbreite), Längenangabe wie &#39;4cm&#39; oder Zahl (Anzahl von Rasterspalten)</a:documentation>
@@ -919,28 +917,28 @@
                 </attribute>
             </optional>
             <optional>
-                <attribute name="maxwidth">
+                <attribute name="max-width">
                     <a:documentation>Die maximale Breite des Bilds. Nur, wenn clip=&#34;no&#34;. Angabe in absoluten Längen, Rasterzellen oder »100%« für volle Breite.</a:documentation>
                 </attribute>
             </optional>
             <optional>
-                <attribute name="maxheight">
+                <attribute name="max-height">
                     <a:documentation>Die maximale Breite des Bilds. Nur, wenn clip=&#34;no&#34;. Angabe in absoluten Längen oder Anzahl Rasterzellen.</a:documentation>
                 </attribute>
             </optional>
             <optional>
-                <attribute name="minwidth">
+                <attribute name="min-width">
                     <a:documentation>Die minimale Breite des Bilds. Nur, wenn clip=&#34;no&#34;. Angabe in absoluten Längen, Rasterzellen oder »100%« für volle Breite.</a:documentation>
                 </attribute>
             </optional>
             <optional>
-                <attribute name="minheight">
+                <attribute name="min-height">
                     <a:documentation>Die minimale Breite des Bilds. Nur, wenn clip=&#34;no&#34;. Angabe in absoluten Längen oder Anzahl Rasterzellen.</a:documentation>
                 </attribute>
             </optional>
             <optional>
                 <attribute name="stretch">
-                    <a:documentation>Dehnt das Bild bis eine der Angaben von maxheight und maxwidth erreich ist. Hilfreich um Bilder so groß wie möglich aber innerhalb gewisser Grenzen anzeigen zu lassen.</a:documentation>
+                    <a:documentation>Dehnt das Bild bis eine der Angaben von max-height und max-width erreicht ist. Hilfreich um Bilder so groß wie möglich aber innerhalb gewisser Grenzen anzeigen zu lassen.</a:documentation>
                     <choice>
                         <value>yes</value>
                         <value>no</value>
@@ -1025,6 +1023,7 @@
                             <ref name="e_Value"></ref>
                             <ref name="e_CopyOf"></ref>
                             <ref name="e_Span"></ref>
+                            <text></text>
                         </choice>
                     </zeroOrMore>
                 </group>
@@ -1608,6 +1607,7 @@
                             <ref name="e_Value"></ref>
                             <ref name="e_CopyOf"></ref>
                             <ref name="e_Span"></ref>
+                            <text></text>
                         </choice>
                     </zeroOrMore>
                 </group>
@@ -1618,11 +1618,9 @@
     <define name="e_Param">
         <element name="Param">
             <a:documentation>Lege einen Parameter für eine Function- oder Template-Definition fest oder übergebe ein Argument bei CallTemplate.</a:documentation>
-            <optional>
-                <attribute name="name">
-                    <a:documentation>Der Name des Parameters</a:documentation>
-                </attribute>
-            </optional>
+            <attribute name="name">
+                <a:documentation>Der Name des Parameters</a:documentation>
+            </attribute>
             <optional>
                 <attribute name="select">
                     <a:documentation>Der Wert des Parameters. Bei CallTemplate ist es das an das Template übergebene Argument; bei einer Template-Definition der Vorgabewert, falls der Aufrufer den Parameter weglässt.</a:documentation>
@@ -1741,7 +1739,7 @@
                     </optional>
                     <optional>
                         <attribute name="background">
-                            <a:documentation>Erzeugt einen farbigen Hintergrund für das Objekt. Das Attribut »backgroundcolor« gibt die Farbe an.</a:documentation>
+                            <a:documentation>Erzeugt einen farbigen Hintergrund für das Objekt. Das Attribut »background-color« gibt die Farbe an.</a:documentation>
                             <choice>
                                 <value>yes</value>
                                 <value>no</value>
@@ -1749,7 +1747,7 @@
                         </attribute>
                     </optional>
                     <optional>
-                        <attribute name="backgroundcolor">
+                        <attribute name="background-color">
                             <a:documentation>Hintergrundfarbe wenn das Objekt mit einer Farbe hinterlegt werden soll.</a:documentation>
                         </attribute>
                     </optional>
@@ -2010,6 +2008,11 @@
                             <a:documentation>Alternativ zur Angabe des Datensatzes im Kindelement.</a:documentation>
                         </attribute>
                     </optional>
+                    <optional>
+                        <attribute name="attributes">
+                            <a:documentation>Eine Sequenz von Attributen (erzeugt mit Attribute), die am Wurzelelement gesetzt wird. Beispiel: $attributesvar</a:documentation>
+                        </attribute>
+                    </optional>
                     <oneOrMore>
                         <optional>
                             <ref name="e_Element"></ref>
@@ -2253,6 +2256,9 @@
                     <oneOrMore>
                         <interleave>
                             <optional>
+                                <ref name="e_Attribute"></ref>
+                            </optional>
+                            <optional>
                                 <ref name="e_Column"></ref>
                             </optional>
                             <optional>
@@ -2326,6 +2332,7 @@
                             <ref name="e_Value"></ref>
                             <ref name="e_CopyOf"></ref>
                             <ref name="e_Span"></ref>
+                            <text></text>
                         </choice>
                     </zeroOrMore>
                 </group>
@@ -2403,6 +2410,9 @@
                         <interleave>
                             <optional>
                                 <ref name="e_Columns"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_CopyOf"></ref>
                             </optional>
                             <optional>
                                 <ref name="e_ForAll"></ref>
@@ -2585,6 +2595,7 @@
                     <oneOrMore>
                         <choice>
                             <ref name="e_Action"></ref>
+                            <ref name="e_CopyOf"></ref>
                             <ref name="e_ForAll"></ref>
                             <ref name="e_Bookmark"></ref>
                             <ref name="e_HTML"></ref>
@@ -2785,6 +2796,7 @@
                             <ref name="e_Value"></ref>
                             <ref name="e_CopyOf"></ref>
                             <ref name="e_Span"></ref>
+                            <text></text>
                         </choice>
                     </zeroOrMore>
                 </group>

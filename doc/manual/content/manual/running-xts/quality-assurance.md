@@ -28,29 +28,31 @@ Run the comparison:
 
 ```
 $ xts compare example/
-Total run time: 1.62956s
+Finished in 1s
 ```
 
-No output means everything matches. If there's a difference:
+If only the finish line appears, everything matches. If there's a difference:
 
 ```
 $ xts compare example/
+---------------------------
+Finished with comparison in
 /path/to/example
 Comparison failed. Bad pages are: [0]
-Max delta is 2162.760009765625
+Max delta is 2162.76
 ```
 
-XTS generates difference images:
+XTS generates difference images, one set per page (`-00`, `-01`, ...):
 
 ```
 example/
 ├── data.xml
 ├── layout.xml
-├── pagediff.png      ← highlighted differences
-├── publisher.pdf     ← current output
+├── pagediff-00.png   ← highlighted differences
+├── xts.pdf           ← current output
 ├── reference.pdf     ← known-good reference
-├── reference.png     ← reference as bitmap
-└── source.png        ← current output as bitmap
+├── reference-00.png  ← reference as bitmap
+└── source-00.png     ← current output as bitmap
 ```
 
 ## Running a test suite
@@ -75,10 +77,10 @@ qa/
 
 ```
 $ xts compare qa/
-Total run time: 4.54s
+Finished in 4s
 ```
 
-XTS recursively finds all directories containing `layout.xml` and runs each test.
+XTS recursively finds all directories containing a `reference.pdf` and runs each test. A directory with a `layout.xml` but no `reference.pdf` is reported with a warning and skipped.
 
 ## Faster comparisons
 
@@ -93,8 +95,8 @@ If the checksum matches, the visual comparison is skipped entirely.
 
 ## HTML report
 
-After running `xts compare`, an HTML report `compare-report.html` is created in the current directory. Open it in a browser for a visual overview of all test results.
+When `xts compare` finds differences, an HTML report `compare-report.html` is created in the current directory. Open it in a browser for a visual overview of the failed tests. With `--verbose`, the report is always written and shows all pages of all tests.
 
 ## Prerequisites
 
-The visual comparison requires [ImageMagick](https://imagemagick.org/) to be installed.
+The visual comparison requires [ImageMagick](https://imagemagick.org/) and [Ghostscript](https://www.ghostscript.com/) (for converting the reference PDF to bitmaps) to be installed.

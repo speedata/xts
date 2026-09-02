@@ -24,7 +24,7 @@ When you run `xts`, this is what happens:
 1. XTS reads the layout file. Top-level commands that aren't `<Record>` are executed immediately -- things like `<DefineColor>`, `<StyleSheet>`, `<SetGrid>`, or `<PageFormat>`.
 2. All `<Record>` commands are stored for later.
 3. XTS reads the data file and looks at the root element.
-4. If there's a `<Record>` whose `element` attribute matches the root element's tag name, XTS executes that record.
+4. If there's a `<Record>` whose `match` attribute matches the root element's tag name, XTS executes that record.
 5. Inside the record, you typically either output content directly or use `<ProcessNode>` / `<ForAll>` to iterate over child elements.
 
 Here's the minimal setup:

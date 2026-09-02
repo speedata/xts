@@ -23,8 +23,8 @@ In addition to the `sd:` functions listed below, all standard XPath functions (s
 `sd:last-page-number()`
 :   Returns the last page number of the document.
 
-`sd:total-pages(selector)`
-:   Returns the total number of pages.
+`sd:total-pages(filename)`
+:   Returns the number of pages of the referenced PDF (or image) file. For the page count of the document being created, use `sd:last-page-number()`.
 
 ## Grid dimensions
 
@@ -43,18 +43,18 @@ In addition to the `sd:` functions listed below, all standard XPath functions (s
 ## Slates
 
 `sd:slate-width(slatename, unit?)`
-:   Returns the width of a named slate. Optional unit.
+:   Returns the width of a named slate: without `unit` as the number of grid columns, with `unit` (e.g. `'cm'`) as a number in that unit.
 
 `sd:slate-height(slatename, unit?)`
-:   Returns the height of a named slate. Optional unit.
+:   Returns the height of a named slate: without `unit` as the number of grid rows, with `unit` as a number in that unit.
 
 ## Images
 
 `sd:image-width(filename, page?, box?, unit?)`
-:   Returns the width of an image. Optional page number (for PDF), box type (`'cropbox'`, `'mediabox'`, `'bleedbox'`, `'trimbox'`, `'artbox'`), and unit.
+:   Returns the width of an image: without `unit` as the number of grid columns, with `unit` (one of `'sp'`, `'mm'`, `'cm'`, `'in'`, `'pt'`, `'px'`, `'pc'`, `'m'`) as a number in that unit. Optional page number (for PDF) and box type (`'cropbox'`, `'mediabox'`, `'bleedbox'`, `'trimbox'`, `'artbox'`).
 
 `sd:image-height(filename, page?, box?, unit?)`
-:   Returns the height of an image. Same optional parameters as `image-width`.
+:   Returns the height of an image (grid rows without `unit`). Same optional parameters as `image-width`.
 
 `sd:aspect-ratio(filename, page?, box?)`
 :   Returns the aspect ratio (width / height) of an image.
@@ -69,8 +69,8 @@ In addition to the `sd:` functions listed below, all standard XPath functions (s
 
 ## Text and formatting
 
-`sd:dummy-text(count?)`
-:   Returns Lorem Ipsum text. Optional paragraph count.
+`sd:dummy-text()`
+:   Returns one paragraph of Lorem Ipsum text.
 
 `sd:markdown(text)`
 :   Converts Markdown text to HTML.
@@ -78,8 +78,8 @@ In addition to the `sd:` functions listed below, all standard XPath functions (s
 `sd:roman-numeral(number)`
 :   Converts a number to a Roman numeral string (e.g. `4` → `"IV"`).
 
-`sd:format-number(number, format, locale)`
-:   Formats a number according to the given format string and locale.
+`sd:format-number(number, thousands-separator, decimal-separator)`
+:   Formats a number with the given thousands separator and decimal separator. Example: `sd:format-number(12345.6, '.', ',')` returns `12.345,6`.
 
 ## Math and logic
 
@@ -89,21 +89,21 @@ In addition to the `sd:` functions listed below, all standard XPath functions (s
 `sd:odd(number)`
 :   Returns `true()` if the number is odd.
 
-`sd:mode(number)`
-:   Returns the most frequent value.
+`sd:mode(name)`
+:   Returns `true()` if the given mode is set (via `--mode` on the command line or `mode` in the configuration file).
 
 ## Unit conversion
 
-`sd:to-unit(value, fromunit?, tounit?)`
-:   Converts a value between units. Example: `sd:to-unit('12pt', 'pt', 'mm')`.
+`sd:to-unit(value, unit, precision?)`
+:   Converts a value to the given unit, optionally rounded to `precision` decimal places. Example: `sd:to-unit('12pt', 'mm', 2)` returns 4.23.
 
 ## File operations
 
 `sd:file-exists(filename)`
 :   Returns `true()` if the file exists.
 
-`sd:file-contents(filename)`
-:   Returns the file contents as a string.
+`sd:file-contents(bytes)`
+:   Writes the given byte sequence (for example the result of `sd:decode-base64()`) to a temporary file and returns its file name, so the data can be used where a file name is expected (such as `<Image href>`).
 
 ## String processing
 

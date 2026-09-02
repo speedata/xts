@@ -8,7 +8,7 @@ Create a table that is similar to the HTML table model.
 
 ##  Child elements
 
-[Columns](../columns), [ForAll](../forall), [Loop](../loop), [TableFoot](../tablefoot), [TableHead](../tablehead), [TableRule](../tablerule), [Tr](../tr), [Value](../value)
+[Columns](../columns), [CopyOf](../copyof), [ForAll](../forall), [Loop](../loop), [TableFoot](../tablefoot), [TableHead](../tablehead), [TableRule](../tablerule), [Tr](../tr), [Value](../value)
 
 ##  Parent elements
 

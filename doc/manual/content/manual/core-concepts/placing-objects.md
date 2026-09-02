@@ -34,7 +34,7 @@ Objects are drawn in the order they appear in the layout. Later objects overlap 
 
 ```xml
 <PlaceObject row="1" column="1" allocate="no">
-    <Box width="{sd:number-of-columns()}" height="3" backgroundcolor="lightyellow"/>
+    <Box width="{sd:number-of-columns()}" height="3" background-color="lightyellow"/>
 </PlaceObject>
 <PlaceObject row="1" column="1">
     <TextBlock>
@@ -47,7 +47,7 @@ You can also overlay a ready-made page with dynamic content, like adding page nu
 
 ```xml
 <PlaceObject row="1" column="1">
-  <Image file="termsofservice.pdf" width="180mm" height="280mm"/>
+  <Image href="termsofservice.pdf" width="180mm" height="280mm"/>
 </PlaceObject>
 <PlaceObject column="1" row="{sd:number-of-rows()}">
   <TextBlock>
@@ -99,7 +99,7 @@ Including images is straightforward:
 
 ```xml
 <PlaceObject>
-    <Image file="_samplea.pdf" width="5cm"/>
+    <Image href="_samplea.pdf" width="5cm"/>
 </PlaceObject>
 ```
 
@@ -111,7 +111,7 @@ Rectangular colored areas:
 
 ```xml
 <PlaceObject>
-  <Box width="4" height="3" backgroundcolor="limegreen"/>
+  <Box width="4" height="3" background-color="limegreen"/>
 </PlaceObject>
 ```
 
@@ -123,17 +123,17 @@ Boxes are commonly used as colored backgrounds behind text or tables. Remember t
 
 ```xml
 <PlaceObject column="5" row="5">
-  <Circle radiusx="3" backgroundcolor="goldenrod"/>
+  <Circle radius-x="3" background-color="goldenrod"/>
 </PlaceObject>
 <PlaceObject column="5" row="5">
-  <Circle radiusx="1pt" backgroundcolor="black"/>
+  <Circle radius-x="1pt" background-color="black"/>
 </PlaceObject>
 ```
 
 ![circle with center point](/manual/img/kreismitmittelpunkt.png)
 <figcaption>A circle with radius 3 grid cells, centered at (5,5).</figcaption>
 
-The radius can be in grid cells or absolute units. For ellipses, use both `radiusx` and `radiusy`. Circles don't allocate grid cells by default.
+The radius can be in grid cells or absolute units. For ellipses, use both `radius-x` and `radius-y`. Like every object, a circle allocates the grid cells of its bounding box unless you set `allocate="no"`.
 
 ## Tables
 

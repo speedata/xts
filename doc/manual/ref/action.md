@@ -49,7 +49,7 @@ Associates an action with a text. Once the text is placed on the page, the assoc
     </TextBlock>
   </PlaceObject>
   <ClearPage/>
-  <Message select="sd:pagenumber('textstart')"></Message>
+  <Message select="sd:page-number('textstart')"></Message>
 </Record>
 
 ```

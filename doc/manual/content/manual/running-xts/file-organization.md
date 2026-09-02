@@ -10,11 +10,12 @@ How XTS finds layout files, data files, images, fonts, and stylesheets.
 
 ## Lookup rules
 
-1. **Relative or absolute paths** -- always work directly
+XTS tries the following, in this order:
+
+1. **The `--extradir` lookup** -- plain file names that were registered from these directories win, even over a file with the same name in the working directory
 2. **URLs** -- fetched on the fly (no caching)
-3. **Paths are relative to the current working directory**
-4. **CSS paths are relative to the CSS file**, not the working directory
-5. **The `--extradir` lookup** -- file names without paths are searched in these directories
+3. **Relative or absolute paths** -- resolved against the current working directory
+4. **CSS paths**: `url()` references inside a stylesheet are first resolved with the rules above; if that fails, they are resolved relative to the CSS file
 
 ## Relative and absolute paths
 
@@ -34,7 +35,7 @@ How XTS finds layout files, data files, images, fonts, and stylesheets.
 
 ## CSS path resolution
 
-CSS `url()` references are relative to the CSS file:
+CSS `url()` references that cannot be resolved via the search path fall back to the directory of the CSS file:
 
 ![file organization](/manual/img/metaprocss.png)
 

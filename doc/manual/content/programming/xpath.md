@@ -10,7 +10,7 @@ aliases:
 
 XPath is a query language for selecting nodes and computing values in XML documents. It lets you navigate the XML tree, filter elements by conditions, and combine values with expressions — similar to how file paths navigate a directory tree, but much more powerful.
 
-XTS uses XPath as its expression language. XPath appears in `select` attributes, `test` conditions, and inside curly braces `{...}` in some contexts. The XPath implementation is provided by the [goxml XPath package](https://doc.speedata.de/goxml/xpath/) — see its documentation for the full list of supported XPath functions and syntax details.
+XTS uses XPath as its expression language. XPath appears in `select` attributes, `test` conditions, and inside curly braces `{...}` in some contexts. The XPath implementation is provided by the [goxpath package](https://github.com/speedata/goxpath) — see its documentation for the full list of supported XPath functions and syntax details.
 
 If you're new to XPath, start with [XPath basics](/programming/xpath-basics) for a
 practical primer (paths, predicates, operators, functions). This page focuses on
@@ -26,7 +26,7 @@ practical primer (paths, predicates, operators, functions). This page focuses on
 
 <!-- test: evaluate to true/false -->
 <Case test="$count > 10"/>
-<DefineMasterPage test="sd:current-page() > 1"/>
+<DefineMasterPage name="followingpages" margin="1cm" test="sd:current-page() > 1"/>
 
 <!-- Curly braces in attributes -->
 <Column width="{sd:grid-width(3)}"/>
@@ -45,7 +45,7 @@ XTS extends XPath with functions in the `sd:` namespace. These let you query the
 | `sd:current-row('area')` | Current cursor row (optional area name) |
 | `sd:page-number('markname')` | Page number where a mark was placed |
 | `sd:last-page-number()` | Number of the last page |
-| `sd:total-pages('selector')` | Total page count |
+| `sd:total-pages('filename')` | Page count of the referenced PDF file |
 
 ### Grid dimensions
 
@@ -77,10 +77,10 @@ XTS extends XPath with functions in the `sd:` namespace. These let you query the
 
 | Function | Returns |
 |----------|---------|
-| `sd:dummy-text(count)` | Lorem ipsum text (optional paragraph count) |
+| `sd:dummy-text()` | One paragraph of Lorem ipsum text |
 | `sd:markdown('text')` | Convert Markdown to HTML |
 | `sd:roman-numeral(number)` | Roman numeral string |
-| `sd:format-number(number, 'format', 'locale')` | Formatted number string |
+| `sd:format-number(number, 'thousands-sep', 'decimal-sep')` | Formatted number string |
 
 ### Utility
 
@@ -89,8 +89,8 @@ XTS extends XPath with functions in the `sd:` namespace. These let you query the
 | `sd:even(number)` | True if number is even |
 | `sd:odd(number)` | True if number is odd |
 | `sd:file-exists('filename')` | True if file exists |
-| `sd:file-contents('filename')` | File contents as string |
-| `sd:to-unit(value, 'from', 'to')` | Unit conversion |
+| `sd:file-contents(bytes)` | Write bytes to a temporary file, return its name |
+| `sd:to-unit(value, 'unit', precision?)` | Unit conversion |
 
 ### Cryptographic
 
@@ -101,11 +101,11 @@ XTS extends XPath with functions in the `sd:` namespace. These let you query the
 | `sd:sha256('string')` | SHA-256 hash |
 | `sd:sha512('string')` | SHA-512 hash |
 | `sd:decode-base64('string')` | Base64 decoded string |
-| `sd:decode-html('string')` | HTML entity decoded string |
+| `sd:decode-html('string')` | Parse a string containing HTML markup into nodes |
 
 ## XPath in HTML content
 
-Inside `<HTML>` elements, XPath expressions are only evaluated when `expand-text="yes"` is set:
+Inside `<HTML>` elements, the `{...}` text templates in the body are only evaluated when `expand-text="yes"` is set (the `select` attribute and embedded XTS commands are always evaluated):
 
 ```xml
 <HTML expand-text="yes">

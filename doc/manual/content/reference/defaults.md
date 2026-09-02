@@ -77,21 +77,10 @@ These font faces are predefined:
 }
 ~~~
 
-The pre-installed fonts can be accessed as `local()` fonts:
+The pre-installed fonts are used through the built-in font families `serif` (CrimsonPro), `sans` (TeXGyreHeros) and `monospace` (CamingoCode). As a `local()` source in an `@font-face` rule, currently only one name is available:
 
 ~~~
  src: local("CamingoCode Regular")
- src: local("CamingoCode Bold")
- src: local("CamingoCode BoldItalic")
- src: local("CamingoCode Italic")
- src: local("CrimsonPro Regular")
- src: local("CrimsonPro Bold")
- src: local("CrimsonPro BoldItalic")
- src: local("CrimsonPro Italic")
- src: local("TeXGyreHeros Regular")
- src: local("TeXGyreHeros Bold")
- src: local("TeXGyreHeros BoldItalic")
- src: local("TeXGyreHeros Italic")
 ~~~
 
 
@@ -100,7 +89,7 @@ The pre-installed fonts can be accessed as `local()` fonts:
 The CSS defaults are:
 
 ~~~css
-html            { font-size: 10pt; tab-size: 4; font-family: sans; }
+html            { font-size: 10pt; tab-size: 4; font-family: serif; }
 li              { display: list-item; padding-left: 0; }
 head            { display: none }
 table           { display: table }
@@ -112,15 +101,16 @@ td, th          { display: table-cell }
 caption         { display: table-caption }
 th              { font-weight: bold; text-align: center }
 caption         { text-align: center }
-body            { margin: 0pt; line-height: 1.2; hyphens: auto; font-weight: normal; }
+body            { margin: 0pt; line-height: 1.2; hyphens: auto; font-weight: normal; text-align: start; }
+p               { font-size: 1em; margin: 1.5em 0 }
 h1              { font-size: 2em; margin:  .67em 0 }
 h2              { font-size: 1.5em; margin: .75em 0 }
 h3              { font-size: 1.17em; margin: .83em 0 }
-h4, p,
+h4,
 blockquote, ul,
 fieldset, form,
 ol, dl, dir,
-h5              { font-size: 1em; margin: 1.5em 0; text-align: left; }
+h5              { font-size: 1em; margin: 1.5em 0; text-align: start; }
 h6              { font-size: .75em; margin: 1.67em 0 }
 h1, h2, h3, h4,
 h5, h6, b,
@@ -170,5 +160,5 @@ The page grid is set to 10mm × 10mm.
 
 The known CSS colors are defined in the RGB color space. The colors 'black' and 'white' are defined in the grayscale color space. See also the command [`<DefineColor>`](/reference/commands/definecolor), there the predefined colors are listed.
 
-The special colors HKS 1-97 and many Pantone colors are already defined with their CMYK values.
+The special colors HKS (86 colors) and many Pantone colors are already defined as spot colors with CMYK alternate values.
 

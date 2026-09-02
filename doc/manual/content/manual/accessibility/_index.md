@@ -108,7 +108,8 @@ the corresponding structure elements.
 
 **Formulas** are written as [MathML](https://developer.mozilla.org/en-US/docs/Web/MathML)
 inside `<HTML>`. They are tagged as a `Formula` structure element with an
-alternative text and the original MathML attached as an associated file. Inline
+alternative text; with PDF/UA-2 the original MathML is additionally attached
+as an associated file. Inline
 and block (`display="block"`) formulas are both supported. A MathML formula
 needs a font with an OpenType `MATH` table, declared in CSS:
 

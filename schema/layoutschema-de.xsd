@@ -4,7 +4,7 @@
     <xs:annotation>
       <xs:documentation>Hyperlink auf eine URL einfügen.</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
@@ -150,7 +150,7 @@
     <xs:annotation>
       <xs:documentation>Schaltet auf »Fett« um.</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
@@ -221,7 +221,7 @@
           <xs:documentation>CSS Stil für dieses Element.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="backgroundcolor">
+      <xs:attribute name="background-color">
         <xs:annotation>
           <xs:documentation>Farbe der Box. Wird für die Farbe ein Strich angegeben (-), ist der Hintergrund transparent.</xs:documentation>
         </xs:annotation>
@@ -356,6 +356,7 @@
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:Column"></xs:element>
+        <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:Loop"></xs:element>
         <xs:element ref="en:Switch"></xs:element>
@@ -484,9 +485,9 @@
         <xs:element ref="en:AtPageShipout"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
       </xs:choice>
-      <xs:attribute name="margin">
+      <xs:attribute name="margin" use="required">
         <xs:annotation>
-          <xs:documentation>Setzt den Rand der Seite (Voreinstellung 1cm). Ein bis vier Werte können übergeben werden, wie bei CSS.</xs:documentation>
+          <xs:documentation>Setzt den Rand der Seite. Ein bis vier Werte können übergeben werden, wie bei CSS.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="name" use="required">
@@ -577,7 +578,7 @@
         <xs:element ref="en:Switch"></xs:element>
         <xs:element ref="en:Value"></xs:element>
       </xs:choice>
-      <xs:attribute name="name">
+      <xs:attribute name="name" use="required">
         <xs:annotation>
           <xs:documentation>Der Name der Funktion (mit Namensraum-Präfix)</xs:documentation>
         </xs:annotation>
@@ -615,7 +616,7 @@
     <xs:annotation>
       <xs:documentation>Schaltet auf »Kursiv« um.</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
@@ -637,7 +638,7 @@
       <xs:documentation>Bindet eine externe Grafik ein. Erlaubte Grafikformate sind PDF (.pdf), PNG (.png) und JPEG (.jpg). Siehe unten für die Einschränkung eingebundener PDF-Dateien.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
-      <xs:attribute name="href">
+      <xs:attribute name="href" use="required">
         <xs:annotation>
           <xs:documentation>Dateiname des Bildes. Kann entweder eine Datei im Suchpfad sein, ein absoluter Dateiname, ein file-URI-Schema (z.B. file:///pfad/zum/bild.pdf) oder eine Quelle im Web (http/https). Mit placeholder://BxH (z.B. placeholder://200x150) wird ein Platzhalterbild mit den angegebenen Maßen in PDF-Punkten erzeugt.</xs:documentation>
         </xs:annotation>
@@ -652,29 +653,29 @@
           <xs:documentation>Die Seitenzahl aus dem PDF. Voreinstellung ist 1.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="maxwidth">
+      <xs:attribute name="max-width">
         <xs:annotation>
           <xs:documentation>Die maximale Breite des Bilds. Nur, wenn clip=&#34;no&#34;. Angabe in absoluten Längen, Rasterzellen oder »100%« für volle Breite.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="maxheight">
+      <xs:attribute name="max-height">
         <xs:annotation>
           <xs:documentation>Die maximale Breite des Bilds. Nur, wenn clip=&#34;no&#34;. Angabe in absoluten Längen oder Anzahl Rasterzellen.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="minwidth">
+      <xs:attribute name="min-width">
         <xs:annotation>
           <xs:documentation>Die minimale Breite des Bilds. Nur, wenn clip=&#34;no&#34;. Angabe in absoluten Längen, Rasterzellen oder »100%« für volle Breite.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="minheight">
+      <xs:attribute name="min-height">
         <xs:annotation>
           <xs:documentation>Die minimale Breite des Bilds. Nur, wenn clip=&#34;no&#34;. Angabe in absoluten Längen oder Anzahl Rasterzellen.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="stretch">
         <xs:annotation>
-          <xs:documentation>Dehnt das Bild bis eine der Angaben von maxheight und maxwidth erreich ist. Hilfreich um Bilder so groß wie möglich aber innerhalb gewisser Grenzen anzeigen zu lassen.</xs:documentation>
+          <xs:documentation>Dehnt das Bild bis eine der Angaben von max-height und max-width erreicht ist. Hilfreich um Bilder so groß wie möglich aber innerhalb gewisser Grenzen anzeigen zu lassen.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
           <xs:restriction base="xs:string">
@@ -716,7 +717,7 @@
     <xs:annotation>
       <xs:documentation>Listeneintrag in einer Aufzählungsliste (mit Aufzählungspunkten oder nummerierten Punkten).</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
@@ -1055,7 +1056,7 @@
     <xs:annotation>
       <xs:documentation>Erzeugt einen Absatz innerhalb eines TextBlocks.</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
@@ -1092,7 +1093,7 @@
       <xs:documentation>Lege einen Parameter für eine Function- oder Template-Definition fest oder übergebe ein Argument bei CallTemplate.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
-      <xs:attribute name="name">
+      <xs:attribute name="name" use="required">
         <xs:annotation>
           <xs:documentation>Der Name des Parameters</xs:documentation>
         </xs:annotation>
@@ -1222,7 +1223,7 @@
       </xs:attribute>
       <xs:attribute name="background">
         <xs:annotation>
-          <xs:documentation>Erzeugt einen farbigen Hintergrund für das Objekt. Das Attribut »backgroundcolor« gibt die Farbe an.</xs:documentation>
+          <xs:documentation>Erzeugt einen farbigen Hintergrund für das Objekt. Das Attribut »background-color« gibt die Farbe an.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
           <xs:restriction base="xs:string">
@@ -1231,7 +1232,7 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
-      <xs:attribute name="backgroundcolor">
+      <xs:attribute name="background-color">
         <xs:annotation>
           <xs:documentation>Hintergrundfarbe wenn das Objekt mit einer Farbe hinterlegt werden soll.</xs:documentation>
         </xs:annotation>
@@ -1412,6 +1413,11 @@
           <xs:documentation>Alternativ zur Angabe des Datensatzes im Kindelement.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="attributes">
+        <xs:annotation>
+          <xs:documentation>Eine Sequenz von Attributen (erzeugt mit Attribute), die am Wurzelelement gesetzt wird. Beispiel: $attributesvar</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
   <xs:element name="Section">
@@ -1534,6 +1540,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="en:Attribute"></xs:element>
         <xs:element ref="en:Column"></xs:element>
         <xs:element ref="en:Columns"></xs:element>
         <xs:element ref="en:CopyOf"></xs:element>
@@ -1578,7 +1585,7 @@
     <xs:annotation>
       <xs:documentation>Text mit Style-Optionen umgeben.</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
@@ -1640,6 +1647,7 @@
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:Columns"></xs:element>
+        <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:Loop"></xs:element>
         <xs:element ref="en:TableFoot"></xs:element>
@@ -1792,6 +1800,7 @@
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:Action"></xs:element>
+        <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
@@ -1945,7 +1954,7 @@
     <xs:annotation>
       <xs:documentation>Unterstreiche Text.</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
