@@ -26,6 +26,7 @@ If no command is given, `run` is assumed.
 | `new [dir]` | Create a starter project with `data.xml` and `layout.xml` |
 | `help` | Show help and exit |
 | `version` | Print the version number and exit |
+| `watch` | Run once, then re-run on every input file change |
 
 ## Flags
 
@@ -78,7 +79,23 @@ xts compare qa/
 
 # Scaffold a new project
 xts new myproject
+
+# Re-run automatically on every change to the input files
+xts watch
 ```
+
+## Watch mode
+
+`xts watch` runs the publishing process once and then watches the current
+directory, the directories of the layout and data files and all extra
+directories (`--extradir`) for changes. Every change to an input file starts
+a new publishing run; errors in a run do not stop the watcher. Press `ctrl-c`
+to quit.
+
+Files written by xts itself (the PDF, protocol and auxiliary files), hidden
+files and editor backup files do not trigger a run, and neither does saving a
+file with unchanged content. Note that subdirectories of the watched
+directories are not watched.
 
 ## Exit codes
 

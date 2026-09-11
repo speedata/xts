@@ -10,6 +10,7 @@ require (
 	github.com/boxesandglue/htmlbag v0.0.51
 	github.com/boxesandglue/svgreader v0.0.4
 	github.com/boxesandglue/textshape v0.0.15
+	github.com/fsnotify/fsnotify v1.10.1
 	github.com/gammazero/workerpool v1.1.3
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pelletier/go-toml/v2 v2.0.8

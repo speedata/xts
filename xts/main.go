@@ -202,6 +202,7 @@ func dothings() error {
 	op.Command("new", "Create simple layout and data file to start. Provide optional directory")
 	op.Command("run", "Load layout and data files and create PDF (default)")
 	op.Command("version", "Print version information")
+	op.Command("watch", "Run once, then re-run on every input file change")
 	err = op.Parse()
 	if err != nil {
 		if err == optionparser.ErrHelp {
@@ -324,11 +325,6 @@ func dothings() error {
 	if len(op.Extra) > 0 {
 		cmd = op.Extra[0]
 	}
-	protocolFilename := configuration.Jobname + "-protocol.xml"
-	if err != nil {
-		return err
-	}
-	var info core.PublishingInfo
 	switch cmd {
 	case "clean":
 		jobname := configuration.Jobname
@@ -385,115 +381,126 @@ func dothings() error {
 		}
 		os.Exit(0)
 	case "run":
-		starttime := time.Now()
-		setupLog(protocolFilename)
-		defer teardownLog()
-
-		for _, cfg := range configFileRead {
-			slog.Info(fmt.Sprintf("Use configuration file %s", cfg))
-		}
-
-		if luafile := configuration.Filter; luafile != "" {
-			var filterpath string
-			if filterpath, err = core.FindFile(luafile); err != nil {
-				return err
-			}
-			if err = runLuaScript(filterpath); err != nil {
-				return err
-			}
-		}
-
-		var layoutpath, datapath string
-		var lr, dr io.ReadSeeker
-		if layoutpath, err = core.FindFile(configuration.Layout); err != nil {
-			return err
-		}
-		if lr, err = os.Open(layoutpath); err != nil {
-			return err
-		}
-
-		if configuration.Dummy {
-			dr = strings.NewReader(`<data />`)
-		} else {
-			if datapath, err = core.FindFile(configuration.Data); err != nil {
-				slog.Error(err.Error())
-				return err
-			}
-			if dr, err = os.Open(datapath); err != nil {
-				slog.Error(err.Error())
-				return err
-			}
-		}
-
-		slog.Debug("checksum", "filename", configuration.Layout, "md5", md5calc(configuration.Layout))
-		slog.Debug("checksum", "filename", configuration.Data, "md5", md5calc(configuration.Data))
-
-		for i := 0; i < int(configuration.Runs); i++ {
-			if cr := configuration.Runs; cr > 1 {
-				slog.Info(fmt.Sprintf("Run %d of %d", i+1, cr))
-			}
-			lr.Seek(0, io.SeekStart)
-			dr.Seek(0, io.SeekStart)
-			xc := &core.XTSConfig{
-				Datafile:     dr,
-				FindFile:     core.FindFile,
-				Layoutfile:   lr,
-				Mode:         configuration.Mode,
-				OutFilename:  configuration.Jobname + ".pdf",
-				Jobname:      configuration.Jobname,
-				SuppressInfo: configuration.SuppressInfo,
-				Tracing:      configuration.Trace,
-				Variables:    configuration.VariablesMap,
-				Pdfua:        configuration.Pdfua,
-				Pdfa:         configuration.Pdfa,
-				Pdfx:         configuration.Pdfx,
-			}
-
-			if fn := dumpOutputFileName; fn != "" {
-				w, err := os.Create(fn)
-				if err != nil {
-					return err
-				}
-				xc.DumpFile = w
-
-			}
-			err = core.RunXTS(xc)
-			info = xc.Info
-			if err != nil {
-				goto finished
-			}
-		}
-		if lrc, ok := lr.(io.ReadCloser); ok {
-			if err = lrc.Close(); err != nil {
-				return err
-			}
-		}
-		if drc, ok := dr.(io.ReadCloser); ok {
-			if err = drc.Close(); err != nil {
-				return err
-			}
-		}
-	finished:
-		if l != nil {
-			runFinalizerCallback()
-		}
-		if err != nil {
-			if terr, ok := err.(core.TypesettingError); ok {
-				if !terr.Logged {
-					slog.Error(terr.Msg)
-				}
-			} else {
-				slog.Error(err.Error())
-			}
-		}
-		dur := time.Since(starttime)
-		slog.Info(fmt.Sprintf("Finished in %s", formatDuration(dur)))
-		fmt.Printf("Finished with %s and %s in %s.\nOutput written to %s (%s, %d bytes)\n  and protocol file to %s.\n", pluralize(errCount, "error"), pluralize(warnCount, "warning"), formatDuration(dur), configuration.Jobname+".pdf", pluralize(info.Pages, "page"), info.FileSize, protocolFilename)
-		if errCount > 0 {
-			return core.TypesettingError{Logged: true}
-		}
+		return runPublisher(dumpOutputFileName, configFileRead)
 	case "version":
 		fmt.Println("xts version", core.Version)
+	case "watch":
+		return watchAndRun(dumpOutputFileName, configFileRead)
+	}
+	return nil
+}
+
+// runPublisher runs the publishing process once (or several times if runs > 1
+// is configured), including the optional Lua filter, and prints the summary
+// line. It is used by the run command and once per change in watch mode, so
+// everything it needs gets opened and closed in here.
+func runPublisher(dumpOutputFileName string, configFileRead []string) error {
+	starttime := time.Now()
+	protocolFilename := configuration.Jobname + "-protocol.xml"
+	if err := setupLog(protocolFilename); err != nil {
+		return err
+	}
+	defer teardownLog()
+
+	for _, cfg := range configFileRead {
+		slog.Info(fmt.Sprintf("Use configuration file %s", cfg))
+	}
+
+	var err error
+	if luafile := configuration.Filter; luafile != "" {
+		var filterpath string
+		if filterpath, err = core.FindFile(luafile); err != nil {
+			return err
+		}
+		if err = runLuaScript(filterpath); err != nil {
+			return err
+		}
+	}
+
+	var layoutpath, datapath string
+	var lr, dr io.ReadSeeker
+	if layoutpath, err = core.FindFile(configuration.Layout); err != nil {
+		return err
+	}
+	layoutfile, err := os.Open(layoutpath)
+	if err != nil {
+		return err
+	}
+	defer layoutfile.Close()
+	lr = layoutfile
+
+	if configuration.Dummy {
+		dr = strings.NewReader(`<data />`)
+	} else {
+		if datapath, err = core.FindFile(configuration.Data); err != nil {
+			slog.Error(err.Error())
+			return err
+		}
+		datafile, err := os.Open(datapath)
+		if err != nil {
+			slog.Error(err.Error())
+			return err
+		}
+		defer datafile.Close()
+		dr = datafile
+	}
+
+	slog.Debug("checksum", "filename", configuration.Layout, "md5", md5calc(configuration.Layout))
+	slog.Debug("checksum", "filename", configuration.Data, "md5", md5calc(configuration.Data))
+
+	var info core.PublishingInfo
+	for i := 0; i < int(configuration.Runs); i++ {
+		if cr := configuration.Runs; cr > 1 {
+			slog.Info(fmt.Sprintf("Run %d of %d", i+1, cr))
+		}
+		lr.Seek(0, io.SeekStart)
+		dr.Seek(0, io.SeekStart)
+		xc := &core.XTSConfig{
+			Datafile:     dr,
+			FindFile:     core.FindFile,
+			Layoutfile:   lr,
+			Mode:         configuration.Mode,
+			OutFilename:  configuration.Jobname + ".pdf",
+			Jobname:      configuration.Jobname,
+			SuppressInfo: configuration.SuppressInfo,
+			Tracing:      configuration.Trace,
+			Variables:    configuration.VariablesMap,
+			Pdfua:        configuration.Pdfua,
+			Pdfa:         configuration.Pdfa,
+			Pdfx:         configuration.Pdfx,
+		}
+
+		if fn := dumpOutputFileName; fn != "" {
+			w, err := os.Create(fn)
+			if err != nil {
+				return err
+			}
+			xc.DumpFile = w
+
+		}
+		err = core.RunXTS(xc)
+		info = xc.Info
+		if err != nil {
+			break
+		}
+	}
+	if l != nil {
+		runFinalizerCallback()
+	}
+	if err != nil {
+		if terr, ok := err.(core.TypesettingError); ok {
+			if !terr.Logged {
+				slog.Error(terr.Msg)
+			}
+		} else {
+			slog.Error(err.Error())
+		}
+	}
+	dur := time.Since(starttime)
+	slog.Info(fmt.Sprintf("Finished in %s", formatDuration(dur)))
+	fmt.Printf("Finished with %s and %s in %s.\nOutput written to %s (%s, %d bytes)\n  and protocol file to %s.\n", pluralize(errCount, "error"), pluralize(warnCount, "warning"), formatDuration(dur), configuration.Jobname+".pdf", pluralize(info.Pages, "page"), info.FileSize, protocolFilename)
+	if errCount > 0 {
+		return core.TypesettingError{Logged: true}
 	}
 	return nil
 }

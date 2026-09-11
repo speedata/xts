@@ -100,6 +100,8 @@ func (lh *logHandler) WithGroup(name string) slog.Handler {
 func setupLog(protocol string) error {
 	var err error
 
+	errCount = 0
+	warnCount = 0
 	protocolFile, err = os.Create(protocol)
 	if err != nil {
 		return err
@@ -127,6 +129,9 @@ func teardownLog() error {
 	}
 	if err := enc.Flush(); err != nil {
 		return err
+	}
+	if c, ok := protocolFile.(io.Closer); ok {
+		return c.Close()
 	}
 	return nil
 }

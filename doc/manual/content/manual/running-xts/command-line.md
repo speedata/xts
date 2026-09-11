@@ -20,6 +20,7 @@ xts <command> <parameters>
 | `doc` | Open the documentation in a web browser |
 | `new` | Create a starter project in the given directory |
 | `version` | Print version number |
+| `watch` | Run once, then re-run on every input file change (see the [CLI reference](/reference/cli)) |
 
 ## Parameters
 
