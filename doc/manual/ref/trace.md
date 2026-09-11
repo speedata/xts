@@ -19,6 +19,22 @@ Set debugging switches
 
 
 
+`boxmodel` (optional)
+:   Draw a translucent overlay visualizing the CSS box model of block-level elements (margin, border, padding and content area, colored like the browser developer tools). Where margins of neighboring elements overlap, the colors add up and appear darker.
+
+
+
+    `yes`
+    :    Show the box model overlay.
+
+
+
+    `no`
+    :    Don't show the box model overlay (default).
+
+
+
+
 `dests` (optional)
 :   Draw PDF destinations with a black circle.
 
@@ -63,6 +79,22 @@ Set debugging switches
 
     `no`
     :    Don't show the grid allocation (default).
+
+
+
+
+`hboxes` (optional)
+:   Visualize the vertical metrics of text lines: the area above the baseline (height) and the area below it (depth) get distinct translucent tints, the baseline and the outline of each line box are stroked.
+
+
+
+    `yes`
+    :    Show the line boxes.
+
+
+
+    `no`
+    :    Don't show the line boxes (default).
 
 
 

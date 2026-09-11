@@ -3157,15 +3157,27 @@ func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 func cmdTrace(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
+		Boxmodel       *bool
 		Dests          *bool
 		Grid           *bool
 		Gridallocation *bool
+		Hboxes         *bool
 		Hyperlinks     *bool
 		Hyphenation    *bool
 		Objects        *bool
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
+	}
+	if attValues.Boxmodel != nil {
+		xd.cssbuilder.TraceBoxModel = *attValues.Boxmodel
+	}
+	if attValues.Hboxes != nil {
+		if *attValues.Hboxes {
+			xd.document.Doc.SetVTrace(document.VTraceHBoxes)
+		} else {
+			xd.document.Doc.ClearVTrace(document.VTraceHBoxes)
+		}
 	}
 	if attValues.Dests != nil {
 		if *attValues.Dests {

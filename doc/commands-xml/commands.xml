@@ -5206,6 +5206,30 @@
       <para>Setze Debugging-Schalter</para>
     </description>
     <childelements/>
+    <attribute en="boxmodel" optional="yes">
+      <description xml:lang="en">
+        <para>Draw a translucent overlay visualizing the CSS box model of block-level elements (margin, border, padding and content area, colored like the browser developer tools). Where margins of neighboring elements overlap, the colors add up and appear darker.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Zeichnet ein halbtransparentes Overlay, das das CSS-Box-Modell der Blockelemente sichtbar macht (Margin, Border, Padding und Inhaltsbereich, eingefärbt wie in den Browser-Entwicklerwerkzeugen). Wo sich Margins benachbarter Elemente überlappen, addieren sich die Farben und erscheinen dunkler.</para>
+      </description>
+      <choice en="yes">
+        <description xml:lang="en">
+          <para>Show the box model overlay.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Zeige das Box-Modell-Overlay.</para>
+        </description>
+      </choice>
+      <choice en="no">
+        <description xml:lang="en">
+          <para>Don't show the box model overlay (default).</para>
+        </description>
+        <description xml:lang="de">
+          <para>Box-Modell-Overlay nicht zeigen (Voreinstellung).</para>
+        </description>
+      </choice>
+    </attribute>
     <attribute en="dests" optional="yes">
       <description xml:lang="en">
         <para>Draw PDF destinations with a black circle.</para>
@@ -5275,6 +5299,30 @@
         </description>
         <description xml:lang="de">
           <para>Rasterbelegung nicht zeigen (Voreinstellung).</para>
+        </description>
+      </choice>
+    </attribute>
+    <attribute en="hboxes" optional="yes">
+      <description xml:lang="en">
+        <para>Visualize the vertical metrics of text lines: the area above the baseline (height) and the area below it (depth) get distinct translucent tints, the baseline and the outline of each line box are stroked.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Macht die vertikalen Maße der Textzeilen sichtbar: die Fläche über der Basislinie (height) und die darunter (depth) werden unterschiedlich halbtransparent eingefärbt, Basislinie und Umriss jeder Zeilenbox werden gezeichnet.</para>
+      </description>
+      <choice en="yes">
+        <description xml:lang="en">
+          <para>Show the line boxes.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Zeige die Zeilenboxen.</para>
+        </description>
+      </choice>
+      <choice en="no">
+        <description xml:lang="en">
+          <para>Don't show the line boxes (default).</para>
+        </description>
+        <description xml:lang="de">
+          <para>Zeilenboxen nicht zeigen (Voreinstellung).</para>
         </description>
       </choice>
     </attribute>

@@ -1951,6 +1951,17 @@
       <xs:documentation>Setze Debugging-Schalter</xs:documentation>
     </xs:annotation>
     <xs:complexType>
+      <xs:attribute name="boxmodel">
+        <xs:annotation>
+          <xs:documentation>Zeichnet ein halbtransparentes Overlay, das das CSS-Box-Modell der Blockelemente sichtbar macht (Margin, Border, Padding und Inhaltsbereich, eingefärbt wie in den Browser-Entwicklerwerkzeugen). Wo sich Margins benachbarter Elemente überlappen, addieren sich die Farben und erscheinen dunkler.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="yes"></xs:enumeration>
+            <xs:enumeration value="no"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
       <xs:attribute name="dests">
         <xs:annotation>
           <xs:documentation>Zeige PDF Ziele mit einem schwarzen Kreis.</xs:documentation>
@@ -1976,6 +1987,17 @@
       <xs:attribute name="gridallocation">
         <xs:annotation>
           <xs:documentation>Wenn &#39;yes&#39;, dann markiert der Publisher die belegten Rasterzellen mit einer Hintergrundfarbe.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="yes"></xs:enumeration>
+            <xs:enumeration value="no"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="hboxes">
+        <xs:annotation>
+          <xs:documentation>Macht die vertikalen Maße der Textzeilen sichtbar: die Fläche über der Basislinie (height) und die darunter (depth) werden unterschiedlich halbtransparent eingefärbt, Basislinie und Umriss jeder Zeilenbox werden gezeichnet.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
           <xs:restriction base="xs:string">

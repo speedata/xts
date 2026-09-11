@@ -1951,6 +1951,17 @@
       <xs:documentation>Set debugging switches</xs:documentation>
     </xs:annotation>
     <xs:complexType>
+      <xs:attribute name="boxmodel">
+        <xs:annotation>
+          <xs:documentation>Draw a translucent overlay visualizing the CSS box model of block-level elements (margin, border, padding and content area, colored like the browser developer tools). Where margins of neighboring elements overlap, the colors add up and appear darker.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="yes"></xs:enumeration>
+            <xs:enumeration value="no"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
       <xs:attribute name="dests">
         <xs:annotation>
           <xs:documentation>Draw PDF destinations with a black circle.</xs:documentation>
@@ -1976,6 +1987,17 @@
       <xs:attribute name="gridallocation">
         <xs:annotation>
           <xs:documentation>Draw allocated cells with yellow and conflicts with red markers.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="yes"></xs:enumeration>
+            <xs:enumeration value="no"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="hboxes">
+        <xs:annotation>
+          <xs:documentation>Visualize the vertical metrics of text lines: the area above the baseline (height) and the area below it (depth) get distinct translucent tints, the baseline and the outline of each line box are stroked.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
           <xs:restriction base="xs:string">

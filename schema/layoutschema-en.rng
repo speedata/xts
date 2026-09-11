@@ -2759,6 +2759,17 @@
         <element name="Trace">
             <a:documentation>Set debugging switches</a:documentation>
             <optional>
+                <attribute name="boxmodel">
+                    <a:documentation>Draw a translucent overlay visualizing the CSS box model of block-level elements (margin, border, padding and content area, colored like the browser developer tools). Where margins of neighboring elements overlap, the colors add up and appear darker.</a:documentation>
+                    <choice>
+                        <value>yes</value>
+                        <a:documentation>Show the box model overlay.</a:documentation>
+                        <value>no</value>
+                        <a:documentation>Don&#39;t show the box model overlay (default).</a:documentation>
+                    </choice>
+                </attribute>
+            </optional>
+            <optional>
                 <attribute name="dests">
                     <a:documentation>Draw PDF destinations with a black circle.</a:documentation>
                     <choice>
@@ -2788,6 +2799,17 @@
                         <a:documentation>Show grid allocation.</a:documentation>
                         <value>no</value>
                         <a:documentation>Don&#39;t show the grid allocation (default).</a:documentation>
+                    </choice>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="hboxes">
+                    <a:documentation>Visualize the vertical metrics of text lines: the area above the baseline (height) and the area below it (depth) get distinct translucent tints, the baseline and the outline of each line box are stroked.</a:documentation>
+                    <choice>
+                        <value>yes</value>
+                        <a:documentation>Show the line boxes.</a:documentation>
+                        <value>no</value>
+                        <a:documentation>Don&#39;t show the line boxes (default).</a:documentation>
                     </choice>
                 </attribute>
             </optional>

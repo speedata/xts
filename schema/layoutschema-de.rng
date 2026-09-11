@@ -2759,6 +2759,17 @@
         <element name="Trace">
             <a:documentation>Setze Debugging-Schalter</a:documentation>
             <optional>
+                <attribute name="boxmodel">
+                    <a:documentation>Zeichnet ein halbtransparentes Overlay, das das CSS-Box-Modell der Blockelemente sichtbar macht (Margin, Border, Padding und Inhaltsbereich, eingefärbt wie in den Browser-Entwicklerwerkzeugen). Wo sich Margins benachbarter Elemente überlappen, addieren sich die Farben und erscheinen dunkler.</a:documentation>
+                    <choice>
+                        <value>yes</value>
+                        <a:documentation>Zeige das Box-Modell-Overlay.</a:documentation>
+                        <value>no</value>
+                        <a:documentation>Box-Modell-Overlay nicht zeigen (Voreinstellung).</a:documentation>
+                    </choice>
+                </attribute>
+            </optional>
+            <optional>
                 <attribute name="dests">
                     <a:documentation>Zeige PDF Ziele mit einem schwarzen Kreis.</a:documentation>
                     <choice>
@@ -2788,6 +2799,17 @@
                         <a:documentation>Zeige Rasterbelegung.</a:documentation>
                         <value>no</value>
                         <a:documentation>Rasterbelegung nicht zeigen (Voreinstellung).</a:documentation>
+                    </choice>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="hboxes">
+                    <a:documentation>Macht die vertikalen Maße der Textzeilen sichtbar: die Fläche über der Basislinie (height) und die darunter (depth) werden unterschiedlich halbtransparent eingefärbt, Basislinie und Umriss jeder Zeilenbox werden gezeichnet.</a:documentation>
+                    <choice>
+                        <value>yes</value>
+                        <a:documentation>Zeige die Zeilenboxen.</a:documentation>
+                        <value>no</value>
+                        <a:documentation>Zeilenboxen nicht zeigen (Voreinstellung).</a:documentation>
                     </choice>
                 </attribute>
             </optional>
