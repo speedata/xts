@@ -497,6 +497,11 @@ func showDiscNodes(n node.Node) {
 		switch t := e.(type) {
 		case *node.HList:
 			showDiscNodes(t.List)
+		case *node.VList:
+			// The htmlbag pipeline nests lines inside wrapper vlists
+			// (vpack padding, margin kerns), so the walk must descend
+			// through vertical lists to reach the line hlists at all.
+			showDiscNodes(t.List)
 		case *node.Disc:
 			r := node.NewRule()
 			r.Pre = "q 0.3 w 0 2 m 0 7 l S Q"
