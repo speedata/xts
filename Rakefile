@@ -8,6 +8,12 @@ end
 
 INSTALDIR = Pathname.new(__dir__).freeze
 
+# The binary `rake build` produces. QA tasks must invoke this path and never a
+# bare `xts`: a bare name resolves through PATH to whatever was last installed
+# into $GOBIN, so the QA would silently compare against a stale build instead
+# of the working tree.
+XTSBIN = INSTALDIR.join("bin", "xts").freeze
+
 @xts_version = git_version
 
 desc "Show rake description"
@@ -45,8 +51,8 @@ end
 
 
 desc "Run quality assurance"
-task :qa do
-	sh "xts compare #{INSTALDIR}/qa"
+task :qa => [:build] do
+	sh XTSBIN.to_s, "compare", INSTALDIR.join("qa").to_s
 end
 
 desc "Clean QA intermediate files"

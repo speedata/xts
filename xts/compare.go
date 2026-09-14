@@ -157,6 +157,18 @@ func calculateHash(filename string) []byte {
 	return h.Sum(nil)
 }
 
+// selfExecutable returns the path of the running binary, so that a comparison
+// typesets its QA cases with the very xts that was started. Spawning a bare
+// "xts" would go through PATH and silently compare the references against
+// whatever was last installed into $GOBIN instead of the build under test.
+func selfExecutable() string {
+	self, err := os.Executable()
+	if err != nil {
+		return "xts" + exeSuffix
+	}
+	return self
+}
+
 func runComparison(path string, statuschan chan []compareStatus) {
 	cs := compareStatus{}
 	allPages := compareStatus{}
@@ -167,7 +179,7 @@ func runComparison(path string, statuschan chan []compareStatus) {
 	if configuration.Verbose {
 		fmt.Println(path)
 	}
-	cmd := exec.Command("xts"+exeSuffix, "--suppressinfo")
+	cmd := exec.Command(selfExecutable(), "--suppressinfo")
 	cmd.Dir = path
 	err = cmd.Run()
 	if err != nil {
