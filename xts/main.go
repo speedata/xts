@@ -349,26 +349,32 @@ func dothings() error {
 		}
 	case "compare":
 		starttime := time.Now()
-		if len(op.Extra) > 1 {
-			dir := op.Extra[1]
-			fi, err := os.Stat(dir)
-			if err != nil {
-				return err
-			}
-			if !fi.IsDir() {
-				return fmt.Errorf("%q must be a directory", dir)
-			}
-			absDir, err := filepath.Abs(dir)
-			if err != nil {
-				return err
-			}
-			// true = write HTML file to $TEMPDIR
-			doCompare(absDir, true, "reference")
-		} else {
-			slog.Error("Please give one directory")
+		if len(op.Extra) < 2 {
+			return fmt.Errorf("compare: please give one directory")
 		}
+		dir := op.Extra[1]
+		fi, err := os.Stat(dir)
+		if err != nil {
+			return err
+		}
+		if !fi.IsDir() {
+			return fmt.Errorf("%q must be a directory", dir)
+		}
+		absDir, err := filepath.Abs(dir)
+		if err != nil {
+			return err
+		}
+		// true = write compare-report.html into the current directory
+		failed, err := doCompare(absDir, true, "reference")
 		dur := time.Since(starttime)
 		fmt.Printf("Finished in %s\n", formatDuration(dur))
+		if err != nil {
+			return err
+		}
+		if failed > 0 {
+			return fmt.Errorf("comparison failed in %s, see compare-report.html",
+				pluralize(failed, "test case"))
+		}
 	case "doc":
 		return openURL("https://doc.speedata.de/xts/")
 	case "help":

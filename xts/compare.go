@@ -58,8 +58,10 @@ func fileExists(filename string) bool {
 }
 
 // doCompare starts comparing the files in the current directory and its
-// subdirectory. This is the function to be called (first).
-func doCompare(absdir string, withHTML bool, referencefn string) {
+// subdirectory. This is the function to be called (first). It returns the
+// number of directories whose pages did not match their reference, so the
+// caller can fail the run: a QA gate that always exits 0 is not a gate.
+func doCompare(absdir string, withHTML bool, referencefn string) (int, error) {
 	switch runtime.GOOS {
 	case "windows":
 		exeSuffix = ".exe"
@@ -74,10 +76,17 @@ func doCompare(absdir string, withHTML bool, referencefn string) {
 	go getCompareStatus(statuschan)
 	wp.StopWait()
 
+	// The send above only completes once getCompareStatus has come back
+	// round to its select, so every status has been recorded by now.
 	finished <- true
 	if withHTML {
-		mkWebPage(!configuration.Verbose)
+		if err := mkWebPage(!configuration.Verbose); err != nil {
+			return 0, err
+		}
 	}
+	mutex.Lock()
+	defer mutex.Unlock()
+	return len(cs), nil
 }
 
 func compareTwoPages(sourcefile, referencefile, dummyfile, path string) float64 {
