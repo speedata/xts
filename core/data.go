@@ -12,7 +12,6 @@ import (
 	"github.com/boxesandglue/boxesandglue/backend/bag"
 	"github.com/boxesandglue/boxesandglue/backend/node"
 	"github.com/boxesandglue/boxesandglue/frontend"
-	"github.com/boxesandglue/htmlbag"
 	"github.com/speedata/goxml"
 	xpath "github.com/speedata/goxpath"
 )
@@ -70,8 +69,10 @@ func (xd *xtsDocument) applyLayoutStyleSheet(classname string, id string, style 
 	}
 	eltname := eltnames[0]
 	sel := doc.Find(eltname)
-	a := sel.Nodes[0]
-	return htmlbag.GetAttributes(a.Attr), nil
+	// The computed styles, shorthands expanded: `border: 1pt solid red` in a
+	// layout stylesheet now reaches CSSPropertiesToValues as its longhands
+	// instead of being dropped as an unknown property.
+	return xd.layoutcss.ComputedStyles(sel.Nodes[0]).Strings(), nil
 }
 
 // decodeHTMLFromHTMLNode takes a parsed HTML structure and return a function

@@ -10,8 +10,8 @@ github.com/boxesandglue/boxesandglue v0.2.52 h1:6xynFEYGJGF8adsmKyuj8NquJBInowO6
 github.com/boxesandglue/boxesandglue v0.2.52/go.mod h1:FSWaMBoU40WlWVwsFbAgUfnjixSLgio41JZUg20N0Ac=
 github.com/boxesandglue/gofpdi v1.0.24 h1:7Q0v4dkmByemj8PyIYi8ylIYrUnNhY/L/Ed6MRGwlro=
 github.com/boxesandglue/gofpdi v1.0.24/go.mod h1:U26faV5/yQf8ivQS0Tt2TdpU7Y8X9wpLLB2T/5oI+u4=
-github.com/boxesandglue/htmlbag v0.0.54 h1:kpa1//WiFGislVPAR16ZRuRY6QCzH9Uroc3/UCdkmt4=
-github.com/boxesandglue/htmlbag v0.0.54/go.mod h1:4EtLodFJ8e2IXULpuy+/8ylpulw5aHul8NZJH85ZrIs=
+github.com/boxesandglue/htmlbag v0.0.56 h1:yPmbLQ55yNTFJ6NNa5D9iPYVmwx6sSPxW8dT+NjB4Ls=
+github.com/boxesandglue/htmlbag v0.0.56/go.mod h1:4EtLodFJ8e2IXULpuy+/8ylpulw5aHul8NZJH85ZrIs=
 github.com/boxesandglue/svgreader v0.0.4 h1:q3hGxqpwUUHByfM3NoinB+vWbH18v1TmVnCJKCo8VWU=
 github.com/boxesandglue/svgreader v0.0.4/go.mod h1:EGGvqEiNQsKBrnLYqDfMznN044fFcKkCHrXDLYJ56IY=
 github.com/boxesandglue/textshape v0.0.15 h1:lWnWReoDxJbO/PNcL/EfMsbLkRgNMzwR86ChN8ZeuO0=
@@ -45,10 +45,10 @@ github.com/speedata/go-lua v0.1.10 h1:0PUuQeLXON6MOVlrhnUfMAb+pQuDWuYHI2tvGJ6Tws
 github.com/speedata/go-lua v0.1.10/go.mod h1:6Ay/2kO1IHOXkp7rmXPpAJrqwNTMwM4qcqM6U9u9RDc=
 github.com/speedata/goxlsx v1.0.2 h1:hi00xy1EQhqrag4HNIc9hVEtVmTGrh3z9C1AH9ysg74=
 github.com/speedata/goxlsx v1.0.2/go.mod h1:7eXkL4ZUZ2uUlnBBAmh0iwOdhOkqqstW/FmkEe2IPMY=
-github.com/speedata/goxml v1.0.9 h1:SJ607OEFUGFYabspu+dX5tgvIoO7gtKCqsdSnuFnDW4=
-github.com/speedata/goxml v1.0.9/go.mod h1:G++cv0h2rC8ltAhvQmANDgwMbKRd3MetXlF8PLob6dw=
-github.com/speedata/goxpath v1.0.13 h1:dIqlSGllBFNUM0WWB4wfUlba+ZNL2XoMeQIshmF4urg=
-github.com/speedata/goxpath v1.0.13/go.mod h1:ZrjnDd5r2gw+20UvSM2EGHDwz3qKIp3DmkoCYzxLKiM=
+github.com/speedata/goxml v1.0.11 h1:k/qjnKEnR2SAg45fjaxT4+zW9heVXxieANUeny9Bw8M=
+github.com/speedata/goxml v1.0.11/go.mod h1:G++cv0h2rC8ltAhvQmANDgwMbKRd3MetXlF8PLob6dw=
+github.com/speedata/goxpath v1.0.18 h1:W/KKl01tOq+bUY9PvDF2oiLazfeaQeVHlV5eJGqT5Ek=
+github.com/speedata/goxpath v1.0.18/go.mod h1:pHarVNKeRc0jWFBPHo3JuxP3qxpwMKlHqScsJO0mLAo=
 github.com/speedata/goxslt v0.0.2 h1:fzARLRHAb0xmAifWJGMD75hfrhRGK7K4iB1u899Rf2k=
 github.com/speedata/goxslt v0.0.2/go.mod h1:LZO9C6pwKTc+blNPA0ELO0+G2DhcsMLNqxCWNYO2Usw=
 github.com/speedata/hyphenation v1.0.2 h1:2rDCtAqNfbf+E56SsqbmNApsVx9CH+4fwIh1RZuu3B8=

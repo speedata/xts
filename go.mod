@@ -6,7 +6,7 @@ require (
 	github.com/alecthomas/chroma v0.10.0
 	github.com/boxesandglue/baseline-pdf v1.1.22
 	github.com/boxesandglue/boxesandglue v0.2.52
-	github.com/boxesandglue/htmlbag v0.0.54
+	github.com/boxesandglue/htmlbag v0.0.56
 	github.com/boxesandglue/svgreader v0.0.4
 	github.com/boxesandglue/textshape v0.0.15
 	github.com/fsnotify/fsnotify v1.10.1
@@ -15,8 +15,8 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.8
 	github.com/speedata/go-lua v0.1.10
 	github.com/speedata/goxlsx v1.0.2
-	github.com/speedata/goxml v1.0.9
-	github.com/speedata/goxpath v1.0.13
+	github.com/speedata/goxml v1.0.11
+	github.com/speedata/goxpath v1.0.18
 	github.com/speedata/goxslt v0.0.2
 	github.com/speedata/optionparser v1.2.1
 	github.com/yuin/goldmark v1.7.16
