@@ -14,7 +14,6 @@ import (
 	"github.com/boxesandglue/boxesandglue/backend/node"
 	"github.com/boxesandglue/boxesandglue/frontend"
 	"github.com/boxesandglue/boxesandglue/frontend/pdfdraw"
-	"github.com/boxesandglue/csshtml"
 	"github.com/boxesandglue/htmlbag"
 	"github.com/speedata/goxml"
 	xpath "github.com/speedata/goxpath"
@@ -53,7 +52,7 @@ func genIntegerSequence(ids chan int) {
 type xtsDocument struct {
 	cfg                *XTSConfig
 	document           *frontend.Document
-	layoutcss          *csshtml.CSS
+	layoutcss          *htmlbag.CSS
 	cssbuilder         *htmlbag.CSSBuilder
 	data               *xpath.Parser
 	pages              []*page
@@ -90,7 +89,7 @@ func newXTSDocument() *xtsDocument {
 		defaultGridHeight: oneCM,
 		defaultGridGapX:   0,
 		defaultGridGapY:   0,
-		layoutcss:         csshtml.NewCSSParserWithDefaults(),
+		layoutcss:         htmlbag.NewCSSParserWithDefaults(),
 		slates:            make(map[string]*slate),
 		templates:         make(map[string]*goxml.Element),
 		store:             make(map[any]any),
