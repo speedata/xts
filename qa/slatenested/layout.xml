@@ -1,0 +1,47 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+    <!-- A slate nested inside another slate, with nothing placed on the page
+         beforehand. The inner </Slate> must restore the outer slate (issue
+         #32) and the outer slate must inherit the page grid although page 1
+         does not exist yet (issue #31, including the nil grid crash). -->
+    <Record match="data">
+        <Slate name="outer">
+            <Contents>
+                <PlaceObject>
+                    <TextBlock width="8">
+                        <Paragraph>
+                            <Value>OUTER A</Value>
+                        </Paragraph>
+                    </TextBlock>
+                </PlaceObject>
+                <Slate name="inner">
+                    <Contents>
+                        <PlaceObject>
+                            <TextBlock width="8">
+                                <Paragraph>
+                                    <Value>INNER X</Value>
+                                </Paragraph>
+                            </TextBlock>
+                        </PlaceObject>
+                    </Contents>
+                </Slate>
+                <PlaceObject>
+                    <TextBlock width="8">
+                        <Paragraph>
+                            <Value>OUTER B</Value>
+                        </Paragraph>
+                    </TextBlock>
+                </PlaceObject>
+            </Contents>
+        </Slate>
+        <PlaceObject>
+            <TextBlock width="8">
+                <Paragraph>
+                    <Value>AFTER SLATE</Value>
+                </Paragraph>
+            </TextBlock>
+        </PlaceObject>
+        <PlaceObject column="1" row="10" slate="inner"/>
+        <PlaceObject column="1" row="20" slate="outer"/>
+    </Record>
+</Layout>

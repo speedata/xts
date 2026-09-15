@@ -924,15 +924,23 @@ func cmdSlate(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
+	// The slate copies its grid geometry from the current page grid, so a
+	// page must exist at this point; otherwise the slate silently gets
+	// nx=0, ny=0. setupPage is a no-op inside an enclosing slate, which
+	// keeps a nested slate from shipping out a page.
+	xd.setupPage()
 	saveGrid := xd.currentGrid
+	saveSlate := xd.currentSlate
+	defer func() {
+		xd.currentSlate = saveSlate
+		xd.currentGrid = saveGrid
+	}()
 	xd.currentSlate = xd.newSlate(attValues.Name)
 	xd.currentGrid = xd.currentSlate.grid
 	_, err = dispatch(xd, layoutelt)
 	if err != nil {
 		return nil, err
 	}
-	xd.currentSlate = nil
-	xd.currentGrid = saveGrid
 	return nil, nil
 }
 

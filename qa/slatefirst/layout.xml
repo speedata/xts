@@ -1,0 +1,33 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+    <!-- The slate is built before anything is placed on page 1, so it must
+         copy its grid from a page that does not exist yet (issue #31). -->
+    <Record match="data">
+        <Slate name="group">
+            <Contents>
+                <PlaceObject>
+                    <TextBlock>
+                        <Paragraph>
+                            <Value>This paragraph has no explicit width, so it should fill the measure.</Value>
+                        </Paragraph>
+                    </TextBlock>
+                </PlaceObject>
+                <PlaceObject>
+                    <TextBlock width="8">
+                        <Paragraph>
+                            <Value>Fixed width one</Value>
+                        </Paragraph>
+                    </TextBlock>
+                </PlaceObject>
+                <PlaceObject>
+                    <TextBlock width="8">
+                        <Paragraph>
+                            <Value>Fixed width two</Value>
+                        </Paragraph>
+                    </TextBlock>
+                </PlaceObject>
+            </Contents>
+        </Slate>
+        <PlaceObject slate="group"/>
+    </Record>
+</Layout>
