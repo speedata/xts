@@ -100,6 +100,9 @@ type commandsXML struct {
 	DefineAttrs []defineAttrXML      `xml:"defineattribute"`
 	DefineList  []defineListXML      `xml:"definelist"`
 	Commands    []commandsxmlCommand `xml:"command"`
+	// LspAnnotations holds the rules for the xml-lsp annotations in the
+	// generated Relax NG schemas, see lsp.go.
+	LspAnnotations lspAnnotationsXML `xml:"lspannotations"`
 }
 
 func readCommandsFile(basedir string) (*commandsXML, error) {

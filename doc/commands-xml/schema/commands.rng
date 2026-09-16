@@ -133,6 +133,15 @@
     </oneOrMore>
   </define>
 
+  <define name="lspform">
+    <attribute name="form">
+      <choice>
+        <value>xpath-string</value>
+        <value>xpath-variable</value>
+      </choice>
+    </attribute>
+  </define>
+
   <define name="descriptions">
       <element name="description">
         <attribute name="xml:lang">
@@ -183,6 +192,58 @@
           <text/>
         </element>
       </oneOrMore>
+      <optional>
+        <element name="lspannotations">
+          <zeroOrMore>
+            <choice>
+              <element name="defines">
+                <attribute name="command"/>
+                <attribute name="attribute"/>
+                <attribute name="symbol"/>
+                <optional><ref name="lspform"/></optional>
+              </element>
+              <element name="references">
+                <optional><attribute name="command"/></optional>
+                <attribute name="attribute"/>
+                <attribute name="symbol"/>
+                <optional><ref name="lspform"/></optional>
+              </element>
+              <element name="builtin">
+                <attribute name="symbol"/>
+                <attribute name="names"/>
+              </element>
+              <element name="format">
+                <attribute name="command"/>
+                <optional><attribute name="preserve"><value>yes</value></attribute></optional>
+                <optional><attribute name="blank-lines"><value>yes</value></attribute></optional>
+                <optional><attribute name="inline"><value>yes</value></attribute></optional>
+              </element>
+              <element name="symbol">
+                <attribute name="command"/>
+                <attribute name="kind"/>
+                <attribute name="label"/>
+                <optional><attribute name="detail"/></optional>
+              </element>
+              <element name="exclusive">
+                <attribute name="command"/>
+                <attribute name="attributes"/>
+                <optional><attribute name="content"><value>yes</value></attribute></optional>
+              </element>
+              <element name="when">
+                <attribute name="command"/>
+                <attribute name="attribute"/>
+                <optional><attribute name="value"/></optional>
+                <optional><attribute name="requires"/></optional>
+                <optional><attribute name="forbids"/></optional>
+              </element>
+              <element name="namespace">
+                <attribute name="prefix"/>
+                <attribute name="uri"/>
+              </element>
+            </choice>
+          </zeroOrMore>
+        </element>
+      </optional>
       <oneOrMore>
         <element name="command">
           <attribute name="en"/>

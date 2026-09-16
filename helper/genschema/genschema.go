@@ -15,6 +15,8 @@ const (
 	FNNAMESPACE string = "urn:speedata.de/2021/xtsfunctions/en"
 	// XHTMLNAMESPACE is the XHTML namespace for literal HTML elements in XTS layouts
 	XHTMLNAMESPACE string = "http://www.w3.org/1999/xhtml"
+	// DOCBASE is the URL prefix of the command reference in the online manual.
+	DOCBASE string = "https://doc.speedata.de/xts/reference/commands/"
 )
 
 // DoThings creates Relax NG and XSD schema files for »en« and »de«. Both
@@ -26,6 +28,7 @@ func DoThings(cfg *config.Config) error {
 	if err != nil {
 		return err
 	}
+	warnUnmatchedLspRules(c)
 
 	schemas := []struct {
 		path string

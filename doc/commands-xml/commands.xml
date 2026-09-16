@@ -471,6 +471,63 @@
 
   <definelist name="languagesshortcodes">--|bg|ca|cs|cy|da|de|el|en|en_GB|en_US|eo|es|et|eu|fi|fr|ga|gl|grc|gu|hi|hr|hu|hy|id|is|it|kn|ku|lt|lv|ml|nb|nl|nn|pl|pt|ro|ru|sc|sk|sl|sr|sv|tr|uk|zh</definelist>
 
+  <!--
+      lspannotations: hints for the xml-lsp language server (vscode-speedata).
+      xtshelper genschema turns these rules into lsp:* elements in the Relax
+      NG schemas (namespace urn:xml-lsp:annotations). The XSD schemas are not
+      affected. See doc/commands-xml/lsp-annotations.md for the format of the
+      generated annotations.
+
+      Every command and attribute value is a space separated list of names.
+      Rules naming a command win over generic rules (without command). Each
+      attribute gets at most one defines/references annotation, defines is
+      checked before references. form is one of xpath-string (the value is an
+      XPath string literal) or xpath-variable (the value is an XPath
+      expression referring to $name); omit it for plain names.
+      Boolean values (preserve, blank-lines, inline, content) are "yes".
+      A when rule without a value applies when the attribute is absent; a
+      value list expands to one annotation per value.
+  -->
+  <lspannotations>
+    <defines command="DefineColor" attribute="name" symbol="color"/>
+    <defines command="DefineMasterPage" attribute="name" symbol="masterpage"/>
+    <defines command="Function" attribute="name" symbol="function"/>
+    <defines command="Mark" attribute="select" symbol="mark" form="xpath-string"/>
+    <defines command="PositioningArea" attribute="name" symbol="area"/>
+    <defines command="Record" attribute="mode" symbol="mode"/>
+    <defines command="Slate" attribute="name" symbol="slate"/>
+    <defines command="Template" attribute="name" symbol="template"/>
+    <defines command="SetVariable Loop" attribute="variable" symbol="variable"/>
+    <defines command="Param" attribute="name" symbol="variable"/>
+    <references command="A" attribute="link" symbol="mark"/>
+    <references command="CallTemplate" attribute="name" symbol="template"/>
+    <references command="SlateContents" attribute="name" symbol="slate"/>
+    <references command="ProcessNode" attribute="mode" symbol="mode"/>
+    <references attribute="area" symbol="area"/>
+    <references attribute="slate" symbol="slate"/>
+    <references attribute="color background-color border-color" symbol="color"/>
+    <references attribute="select test match attributes" symbol="variable" form="xpath-variable"/>
+    <builtin symbol="color" names="aliceblue antiquewhite aqua aquamarine azure beige bisque black blanchedalmond blue blueviolet brown burlywood cadetblue chartreuse chocolate coral cornflowerblue cornsilk crimson cyan darkblue darkcyan darkgoldenrod darkgray darkgreen darkgrey darkkhaki darkmagenta darkolivegreen darkorange darkorchid darkred darksalmon darkseagreen darkslateblue darkslategray darkslategrey darkturquoise darkviolet deeppink deepskyblue dimgray dimgrey dodgerblue firebrick floralwhite forestgreen fuchsia gainsboro ghostwhite gold goldenrod gray green greenyellow grey honeydew hotpink indianred indigo ivory khaki lavender lavenderblush lawngreen lemonchiffon lightblue lightcoral lightcyan lightgoldenrodyellow lightgray lightgreen lightgrey lightpink lightsalmon lightseagreen lightskyblue lightslategray lightslategrey lightsteelblue lightyellow lime limegreen linen magenta maroon mediumaquamarine mediumblue mediumorchid mediumpurple mediumseagreen mediumslateblue mediumspringgreen mediumturquoise mediumvioletred midnightblue mintcream mistyrose moccasin navajowhite navy oldlace olive olivedrab orange orangered orchid palegoldenrod palegreen paleturquoise palevioletred papayawhip peachpuff peru pink plum powderblue purple rebeccapurple red rosybrown royalblue saddlebrown salmon sandybrown seagreen seashell sienna silver skyblue slateblue slategray slategrey snow springgreen steelblue tan teal thistle tomato transparent turquoise violet wheat white whitesmoke yellow yellowgreen"/>
+    <builtin symbol="variable" names="_lastpage"/>
+    <format command="Value" preserve="yes"/>
+    <format command="Section" blank-lines="yes"/>
+    <format command="HTML" inline="yes"/>
+    <symbol command="Section" kind="namespace" label="{@name}"/>
+    <symbol command="Record" kind="struct" label="{@match}" detail="{@mode}"/>
+    <symbol command="Function" kind="function" label="{@name}"/>
+    <symbol command="Template" kind="method" label="{@name}"/>
+    <symbol command="DefineMasterPage" kind="object" label="{@name}"/>
+    <exclusive command="Value SetVariable Message SaveXML HTML" attributes="select" content="yes"/>
+    <when command="DefineColor" attribute="model" value="cmyk" requires="c m y k" forbids="r g b value colorname"/>
+    <when command="DefineColor" attribute="model" value="rgb RGB" requires="r g b" forbids="c m y k value colorname"/>
+    <when command="DefineColor" attribute="model" value="gray GRAY" requires="g" forbids="r b c m y k value colorname"/>
+    <when command="DefineColor" attribute="model" value="spotcolor" requires="colorname" forbids="r g b c m y k value"/>
+    <when command="DefineColor" attribute="model" requires="value" forbids="r g b c m y k colorname"/>
+    <namespace prefix="sd" uri="urn:speedata.de/2021/xtsfunctions/en"/>
+    <namespace prefix="map" uri="http://www.w3.org/2005/xpath-functions/map"/>
+    <namespace prefix="array" uri="http://www.w3.org/2005/xpath-functions/array"/>
+  </lspannotations>
+
 
   <!--
       ****************************************************************************************
