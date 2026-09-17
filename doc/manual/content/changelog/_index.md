@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.0.30 (2026-09-17)
 
+- **allocate="no" no longer moves the cursor for full width objects.**<br>
+  A `<PlaceObject allocate="no">` whose object reached the right edge of the area still moved the cursor to the row below it, so the next object placed without coordinates ended up under a full width background instead of on top of it. The reference promises that the cursor position is not changed, and now it is not. Narrow objects were not affected.
 - **xts compare can look for a reference PDF with another name.**<br>
   The new option `--reference NAME` makes `xts compare` look for `NAME.pdf` in every test directory instead of `reference.pdf`. This allows a collection of examples whose expected output is stored as `result.pdf` to be checked with the same command.
 - **CSS @page margin boxes render headers and footers on master pages.** [↗](https://github.com/speedata/xts/commit/cec2eff)<br>

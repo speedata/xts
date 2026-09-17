@@ -1,0 +1,32 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+
+    <!-- allocate="no" must leave the cursor where it was, even when the
+         object reaches the right edge of the area. The yellow background
+         spans the full width; the text placed afterwards without
+         coordinates has to land on top of it in row 1, not below it.
+         The second pair checks the same for a narrow object. -->
+
+    <SetGrid nx="10" ny="12"/>
+    <Trace grid="yes" gridallocation="yes"/>
+
+    <Record match="data">
+        <PlaceObject allocate="no">
+            <Box width="10" height="3" background-color="lightyellow"/>
+        </PlaceObject>
+        <PlaceObject>
+            <TextBlock width="6">
+                <Paragraph><Value>Text on the full width background, row 1.</Value></Paragraph>
+            </TextBlock>
+        </PlaceObject>
+
+        <PlaceObject row="6" column="1" allocate="no">
+            <Box width="4" height="3" background-color="lightblue"/>
+        </PlaceObject>
+        <PlaceObject row="6" column="1">
+            <TextBlock width="4">
+                <Paragraph><Value>Text on the narrow background, row 6.</Value></Paragraph>
+            </TextBlock>
+        </PlaceObject>
+    </Record>
+</Layout>

@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.0">
     <entry version="0.0.30" date="2026-09-17">
+      <en summary="allocate=&quot;no&quot; no longer moves the cursor for full width objects.">A <tt>&lt;PlaceObject allocate="no"&gt;</tt> whose object reached the right edge of the area still moved the cursor to the row below it, so the next object placed without coordinates ended up under a full width background instead of on top of it. The reference promises that the cursor position is not changed, and now it is not. Narrow objects were not affected.</en>
+    </entry>
+    <entry version="0.0.30" date="2026-09-17">
       <en summary="xts compare can look for a reference PDF with another name.">The new option <tt>--reference NAME</tt> makes <tt>xts compare</tt> look for <tt>NAME.pdf</tt> in every test directory instead of <tt>reference.pdf</tt>. This allows a collection of examples whose expected output is stored as <tt>result.pdf</tt> to be checked with the same command.</en>
     </entry>
     <entry version="0.0.30" date="2026-09-17" sha1="cec2eff">

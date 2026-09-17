@@ -2213,9 +2213,11 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		}
 		xd.OutputAt(vl, col, row, attValues.Allocate, area, origin, halign)
 
-		// if the current column is right of the area, go to the start of the
-		// next row below the object.
-		if col+xd.currentGrid.widthToColumns(vl.Width) > area.frame[area.currentFrame].width {
+		// If the object reaches the right edge of the area, go to the start
+		// of the next row below it. Only when the object allocates: with
+		// allocate="no" the cursor must stay where it was, as the reference
+		// promises, so that the next object can be placed on top of it.
+		if attValues.Allocate && col+xd.currentGrid.widthToColumns(vl.Width) > area.frame[area.currentFrame].width {
 			area.SetCurrentRow(row + xd.currentGrid.heightToRows(vl.Height+vl.Depth))
 			area.SetCurrentCol(1)
 		}

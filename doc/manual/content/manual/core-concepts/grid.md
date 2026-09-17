@@ -86,6 +86,8 @@ If you *want* objects to overlap (say, a background image behind text), use `all
 </PlaceObject>
 ```
 
+Such an object leaves the cursor where it was, so the next object without coordinates is placed on top of it. Objects positioned with absolute lengths in both `column` and `row` never allocate cells, whatever `allocate` says.
+
 ## Automatic placement
 
 If you omit `row` and `column`, XTS finds the next free position automatically:
