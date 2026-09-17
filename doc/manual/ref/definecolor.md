@@ -131,4 +131,8 @@ The predefined colors are: `aliceblue`, `black`, `orange`, `rebeccapurple`, `ant
 
 
 
+A color defined with [DefineColor](../definecolor) can be used in CSS as well: `color: muted` in a [StyleSheet](../stylesheet) refers to the color named `muted`. The reverse works too, the CSS rule `@-bag-color` defines a color name with the same descriptors as the attributes of this command, for example `@-bag-color brand { model: cmyk; c: 0; m: 80; y: 90; k: 10; }`.
+
+
+
 

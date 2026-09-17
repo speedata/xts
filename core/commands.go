@@ -647,6 +647,22 @@ func cmdDefineColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		col.G = float64(g) / 255.0
 	case "spotcolor":
 		col.Space = color.ColorSpotcolor
+		// the ink name; DefineColor falls back to the color name
+		col.Basecolor = attValues.Colorname
+		// optional cmyk fallback for the tint transform
+		for _, comp := range []struct {
+			s    string
+			dest *float64
+		}{{attValues.C, &col.C}, {attValues.M, &col.M}, {attValues.Y, &col.Y}, {attValues.K, &col.K}} {
+			if comp.s == "" {
+				continue
+			}
+			v, err := strconv.Atoi(comp.s)
+			if err != nil {
+				return nil, fmt.Errorf("DefineColor: cannot parse spot color fallback value %q (line %d)", comp.s, layoutelt.Line)
+			}
+			*comp.dest = float64(v) / 100.0
+		}
 	case "":
 		// let's hope the user has provided a value field...
 		if attValues.Value == "" {
@@ -2607,6 +2623,9 @@ func cmdStyleSheet(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 		return nil, newTypesettingError("StyleSheet", layoutelt.Line, err.Error())
 	}
 	if err = htmlbag.AddFontFamiliesFromCSS(xd.layoutcss, xd.document); err != nil {
+		return nil, newTypesettingError("StyleSheet", layoutelt.Line, err.Error())
+	}
+	if err = htmlbag.AddColorsFromCSS(xd.layoutcss, xd.document); err != nil {
 		return nil, newTypesettingError("StyleSheet", layoutelt.Line, err.Error())
 	}
 
