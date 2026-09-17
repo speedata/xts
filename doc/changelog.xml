@@ -10,7 +10,10 @@
 
   version  the release the change ships in (the next tag while unreleased)
   date     the date of the commit, YYYY-MM-DD
-  sha1     the commit in github.com/speedata/xts, several separated by comma
+  sha1     optional: the commit in github.com/speedata/xts, several
+           separated by comma. Changes are made in the mono repo and the
+           hash of the synced commit is not known there, so leave it out
+           unless the commit already exists (patches adopted from outside)
   summary  one sentence, shown as the headline in the manual and the
            release notes; the element text gives the details and may use
            <tt> for code. Issue numbers such as #29 become links.
