@@ -88,14 +88,17 @@ xts watch
 
 `xts watch` runs the publishing process once and then watches the current
 directory, the directories of the layout and data files and all extra
-directories (`--extradir`) for changes. Every change to an input file starts
-a new publishing run; errors in a run do not stop the watcher. Press `ctrl-c`
-to quit.
+directories (`--extradir`) for changes, including their subdirectories
+(hidden directories such as `.git` are skipped). Every change to an input
+file starts a new publishing run, saving a file with unchanged content
+included, so saving the layout again is a simple way to force a run. Errors
+in a run do not stop the watcher. Press `ctrl-c` to quit.
 
 Files written by xts itself (the PDF, protocol and auxiliary files), hidden
-files and editor backup files do not trigger a run, and neither does saving a
-file with unchanged content. Note that subdirectories of the watched
-directories are not watched.
+files and editor backup files do not trigger a run. A file that is written
+while a run is in progress (for example a data file rewritten by a Lua
+filter) starts another run only if its content differs from the previous
+run.
 
 ## Exit codes
 

@@ -12,9 +12,9 @@ import (
 	"github.com/speedata/xts/core"
 )
 
-// watchDirs returns the directories to watch in watch mode: the current
-// directory, the directories of the layout and the data file and all extra
-// directories. Files that cannot be found yet are skipped, creating them
+// watchDirs returns the top level directories to watch in watch mode: the
+// current directory, the directories of the layout and the data file and all
+// extra directories. Files that cannot be found yet are skipped, creating them
 // later in a watched directory triggers a run.
 func watchDirs() []string {
 	seen := make(map[string]bool)
@@ -42,6 +42,32 @@ func watchDirs() []string {
 		add(d)
 	}
 	return dirs
+}
+
+// watchRecursive adds the directory and all its subdirectories to the
+// watcher. Hidden directories (.git, .vscode, ...) are skipped. Style sheets,
+// fonts and images usually live in subdirectories of the layout directory, so
+// changes there must trigger a run too.
+func watchRecursive(watcher *fsnotify.Watcher, root string) error {
+	return filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error {
+		if err != nil {
+			// unreadable directory: skip it, watch the rest
+			if d != nil && d.IsDir() {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if !d.IsDir() {
+			return nil
+		}
+		if path != root && strings.HasPrefix(d.Name(), ".") {
+			return filepath.SkipDir
+		}
+		if werr := watcher.Add(path); werr != nil {
+			return fmt.Errorf("cannot watch directory %s: %w", path, werr)
+		}
+		return nil
+	})
 }
 
 // isGeneratedFile reports whether the file is written by xts itself during a
@@ -95,10 +121,12 @@ func triggersRun(ev fsnotify.Event, dumpOutputFileName string) bool {
 	return true
 }
 
-// contentChanged reports whether the file content differs from the content at
-// the last publishing run that this file triggered. Without this check a Lua
-// filter that rewrites its data file on every run would trigger runs forever.
-// Unreadable (for example removed) files always count as changed.
+// contentChanged reports whether the file content differs from the content
+// seen the last time this file was checked. The check is only applied to
+// files that were written while a publishing run was in progress: a Lua
+// filter that rewrites its data file on every run would otherwise trigger
+// runs forever. Unreadable (for example removed) files always count as
+// changed.
 func contentChanged(lastSeen map[string]string, filename string) bool {
 	data, err := os.ReadFile(filename)
 	if err != nil {
@@ -132,6 +160,13 @@ func discardEvents(watcher *fsnotify.Watcher, d time.Duration) {
 // watchAndRun runs the publishing process once and re-runs it whenever an
 // input file changes. Errors from a publishing run do not stop the loop, the
 // watcher waits for the next change instead.
+//
+// A file change after a run always starts a new run, even if the file content
+// is identical: saving the layout again is the natural way to force a re-run
+// after editing something xts does not watch. Files written while a run is in
+// progress are usually written by xts itself (a Lua filter rewriting the data
+// file, for example). They only start another run when their content differs
+// from the previous run, so the loop converges instead of running forever.
 func watchAndRun(dumpOutputFileName string, configFileRead []string) error {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -139,41 +174,73 @@ func watchAndRun(dumpOutputFileName string, configFileRead []string) error {
 	}
 	defer watcher.Close()
 
-	dirs := watchDirs()
-	for _, dir := range dirs {
-		if err = watcher.Add(dir); err != nil {
-			return fmt.Errorf("cannot watch directory %s: %w", dir, err)
+	for _, dir := range watchDirs() {
+		if err = watchRecursive(watcher, dir); err != nil {
+			return err
 		}
 	}
 
-	runOnce := func() {
-		if err := runPublisher(dumpOutputFileName, configFileRead); err != nil {
-			if terr, ok := err.(core.TypesettingError); !ok || !terr.Logged {
-				fmt.Println("Error:", err)
+	done := make(chan struct{})
+	running := false
+	start := func() {
+		running = true
+		go func() {
+			if err := runPublisher(dumpOutputFileName, configFileRead); err != nil {
+				if terr, ok := err.(core.TypesettingError); !ok || !terr.Logged {
+					fmt.Println("Error:", err)
+				}
 			}
-		}
-		fmt.Println("Waiting for changes (press ctrl-c to quit)")
+			done <- struct{}{}
+		}()
 	}
 
 	lastSeen := make(map[string]string)
-	runOnce()
+	// files written while a run was in progress
+	dirty := make(map[string]bool)
+	start()
 
 	for {
 		select {
+		case <-done:
+			running = false
+			changed := []string{}
+			for name := range dirty {
+				if contentChanged(lastSeen, name) {
+					changed = append(changed, name)
+				}
+			}
+			dirty = make(map[string]bool)
+			if len(changed) > 0 {
+				fmt.Printf("Change detected during run: %s\n", strings.Join(changed, ", "))
+				start()
+				continue
+			}
+			fmt.Println("Waiting for changes (press ctrl-c to quit)")
 		case ev, ok := <-watcher.Events:
 			if !ok {
 				return nil
 			}
+			if ev.Has(fsnotify.Create) {
+				if fi, serr := os.Stat(ev.Name); serr == nil && fi.IsDir() {
+					// a new subdirectory: watch it, but a directory itself
+					// is no input
+					if werr := watchRecursive(watcher, ev.Name); werr != nil {
+						fmt.Println("Watch error:", werr)
+					}
+					continue
+				}
+			}
 			if !triggersRun(ev, dumpOutputFileName) {
+				continue
+			}
+			if running {
+				dirty[ev.Name] = true
 				continue
 			}
 			// let the editor finish writing before the file gets read
 			discardEvents(watcher, 200*time.Millisecond)
-			if !contentChanged(lastSeen, ev.Name) {
-				continue
-			}
 			fmt.Printf("Change detected: %s\n", ev.Name)
-			runOnce()
+			start()
 		case werr, ok := <-watcher.Errors:
 			if !ok {
 				return nil
