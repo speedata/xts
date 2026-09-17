@@ -3,7 +3,7 @@ xts.xpr
 .vscode
 publisher.pdf
 bin/
-img/
+/img/
 dist/
 playground/
 build
