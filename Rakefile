@@ -29,9 +29,18 @@ task :xtshelper  do
 	sh "go build -ldflags \"-X main.version=#{@xts_version} -X main.basedir=#{INSTALDIR} \" -o bin/xtshelper github.com/speedata/xts/helper"
 end
 
-desc "Create markdown reference"
+desc "Create markdown reference and the changelog page"
 task :doc => [:xtshelper] do
 	sh "bin/xtshelper doc"
+end
+
+desc "Check that doc/changelog.xml is ready for a release: rake changelog[v0.1.0]"
+task :changelog, [:version] => [:xtshelper] do |t, args|
+	version = args[:version] || suggest_next_version
+	sh "bin/xtshelper changelog check #{version}"
+	puts "Release notes for #{version}:"
+	puts
+	sh "bin/xtshelper changelog notes #{version}"
 end
 
 desc "Build the 'xts' binary"

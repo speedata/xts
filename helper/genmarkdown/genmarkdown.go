@@ -7,6 +7,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/speedata/xts/helper/changelog"
 	"github.com/speedata/xts/helper/commandsxml"
 	"github.com/speedata/xts/helper/config"
 )
@@ -62,7 +63,14 @@ func DoThings(cfg *config.Config) error {
 		builddoc(c, v, fullpath)
 	}
 
-	return nil
+	cl, err := changelog.Read(cfg)
+	if err != nil {
+		return err
+	}
+	if err = cl.Validate(); err != nil {
+		return err
+	}
+	return cl.WriteManualPage(cfg)
 }
 
 func parentelements(cmd *commandsxml.Command) string {

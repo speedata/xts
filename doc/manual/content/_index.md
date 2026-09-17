@@ -49,3 +49,7 @@ Exact specifications for every command, function, and option. Use this when you 
 [Units](reference/units) --
 [Defaults](reference/defaults) --
 [CLI Reference](reference/cli)
+
+### Changelog
+
+What changed in each release: [Changelog](changelog).

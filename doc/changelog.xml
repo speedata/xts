@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Changelog of XTS.
+
+  One <entry> per user visible change, newest first. Every change that a
+  layout author can notice (new command or attribute, changed behaviour,
+  fixed bug, removed feature) gets an entry in the same commit that makes
+  the change. Internal refactorings and pure dependency bumps without a
+  visible effect do not.
+
+  version  the release the change ships in (the next tag while unreleased)
+  date     the date of the commit, YYYY-MM-DD
+  sha1     the commit in github.com/speedata/xts, several separated by comma
+  summary  one sentence, shown as the headline in the manual and the
+           release notes; the element text gives the details and may use
+           <tt> for code. Issue numbers such as #29 become links.
+
+  rake doc writes the manual page from this file, xtshelper changelog notes
+  the GitHub release notes, and xtshelper changelog check refuses a release
+  tag that has no entries here.
+-->
+<changelog xmlns="urn:speedata.de:2014/changelog">
+  <chapter version="0.0">
+    <entry version="0.0.30" date="2026-09-17" sha1="cec2eff">
+      <en summary="CSS @page margin boxes render headers and footers on master pages.">A <tt>@page name { }</tt> rule in a <tt>&lt;StyleSheet&gt;</tt> now belongs to the <tt>&lt;DefineMasterPage&gt;</tt> with the same name, the generic <tt>@page</tt> rule is the base for every master page. The margin boxes (<tt>@top-left</tt>, <tt>@bottom-center</tt>, ...) are rendered into the page margin when the page is shipped out, after <tt>&lt;AtPageShipout&gt;</tt>, so <tt>counter(page)</tt> is final and no grid cell is consumed. Static headers and footers no longer need a hook. The <tt>margin</tt> attribute of <tt>&lt;DefineMasterPage&gt;</tt> is now optional: when present it defines the grid and wins over the <tt>@page</tt> margins with a warning, without it the margins come from the <tt>@page</tt> rule, and without either the margin is 1cm. The selectors <tt>:first</tt>, <tt>:left</tt> and <tt>:right</tt> are not evaluated, the <tt>test</tt> attribute selects the master page.</en>
+    </entry>
+    <entry version="0.0.30" date="2026-09-17" sha1="0ad0bd5">
+      <en summary="StyleSheet accepts @-bag-color, spot colors get their ink name.">Colors defined with the <tt>@-bag-color</tt> at-rule in a <tt>&lt;StyleSheet&gt;</tt> are registered with the document, so CSS and layout commands can use them by name. <tt>&lt;DefineColor&gt;</tt> with <tt>model="spotcolor"</tt> now passes the <tt>colorname</tt> attribute as the ink name and the optional <tt>c</tt>, <tt>m</tt>, <tt>y</tt> and <tt>k</tt> attributes as the fallback tint. Both were ignored before, so the Separation color space was written without a name.</en>
+    </entry>
+    <entry version="0.0.30" date="2026-09-17" sha1="e5cca8c">
+      <en summary="xts watch sees subdirectories and always re-runs on a save.">The watch mode did not notice a change to a file in a subdirectory of the layout directory, such as <tt>css/style.css</tt>, and a save of the unchanged layout afterwards was dropped as well. The watcher now observes all subdirectories, including ones created later, and a save after a run always starts a new run. Files written while a run is in progress are still ignored when their content did not change, so a Lua filter that rewrites its data file does not loop.</en>
+    </entry>
+    <entry version="0.0.30" date="2026-09-16" sha1="ddbd322">
+      <en summary="The layout schemas carry annotations for the speedata language server.">The RELAX NG schemas <tt>layoutschema-en.rng</tt> and <tt>layoutschema-de.rng</tt> now contain <tt>lsp:</tt> annotations for the language server used by the speedata Visual Studio Code extension: links to the reference page, outline entries, definitions and references of named things such as colors and areas, conditional attributes and predefined names. The XSD schemas are unchanged.</en>
+    </entry>
+    <entry version="0.0.30" date="2026-09-15" sha1="c5c72b9">
+      <en summary="Slates built before the first placement and nested slates work.">A <tt>&lt;Slate&gt;</tt> created before anything was placed on page 1 got an empty grid: text blocks without an explicit width came out with zero width and objects without <tt>column</tt> and <tt>row</tt> overprinted each other. A slate nested in another slate placed the rest of the outer slate on the page instead of the outer slate, and crashed when combined with the first problem (#31, #32).</en>
+    </entry>
+    <entry version="0.0.29" date="2026-09-14" sha1="6a4b5c7">
+      <en summary="xts compare exits with an error when a page differs from its reference.">The compare command reported differing pages on standard output and in <tt>compare-report.html</tt>, but always exited with status 0, so a QA run could not fail. It now exits with status 1 when at least one directory does not match its reference, when the report cannot be written, and when no directory is given.</en>
+    </entry>
+    <entry version="0.0.29" date="2026-09-14" sha1="ee6a25d">
+      <en summary="CSS shorthands in StyleSheet are expanded, several XPath axis fixes.">A shorthand such as <tt>border: 1pt solid red</tt> in a layout style sheet was dropped as an unknown property, it now arrives as its longhands. The XPath engine fixes <tt>self::A</tt> (matched every element), <tt>self::A or self::B</tt> and <tt>(@A, @B)[1]</tt> (the context was not restored between operands), <tt>preceding::</tt> and <tt>following::</tt> (only looked at siblings) and the name tests <tt>prefix:*</tt> and <tt>*:name</tt>.</en>
+    </entry>
+    <entry version="0.0.29" date="2026-09-14" sha1="8275e3d">
+      <en summary="Floats keep the text clear of their own margins.">A floated element in HTML content now holds the text clear of its own margins on every side instead of the default gutter alone. A percentage width on a floated image resolves against the container instead of the intrinsic size of the image, and a float stays inside its container whatever margin sits below it.</en>
+    </entry>
+    <entry version="0.0.29" date="2026-09-12" sha1="9cb2275">
+      <en summary="Text flows beside left and right floats, CSS errors name the selector.">In HTML content and paragraphs text now flows beside elements with <tt>float: left</tt> and <tt>float: right</tt>. CSS parse errors name the selector and the line in the style sheet. A relative <tt>url()</tt> in an <tt>@page</tt> rule resolves against the style sheet that declares it instead of the document directory, and the color of <tt>text-decoration</tt> is resolved where it is declared.</en>
+    </entry>
+    <entry version="0.0.29" date="2026-09-11" sha1="d233251">
+      <en summary="New subcommand xts watch re-runs the publishing process on file changes.">The new subcommand <tt>xts watch</tt> runs the publishing process once and again whenever an input file changes. It observes the current directory, the directories of the layout and data files and all extra directories. Events are debounced, files written by xts itself and editor artifacts are ignored, and errors in a run do not stop the loop (#30).</en>
+    </entry>
+    <entry version="0.0.28" date="2026-09-11" sha1="85b6a10">
+      <en summary="Trace hyphenation shows the hyphenation points again.">The hyphenation trace did not descend into the vertical lists that wrap the lines of a paragraph, so <tt>&lt;Trace hyphenation="yes"&gt;</tt> drew nothing.</en>
+    </entry>
+    <entry version="0.0.28" date="2026-09-11" sha1="f1eb437">
+      <en summary="Trace gains the boxmodel and hboxes overlays.">The new attribute <tt>boxmodel</tt> on <tt>&lt;Trace&gt;</tt> draws the translucent CSS box model overlay known from the browser developer tools (content, padding, border and margin), <tt>hboxes</tt> outlines the line boxes.</en>
+    </entry>
+    <entry version="0.0.27" date="2026-09-02" sha1="c05b253">
+      <en summary="PositioningArea accepts a Switch to select frames per page.">A <tt>&lt;Switch&gt;</tt> inside <tt>&lt;PositioningArea&gt;</tt> is evaluated when the page is created, so a <tt>&lt;Case&gt;</tt> with <tt>sd:current-page()</tt> can define different frames for even and odd pages. If no branch matches, the area does not exist on that page.</en>
+    </entry>
+    <entry version="0.0.27" date="2026-09-02" sha1="c05b253">
+      <en summary="Column supports align, valign and background-color, Td supports align.">The new attributes <tt>align</tt>, <tt>valign</tt> and <tt>background-color</tt> on <tt>&lt;Column&gt;</tt> are distributed onto the cells of the column, aware of <tt>colspan</tt> and <tt>rowspan</tt>. <tt>&lt;Td&gt;</tt> gets <tt>align</tt>. Settings on the cell win over settings on the column.</en>
+    </entry>
+    <entry version="0.0.27" date="2026-09-02" sha1="c05b253">
+      <en summary="ClearPage can open the next page on the left or right side.">The new attribute <tt>openon="right"</tt> or <tt>openon="left"</tt> on <tt>&lt;ClearPage&gt;</tt> inserts a blank page when the next page would open on the wrong side. Right pages have odd page numbers.</en>
+    </entry>
+    <entry version="0.0.27" date="2026-09-02" sha1="c05b253">
+      <en summary="A slate can define its own grid and place objects on it.">A <tt>&lt;Grid&gt;</tt> child of <tt>&lt;Slate&gt;</tt> with the attributes of <tt>&lt;SetGrid&gt;</tt> defines the grid of the slate, and <tt>&lt;PlaceObject&gt;</tt> with <tt>column</tt> and <tt>row</tt> inside a slate positions the object on that grid. A <tt>&lt;PlaceObject&gt;</tt> with an unknown slate name reports an error instead of crashing, as do <tt>sd:slate-width()</tt> and <tt>sd:slate-height()</tt> on an empty slate.</en>
+    </entry>
+    <entry version="0.0.27" date="2026-09-02" sha1="b65abf5">
+      <en summary="Breaking: the Lua xlsx worksheet call takes (row, column).">The worksheet accessor of the Lua xlsx module took <tt>(column, row)</tt> while the manual documented <tt>(row, column)</tt>. The code now follows the manual, Lua filters that read spreadsheets need to swap the two arguments.</en>
+    </entry>
+    <entry version="0.0.27" date="2026-09-02" sha1="b65abf5">
+      <en summary="Required attributes are enforced, CSS-like attributes use dashed names.">Attributes the schema marks as required are now checked at run time: <tt>select</tt> on <tt>&lt;Attribute&gt;</tt>, <tt>&lt;ForAll&gt;</tt> and <tt>&lt;Mark&gt;</tt>, <tt>level</tt> on <tt>&lt;Bookmark&gt;</tt>, <tt>name</tt> on <tt>&lt;DefineColor&gt;</tt>, <tt>elementname</tt> on <tt>&lt;SaveXML&gt;</tt> and <tt>test</tt> on <tt>&lt;Case&gt;</tt>. CSS-like attributes use dashed names such as <tt>background-color</tt> and <tt>max-width</tt>, the old spellings keep working. <tt>&lt;SaveXML&gt;</tt> gains the documented <tt>attributes</tt> attribute.</en>
+    </entry>
+    <entry version="0.0.27" date="2026-09-02" sha1="b65abf5">
+      <en summary="Constructed elements are navigable with XPath, several smaller fixes.">Structures built with <tt>&lt;Element&gt;</tt> and <tt>&lt;Attribute&gt;</tt> can be navigated with XPath. <tt>&lt;OutputAt&gt;</tt> with <tt>halign="right"</tt> aligns to the width of the area instead of a fixed six grid columns. <tt>sd:odd()</tt> handles negative numbers, <tt>sd:file-exists()</tt> checks the file system, the Lua filter script is looked up via the extra directories, the Lua <tt>runtime.finalizer</tt> runs after the publishing run, and the <tt>--trace</tt> help names <tt>gridallocation</tt>. The manual was audited against the implementation and examples from the speedata Publisher era were repaired.</en>
+    </entry>
+    <entry version="0.0.26" date="2026-09-01" sha1="6b6d6ec">
+      <en summary="New command TableFoot repeats rows at the bottom of every table part.">The new command <tt>&lt;TableFoot&gt;</tt> mirrors <tt>&lt;TableHead&gt;</tt>: its rows are set at the end of the table and, when the table is split across frames or pages, above every break as well.</en>
+    </entry>
+    <entry version="0.0.26" date="2026-09-01" sha1="176a95c,d6978c6,305811e,cf23246,c71a8f5,4d7f55f">
+      <en summary="A table with a TableHead breaks across frames and pages.">A table taller than the frame was drawn past the bottom margin. A table placed on the grid that has a <tt>&lt;TableHead&gt;</tt> is now split: rows fill the frame, the table continues in the next frame of the area or on a new page, and the header rows are repeated at the top of every continuation. A lone header is never left at the bottom of a frame, frame and background are drawn per table part, and the column position is kept when the table continues. A table without a head is placed as a single object as before, as is an absolutely positioned table (#29).</en>
+    </entry>
+    <entry version="0.0.26" date="2026-09-01" sha1="b999b4b">
+      <en summary="expand-text works in mixed XHTML content of HTML.">The attribute <tt>expand-text</tt> on <tt>&lt;HTML&gt;</tt> was ignored when the content mixed XHTML and XTS elements, so <tt>{$width}</tt> in an attribute value or in text reached the output with the braces intact. The setting now applies on both paths, the default stays <tt>no</tt> (#28).</en>
+    </entry>
+    <entry version="0.0.25" date="2026-09-01" sha1="257c514">
+      <en summary="CSS white-space and text-decoration are supported, the interword space comes from the font.">All five values of the CSS property <tt>white-space</tt> are honoured, <tt>text-decoration</tt> supports overline and line-through with <tt>text-decoration-style</tt> and <tt>text-decoration-color</tt>. The width of the space between words now comes from the space glyph of the font instead of a fixed value, which changes the line breaks of existing layouts slightly. Centered and right aligned table cells no longer measure zero width, and several blocks in a cell stack instead of packing side by side.</en>
+    </entry>
+    <entry version="0.0.24" date="2026-09-01" sha1="ae01e5d">
+      <en summary="PlaceObject gets an id attribute for the XML dump.">The optional attribute <tt>id</tt> on <tt>&lt;PlaceObject&gt;</tt> is stamped on the placed object and appears as <tt>attr-id</tt> next to the box geometry in the output of <tt>--dumpoutput</tt>, so external tools can map output boxes back to the layout element. The value goes through the usual <tt>{}</tt> interpolation. It is not a CSS id and does not create a link target (#26).</en>
+    </entry>
+    <entry version="0.0.24" date="2026-07-01" sha1="5460b1e">
+      <en summary="The subcommand list-fonts has been removed.">The subcommand <tt>xts list-fonts</tt>, which printed <tt>@font-face</tt> rules for the fonts in the search path, is gone.</en>
+    </entry>
+    <entry version="0.0.24" date="2026-06-30" sha1="507b6b9">
+      <en summary="The XSD schemas are generated natively, the content model is permissive.">The XSD layout schemas are now generated directly from <tt>commands.xml</tt> instead of being converted from RELAX NG with a Java tool. Since XSD cannot express the interleaved content model, the XSD allows the child elements of a command in any order and number, which keeps editor completion working. Validation with the RELAX NG schema remains exact.</en>
+    </entry>
+    <entry version="0.0.24" date="2026-06-29" sha1="9cb38d6">
+      <en summary="Value keeps inline markup, imagenotfound=error no longer aborts the run.">Mixed content in <tt>&lt;Value&gt;</tt> such as <tt>&lt;Value&gt;foo&lt;br/&gt;bar&lt;/Value&gt;</tt> lost its child elements, the <tt>&lt;br/&gt;</tt> was dropped and the text glued together. Inline markup is now passed on to the enclosing paragraph. <tt>&lt;Image&gt;</tt> with <tt>imagenotfound="error"</tt> inserts the file-not-found placeholder like <tt>warning</tt> and still produces a PDF, the error only makes the process exit with a non-zero status.</en>
+    </entry>
+    <entry version="0.0.23" date="2026-06-29" sha1="b555f04">
+      <en summary="PDF/UA, PDF/A and PDF/X are selected with command line flags and configuration keys.">The conformance classes are configured with the orthogonal flags <tt>--pdfua</tt>, <tt>--pdfa</tt> and <tt>--pdfx</tt> or the matching keys in <tt>xts.cfg</tt>. The <tt>format</tt> attribute of <tt>&lt;PDFOptions&gt;</tt> has been removed. <tt>&lt;HTML&gt;</tt> accepts <tt>&lt;math&gt;</tt> with MathML content, and the manual gains a chapter on accessible PDF.</en>
+    </entry>
+    <entry version="0.0.23" date="2026-06-28" sha1="c5a5543">
+      <en summary="Typed values, Template and CallTemplate, and a Programming manual.">Every command is classified as constructor, action or control flow. A value context, that is <tt>&lt;SetVariable&gt;</tt> with the new <tt>as</tt> attribute and the body of <tt>&lt;Function&gt;</tt>, rejects layout actions such as <tt>&lt;PlaceObject&gt;</tt>. The <tt>as</tt> attribute takes a sequence type in the style of XSLT and XQuery. Constructors return queryable data, so <tt>count($head)</tt> and <tt>$head/@width</tt> work on a variable that holds <tt>&lt;Column&gt;</tt> elements. The new commands <tt>&lt;Template&gt;</tt> and <tt>&lt;CallTemplate&gt;</tt> offer reusable behaviour with parameters. The manual is restructured into Layout Guide, Programming and Reference.</en>
+    </entry>
+    <entry version="0.0.23" date="2026-05-20" sha1="4cb6a7b">
+      <en summary="Color fonts are supported.">Fonts with color glyphs (COLR/CPAL, sbix, CBDT and SVG-in-OpenType) such as emoji fonts render in color.</en>
+    </entry>
+    <entry version="0.0.23" date="2026-05-19" sha1="f62838b">
+      <en summary="New output formats PDF/UA-1 and PDF/UA-2.">XTS can write tagged, accessible PDF that conforms to PDF/UA-1 and PDF/UA-2.</en>
+    </entry>
+    <entry version="0.0.23" date="2026-03-30" sha1="a538fb7">
+      <en summary="New command AttachFile, placeholder for missing images.">The new command <tt>&lt;AttachFile&gt;</tt> embeds a file in the PDF. When an image file is not found, a placeholder is inserted instead of leaving the space empty.</en>
+    </entry>
+  </chapter>
+</changelog>
