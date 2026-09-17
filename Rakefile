@@ -36,10 +36,14 @@ end
 
 desc "Build the manual with Hugo and check its internal links with htmltest"
 task :doccheck => [:doc] do
-	outdir = INSTALDIR.join("build", "manual").to_s
-	FileUtils.rm_rf(outdir)
-	sh "cd doc/manual && hugo --quiet -d #{outdir}"
-	sh "htmltest -c doc/manual/.htmltest.yml #{outdir}"
+	# The manual is deployed under https://doc.speedata.de/xts/, so the check
+	# builds it into the subdirectory xts/ of an otherwise empty web root and
+	# lets htmltest resolve links against that root. A root-relative path such
+	# as /manual/img/x.png then fails here as it does on the server.
+	webroot = INSTALDIR.join("build", "manual").to_s
+	FileUtils.rm_rf(webroot)
+	sh "cd doc/manual && hugo --quiet --baseURL http://localhost/xts/ -d #{webroot}/xts"
+	sh "htmltest -c doc/manual/.htmltest.yml #{webroot}"
 end
 
 desc "Check that doc/changelog.xml is ready for a release: rake changelog[v0.1.0]"

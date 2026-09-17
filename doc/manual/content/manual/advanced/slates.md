@@ -13,8 +13,8 @@ linktitle: Slates
 
 <figure>
 <div class="slate-images">
-<img src="/manual/advanced/img/slate.webp" alt="A classic school slate with wooden frame" />
-<img src="/manual/advanced/img/magic-slate.webp" alt="A magic drawing slate (JIKKY) with drawings" />
+<img src="../img/slate.webp" alt="A classic school slate with wooden frame" />
+<img src="../img/magic-slate.webp" alt="A magic drawing slate (JIKKY) with drawings" />
 </div>
 <figcaption>From school slate to magic drawing tablet -- the idea behind Slates in XTS: draw content on an independent surface, measure it, place it on the page, or simply discard it.<br/>
 <small>Left: Hannes Grobe, <a href="https://commons.wikimedia.org/wiki/File:Slate_hg.jpg">Wikimedia Commons</a>, CC BY 3.0. Right: Tatsuo Yamashita, CC BY 2.0.</small>
