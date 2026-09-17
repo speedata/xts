@@ -1727,20 +1727,20 @@
         <!-- <optional><cmd name="Grid"/></optional> -->
       </interleave>
     </childelements>
-    <attribute en="margin" type="text" optional="no" allowxpath="yes">
+    <attribute en="margin" type="text" optional="yes" allowxpath="yes">
       <description xml:lang="en">
-        <para>Set the margin of the page. One to four values can be provided, similar to CSS.</para>
+        <para>Set the margin of the page. One to four values can be provided, similar to CSS. If the attribute is omitted, the margins are taken from the CSS <tt>@page</tt> rule of the same name (see remarks), or 1cm without such a rule.</para>
       </description>
       <description xml:lang="de">
-        <para>Setzt den Rand der Seite. Ein bis vier Werte können übergeben werden, wie bei CSS.</para>
+        <para>Setzt den Rand der Seite. Ein bis vier Werte können übergeben werden, wie bei CSS. Fehlt das Attribut, kommen die Ränder aus der CSS-Regel <tt>@page</tt> mit demselben Namen (siehe Anmerkungen), ohne eine solche Regel sind es 1cm.</para>
       </description>
     </attribute>
     <attribute en="name" type="text" optional="no">
       <description xml:lang="en">
-        <para>Name of the master page. It is for informational purpose and as a selection for <cmd name="ClearPage"/>.</para>
+        <para>Name of the master page. It is used as a selection for <cmd name="ClearPage"/> and couples the master page to the CSS rule <tt>@page name</tt> in a <cmd name="StyleSheet"/>.</para>
       </description>
       <description xml:lang="de">
-        <para>Name der Seitenvorlage. Der Name ist zu Informationszwecken und zur Auswahl bei <cmd name="ClearPage"/>.</para>
+        <para>Name der Seitenvorlage. Der Name dient zur Auswahl bei <cmd name="ClearPage"/> und koppelt die Seitenvorlage an die CSS-Regel <tt>@page name</tt> in einem <cmd name="StyleSheet"/>.</para>
       </description>
     </attribute>
     <attribute en="test" type="xpath" optional="no">
@@ -1754,12 +1754,14 @@
     <remark xml:lang="en">
       <para>The contents of the element at <cmd name="AtPageCreation"/> is executed, as soon as something will be placed on the page. The commands inside <cmd name="AtPageShipout"/> are executed when switching to a new page.</para>
       <para>When creating a new page, all page types are tried in reversed order. That means that the later defined master pages have a higher priority. This is important if more than one test in a Masterpage definition evaluates to true.</para>
+      <para>A CSS rule <tt>@page name { ... }</tt> in a <cmd name="StyleSheet"/> belongs to the master page with the same name, the generic <tt>@page { ... }</tt> rule is the base for all master pages. The page margin boxes of that rule (<tt>@top-left</tt>, <tt>@bottom-center</tt> and so on) are placed in the page margin when the page is written to the PDF, so <tt>counter(page)</tt> is the final page number. They never occupy grid cells. The <tt>margin</tt> declaration of the rule is used only when the <tt>margin</tt> attribute is missing; if both are given and differ, the attribute wins and a warning is issued. The CSS page selectors <tt>:first</tt>, <tt>:left</tt> and <tt>:right</tt> have no effect, use the attribute <tt>test</tt> instead.</para>
     </remark>
     <remark xml:lang="de">
       <para>Die Inhalte des Elements <cmd name="AtPageCreation"/> werden ausgeführt, sobald das erste Mal auf die Seite zugegriffen wird, bei <cmd name="AtPageShipout"/> werden die Inhalte ausgeführt, sobald
         beispielsweise <cmd name="ClearPage"/> aufgerufen wird.</para>
       <para>Wenn eine neue Seite erzeugt wird, werden die Seitentypen in umgekehrter Reihenfolge geprüft. Das bedeutet, dass die allgemeineren Seitentypen zuerst definiert werden müssen, später die
         speziellen. Das ist nur dann wichtig, wenn mehrere Bedingungen »wahr« ergeben würden. </para>
+      <para>Eine CSS-Regel <tt>@page name { ... }</tt> in einem <cmd name="StyleSheet"/> gehört zur Seitenvorlage mit demselben Namen, die allgemeine Regel <tt>@page { ... }</tt> ist die Basis für alle Seitenvorlagen. Die Randboxen dieser Regel (<tt>@top-left</tt>, <tt>@bottom-center</tt> usw.) werden beim Schreiben der Seite ins PDF im Seitenrand platziert, <tt>counter(page)</tt> ist dann die endgültige Seitenzahl. Sie belegen keine Rasterzellen. Die Angabe <tt>margin</tt> der Regel wird nur benutzt, wenn das Attribut <tt>margin</tt> fehlt; sind beide angegeben und unterscheiden sich, gewinnt das Attribut und es gibt eine Warnung. Die CSS-Seitenselektoren <tt>:first</tt>, <tt>:left</tt> und <tt>:right</tt> haben keine Wirkung, dafür gibt es das Attribut <tt>test</tt>.</para>
     </remark>
     <example xml:lang="en">
       <listing><![CDATA[<DefineMasterPage name="right page" margin="1cm" test=" sd:odd( sd:current-page() ) "/>]]></listing>
@@ -4647,9 +4649,11 @@
     </attribute>
     <remark xml:lang="en">
       <para>If no filename is given, the speedata Publisher expects the CSS rules as the contents of this element.</para>
+      <para>Besides styling layout elements, the stylesheet can declare fonts (<tt>@font-face</tt>), colors (<tt>@-bag-color</tt>) and page margin boxes: an <tt>@page name { ... }</tt> rule belongs to the <cmd name="DefineMasterPage"/> with the same name, see there.</para>
     </remark>
     <remark xml:lang="de">
       <para>Wird kein Dateiname angegeben, so erwartet der speedata Publisher CSS-Eigenschaften als Inhalt des Elements.</para>
+      <para>Neben der Gestaltung von Layout-Elementen kann das Stylesheet Schriften (<tt>@font-face</tt>), Farben (<tt>@-bag-color</tt>) und Randboxen für Seiten deklarieren: eine Regel <tt>@page name { ... }</tt> gehört zur <cmd name="DefineMasterPage"/> mit demselben Namen, siehe dort.</para>
     </remark>
     <example xml:lang="en">
       <listing><![CDATA[<StyleSheet href="style.css" />]]></listing>

@@ -28,6 +28,8 @@ Load a CSS file or define CSS rules
 ## Remarks
 If no filename is given, the speedata Publisher expects the CSS rules as the contents of this element.
 
+Besides styling layout elements, the stylesheet can declare fonts (`@font-face`), colors (`@-bag-color`) and page margin boxes: an `@page name { ... }` rule belongs to the [DefineMasterPage](../definemasterpage) with the same name, see there.
+
 
 ## Example
 

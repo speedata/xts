@@ -1,0 +1,40 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+
+    <!-- CSS page margin boxes coupled to master pages by name. The master
+         page "default" has no margin attribute, so its margins come from
+         @page default (2cm top, 1cm elsewhere from the generic rule). The
+         header and footer live in the page margin, the grid stays free.
+         Page 2 checks that counter(page) is final at shipout and that the
+         @bottom-right box of the generic @page rule is merged into the
+         named rule. -->
+
+    <StyleSheet>
+        @page {
+            margin: 1cm;
+            @bottom-right { content: "Page " counter(page); font-size: 9pt; }
+        }
+        @page default {
+            margin-top: 2cm;
+            @top-left { content: "QA header"; font-weight: bold; vertical-align: bottom; }
+            @top-right { content: "margin boxes"; font-size: 8pt; vertical-align: bottom; }
+            @bottom-left { content: "xts"; font-size: 9pt; border-top: 0.5pt solid black; }
+        }
+    </StyleSheet>
+
+    <DefineMasterPage name="default" test="true()" />
+
+    <Record match="data">
+        <PlaceObject>
+            <TextBlock>
+                <Paragraph><Value>First page.</Value></Paragraph>
+            </TextBlock>
+        </PlaceObject>
+        <ClearPage />
+        <PlaceObject>
+            <TextBlock>
+                <Paragraph><Value>Second page.</Value></Paragraph>
+            </TextBlock>
+        </PlaceObject>
+    </Record>
+</Layout>

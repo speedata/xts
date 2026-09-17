@@ -75,6 +75,29 @@ A typical setup uses `<AtPageCreation>` for the background and `<AtPageShipout>`
 </DefineMasterPage>
 ```
 
+## Page margin boxes from CSS
+
+For static headers and footers there is a third option that needs no hook at all: the page margin boxes of a CSS `@page` rule in a [StyleSheet](/reference/commands/stylesheet). The rule `@page name { ... }` belongs to the master page with the same `name`; the generic `@page { ... }` rule is the base for every master page.
+
+```xml
+<StyleSheet>
+    @page default {
+        margin: 2cm;
+        @top-left { content: "NORDWERK"; font-weight: bold; vertical-align: bottom; }
+        @bottom-right { content: "Page " counter(page); font-size: 9pt; }
+    }
+</StyleSheet>
+<DefineMasterPage name="default" test="true()" />
+```
+
+The margin boxes differ from the hooks in three ways:
+
+- They are placed in the page margin, outside the grid, so they never occupy grid cells. A header in `<AtPageCreation>` at row 1 takes that row away from the content.
+- They are rendered when the page is written to the PDF, like `<AtPageShipout>`, so `counter(page)` is the final page number.
+- Their content is limited to text, `counter(page)` and an image via `url()`. Tables, several paragraphs or values from the data still need a hook.
+
+The `margin` attribute of `<DefineMasterPage>` stays authoritative for the page geometry, because it defines the grid. Without the attribute the margins come from the `@page` rule. If both are given and differ, the attribute wins and XTS issues a warning. The CSS page selectors `:first`, `:left` and `:right` are not evaluated, the `test` attribute selects the master page.
+
 ## See also
 
 - [AtPageCreation reference](/reference/commands/atpagecreation)

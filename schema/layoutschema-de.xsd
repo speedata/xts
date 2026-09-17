@@ -527,14 +527,14 @@
         <xs:element ref="en:AtPageShipout"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
       </xs:choice>
-      <xs:attribute name="margin" use="required">
+      <xs:attribute name="margin">
         <xs:annotation>
-          <xs:documentation>Setzt den Rand der Seite. Ein bis vier Werte können übergeben werden, wie bei CSS.</xs:documentation>
+          <xs:documentation>Setzt den Rand der Seite. Ein bis vier Werte können übergeben werden, wie bei CSS. Fehlt das Attribut, kommen die Ränder aus der CSS-Regel @page mit demselben Namen (siehe Anmerkungen), ohne eine solche Regel sind es 1cm.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="name" use="required">
         <xs:annotation>
-          <xs:documentation>Name der Seitenvorlage. Der Name ist zu Informationszwecken und zur Auswahl bei ClearPage.</xs:documentation>
+          <xs:documentation>Name der Seitenvorlage. Der Name dient zur Auswahl bei ClearPage und koppelt die Seitenvorlage an die CSS-Regel @page name in einem StyleSheet.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="test" use="required">

@@ -19,14 +19,14 @@ Define a master page. A master page is chosen depending on the criterion given w
 
 
 
-`margin` (text)
-:   Set the margin of the page. One to four values can be provided, similar to CSS.
+`margin` (text, optional)
+:   Set the margin of the page. One to four values can be provided, similar to CSS. If the attribute is omitted, the margins are taken from the CSS `@page` rule of the same name (see remarks), or 1cm without such a rule.
 
 
 
 
 `name` (text)
-:   Name of the master page. It is for informational purpose and as a selection for [ClearPage](../clearpage).
+:   Name of the master page. It is used as a selection for [ClearPage](../clearpage) and couples the master page to the CSS rule `@page name` in a [StyleSheet](../stylesheet).
 
 
 
@@ -41,6 +41,8 @@ Define a master page. A master page is chosen depending on the criterion given w
 The contents of the element at [AtPageCreation](../atpagecreation) is executed, as soon as something will be placed on the page. The commands inside [AtPageShipout](../atpageshipout) are executed when switching to a new page.
 
 When creating a new page, all page types are tried in reversed order. That means that the later defined master pages have a higher priority. This is important if more than one test in a Masterpage definition evaluates to true.
+
+A CSS rule `@page name { ... }` in a [StyleSheet](../stylesheet) belongs to the master page with the same name, the generic `@page { ... }` rule is the base for all master pages. The page margin boxes of that rule (`@top-left`, `@bottom-center` and so on) are placed in the page margin when the page is written to the PDF, so `counter(page)` is the final page number. They never occupy grid cells. The `margin` declaration of the rule is used only when the `margin` attribute is missing; if both are given and differ, the attribute wins and a warning is issued. The CSS page selectors `:first`, `:left` and `:right` have no effect, use the attribute `test` instead.
 
 
 ## Example

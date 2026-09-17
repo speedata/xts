@@ -8,6 +8,7 @@ import (
 	"github.com/boxesandglue/boxesandglue/backend/document"
 	"github.com/boxesandglue/boxesandglue/backend/node"
 	"github.com/boxesandglue/boxesandglue/frontend"
+	"github.com/boxesandglue/htmlbag"
 	"github.com/speedata/goxml"
 )
 
@@ -24,7 +25,75 @@ type pagetype struct {
 	marginRight  bag.ScaledPoint // the default right margin
 	marginTop    bag.ScaledPoint // the default top margin
 	marginBottom bag.ScaledPoint // the default bottom margin
-	layoutElt    *goxml.Element
+	// marginFromXML is true when the margin attribute of DefineMasterPage
+	// is set. The attribute owns the page geometry (it defines the grid);
+	// without it the margins come from the matching CSS @page rule.
+	marginFromXML bool
+	// cssPage is the @page rule matched by name (see resolvePageCSS), nil
+	// when the stylesheets carry no @page rule at all.
+	cssPage *htmlbag.Page
+	// cssMarginWarned prevents repeating the margin mismatch warning on
+	// every page.
+	cssMarginWarned bool
+	layoutElt       *goxml.Element
+}
+
+// cssDefaultPageMargin is the margin used when neither the DefineMasterPage
+// attribute nor the @page rule sets one, matching the CSS default in
+// htmlbag.
+var cssDefaultPageMargin = bag.MustSP("1cm")
+
+// resolvePageCSS couples the master page to the CSS @page rule of the same
+// name (with the generic @page rule as base). It applies the margin rule:
+// the margin attribute of DefineMasterPage is authoritative, the @page
+// margins fill in only when the attribute is absent, and a conflict between
+// the two is reported once.
+//
+// The lookup runs at page creation rather than at DefineMasterPage time,
+// so a StyleSheet that follows the master page definition in the layout is
+// still honoured.
+func (xd *xtsDocument) resolvePageCSS(pt *pagetype) error {
+	pg, ok := xd.layoutcss.NamedPage(pt.name)
+	if !ok {
+		pt.cssPage = nil
+		if !pt.marginFromXML {
+			pt.marginTop, pt.marginBottom, pt.marginLeft, pt.marginRight = cssDefaultPageMargin, cssDefaultPageMargin, cssDefaultPageMargin, cssDefaultPageMargin
+		}
+		return nil
+	}
+	pt.cssPage = pg
+	type side struct {
+		name string
+		css  string
+		xml  *bag.ScaledPoint
+	}
+	sides := []side{
+		{"top", pg.MarginTop, &pt.marginTop},
+		{"bottom", pg.MarginBottom, &pt.marginBottom},
+		{"left", pg.MarginLeft, &pt.marginLeft},
+		{"right", pg.MarginRight, &pt.marginRight},
+	}
+	for _, sd := range sides {
+		if sd.css == "" {
+			if !pt.marginFromXML {
+				*sd.xml = cssDefaultPageMargin
+			}
+			continue
+		}
+		v, err := bag.SP(sd.css)
+		if err != nil {
+			return fmt.Errorf("master page %q: cannot parse @page margin-%s %q: %w", pt.name, sd.name, sd.css, err)
+		}
+		if !pt.marginFromXML {
+			*sd.xml = v
+			continue
+		}
+		if v != *sd.xml && !pt.cssMarginWarned {
+			pt.cssMarginWarned = true
+			slog.Warn("Margin of master page differs from the CSS @page rule, the margin attribute of DefineMasterPage wins", "masterpage", pt.name, "side", sd.name, "attribute", sd.xml.String()+"pt", "css", sd.css)
+		}
+	}
+	return nil
 }
 
 func (xd *xtsDocument) newPagetype(name string, test string) (*pagetype, error) {
@@ -84,6 +153,23 @@ func clearPage(xd *xtsDocument) {
 	if cp.atPageShipout != nil {
 		cp.atPageShipout()
 	}
+	// CSS page margin boxes (@top-left, @bottom-center, ...) from the @page
+	// rule coupled to this master page. They live in the page margin, so
+	// they never touch the grid, and they render at shipout like
+	// AtPageShipout, so counter(page) is final.
+	if pt := cp.pagetype; pt.cssPage != nil {
+		pd := htmlbag.PageDimensions{
+			Width:        cp.pageWidth,
+			Height:       cp.pageHeight,
+			MarginTop:    pt.marginTop,
+			MarginBottom: pt.marginBottom,
+			MarginLeft:   pt.marginLeft,
+			MarginRight:  pt.marginRight,
+		}
+		if err := xd.cssbuilder.OutputMarginBoxes(pd, pt.cssPage); err != nil {
+			slog.Error("Cannot output CSS page margin boxes", "masterpage", pt.name, "page", cp.pagenumber, "error", err)
+		}
+	}
 	xd.currentPage.bagPage.Shipout()
 	xd.currentPage = nil
 }
@@ -95,6 +181,9 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 	g := newGrid(xd)
 	pt, err := xd.detectPagetype()
 	if err != nil {
+		return nil, nil, err
+	}
+	if err = xd.resolvePageCSS(pt); err != nil {
 		return nil, nil, err
 	}
 	d := xd.document.Doc

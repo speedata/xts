@@ -527,14 +527,14 @@
         <xs:element ref="en:AtPageShipout"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
       </xs:choice>
-      <xs:attribute name="margin" use="required">
+      <xs:attribute name="margin">
         <xs:annotation>
-          <xs:documentation>Set the margin of the page. One to four values can be provided, similar to CSS.</xs:documentation>
+          <xs:documentation>Set the margin of the page. One to four values can be provided, similar to CSS. If the attribute is omitted, the margins are taken from the CSS @page rule of the same name (see remarks), or 1cm without such a rule.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="name" use="required">
         <xs:annotation>
-          <xs:documentation>Name of the master page. It is for informational purpose and as a selection for ClearPage.</xs:documentation>
+          <xs:documentation>Name of the master page. It is used as a selection for ClearPage and couples the master page to the CSS rule @page name in a StyleSheet.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="test" use="required">

@@ -734,11 +734,13 @@
             <lsp:symbol kind="object" label="{@name}"></lsp:symbol>
             <interleave>
                 <group>
-                    <attribute name="margin">
-                        <a:documentation>Set the margin of the page. One to four values can be provided, similar to CSS.</a:documentation>
-                    </attribute>
+                    <optional>
+                        <attribute name="margin">
+                            <a:documentation>Set the margin of the page. One to four values can be provided, similar to CSS. If the attribute is omitted, the margins are taken from the CSS @page rule of the same name (see remarks), or 1cm without such a rule.</a:documentation>
+                        </attribute>
+                    </optional>
                     <attribute name="name">
-                        <a:documentation>Name of the master page. It is for informational purpose and as a selection for ClearPage.</a:documentation>
+                        <a:documentation>Name of the master page. It is used as a selection for ClearPage and couples the master page to the CSS rule @page name in a StyleSheet.</a:documentation>
                         <lsp:defines symbol="masterpage"></lsp:defines>
                     </attribute>
                     <attribute name="test">

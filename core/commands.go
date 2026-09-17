@@ -679,7 +679,7 @@ func cmdDefineColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 func cmdDefineMasterPage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
-		Margin string `sdxml:"mustexist"`
+		Margin string
 		Name   string `sdxml:"mustexist"`
 		Test   string `sdxml:"mustexist"`
 	}{}
@@ -691,14 +691,19 @@ func cmdDefineMasterPage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Seque
 	if err != nil {
 		return nil, err
 	}
-	fv, err := getFourValuesSP(attValues.Margin)
-	if err != nil {
-		return nil, err
+	// The margin attribute is optional: without it the margins come from
+	// the CSS @page rule of the same name (see resolvePageCSS).
+	if attValues.Margin != "" {
+		fv, err := getFourValuesSP(attValues.Margin)
+		if err != nil {
+			return nil, err
+		}
+		pt.marginBottom = fv["bottom"]
+		pt.marginLeft = fv["left"]
+		pt.marginRight = fv["right"]
+		pt.marginTop = fv["top"]
+		pt.marginFromXML = true
 	}
-	pt.marginBottom = fv["bottom"]
-	pt.marginLeft = fv["left"]
-	pt.marginRight = fv["right"]
-	pt.marginTop = fv["top"]
 
 	pt.layoutElt = layoutelt
 	return xpath.Sequence{}, nil

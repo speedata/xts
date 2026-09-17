@@ -734,11 +734,13 @@
             <lsp:symbol kind="object" label="{@name}"></lsp:symbol>
             <interleave>
                 <group>
-                    <attribute name="margin">
-                        <a:documentation>Setzt den Rand der Seite. Ein bis vier Werte können übergeben werden, wie bei CSS.</a:documentation>
-                    </attribute>
+                    <optional>
+                        <attribute name="margin">
+                            <a:documentation>Setzt den Rand der Seite. Ein bis vier Werte können übergeben werden, wie bei CSS. Fehlt das Attribut, kommen die Ränder aus der CSS-Regel @page mit demselben Namen (siehe Anmerkungen), ohne eine solche Regel sind es 1cm.</a:documentation>
+                        </attribute>
+                    </optional>
                     <attribute name="name">
-                        <a:documentation>Name der Seitenvorlage. Der Name ist zu Informationszwecken und zur Auswahl bei ClearPage.</a:documentation>
+                        <a:documentation>Name der Seitenvorlage. Der Name dient zur Auswahl bei ClearPage und koppelt die Seitenvorlage an die CSS-Regel @page name in einem StyleSheet.</a:documentation>
                         <lsp:defines symbol="masterpage"></lsp:defines>
                     </attribute>
                     <attribute name="test">
