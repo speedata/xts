@@ -62,3 +62,22 @@ func TestMarkdown(t *testing.T) {
 		}
 	}
 }
+
+func TestReleaseNotes(t *testing.T) {
+	cl := &Changelog{Chapter: []Chapter{{Entries: []Entry{
+		{Version: "1.2.3", En: Text{Summary: "CSS @page rules.", Text: "Long details."}},
+		{Version: "1.2.3", En: Text{Summary: "New <tt>&lt;Foo&gt;</tt> command.", Text: "More details."}},
+		{Version: "1.2.2", En: Text{Summary: "Older.", Text: "Not included."}},
+	}}}}
+	got, err := cl.ReleaseNotes("1.2.3")
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := "- CSS `@page` rules.\n- New `<Foo>` command.\n\nDetails in the [changelog](" + ManualChangelog + ").\n"
+	if got != want {
+		t.Errorf("got\n%s\nwant\n%s", got, want)
+	}
+	if _, err := cl.ReleaseNotes("9.9.9"); err == nil {
+		t.Error("expected an error for a version without entries")
+	}
+}

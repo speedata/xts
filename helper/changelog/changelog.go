@@ -259,13 +259,24 @@ func (r *Release) Markdown(commitLinks bool) string {
 	return b.String()
 }
 
-// ReleaseNotes renders the notes for the GitHub release of a version.
+// ManualChangelog is the changelog page of the manual, linked from the
+// release notes.
+const ManualChangelog = "https://doc.speedata.de/xts/changelog/"
+
+// ReleaseNotes renders the notes for the GitHub release of a version: the
+// summaries as a bullet list and a link to the changelog page of the
+// manual, which carries the details.
 func (cl *Changelog) ReleaseNotes(version string) (string, error) {
 	r := cl.Release(version)
 	if r == nil {
 		return "", fmt.Errorf("no changelog entries for version %s", version)
 	}
-	return r.Markdown(false), nil
+	var b strings.Builder
+	for _, e := range r.Entries {
+		fmt.Fprintf(&b, "- %s\n", markdown(e.En.Summary))
+	}
+	fmt.Fprintf(&b, "\nDetails in the [changelog](%s).\n", ManualChangelog)
+	return b.String(), nil
 }
 
 // WriteManualPage writes the changelog section of the Hugo manual.
