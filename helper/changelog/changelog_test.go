@@ -49,13 +49,13 @@ func TestValidateOrder(t *testing.T) {
 func TestMarkdown(t *testing.T) {
 	r := &Release{Entries: []Entry{{
 		SHA1: "abc1234,def5678",
-		En:   Text{Summary: "New <tt>&lt;Foo&gt;</tt> command (#12).", Text: "Uses <tt>a_b</tt> and\n   <tt>*</tt>, see *docs*."},
+		En:   Text{Summary: "New <tt>&lt;Foo&gt;</tt> command (#12), CSS @page and @-bag-color.", Text: "Uses <tt>a_b</tt> and\n   <tt>*</tt>, see *docs*. Rules <tt>@page</tt> and @top-left, mail a@b.c."},
 	}}}
 	got := r.Markdown(true)
 	for _, want := range []string{
-		"- **New `<Foo>` command ([#12](" + Repo + "/issues/12)).**",
+		"- **New `<Foo>` command ([#12](" + Repo + "/issues/12)), CSS `@page` and `@-bag-color`.**",
 		"[↗](" + Repo + "/commit/abc1234) [↗](" + Repo + "/commit/def5678)<br>",
-		"Uses `a_b` and `*`, see \\*docs\\*.",
+		"Uses `a_b` and `*`, see \\*docs\\*. Rules `@page` and `@top-left`, mail a@b.c.",
 	} {
 		if !strings.Contains(got, want) {
 			t.Errorf("missing %q in\n%s", want, got)

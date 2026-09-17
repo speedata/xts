@@ -211,22 +211,34 @@ var (
 	ttRepl    = strings.NewReplacer(`<tt>`, "`", `</tt>`, "`")
 	mdEscRepl = strings.NewReplacer(`\`, `\\`, `*`, `\*`, `_`, `\_`, `[`, `\[`, `]`, `\]`, `<`, `\<`, `>`, `\>`)
 	spaceRe   = regexp.MustCompile(`\s+`)
+	// mentionRe finds an @-word outside a code span. GitHub turns "@page"
+	// in release notes into a mention of the user "page" and lists that
+	// user as a contributor of the release, so CSS at-rules in a summary
+	// (which has no <tt> markup) must become code spans.
+	mentionRe = regexp.MustCompile("(^|[^\\w`])(@[\\w-]+)")
 )
+
+// escapeOutsideCode escapes Markdown characters and wraps @-words in code
+// spans; used for the parts of a text that are not inside <tt>.
+func escapeOutsideCode(s string) string {
+	return mentionRe.ReplaceAllString(mdEscRepl.Replace(s), "$1`$2`")
+}
 
 // markdown turns the inner XML of a summary or text into Markdown: entity
 // references are decoded, Markdown characters outside <tt> are escaped,
-// <tt> becomes a code span and issue numbers become links.
+// @-words outside <tt> become code spans so GitHub does not read them as
+// user mentions, <tt> becomes a code span and issue numbers become links.
 func markdown(s string) string {
 	s = spaceRe.ReplaceAllString(strings.TrimSpace(s), " ")
 	s = html.UnescapeString(s)
 	var b strings.Builder
 	last := 0
 	for _, loc := range ttBlockRe.FindAllStringIndex(s, -1) {
-		b.WriteString(mdEscRepl.Replace(s[last:loc[0]]))
+		b.WriteString(escapeOutsideCode(s[last:loc[0]]))
 		b.WriteString(s[loc[0]:loc[1]])
 		last = loc[1]
 	}
-	b.WriteString(mdEscRepl.Replace(s[last:]))
+	b.WriteString(escapeOutsideCode(s[last:]))
 	s = ghIssueRe.ReplaceAllString(b.String(), `[#$1](`+Repo+`/issues/$1)`)
 	return ttRepl.Replace(s)
 }
