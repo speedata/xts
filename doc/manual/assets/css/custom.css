@@ -21,32 +21,14 @@ footer {
   background-color: var(--nav-color);
 }
 
-blockquote {
-  color: black;
+/* The theme draws a border on the left of a blockquote (its rule is
+   .content :where(blockquote), so a bare blockquote selector loses).
+   The manual uses quotes sparingly, as an indented italic line. */
+.content blockquote {
   border: none;
-  align-items: left;
-  font-weight: 100;
-  font-size: 1rem;
-  width: auto;
-  line-height: 1.4;
-  position: relative;
-  margin: 0;
-  padding: .5rem;
-}
-
-blockquote:before,
-blockquote:after {
-  position: absolute;
-  color: #f1efe6;
-  font-size: 8rem;
-  width: 1rem;
-  height: 4rem;
-}
-
-blockquote:before {
-  content: '“';
-  left: -2rem;
-  top: -2rem;
+  margin: 1.5rem 0;
+  padding: 0 0 0 1.5rem;
+  font-style: italic;
 }
 
 .nav-container-blur {

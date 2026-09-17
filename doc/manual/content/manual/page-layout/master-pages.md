@@ -53,6 +53,31 @@ Combine master pages with positioning areas for complex layouts:
 </DefineMasterPage>
 ```
 
+## Page setup from CSS
+
+The margins of a master page can also come from a CSS `@page` rule in a [StyleSheet](/reference/commands/stylesheet). The rule `@page name { ... }` belongs to the master page with the same `name`; the generic `@page { ... }` rule is the base for every master page. This is the place for static headers and footers, too: the page margin boxes `@top-left`, `@top-center`, `@top-right`, `@bottom-left`, `@bottom-center` and `@bottom-right` are placed in the page margin, outside the grid.
+
+```xml
+<StyleSheet>
+    @page default {
+        margin: 2cm;
+        @top-left { content: "NORDWERK"; font-weight: bold; vertical-align: bottom; }
+        @bottom-right { content: "Page " counter(page); font-size: 9pt; }
+    }
+</StyleSheet>
+<DefineMasterPage name="default" test="true()" />
+```
+
+![page margins and margin boxes](/manual/img/page-margins.png)
+<figcaption>The CSS margins enclose the grid. The margin boxes sit in the margin, so they never take grid cells away from the content.</figcaption>
+
+The rules for combining both mechanisms:
+
+- The `margin` attribute of `<DefineMasterPage>` stays authoritative for the page geometry, because it defines the grid. Without the attribute the margins come from the `@page` rule, and without either they are 1cm. If both are given and differ, the attribute wins and XTS issues a warning.
+- The margin boxes are rendered when the page is written to the PDF, like [`<AtPageShipout>`](../page-hooks), so `counter(page)` is the final page number.
+- Their content is limited to text, `counter(page)` and an image via `url()`. Tables, several paragraphs or values from the data still need a [page hook](../page-hooks).
+- The CSS page selectors `:first`, `:left` and `:right` are not evaluated. The `test` attribute selects the master page.
+
 ## Page format
 
 Set the page size with `<PageFormat>`:

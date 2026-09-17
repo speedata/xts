@@ -101,7 +101,7 @@ td, th          { display: table-cell }
 caption         { display: table-caption }
 th              { font-weight: bold; text-align: center }
 caption         { text-align: center }
-body            { margin: 0pt; line-height: 1.2; hyphens: auto; font-weight: normal; text-align: start; }
+body            { margin: 0pt; line-height: 1.2; hyphens: auto; font-weight: normal; text-align: start; -bag-leading-model: half; }
 p               { font-size: 1em; margin: 1.5em 0 }
 h1              { font-size: 2em; margin:  .67em 0 }
 h2              { font-size: 1.5em; margin: .75em 0 }

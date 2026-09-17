@@ -1,0 +1,23 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+        xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+  <!-- Source of manual/img/font-size-line-height.png, see ../Readme.md -->
+  <PageFormat width="180mm" height="58mm"/>
+  <StyleSheet>
+    p {
+      font-family: serif;
+      font-size: 24pt;
+      line-height: 36pt;
+      text-align: justify;
+    }
+  </StyleSheet>
+  <Record match="data">
+    <PlaceObject column="8mm" row="3mm">
+      <TextBlock width="132mm">
+        <Paragraph><Value>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</Value></Paragraph>
+      </TextBlock>
+    </PlaceObject>
+    <PlaceObject column="0mm" row="0mm">
+      <Image href="annotations.svg" width="180mm" height="58mm"/>
+    </PlaceObject>
+  </Record>
+</Layout>

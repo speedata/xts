@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="510.24pt" height="164.41pt" viewBox="0 0 510.24 164.41">
+  <!--
+    Overlay for layout.xml. All coordinates are in PostScript points from
+    the top left corner of the page. The baselines were read from the
+    dump (xts \-\-dumpoutput): line 1 at y=48.86, line 2 at 84.86, line 3
+    at 120.86 (36pt apart, the line-height). The em box of the 24pt font
+    is split like the CrimsonPro ascender/descender (918:220), so it
+    reaches 19.36pt above and 4.64pt below the baseline.
+  -->
+  <g stroke="#999" stroke-width="0.5">
+    <!-- baselines 1 and 2 -->
+    <line x1="14" y1="48.86" x2="440" y2="48.86"/>
+    <line x1="14" y1="84.86" x2="440" y2="84.86"/>
+    <!-- em box of line 3 -->
+    <line x1="410" y1="101.5" x2="440" y2="101.5"/>
+    <line x1="410" y1="125.5" x2="440" y2="125.5"/>
+  </g>
+  <g stroke="#000" stroke-width="0.8" fill="#000">
+    <line x1="425" y1="52.5" x2="425" y2="81.2"/>
+    <polygon points="425,48.86 422.5,53.5 427.5,53.5"/>
+    <polygon points="425,84.86 422.5,80.2 427.5,80.2"/>
+    <line x1="425" y1="105.1" x2="425" y2="121.9"/>
+    <polygon points="425,101.5 422.5,106.1 427.5,106.1"/>
+    <polygon points="425,125.5 422.5,120.9 427.5,120.9"/>
+  </g>
+  <text x="432" y="70.5" font-family="sans" font-size="11">line-height</text>
+  <text x="432" y="117" font-family="sans" font-size="11">font-size</text>
+</svg>

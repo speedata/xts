@@ -1,0 +1,30 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+        xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+  <!-- Source of manual/img/page-margins.png, see ../Readme.md -->
+  <PageFormat width="120mm" height="85mm"/>
+  <Trace grid="yes"/>
+  <SetGrid nx="12" ny="5"/>
+  <StyleSheet>
+    @page {
+      margin: 16mm 12mm 14mm 12mm;
+      @top-left      { content: "@top-left";      font-family: monospace; font-size: 7pt; vertical-align: bottom; }
+      @top-center    { content: "@top-center";    font-family: monospace; font-size: 7pt; vertical-align: bottom; }
+      @top-right     { content: "@top-right";     font-family: monospace; font-size: 7pt; vertical-align: bottom; }
+      @bottom-left   { content: "@bottom-left";   font-family: monospace; font-size: 7pt; vertical-align: top; }
+      @bottom-center { content: "Page " counter(page); font-family: sans; font-size: 7pt; vertical-align: top; }
+      @bottom-right  { content: "@bottom-right";  font-family: monospace; font-size: 7pt; vertical-align: top; }
+    }
+    p { font-family: sans; font-size: 9pt; }
+  </StyleSheet>
+  <DefineMasterPage name="default" test="true()"/>
+  <Record match="data">
+    <PlaceObject column="0mm" row="0mm">
+      <Image href="annotations.svg" width="120mm" height="85mm"/>
+    </PlaceObject>
+    <PlaceObject>
+      <TextBlock width="5">
+        <Paragraph><Value>Content goes into the grid between the margins.</Value></Paragraph>
+      </TextBlock>
+    </PlaceObject>
+  </Record>
+</Layout>

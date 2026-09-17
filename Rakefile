@@ -46,6 +46,22 @@ task :doccheck => [:doc] do
 	sh "htmltest -c doc/manual/.htmltest.yml #{webroot}"
 end
 
+desc "Render the manual images from doc/manual/images/*/layout.xml: rake docimages[name]"
+task :docimages, [:name] => [:build] do |t, args|
+	# Every subdirectory of doc/manual/images holds the layout (and the
+	# optional data.xml and overlay files) of one image in the manual. The
+	# first page of its PDF becomes content/manual/img/<name>.png, so the
+	# page format of the layout is the image size. See doc/manual/images/Readme.md.
+	srcdir = INSTALDIR.join("doc", "manual", "images")
+	outdir = INSTALDIR.join("doc", "manual", "content", "manual", "img")
+	dirs = args[:name] ? [srcdir.join(args[:name])] : srcdir.children.sort
+	dirs.select { |d| d.join("layout.xml").exist? }.each do |dir|
+		data = dir.join("data.xml").exist? ? "" : "--dummy"
+		sh "cd #{dir} && #{XTSBIN} --suppressinfo --quiet #{data}"
+		sh "pdftoppm -r 200 -png -singlefile #{dir.join('xts.pdf')} #{outdir.join(dir.basename)}"
+	end
+end
+
 desc "Check that doc/changelog.xml is ready for a release: rake changelog[v0.1.0]"
 task :changelog, [:version] => [:xtshelper] do |t, args|
 	version = args[:version] || suggest_next_version

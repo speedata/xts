@@ -105,7 +105,7 @@ There are two ways to iterate over child elements:
 
 Inside a `<Record>`, you can use XPath expressions to access the current element's attributes and children:
 
-- `@nr` -- the value of the `nr` attribute
+- `@name` -- the value of the `name` attribute
 - `description` -- the child element called `description`
 - `image/@mainimage` -- the `mainimage` attribute of the `image` child
 - `concat(@price, ' EUR')` -- string concatenation

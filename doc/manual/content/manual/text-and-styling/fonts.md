@@ -39,9 +39,6 @@ A font family groups the regular, bold, italic, and bold-italic variants under o
 
 You only need to define the variants you actually use. If you never use bold italic, skip it.
 
-![font size and leading](/manual/img/14-fontsize-leading.png)
-<figcaption>Font size and line height (leading).</figcaption>
-
 ## Selecting fonts
 
 Once loaded, use the font family name in your CSS rules:
@@ -61,6 +58,26 @@ Once loaded, use the font family name in your CSS rules:
     <Value> more text</Value>
 </Paragraph>
 ```
+
+## Font size and line height
+
+The size of the text and the distance between lines are CSS properties, not part of the font definition:
+
+```xml
+<StyleSheet>
+  p {
+    font-size: 11pt;
+    line-height: 14pt;
+  }
+</StyleSheet>
+```
+
+`font-size` is the height of the em box of the font. `line-height` is the distance from one baseline to the next. A unitless value such as `line-height: 1.3` is a factor of the font size and follows the font size when it changes, so it is the better choice for inherited settings. The default is a font size of 10pt with a line height of 1.2, which gives 12pt from baseline to baseline.
+
+![font size and line height](/manual/img/font-size-line-height.png)
+<figcaption>Font size and line height.</figcaption>
+
+XTS follows the CSS model of line spacing: the space between the line height and the height of the glyphs is split into two halves, one above and one below each line. This is what browsers do and it matters when a line mixes several font sizes or when the first line of a block is placed.
 
 ## Default fonts
 

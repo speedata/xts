@@ -99,6 +99,10 @@ Each paragraph can have its own class or inline style:
 For inline styling within a paragraph, use `<Span>`:
 
 ```xml
+<StyleSheet>
+    .highlight { color: firebrick; font-weight: bold; }
+</StyleSheet>
+
 <Paragraph>
     <Value>Regular text </Value>
     <Span class="highlight">
@@ -108,7 +112,7 @@ For inline styling within a paragraph, use `<Span>`:
 </Paragraph>
 ```
 
-Spans support `class`, `style`, and `id` attributes, just like in HTML.
+Spans support `class`, `style`, and `id` attributes, just like in HTML. Properties that change the font or the text color work on a span; a `background-color` is only painted on block elements such as paragraphs and table cells.
 
 ## Line breaks
 

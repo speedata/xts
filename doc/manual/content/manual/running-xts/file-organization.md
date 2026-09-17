@@ -52,7 +52,16 @@ Inside `metapro.css`:
 }
 ```
 
-The `../fonts/` path is relative to the `css/` directory.
+The `../fonts/` path is relative to the CSS file, not to the working directory: XTS resolves it against `css/`, the directory of `metapro.css`.
+
+This fallback is the last step. Files referenced from CSS go through the same lookup as everything else first, so a font or background image that lives in an `--extradir` directory is found by its plain name, wherever the stylesheet is:
+
+```css
+@font-face {
+    font-family: "MetaPro";
+    src: url("ff-metapro-normal.otf");   /* found via --extradir */
+}
+```
 
 ## Adding search directories
 

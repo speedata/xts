@@ -57,16 +57,39 @@ You can also choose which PDF box determines the visible part of the page (`medi
 
 ## Image dimensions in XPath
 
-Query image dimensions for dynamic layouts:
+Sometimes the layout has to react to the image instead of the other way round: a landscape photo gets the full width, a portrait photo sits next to its caption, or a box is drawn exactly as tall as the picture. Three XPath functions read the dimensions of an image file before it is placed:
 
 ```xml
-<!-- Get the aspect ratio -->
+<!-- Width divided by height, 1.5 for a 3:2 photo -->
 <Value select="sd:aspect-ratio('photo.jpg')"/>
 
-<!-- Get width/height in a specific unit -->
-<Value select="sd:image-width('photo.jpg', 1, 'cropbox', 'cm')"/>
-<Value select="sd:image-height('photo.jpg', 1, 'cropbox', 'cm')"/>
+<!-- Width and height in a unit of your choice -->
+<Value select="sd:image-width('photo.jpg', 'cm')"/>
+<Value select="sd:image-height('photo.jpg', 'cm')"/>
+
+<!-- Without a unit: the number of grid cells the image would occupy -->
+<Value select="sd:image-width('photo.jpg')"/>
+
+<!-- PDF: page 2, measured by its crop box -->
+<Value select="sd:image-height('document.pdf', 2, 'cropbox', 'mm')"/>
 ```
+
+The first argument is the file name. The remaining arguments are optional and can be given in any order: a page number and a box name for PDF files, and a unit such as `'mm'`, `'cm'`, `'pt'` or `'in'`. Without a unit the result is in grid cells, which is what `width` and `height` of `<Image>` expect, so the value can go straight back into the layout:
+
+```xml
+<Switch>
+  <Case test="sd:aspect-ratio(@src) &gt; 1">
+    <!-- landscape: full width of the frame -->
+    <PlaceObject><Image href="{@src}" width="{sd:number-of-columns()}"/></PlaceObject>
+  </Case>
+  <Otherwise>
+    <!-- portrait: half the width, caption goes to the right -->
+    <PlaceObject><Image href="{@src}" width="{sd:number-of-columns() idiv 2}"/></PlaceObject>
+  </Otherwise>
+</Switch>
+```
+
+See the [XPath functions](/reference/xpath-functions) reference for the exact signatures.
 
 ## File locations
 

@@ -26,6 +26,8 @@ page.
 </Columns>
 ```
 
+Note what the value is: `<Columns>` does not produce a `Columns` element, it returns its `<Column>` children as a sequence of two elements. That is why the variable below is typed `element(Column)*` and why `count($head)` is 2.
+
 **Actions** have an effect on the document and produce no reusable value. They
 *do* something: place an object, break to a new page, define a colour, attach a
 file. You cannot store an action in a variable, because there is nothing to

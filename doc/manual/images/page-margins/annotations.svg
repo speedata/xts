@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="340.16pt" height="240.94pt" viewBox="0 0 340.16 240.94">
+  <!--
+    Underlay for layout.xml, coordinates in PostScript points from the top
+    left of the page (120mm x 85mm = 340.16 x 240.94pt). The page margins
+    are 16mm top (45.35pt), 12mm left and right (34.02pt), 14mm bottom
+    (39.69pt); the content area is the rectangle in between.
+  -->
+  <!-- margin area, page minus content rectangle -->
+  <path d="M0,0 H340.16 V240.94 H0 Z M34.02,45.35 H306.14 V201.25 H34.02 Z" fill="#f2f2f2" fill-rule="evenodd"/>
+  <!-- margin-top, arrow at the left side of the page -->
+  <g stroke="#000" stroke-width="0.6" fill="#000">
+    <line x1="14" y1="3.5" x2="14" y2="41.85"/>
+    <polygon points="14,0 12,4.5 16,4.5"/>
+    <polygon points="14,45.35 12,40.85 16,40.85"/>
+    <!-- margin-left, arrow below the content top -->
+    <line x1="3.5" y1="120" x2="30.5" y2="120"/>
+    <polygon points="0,120 4.5,118 4.5,122"/>
+    <polygon points="34.02,120 29.5,118 29.5,122"/>
+  </g>
+  <text x="17" y="26" font-family="sans" font-size="6.5">margin-top</text>
+  <text x="2" y="130" font-family="sans" font-size="6.5">margin-left</text>
+</svg>

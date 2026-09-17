@@ -22,7 +22,7 @@ Define CSS rules directly in your layout file:
         line-height: 1.4;
     }
     .highlight {
-        background-color: yellow;
+        color: firebrick;
     }
 </StyleSheet>
 ```
@@ -81,13 +81,7 @@ For one-off styling:
 
 ## Supported CSS properties
 
-Here's a quick overview of what works. For the full list, see [CSS Properties Reference](/reference/css-properties).
-
-**Text:** `font-family`, `font-size`, `font-weight`, `font-style`, `color`, `text-align`, `text-indent`, `line-height`, `font-feature-settings`
-
-**Box model:** `margin`, `padding`, `border`, `border-radius`, `background-color`
-
-**Borders per side:** `border-top`, `border-bottom`, `border-left`, `border-right`
+The [CSS Properties Reference](/reference/css-properties) lists every property, value and selector that XTS understands, and the at-rules for fonts, colors and page margin boxes.
 
 ## HTML content
 

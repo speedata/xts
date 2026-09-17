@@ -129,9 +129,13 @@ needs a font with an OpenType `MATH` table, declared in CSS:
 
 ## A complete minimal example
 
+The conformance level is not part of the layout. It is set once for the run, here in the configuration file next to the layout (the command line option `--pdfua 2` does the same):
+
 ```toml title="xts.cfg"
 pdfua = "2"
 ```
+
+The layout supplies the title, the language and semantic content:
 
 ```xml title="layout.xml"
 <Layout xmlns="urn:speedata.de/2021/xts/en">

@@ -40,6 +40,23 @@ Then use them by name:
 <Box width="4" height="2" background-color="brandblue"/>
 ```
 
+## Defining colors in CSS
+
+The same named colors can be declared in a stylesheet with the `@-bag-color` rule, which keeps color definitions next to the rules that use them. The descriptors mirror the attributes of `<DefineColor>`:
+
+```xml
+<StyleSheet>
+    @-bag-color gold  { value: #FFC72C; }
+    @-bag-color brand { model: cmyk; c: 0; m: 80; y: 90; k: 10; }
+    @-bag-color spot  { model: spotcolor; colorname: "PANTONE 300 C"; c: 100; m: 44; y: 0; k: 0; }
+
+    h1 { color: brand; }
+    .badge { background-color: gold; }
+</StyleSheet>
+```
+
+Without a `model` the `value` is any color CSS accepts, including a name defined earlier. The models `cmyk`, `rgb` and `gray` take their components from 0 to 100 (percentages work too), `RGB` and `GRAY` from 0 to 255. A spot color takes the ink name in `colorname` and optional CMYK components for the fallback; without an ink name the color name is used. A color defined this way is available everywhere a color from `<DefineColor>` is, in CSS and in attributes such as `background-color`.
+
 ## Pre-defined colors
 
 XTS comes with all standard CSS named colors plus:
