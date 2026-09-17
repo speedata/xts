@@ -24,6 +24,9 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.0">
+    <entry version="0.0.30" date="2026-09-17">
+      <en summary="xts compare can look for a reference PDF with another name.">The new option <tt>--reference NAME</tt> makes <tt>xts compare</tt> look for <tt>NAME.pdf</tt> in every test directory instead of <tt>reference.pdf</tt>. This allows a collection of examples whose expected output is stored as <tt>result.pdf</tt> to be checked with the same command.</en>
+    </entry>
     <entry version="0.0.30" date="2026-09-17" sha1="cec2eff">
       <en summary="CSS @page margin boxes render headers and footers on master pages.">A <tt>@page name { }</tt> rule in a <tt>&lt;StyleSheet&gt;</tt> now belongs to the <tt>&lt;DefineMasterPage&gt;</tt> with the same name, the generic <tt>@page</tt> rule is the base for every master page. The margin boxes (<tt>@top-left</tt>, <tt>@bottom-center</tt>, ...) are rendered into the page margin when the page is shipped out, after <tt>&lt;AtPageShipout&gt;</tt>, so <tt>counter(page)</tt> is final and no grid cell is consumed. Static headers and footers no longer need a hook. The <tt>margin</tt> attribute of <tt>&lt;DefineMasterPage&gt;</tt> is now optional: when present it defines the grid and wins over the <tt>@page</tt> margins with a warning, without it the margins come from the <tt>@page</tt> rule, and without either the margin is 1cm. The selectors <tt>:first</tt>, <tt>:left</tt> and <tt>:right</tt> are not evaluated, the <tt>test</tt> attribute selects the master page.</en>
     </entry>

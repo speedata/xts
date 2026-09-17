@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.0.30 (2026-09-17)
 
+- **xts compare can look for a reference PDF with another name.**<br>
+  The new option `--reference NAME` makes `xts compare` look for `NAME.pdf` in every test directory instead of `reference.pdf`. This allows a collection of examples whose expected output is stored as `result.pdf` to be checked with the same command.
 - **CSS @page margin boxes render headers and footers on master pages.** [↗](https://github.com/speedata/xts/commit/cec2eff)<br>
   A `@page name { }` rule in a `<StyleSheet>` now belongs to the `<DefineMasterPage>` with the same name, the generic `@page` rule is the base for every master page. The margin boxes (`@top-left`, `@bottom-center`, ...) are rendered into the page margin when the page is shipped out, after `<AtPageShipout>`, so `counter(page)` is final and no grid cell is consumed. Static headers and footers no longer need a hook. The `margin` attribute of `<DefineMasterPage>` is now optional: when present it defines the grid and wins over the `@page` margins with a warning, without it the margins come from the `@page` rule, and without either the margin is 1cm. The selectors `:first`, `:left` and `:right` are not evaluated, the `test` attribute selects the master page.
 - **StyleSheet accepts @-bag-color, spot colors get their ink name.** [↗](https://github.com/speedata/xts/commit/0ad0bd5)<br>

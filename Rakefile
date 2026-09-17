@@ -34,6 +34,14 @@ task :doc => [:xtshelper] do
 	sh "bin/xtshelper doc"
 end
 
+desc "Build the manual with Hugo and check its internal links with htmltest"
+task :doccheck => [:doc] do
+	outdir = INSTALDIR.join("build", "manual").to_s
+	FileUtils.rm_rf(outdir)
+	sh "cd doc/manual && hugo --quiet -d #{outdir}"
+	sh "htmltest -c doc/manual/.htmltest.yml #{outdir}"
+end
+
 desc "Check that doc/changelog.xml is ready for a release: rake changelog[v0.1.0]"
 task :changelog, [:version] => [:xtshelper] do |t, args|
 	version = args[:version] || suggest_next_version

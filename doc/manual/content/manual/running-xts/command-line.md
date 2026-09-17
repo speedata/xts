@@ -42,6 +42,7 @@ xts <command> <parameters>
 | `--pdfx=VAL` | Claim PDF/X print conformance: `none`, `X-3`, `X-4` |
 | `--runs=N` | Run XTS N times (for cross-references) |
 | `--quiet` | No console output |
+| `--reference=NAME` | Base name of the reference PDF for `compare` (default: `reference`) |
 | `--suppressinfo` | Create reproducible PDF (no timestamps/random IDs) |
 | `--systemfonts` | Include system-installed fonts |
 | `--trace=NAMES` | Enable traces: `grid`, `gridallocation` |

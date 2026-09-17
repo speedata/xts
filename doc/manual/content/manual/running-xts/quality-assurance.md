@@ -82,6 +82,12 @@ Finished in 4s
 
 XTS recursively finds all directories containing a `reference.pdf` and runs each test. A directory with a `layout.xml` but no `reference.pdf` is reported with a warning and skipped.
 
+The reference does not have to be called `reference.pdf`. With `--reference NAME` XTS looks for `NAME.pdf` instead, which is useful when the expected output is kept under another name, for example in a collection of examples:
+
+```
+$ xts compare --reference result examples/
+```
+
 ## Faster comparisons
 
 Use `--suppressinfo` to create reproducible PDFs without timestamps:

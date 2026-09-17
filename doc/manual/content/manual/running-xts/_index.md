@@ -13,3 +13,4 @@ Everything about the operational side: command line usage, configuration files, 
 - [File Organization](file-organization) -- How XTS finds files
 - [Schema Validation](schema-validation) -- Editor integration for auto-complete
 - [Quality Assurance](quality-assurance) -- PDF comparison testing
+- [Versions](versions) -- Version numbers, compatibility, deprecation

@@ -1,0 +1,9 @@
+# Link check of the built manual, run by rake doccheck.
+CheckExternal: false
+IgnoreDirectoryMissingTrailingSlash: true
+IgnoreAltMissing: true
+IgnoreInternalEmptyHash: true
+IgnoreDirs:
+  - "fonts"
+LogLevel: 1
+OutputDir: build/htmltest

@@ -172,6 +172,8 @@ func dothings() error {
 	configuration.libdir = filepath.Join(configuration.basedir, "lib")
 	var dumpOutputFileName string
 	cmdline := make(map[string]string)
+	// Base name of the reference PDF that compare looks for in each directory.
+	referenceName := "reference"
 	extraDir := make([]string, 0)
 
 	op := optionparser.NewOptionParser()
@@ -189,6 +191,7 @@ func dothings() error {
 	op.On("--pdfa VAL", "Claim PDF/A archival conformance: 'none' or '3b'", cmdline)
 	op.On("--pdfx VAL", "Claim PDF/X print conformance: 'none', 'X-3', or 'X-4'", cmdline)
 	op.On("--quiet", "Run XTS in quiet mode (no output on STDOUT)", cmdline)
+	op.On("--reference NAME", "Base name of the reference PDF for compare. Defaults to 'reference'", cmdline)
 	op.On("--runs N", "Run XTS N times", cmdline)
 	op.On("--suppressinfo", "Create a reproducible document", cmdline)
 	op.On("--systemfonts", "Use system fonts", cmdline)
@@ -255,6 +258,8 @@ func dothings() error {
 			configuration.Pdfx = v
 		case "quiet":
 			configuration.Quiet = (v == "true")
+		case "reference":
+			referenceName = v
 		case "suppressinfo":
 			configuration.SuppressInfo = (v == "true")
 		case "systemfonts":
@@ -365,7 +370,7 @@ func dothings() error {
 			return err
 		}
 		// true = write compare-report.html into the current directory
-		failed, err := doCompare(absDir, true, "reference")
+		failed, err := doCompare(absDir, true, referenceName)
 		dur := time.Since(starttime)
 		fmt.Printf("Finished in %s\n", formatDuration(dur))
 		if err != nil {
