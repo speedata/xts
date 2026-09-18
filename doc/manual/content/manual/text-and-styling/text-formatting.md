@@ -112,7 +112,7 @@ For inline styling within a paragraph, use `<Span>`:
 </Paragraph>
 ```
 
-Spans support `class`, `style`, and `id` attributes, just like in HTML. Properties that change the font or the text color work on a span; a `background-color` is only painted on block elements such as paragraphs and table cells.
+Spans support `class`, `style`, and `id` attributes, just like in HTML. Properties that change the font or the text color work on a span, and so does `background-color`: the box behind the text is as high as the font and follows the text across line breaks.
 
 ## Line breaks
 

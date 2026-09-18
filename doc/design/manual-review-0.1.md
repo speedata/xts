@@ -21,7 +21,7 @@ Tracked in issue #33.
 | [x] | `manual/core-concepts/positioning-areas.md` (Positioning Areas) | https://doc.speedata.de/xts/manual/core-concepts/positioning-areas/ | |
 | [x] | `manual/text-and-styling/_index.md` (Text & Styling) | https://doc.speedata.de/xts/manual/text-and-styling/ | |
 | [x] | `manual/text-and-styling/fonts.md` (Fonts) | https://doc.speedata.de/xts/manual/text-and-styling/fonts/ | Leading rausgeworfen (erledigt) |
-| [x] | `manual/text-and-styling/text-formatting.md` (Text Formatting) | https://doc.speedata.de/xts/manual/text-and-styling/text-formatting/ | Das hier scheint nicht zu funktionieren: ```<Span class="highlight"> <Value>highlighted</Value>    </Span> ``` mit background-color: yellow; -> wenn Zeit ist mal prüfen |
+| [x] | `manual/text-and-styling/text-formatting.md` (Text Formatting) | https://doc.speedata.de/xts/manual/text-and-styling/text-formatting/ | Das hier schien nicht zu funktionieren: `<Span class="highlight">` mit background-color: yellow -> gefixt 2026-09-18 (Inline-Hintergrund in boxesandglue), Handbuchsatz angepasst |
 | [x] | `manual/text-and-styling/css-html.md` (CSS and HTML) | https://doc.speedata.de/xts/manual/text-and-styling/css-html/ | Supported CSS properties ist sicher nicht mehr aktuell. Ist aber eine Doppelung mit dem Reference Kapitel, oder? |
 | [x] | `manual/text-and-styling/lists.md` (Lists) | https://doc.speedata.de/xts/manual/text-and-styling/lists/ | |
 | [x] | `manual/tables/_index.md` (Tables) | https://doc.speedata.de/xts/manual/tables/ | |
