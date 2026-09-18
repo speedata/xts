@@ -63,8 +63,8 @@ CSS properties supported by XTS for styling layout elements and HTML content. Le
 | `border-*-width`, `border-*-style`, `border-*-color` | Longhands per side | `border-left-width: 3pt;` |
 | `border-radius` | Length, one to four values | `border-radius: 3pt;` |
 | `border-top-left-radius` and the other three corners | Length | `border-top-left-radius: 3pt;` |
-| `border-collapse` | `collapse` (the default), `separate`; on tables | `border-collapse: separate;` |
-| `border-spacing` | One or two lengths, on tables with `border-collapse: separate` | `border-spacing: 4pt 2pt;` |
+| `border-collapse` | `separate` (the default, as in CSS), `collapse`; on tables | `border-collapse: collapse;` |
+| `border-spacing` | One or two lengths, on tables in the separated model; the default is 2pt | `border-spacing: 4pt 2pt;` |
 
 Border styles: `none`, `solid`, `dashed`, `dotted`, `double`.
 
