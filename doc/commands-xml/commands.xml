@@ -2659,10 +2659,10 @@
     </childelements>
     <attribute en="version" type="number" optional="yes">
       <description xml:lang="en">
-        <para>Minimum publisher version required. If major or minor version differ, give a warning. Format: 1.6.12 (revision number can be left out).</para>
+        <para>The version of XTS the layout was written for, such as <tt>0.1</tt> or <tt>0.1.2</tt>. The parts are compared from the left with the version of the running XTS, so <tt>0.1</tt> is satisfied by 0.1.0, 0.1.5 and 0.2.0. When the layout asks for a newer version, XTS stops with an error instead of producing a document that silently lacks the features the layout relies on. Development builds of XTS accept every version. See the chapter <quote>Versions and Compatibility</quote> in the manual.</para>
       </description>
       <description xml:lang="de">
-        <para>Gibt die minimale Version des Publishers an. Format: 1.6.13. Die letzten Ziffern können weggelassen werden. Falls die erste oder die zweite Ziffer der Versionsangabe unterschiedlich ist, wird eine Warnung ausgegeben.</para>
+        <para>Die Version von XTS, für die das Layout geschrieben wurde, zum Beispiel <tt>0.1</tt> oder <tt>0.1.2</tt>. Die Teile werden von links mit der Version des laufenden XTS verglichen, <tt>0.1</tt> ist also mit 0.1.0, 0.1.5 und 0.2.0 erfüllt. Verlangt das Layout eine neuere Version, bricht XTS mit einer Fehlermeldung ab, statt ein Dokument zu erzeugen, dem stillschweigend Funktionen fehlen. Entwicklungsversionen von XTS akzeptieren jede Angabe. Siehe das Kapitel <quote>Versions and Compatibility</quote> im Handbuch.</para>
       </description>
     </attribute>
     <example xml:lang="en">

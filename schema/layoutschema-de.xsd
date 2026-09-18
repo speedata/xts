@@ -925,7 +925,7 @@
       </xs:choice>
       <xs:attribute name="version">
         <xs:annotation>
-          <xs:documentation>Gibt die minimale Version des Publishers an. Format: 1.6.13. Die letzten Ziffern können weggelassen werden. Falls die erste oder die zweite Ziffer der Versionsangabe unterschiedlich ist, wird eine Warnung ausgegeben.</xs:documentation>
+          <xs:documentation>Die Version von XTS, für die das Layout geschrieben wurde, zum Beispiel 0.1 oder 0.1.2. Die Teile werden von links mit der Version des laufenden XTS verglichen, 0.1 ist also mit 0.1.0, 0.1.5 und 0.2.0 erfüllt. Verlangt das Layout eine neuere Version, bricht XTS mit einer Fehlermeldung ab, statt ein Dokument zu erzeugen, dem stillschweigend Funktionen fehlen. Entwicklungsversionen von XTS akzeptieren jede Angabe. Siehe das Kapitel Versions and Compatibility im Handbuch.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
     </xs:complexType>

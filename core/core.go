@@ -99,64 +99,49 @@ func newXTSDocument() *xtsDocument {
 	return xd
 }
 
-// Check if requestedVersion can be used in productVersion.
+// checkVersion reports an error when the layout asks for a version of XTS
+// (the version attribute of <Layout>) that is newer than productVersion.
+// The parts are compared from the left, so "0.1" is satisfied by 0.1.0 and
+// 0.1.5 and by every 0.2.x, and an older request passes: the attribute
+// records the minimum, not an exact match. A productVersion that is not a
+// released version number (a development build such as "dev", a commit id
+// or "0.1.0-3-gabcdef1") accepts every request.
 func checkVersion(requestedVersion, productVersion string) error {
 	if requestedVersion == "" {
 		// no version information in the layout file, ok!
 		return nil
 	}
-
-	xtsVersionSplit := strings.Split(productVersion, ".")
-	if len(xtsVersionSplit) != 3 {
-		return fmt.Errorf("XTS version %q looks incorrect", productVersion)
-	}
-	if strings.Contains(xtsVersionSplit[2], "-") {
-		// this is probably a SHA1 based development version and should always work.
+	product, err := parseVersionParts(productVersion)
+	if err != nil || len(product) != 3 {
+		// development build
 		return nil
 	}
-	var xtsVersionArray [3]int
-	var err error
-	for i, v := range xtsVersionSplit {
-		if xtsVersionArray[i], err = strconv.Atoi(v); err != nil {
-			return err
-		}
+	requested, err := parseVersionParts(requestedVersion)
+	if err != nil {
+		return fmt.Errorf("the version attribute of Layout must look like 0.1 or 0.1.2, got %q", requestedVersion)
 	}
-
-	layoutVersionSplit := strings.Split(requestedVersion, ".")
-	if len(layoutVersionSplit) > 0 {
-		if i, err := strconv.Atoi(layoutVersionSplit[0]); err == nil {
-			if i > xtsVersionArray[0] {
-				goto versionMismatch
-			} else if i < xtsVersionArray[0] {
-				return nil
-			}
-		} else {
-			return err
-		}
-	}
-	if len(requestedVersion) > 1 {
-		if i, err := strconv.Atoi(layoutVersionSplit[1]); err == nil {
-			if i > xtsVersionArray[1] {
-				goto versionMismatch
-			} else if i < xtsVersionArray[1] {
-				return nil
-			}
-		} else {
-			return err
-		}
-	}
-	if len(requestedVersion) > 2 {
-		if i, err := strconv.Atoi(layoutVersionSplit[2]); err == nil {
-			if i > xtsVersionArray[2] {
-				goto versionMismatch
-			}
-		} else {
-			return err
+	for i := 0; i < len(requested) && i < len(product); i++ {
+		switch {
+		case requested[i] > product[i]:
+			return fmt.Errorf("the layout requires XTS %s, this is XTS %s", requestedVersion, productVersion)
+		case requested[i] < product[i]:
+			return nil
 		}
 	}
 	return nil
-versionMismatch:
-	return fmt.Errorf("requested layout version %q and xts version %q don't match", requestedVersion, productVersion)
+}
+
+// parseVersionParts splits a dotted version number into its numeric parts.
+func parseVersionParts(s string) ([]int, error) {
+	var parts []int
+	for _, p := range strings.Split(s, ".") {
+		n, err := strconv.Atoi(p)
+		if err != nil {
+			return nil, err
+		}
+		parts = append(parts, n)
+	}
+	return parts, nil
 }
 
 var inSetupPage bool

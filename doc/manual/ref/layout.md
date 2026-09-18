@@ -20,7 +20,7 @@ This command is the root element in the Layout instructions.
 
 
 `version` (number, optional)
-:   Minimum publisher version required. If major or minor version differ, give a warning. Format: 1.6.12 (revision number can be left out).
+:   The version of XTS the layout was written for, such as `0.1` or `0.1.2`. The parts are compared from the left with the version of the running XTS, so `0.1` is satisfied by 0.1.0, 0.1.5 and 0.2.0. When the layout asks for a newer version, XTS stops with an error instead of producing a document that silently lacks the features the layout relies on. Development builds of XTS accept every version. See the chapter Versions and Compatibility in the manual.
 
 
 

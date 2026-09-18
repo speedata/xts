@@ -9,6 +9,11 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
+## 0.1.0 (2026-09-18)
+
+- **Releases follow the 0.MINOR.PATCH scheme and the version attribute of Layout checks against it.**<br>
+  Starting with this release the version number of XTS says what an update means: a patch release (0.1.0 to 0.1.1) fixes bugs only, a minor release (0.1 to 0.2) adds commands, attributes and functions, may change line and page breaks of an existing layout and may remove features that were deprecated in the previous minor release. The manual chapter "Versions and Compatibility" describes the rules. The `version` attribute of `<Layout>` takes the version the layout was written for, such as `version="0.1"`: the parts are compared from the left, a layout that asks for a newer version than the running XTS stops with an error, an older request passes, and development builds accept every version. A two part version such as `0.1` crashed XTS before, and a development build rejected every version. The reference of the attribute still described the speedata Publisher.
+
 ## 0.0.30 (2026-09-17)
 
 - **allocate="no" no longer moves the cursor for full width objects.**<br>

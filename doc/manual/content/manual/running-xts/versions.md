@@ -44,12 +44,12 @@ version the layout was written for:
         version="0.1">
 ```
 
-XTS compares the major and minor part with its own version. A layout
-that asks for a newer version than the running XTS stops with an error
-instead of producing a document that silently lacks the features the
-layout relies on. An older version passes, so the attribute records the
-minimum, not an exact match. Development builds of XTS accept every
-version.
+XTS compares the parts from the left with its own version, so `0.1` is
+satisfied by 0.1.0, 0.1.5 and 0.2.0. A layout that asks for a newer
+version than the running XTS stops with an error instead of producing a
+document that silently lacks the features the layout relies on. An older
+version passes, so the attribute records the minimum, not an exact match.
+Development builds of XTS accept every version.
 
 ## Finding the version
 
