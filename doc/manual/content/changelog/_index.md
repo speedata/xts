@@ -11,6 +11,12 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.0 (2026-09-18)
 
+- **border-collapse and border-spacing work on tables.**<br>
+  Tables draw their borders in the collapsing model: the border between two cells is drawn once, the wider one wins and brings its colour, and a `border` on the table itself merges into the cells on the edge instead of being drawn around them a second time. `border-collapse: separate` switches to the separated model, where every cell draws all of its borders and `border-spacing` (one length, or horizontal and vertical) keeps the cells apart, also from the edge of the table. Both properties were parsed before but had no effect. The default stays `collapse`, which differs from browsers, so existing layouts do not change.
+- **list-style-type knows the alphabetic and roman styles.**<br>
+  An ordered list can be numbered with `lower-alpha`, `upper-alpha` (or `lower-latin`, `upper-latin`), `lower-roman`, `upper-roman`, `lower-greek` and `decimal-leading-zero`; before, every style other than `decimal` and the three bullets fell back to a bullet. The same styles are the optional last argument of `counter()`, `counters()`, `target-counter()` and `target-counters()` in a `content` value, as in `counter(chapter, upper-roman)`.
+- **SVG text takes its font from an enclosing group.**<br>
+  A `<text>` in an SVG image without `font-family`, `font-size`, `font-weight`, `font-style` or `text-anchor` of its own now takes them from the nearest `<g>` or the `<svg>` root that sets them, as SVG prescribes; before, such a text was not rendered at all. A text whose font family XTS does not know is still dropped, but now with a warning that names the family and the text.
 - **background-color is painted on spans and other inline elements.**<br>
   A `background-color` on a `<Span>`, or on an inline element such as `<span>` or `<code>` in HTML, had no effect: only paragraphs, table cells and other block elements got a background. The colour is now painted behind the text of the span, as high as the font, and follows the text across line breaks, one box per line. Nested spans paint the inner colour on top of the outer one, an underline stays visible on top of the background, and a span whose colour is the one of its paragraph paints nothing extra. The manual page "Text Formatting" no longer claims that a background is only painted on block elements.
 - **Releases follow the 0.MINOR.PATCH scheme and the version attribute of Layout checks against it.**<br>

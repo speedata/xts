@@ -63,7 +63,8 @@ CSS properties supported by XTS for styling layout elements and HTML content. Le
 | `border-*-width`, `border-*-style`, `border-*-color` | Longhands per side | `border-left-width: 3pt;` |
 | `border-radius` | Length, one to four values | `border-radius: 3pt;` |
 | `border-top-left-radius` and the other three corners | Length | `border-top-left-radius: 3pt;` |
-| `border-spacing` | Length, on tables | `border-spacing: 2pt;` |
+| `border-collapse` | `collapse` (the default), `separate`; on tables | `border-collapse: separate;` |
+| `border-spacing` | One or two lengths, on tables with `border-collapse: separate` | `border-spacing: 4pt 2pt;` |
 
 Border styles: `none`, `solid`, `dashed`, `dotted`, `double`.
 
@@ -84,10 +85,10 @@ Border styles: `none`, `solid`, `dashed`, `dotted`, `double`.
 
 | Property | Values | Example |
 |----------|--------|---------|
-| `list-style-type` | `disc`, `circle`, `square`, `decimal`, `none` | `list-style-type: decimal;` |
+| `list-style-type` | `disc`, `circle`, `square`, `none`, `decimal`, `decimal-leading-zero`, `lower-alpha`, `upper-alpha`, `lower-latin`, `upper-latin`, `lower-roman`, `upper-roman`, `lower-greek` | `list-style-type: lower-roman;` |
 | `list-style` | Shorthand, also takes `inside` or `outside` | `list-style: square inside;` |
 | `counter-reset`, `counter-increment` | Counter name and optional number | `counter-reset: section;` |
-| `content` | On `::before`, `::after` and `::marker`: strings, `attr()`, `counter()`, `counters()`, `target-counter()`, `target-text()`, `element()` | `content: counter(section) ". ";` |
+| `content` | On `::before`, `::after` and `::marker`: strings, `attr()`, `counter()`, `counters()`, `target-counter()`, `target-text()`, `element()`. The counter functions take a counter style as their last argument | `content: counter(section, upper-roman) ". ";` |
 
 ## XTS specific properties
 

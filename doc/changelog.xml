@@ -25,6 +25,15 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.0" date="2026-09-18">
+      <en summary="border-collapse and border-spacing work on tables.">Tables draw their borders in the collapsing model: the border between two cells is drawn once, the wider one wins and brings its colour, and a <tt>border</tt> on the table itself merges into the cells on the edge instead of being drawn around them a second time. <tt>border-collapse: separate</tt> switches to the separated model, where every cell draws all of its borders and <tt>border-spacing</tt> (one length, or horizontal and vertical) keeps the cells apart, also from the edge of the table. Both properties were parsed before but had no effect. The default stays <tt>collapse</tt>, which differs from browsers, so existing layouts do not change.</en>
+    </entry>
+    <entry version="0.1.0" date="2026-09-18">
+      <en summary="list-style-type knows the alphabetic and roman styles.">An ordered list can be numbered with <tt>lower-alpha</tt>, <tt>upper-alpha</tt> (or <tt>lower-latin</tt>, <tt>upper-latin</tt>), <tt>lower-roman</tt>, <tt>upper-roman</tt>, <tt>lower-greek</tt> and <tt>decimal-leading-zero</tt>; before, every style other than <tt>decimal</tt> and the three bullets fell back to a bullet. The same styles are the optional last argument of <tt>counter()</tt>, <tt>counters()</tt>, <tt>target-counter()</tt> and <tt>target-counters()</tt> in a <tt>content</tt> value, as in <tt>counter(chapter, upper-roman)</tt>.</en>
+    </entry>
+    <entry version="0.1.0" date="2026-09-18">
+      <en summary="SVG text takes its font from an enclosing group.">A <tt>&lt;text&gt;</tt> in an SVG image without <tt>font-family</tt>, <tt>font-size</tt>, <tt>font-weight</tt>, <tt>font-style</tt> or <tt>text-anchor</tt> of its own now takes them from the nearest <tt>&lt;g&gt;</tt> or the <tt>&lt;svg&gt;</tt> root that sets them, as SVG prescribes; before, such a text was not rendered at all. A text whose font family XTS does not know is still dropped, but now with a warning that names the family and the text.</en>
+    </entry>
+    <entry version="0.1.0" date="2026-09-18">
       <en summary="background-color is painted on spans and other inline elements.">A <tt>background-color</tt> on a <tt>&lt;Span&gt;</tt>, or on an inline element such as <tt>&lt;span&gt;</tt> or <tt>&lt;code&gt;</tt> in HTML, had no effect: only paragraphs, table cells and other block elements got a background. The colour is now painted behind the text of the span, as high as the font, and follows the text across line breaks, one box per line. Nested spans paint the inner colour on top of the outer one, an underline stays visible on top of the background, and a span whose colour is the one of its paragraph paints nothing extra. The manual page "Text Formatting" no longer claims that a background is only painted on block elements.</en>
     </entry>
     <entry version="0.1.0" date="2026-09-18">

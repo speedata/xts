@@ -37,5 +37,6 @@ look for the `<hlist attr-origin="line">` elements and subtract their
 from into a comment in the SVG, so the next change to the layout can
 repeat the measurement.
 
-Text in the SVG needs `font-family` and `font-size` on the `<text>`
-element itself, the renderer does not take them from an enclosing `<g>`.
+Text in the SVG needs a `font-family` that XTS knows, on the `<text>`
+element or on an enclosing `<g>` or the `<svg>` root. A text whose font
+is unknown is dropped with a warning in the protocol.
