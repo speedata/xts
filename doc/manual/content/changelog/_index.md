@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.0 (2026-09-18)
 
+- **height on a table row or cell sets the minimum height of the row.**<br>
+  A CSS `height` on `<Tr>` or `<Td>`, or on `tr`, `td` and `th` in HTML, was ignored. It is now the minimum height of the row, as CSS 2.1 prescribes for tables: a row with less content grows to the height, a row whose cells need more room keeps its natural height, nothing is clipped. The height counts the whole cell including padding and borders, and `valign` places the content within the extra room. `min-height` and `max-height` have no defined meaning on table rows in CSS and are still ignored.
 - **border-collapse and border-spacing work on tables, the default is separate as in CSS.**<br>
   Both properties were parsed before but had no effect: tables always drew their borders in a collapsing manner. Now a table follows CSS. The default is the separated model: every cell draws all of its borders and `border-spacing` (one length, or horizontal and vertical, 2pt by default) keeps the cells apart, also from the edge of the table. `border-collapse: collapse` draws the border between two cells once, the wider one wins and brings its color, and a `border` on the table itself merges into the cells on the edge instead of being drawn around them a second time. A style sheet that relied on the old behavior without saying so shows gaps and doubled borders between the cells, like a browser would; `table { border-collapse: collapse }` restores the old look.
 - **list-style-type knows the alphabetic and roman styles.**<br>

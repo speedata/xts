@@ -127,6 +127,18 @@ Tables support full CSS styling:
 <Td class="right"><Paragraph><Value>99.95</Value></Paragraph></Td>
 ```
 
+### Row height
+
+A CSS `height` on a row or a cell is the minimum height of the row, as in a browser. A row with less content grows to that height and `vertical-align` places the content in the extra room. A row whose cells need more room keeps its natural height, nothing is clipped. The height counts the whole cell including padding and borders.
+
+```xml
+<StyleSheet>
+    tr { height: 8mm; }
+</StyleSheet>
+
+<Tr style="height: 2cm"><Td><Paragraph><Value>Tall row</Value></Paragraph></Td></Tr>
+```
+
 ### Tabular numbers for financial data
 
 ```xml

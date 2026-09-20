@@ -1,0 +1,42 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+    <!-- CSS height on a table row or cell is the minimum height of the row
+         (CSS 2.1 §17.5.3): short rows grow, tall rows keep their size,
+         valign places the content in the extra room. -->
+    <StyleSheet>
+        td { border: 0.5pt solid black; padding: 2pt; }
+        tr.tall { height: 2cm; }
+        .middle { vertical-align: middle; }
+        .bottom { vertical-align: bottom; }
+    </StyleSheet>
+    <Record match="data">
+        <PlaceObject>
+            <Table width="10">
+                <Tr class="tall">
+                    <Td><Paragraph><Value>tr height 2cm, top</Value></Paragraph></Td>
+                    <Td class="middle"><Paragraph><Value>middle</Value></Paragraph></Td>
+                    <Td class="bottom"><Paragraph><Value>bottom</Value></Paragraph></Td>
+                </Tr>
+                <Tr>
+                    <Td style="height: 1cm"><Paragraph><Value>td height 1cm</Value></Paragraph></Td>
+                    <Td><Paragraph><Value>no height</Value></Paragraph></Td>
+                    <Td><Paragraph><Value>no height</Value></Paragraph></Td>
+                </Tr>
+                <Tr style="height: 1pt">
+                    <Td><Paragraph><Value>tr height 1pt is smaller than the content and has no effect</Value></Paragraph></Td>
+                    <Td><Paragraph><Value>natural</Value></Paragraph></Td>
+                    <Td><Paragraph><Value>natural</Value></Paragraph></Td>
+                </Tr>
+                <Tr class="tall">
+                    <Td rowspan="2"><Paragraph><Value>rowspan 2</Value></Paragraph></Td>
+                    <Td><Paragraph><Value>tr height 2cm</Value></Paragraph></Td>
+                    <Td><Paragraph><Value>tall</Value></Paragraph></Td>
+                </Tr>
+                <Tr>
+                    <Td><Paragraph><Value>natural</Value></Paragraph></Td>
+                    <Td><Paragraph><Value>natural</Value></Paragraph></Td>
+                </Tr>
+            </Table>
+        </PlaceObject>
+    </Record>
+</Layout>

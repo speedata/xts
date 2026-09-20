@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.0" date="2026-09-18">
+      <en summary="height on a table row or cell sets the minimum height of the row.">A CSS <tt>height</tt> on <tt>&lt;Tr&gt;</tt> or <tt>&lt;Td&gt;</tt>, or on <tt>tr</tt>, <tt>td</tt> and <tt>th</tt> in HTML, was ignored. It is now the minimum height of the row, as CSS 2.1 prescribes for tables: a row with less content grows to the height, a row whose cells need more room keeps its natural height, nothing is clipped. The height counts the whole cell including padding and borders, and <tt>valign</tt> places the content within the extra room. <tt>min-height</tt> and <tt>max-height</tt> have no defined meaning on table rows in CSS and are still ignored.</en>
+    </entry>
+    <entry version="0.1.0" date="2026-09-18">
       <en summary="border-collapse and border-spacing work on tables, the default is separate as in CSS.">Both properties were parsed before but had no effect: tables always drew their borders in a collapsing manner. Now a table follows CSS. The default is the separated model: every cell draws all of its borders and <tt>border-spacing</tt> (one length, or horizontal and vertical, 2pt by default) keeps the cells apart, also from the edge of the table. <tt>border-collapse: collapse</tt> draws the border between two cells once, the wider one wins and brings its color, and a <tt>border</tt> on the table itself merges into the cells on the edge instead of being drawn around them a second time. A style sheet that relied on the old behavior without saying so shows gaps and doubled borders between the cells, like a browser would; <tt>table { border-collapse: collapse }</tt> restores the old look.</en>
     </entry>
     <entry version="0.1.0" date="2026-09-18">

@@ -50,7 +50,7 @@ CSS properties supported by XTS for styling layout elements and HTML content. Le
 | `padding-top`, `padding-right`, `padding-bottom`, `padding-left` | Length | `padding-left: 10pt;` |
 | `padding-inline-start` | Length. Maps to `padding-left` for `ltr` and to `padding-right` for `rtl` | `padding-inline-start: 2em;` |
 | `width` | Length or percentage, on blocks, images and table cells | `width: 100%;` |
-| `height` | Length, on blocks and images | `height: 4cm;` |
+| `height` | Length, on blocks, images, table rows and table cells. A minimum: content taller than the height is never clipped, a table row grows to fit its cells | `height: 4cm;` |
 | `max-width` | Length or percentage, on images | `max-width: 100%;` |
 | `background-color` | Color value, painted on block elements, inline elements and table cells | `background-color: #ffffcc;` |
 | `background` | Shorthand, only the color is read | `background: #ffffcc;` |
