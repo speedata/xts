@@ -15,6 +15,18 @@ import (
 
 var filelist = make(map[string]string)
 
+// statCache holds the absolute paths of the files FindFile found by looking
+// at the file system during the current run. A layout that places the same
+// image on hundreds of pages would otherwise stat the file (and resolve the
+// working directory) for every placement. RunXTS clears it, so a file that
+// disappears between two runs in watch mode is noticed.
+var statCache = make(map[string]string)
+
+// resetStatCache forgets the files found on the file system.
+func resetStatCache() {
+	statCache = make(map[string]string)
+}
+
 // AddDir recursively adds a directory to the file list
 func AddDir(dirname string) error {
 	slog.Debug("Add directory to recursive file list", "dir", dirname)
@@ -76,6 +88,10 @@ func FindFile(filename string) (string, error) {
 		slog.Info("Write URL to file", "url", filename, "file", fn)
 		return fn, nil
 	}
+	if fn, ok := statCache[filename]; ok {
+		slog.Debug("File lookup", "src", filename, "found", fn)
+		return fn, nil
+	}
 	if _, err := os.Stat(filename); err == nil {
 		var fn string
 		fn, err = filepath.Abs(filename)
@@ -83,6 +99,7 @@ func FindFile(filename string) (string, error) {
 			return "", err
 		}
 		slog.Debug("File lookup", "src", filename, "found", fn)
+		statCache[filename] = fn
 		return fn, nil
 	}
 	slog.Debug("File lookup (not found)", "src", filename)

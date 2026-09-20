@@ -200,6 +200,7 @@ type XTSConfig struct {
 
 // RunXTS is the entry point
 func RunXTS(cfg *XTSConfig) error {
+	resetStatCache()
 	var err error
 	var layoutxml *goxml.XMLDocument
 	slog.Info(fmt.Sprintf("XTS start version %s", Version))
