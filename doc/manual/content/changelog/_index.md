@@ -9,8 +9,10 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
-## 0.1.0 (2026-09-18)
+## 0.1.0 (2026-09-20)
 
+- **Tables are laid out about twice as fast.**<br>
+  Every paragraph in a table cell was shaped and broken into lines four times: twice to find the column widths and twice to build the row. The column widths are now measured on the shaped text without breaking it into lines, and a cell is built once. A catalog of 112 pages of nested tables takes 0.4 seconds instead of 0.9. Along the way a miscalculation was fixed: a column whose cell breaks its lines with `<Br>` came out too wide from the third line on, it now follows the longest line.
 - **height on a table row or cell sets the minimum height of the row.**<br>
   A CSS `height` on `<Tr>` or `<Td>`, or on `tr`, `td` and `th` in HTML, was ignored. It is now the minimum height of the row, as CSS 2.1 prescribes for tables: a row with less content grows to the height, a row whose cells need more room keeps its natural height, nothing is clipped. The height counts the whole cell including padding and borders, and `valign` places the content within the extra room. `min-height` and `max-height` have no defined meaning on table rows in CSS and are still ignored.
 - **border-collapse and border-spacing work on tables, the default is separate as in CSS.**<br>
