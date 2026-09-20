@@ -142,5 +142,5 @@ the data in one value.
 - [Maps and arrays](/programming/maps-and-arrays) -- arrays, maps, and the `?` lookup operator.
 - [Values and types](/programming/values-and-types) -- typing a variable with `as` and the
   queryable data band.
-- [Functions](/programming/functions) -- parameterised, reusable values.
-- [Templates](/programming/templates) -- parameterised, reusable behaviour.
+- [Functions](/programming/functions) -- parameterized, reusable values.
+- [Templates](/programming/templates) -- parameterized, reusable behavior.

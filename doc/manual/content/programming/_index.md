@@ -40,7 +40,7 @@ Two chapters set up the way of thinking that the rest build on. Read them first.
   and the `?` lookup operator.
 - [Functions](/programming/functions) -- reusable, side-effect-free `<Function>` definitions that
   return data.
-- [Templates](/programming/templates) -- reusable *behaviour* with `<Template>` / `<CallTemplate>`,
+- [Templates](/programming/templates) -- reusable *behavior* with `<Template>` / `<CallTemplate>`,
   including layout actions.
 - [Control flow](/programming/control-flow) -- `ForAll`, `Loop`, `While`/`Until`, `Switch`/`Case`.
 - [Records and dispatch](/programming/records-and-dispatch) -- matching data elements to records,

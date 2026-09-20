@@ -6,10 +6,10 @@ linktitle: Functions
 
 # Functions
 
-A `<Function>` defines a reusable, parameterised **value**. You call it from an
+A `<Function>` defines a reusable, parameterized **value**. You call it from an
 XPath expression, and it returns data -- a number, a string, or an XML structure.
 Functions are pure: they build values and have no side effects on the document.
-For reusable *behaviour* (output, page breaks), use a [template](/programming/templates)
+For reusable *behavior* (output, page breaks), use a [template](/programming/templates)
 instead.
 
 ## Defining a function

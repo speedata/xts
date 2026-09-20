@@ -16,7 +16,7 @@ being shaped and may change between minor versions.
   with `0.1.1` produces the same document with `0.1.2`, apart from the
   bug that was fixed.
 - **MINOR** (`0.1` to `0.2`): new commands, attributes and functions, and
-  changes in behaviour. A minor release may change line breaks or page
+  changes in behavior. A minor release may change line breaks or page
   breaks of an existing layout, and it may remove features that were
   marked as deprecated in the previous minor release.
 

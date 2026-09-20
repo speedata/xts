@@ -29,7 +29,7 @@ page.
 Note what the value is: `<Columns>` does not produce a `Columns` element, it returns its `<Column>` children as a sequence of two elements. That is why the variable below is typed `element(Column)*` and why `count($head)` is 2.
 
 **Actions** have an effect on the document and produce no reusable value. They
-*do* something: place an object, break to a new page, define a colour, attach a
+*do* something: place an object, break to a new page, define a color, attach a
 file. You cannot store an action in a variable, because there is nothing to
 store.
 
@@ -89,24 +89,24 @@ any depth, even nested inside a constructor -- is an error. This is what keeps
 The same constructor/action classification drives three rules:
 
 1. **`<SetVariable as="…">`** rejects actions in its body. A bound value is data,
-   not behaviour. See [Values and types](/programming/values-and-types).
+   not behavior. See [Values and types](/programming/values-and-types).
 2. **`<Function>` bodies are action-free.** A function body is evaluated lazily by
    the XPath engine -- possibly more than once, in any order, or not at all. An
    action there would run an unpredictable number of times. Functions therefore
    build values only. See [Functions](/programming/functions).
 3. **`<Template>` bodies may contain actions.** A template runs in the normal
    imperative flow, exactly once, at the call site -- so effects are welcome.
-   This is the home for reusable *behaviour*. See [Templates](/programming/templates).
+   This is the home for reusable *behavior*. See [Templates](/programming/templates).
 
-## Reuse: data versus behaviour
+## Reuse: data versus behavior
 
 The data/action split gives you a clean way to choose a reuse mechanism:
 
 | What you are reusing | Mechanism |
 |---|---|
 | Fixed content (a header that is always the same) | a **data variable** (`as="element()*"`) plus `<CopyOf>` |
-| Parameterised *data* | a named [`<Function>`](/programming/functions), called from XPath |
-| Parameterised *behaviour* with effects | a named [`<Template>`](/programming/templates) via `<CallTemplate>` |
+| Parameterized *data* | a named [`<Function>`](/programming/functions), called from XPath |
+| Parameterized *behavior* with effects | a named [`<Template>`](/programming/templates) via `<CallTemplate>` |
 
 ## The bridge from data to a command
 

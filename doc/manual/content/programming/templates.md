@@ -10,7 +10,7 @@ A **template** is a named, reusable block of layout code that you invoke where
 you need it. Unlike a [function](/programming/functions), a template may contain layout
 **actions** (such as `<PlaceObject>` or `<ClearPage>`): it runs in the normal
 imperative flow, exactly once, at the call site, in document order. Templates are
-the right tool for reusing *behaviour*.
+the right tool for reusing *behavior*.
 
 ## Defining and calling a template
 
@@ -103,6 +103,6 @@ template.
 - Reusing fixed content? Store it in a [data variable](/programming/values-and-types) and
   splice it with `<CopyOf>`.
 - Reusing a computed value? Write a [function](/programming/functions).
-- Reusing behaviour with output? Write a template.
+- Reusing behavior with output? Write a template.
 
 See [Data vs. action](/programming/data-and-actions) for the principle behind this split.
