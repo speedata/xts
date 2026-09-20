@@ -63,6 +63,10 @@ func DoThings(cfg *config.Config) error {
 		builddoc(c, v, fullpath)
 	}
 
+	if err = writeCSSProperties(cfg); err != nil {
+		return err
+	}
+
 	cl, err := changelog.Read(cfg)
 	if err != nil {
 		return err
