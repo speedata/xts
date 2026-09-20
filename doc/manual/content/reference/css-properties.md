@@ -77,7 +77,7 @@ CSS properties supported by XTS for styling layout elements and HTML content. Le
 
 | Property | Values | Example |
 |----------|--------|---------|
-| `float` | `left`, `right`, `none` | `float: right;` |
+| `float` | `left`, `right`, `none`; `top` (or `before`) and `bottom` (or `after`) lift the element out of the flow to the top or bottom of the page | `float: right;` |
 | `clear` | `left`, `right`, `both`, `none` | `clear: both;` |
 | `position` | `static`, `relative`, `absolute`, `running(name)` for running elements that repeat in page margin boxes. `fixed` and `sticky` are not supported | `position: absolute;` |
 | `top`, `right`, `bottom`, `left` | Length or `auto`, with `position` | `top: 1cm;` |
@@ -138,6 +138,7 @@ Sets up a master page, see [Master Pages](/manual/page-layout/master-pages#page-
 | `margin-top`, `margin-right`, `margin-bottom`, `margin-left` | Length, one page margin | `margin-left: 3cm;` |
 | `border`, `border-top`, `border-right`, `border-bottom`, `border-left`, `border-width`, `border-style`, `border-color`, `border-radius` | As on elements, drawn around the page content area on every page | `border-left: 4pt solid navy;` |
 | `padding`, `padding-top`, `padding-right`, `padding-bottom`, `padding-left` | Length, space between the page border and the content | `padding: 5mm;` |
+| `background-color` | Color value, fills the sheet. Painted on the first page only | `background-color: #fafafa;` |
 | `background-image` | `url()` of an image or PDF file, scaled to the full sheet on every page that uses this `@page` rule | `background-image: url("letterhead.pdf");` |
 | `-bag-background-page` | Page number of a multi page PDF used as `background-image`, the default is 1 | `-bag-background-page: 2;` |
 
