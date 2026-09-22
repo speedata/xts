@@ -77,8 +77,8 @@ CSS properties supported by XTS for styling layout elements and HTML content. Le
 
 | Property | Values | Example |
 |----------|--------|---------|
-| `float` | `left`, `right`, `none`; `top` (or `before`) and `bottom` (or `after`) lift the element out of the flow to the top or bottom of the page | `float: right;` |
-| `clear` | `left`, `right`, `both`, `none` | `clear: both;` |
+| `float` | `left`, `right`, `none`; `inside` and `outside` pick the side towards or away from the binding on the page the float lands on, with the declared `margin-left`/`margin-right` swapped on left pages; `top` (or `before`) and `bottom` (or `after`) lift the element out of the flow to the top or bottom of the page | `float: outside;` |
+| `clear` | `left`, `right`, `inside`, `outside`, `both`, `none` | `clear: both;` |
 | `position` | `static`, `relative`, `absolute`, `running(name)` for running elements that repeat in page margin boxes. `fixed` and `sticky` are not supported | `position: absolute;` |
 | `top`, `right`, `bottom`, `left` | Length or `auto`, with `position` | `top: 1cm;` |
 | `z-index` | Integer or `auto`, with `position` | `z-index: 1;` |

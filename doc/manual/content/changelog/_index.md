@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.1 (2026-09-22)
 
+- **CSS floats can be placed towards or away from the binding with float: inside and float: outside.**<br>
+  In HTML content, `float: outside` and `float: inside` pick the side of the float from the page it lands on: the outer edge on right pages is the right edge, on left pages the left edge. The declared `margin-left` and `margin-right` are read as written for a right page and swapped on left pages, so one rule with a negative outer margin places a margin note in the outer margin of every page. `clear` accepts the two values as well. A float now starts level with the block after it (the margin between the two blocks is laid out before the float), and a margin note followed by a floated figure shares its position instead of pushing the figure down.
 - **Right-to-left paragraphs keep their insets and alignment on the correct side.**<br>
   In a right-to-left paragraph the lines beside a float on the right ran underneath the float, `text-align` `end` and `center` came out flush right, the first-line indent went to the left edge, a line ending in a forced break was flush left, and so was the last line of a justified paragraph. Hanging punctuation at the end of a right-to-left line was painted over the next glyph. All of these now follow the paragraph direction: insets are physical, indents and alignment are resolved from the line start.
 - **Tables are laid out about twice as fast.**<br>
