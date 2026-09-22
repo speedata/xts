@@ -24,7 +24,10 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
-    <entry version="0.1.0" date="2026-09-20">
+    <entry version="0.1.1" date="2026-09-22">
+      <en summary="Right-to-left paragraphs keep their insets and alignment on the correct side.">In a right-to-left paragraph the lines beside a float on the right ran underneath the float, <tt>text-align</tt> <tt>end</tt> and <tt>center</tt> came out flush right, the first-line indent went to the left edge, a line ending in a forced break was flush left, and so was the last line of a justified paragraph. Hanging punctuation at the end of a right-to-left line was painted over the next glyph. All of these now follow the paragraph direction: insets are physical, indents and alignment are resolved from the line start.</en>
+    </entry>
+    <entry version="0.1.1" date="2026-09-20">
       <en summary="Tables are laid out about twice as fast.">Every paragraph in a table cell was shaped and broken into lines four times: twice to find the column widths and twice to build the row. The column widths are now measured on the shaped text without breaking it into lines, and a cell is built once. A catalog of 112 pages of nested tables takes 0.4 seconds instead of 0.9. Along the way a miscalculation was fixed: a column whose cell breaks its lines with <tt>&lt;Br&gt;</tt> came out too wide from the third line on, it now follows the longest line.</en>
     </entry>
     <entry version="0.1.0" date="2026-09-18">
