@@ -9,6 +9,11 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
+## 0.1.2 (2026-09-22)
+
+- **A table without a TableHead breaks across frames and pages too.**<br>
+  A table taller than the frame that had no `<TableHead>` was placed as a single object and drawn past the bottom margin. It is now split row by row like a table with a head, continuing in the next frame of the area or on a new page; there are just no header rows to repeat. A table with only a `<TableFoot>` is split as well, with its footer repeated. This also changes a short table without a head that does not fit the space left in the frame: it starts where it is and breaks, as a table with a head already did, where before it moved whole to the next frame ([#29](https://github.com/speedata/xts/issues/29)).
+
 ## 0.1.1 (2026-09-22)
 
 - **CSS floats can be placed towards or away from the binding with float: inside and float: outside.**<br>

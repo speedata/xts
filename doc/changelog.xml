@@ -24,6 +24,9 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
+    <entry version="0.1.2" date="2026-09-22">
+      <en summary="A table without a TableHead breaks across frames and pages too.">A table taller than the frame that had no <tt>&lt;TableHead&gt;</tt> was placed as a single object and drawn past the bottom margin. It is now split row by row like a table with a head, continuing in the next frame of the area or on a new page; there are just no header rows to repeat. A table with only a <tt>&lt;TableFoot&gt;</tt> is split as well, with its footer repeated. This also changes a short table without a head that does not fit the space left in the frame: it starts where it is and breaks, as a table with a head already did, where before it moved whole to the next frame (#29).</en>
+    </entry>
     <entry version="0.1.1" date="2026-09-22">
       <en summary="CSS floats can be placed towards or away from the binding with float: inside and float: outside.">In HTML content, <tt>float: outside</tt> and <tt>float: inside</tt> pick the side of the float from the page it lands on: the outer edge on right pages is the right edge, on left pages the left edge. The declared <tt>margin-left</tt> and <tt>margin-right</tt> are read as written for a right page and swapped on left pages, so one rule with a negative outer margin places a margin note in the outer margin of every page. <tt>clear</tt> accepts the two values as well. A float now starts level with the block after it (the margin between the two blocks is laid out before the float), and a margin note followed by a floated figure shares its position instead of pushing the figure down.</en>
     </entry>
