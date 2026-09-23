@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.2" date="2026-09-23">
+      <en summary="Text that exactly fills its line is no longer pushed 1pt to the right.">A line whose contents were exactly as wide as the measure had its glue stretched fully instead of not at all. In tables that hit the widest cell of a column, the one the column width is taken from: its text started 1pt further right than the other cells and ran 1pt past the cell. Such lines are now set at their natural width. Also, a line breaking at a soft hyphen right before a space was chosen as if the hyphen were set and the space kept on the next line; both lines are now measured the way they are set, without the hyphen and the space.</en>
+    </entry>
+    <entry version="0.1.2" date="2026-09-23">
       <en summary="An object that no longer fits continues where there is room: in the next frame of its area, or below what a new page already carries.">When an object placed in an area with several frames did not fit the rest of a frame, it went to row 1 of the next frame without checking that row was free, so a frame that starts beside content placed earlier (a full-width box above two columns) was written over. It now moves frame by frame to the first that has room; an object taller than every frame takes the next free one. On a new page the same search runs over its frames, so the first object no longer covers what <tt>&lt;AtPageCreation&gt;</tt> placed; a table continuing into the next frame or onto a new page does the same. This changes documents with a single area too: after a page break, placement used the previous page's area, so the objects after the first on a new page could be set in the wrong frame or column; they now follow the first as they did on page 1. <tt>&lt;NextRow&gt;</tt> had the same page-break problem and is fixed too.</en>
     </entry>
     <entry version="0.1.2" date="2026-09-23">
