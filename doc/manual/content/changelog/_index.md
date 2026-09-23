@@ -9,8 +9,10 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
-## 0.1.1 (2026-09-22)
+## 0.1.1 (2026-09-23)
 
+- **A CSS float stays with its text at a page break.**<br>
+  A float reserved no height of its own, so at a page break a margin note or a floated figure could stay at the bottom of the page while the paragraph beside it moved to the next one. The band a figure leaves beside itself also ran across the break and narrowed the first lines on the next page next to nothing. A float now stays on the same page as the block beside it, or both move to the next page together, and the band ends at the page break: the lines of a split paragraph on the next page run at full width again. Also, the `id` attribute of a paragraph, table row or table cell in HTML content is now carried onto the box it produces and shows up as `attr-id` in the dump output.
 - **CSS floats can be placed towards or away from the binding with float: inside and float: outside.**<br>
   In HTML content, `float: outside` and `float: inside` pick the side of the float from the page it lands on: the outer edge on right pages is the right edge, on left pages the left edge. The declared `margin-left` and `margin-right` are read as written for a right page and swapped on left pages, so one rule with a negative outer margin places a margin note in the outer margin of every page. `clear` accepts the two values as well. A float now starts level with the block after it (the margin between the two blocks is laid out before the float), and a margin note followed by a floated figure shares its position instead of pushing the figure down.
 - **Right-to-left paragraphs keep their insets and alignment on the correct side.**<br>
