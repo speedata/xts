@@ -2058,9 +2058,9 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		}
 		vl.Attributes["id"] = attValues.ID
 	}
-	// A table with a <TableHead> can be laid out row by row and continued in
-	// the next frame or on the next page. Detecting it here changes how the
-	// row search below treats a table that is taller than the frame: without
+	// A table can be laid out row by row and continued in the next frame or
+	// on the next page. Detecting it here changes how the row search below
+	// treats a table that is taller than the frame: without
 	// this it would give up, advance the area and start the table on a fresh
 	// frame that it still does not fit into. The check runs before the trace
 	// box and the frame/background rules are added, since those sit next to
@@ -2225,18 +2225,19 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	return nil, nil
 }
 
-// splittableTable returns the table VList that frontend.BuildTable stamped its
-// header-repeat closure onto, unwrapping the html/body VLists that
-// CSSBuilder.CreateVlist puts around it. The descent only follows wrappers
-// whose sole content is a single VList (glue and kern are tolerated): a table
-// that sits next to other material, e.g. inside mixed <HTML> content, must
-// keep the single-placement path, because splitTable lays out the table alone
-// and would drop its siblings. It returns nil when the object is not such a
-// table with a <TableHead>.
+// splittableTable returns the table VList frontend.BuildTable built,
+// unwrapping the html/body VLists that CSSBuilder.CreateVlist puts around it.
+// The descent only follows wrappers whose sole content is a single VList (glue
+// and kern of no width are tolerated): a table that sits next to other
+// material, e.g. inside mixed <HTML> content, must keep the single-placement
+// path, because splitTable lays out the table alone and would drop its
+// siblings. So must a wrapper that spaces the table, e.g. a padded <div>,
+// whose spacing would be lost with the wrapper. It returns nil when the
+// object is not such a table.
 func splittableTable(vl *node.VList) *node.VList {
 	for depth := 0; depth <= 4; depth++ {
 		if vl.Attributes != nil {
-			if _, ok := vl.Attributes["_buildHeaders"]; ok {
+			if o, _ := vl.Attributes["origin"].(string); o == "table" {
 				return vl
 			}
 		}
@@ -2248,8 +2249,14 @@ func splittableTable(vl *node.VList) *node.VList {
 					return nil
 				}
 				sole = t
-			case *node.Glue, *node.Kern:
-				// spacing between the wrappers carries no content
+			case *node.Glue:
+				if t.Width != 0 {
+					return nil
+				}
+			case *node.Kern:
+				if t.Kern != 0 {
+					return nil
+				}
 			default:
 				return nil
 			}

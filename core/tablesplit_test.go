@@ -28,8 +28,8 @@ func tableVList() *node.VList {
 }
 
 // TestSplittableTable checks what PlaceObject treats as a splittable table: a
-// table that carries the header-repeat closure, however deeply CreateVlist has
-// wrapped it. Anything else keeps the single-placement path.
+// table, however deeply CreateVlist has wrapped it. Anything else keeps the
+// single-placement path.
 func TestSplittableTable(t *testing.T) {
 	table := tableVList()
 
@@ -40,15 +40,15 @@ func TestSplittableTable(t *testing.T) {
 		t.Errorf("wrapped table: got %v, want the table", got)
 	}
 	if got := splittableTable(wrapVList(node.NewVList(), 2)); got != nil {
-		t.Errorf("table without a TableHead: got %v, want nil", got)
+		t.Errorf("wrapper without a table: got %v, want nil", got)
 	}
 
-	// A headerless table is placed as one object, as before: without header
-	// rows there is nothing to repeat and no reason to prefer fragments.
+	// A table without a <TableHead> splits too: placed as one object, a
+	// table taller than the frame runs off the bottom of the page.
 	headerless := node.NewVList()
 	headerless.Attributes = node.H{"origin": "table"}
-	if got := splittableTable(headerless); got != nil {
-		t.Errorf("headerless table: got %v, want nil", got)
+	if got := splittableTable(wrapVList(headerless, 2)); got != headerless {
+		t.Errorf("headerless table: got %v, want the table", got)
 	}
 
 	// A table next to other content, e.g. a paragraph in mixed <HTML>
@@ -65,7 +65,8 @@ func TestSplittableTable(t *testing.T) {
 		t.Errorf("table with sibling content: got %v, want nil", got)
 	}
 
-	// Glue next to the wrapper carries no content and is tolerated.
+	// Glue of no width next to the wrapper carries no content and is
+	// tolerated.
 	glue := node.NewGlue()
 	tblAfterGlue := tableVList()
 	head = nil
@@ -75,6 +76,23 @@ func TestSplittableTable(t *testing.T) {
 	wrapper.List = head
 	if got := splittableTable(wrapper); got != tblAfterGlue {
 		t.Errorf("table behind glue: got %v, want the table", got)
+	}
+
+	// Spacing with a width is the wrapper's padding or margin, which the
+	// fragments would lose.
+	for name, space := range map[string]node.Node{
+		"glue": func() node.Node { g := node.NewGlue(); g.Width = 4 * 65536; return g }(),
+		"kern": func() node.Node { k := node.NewKern(); k.Kern = 4 * 65536; return k }(),
+	} {
+		tbl := tableVList()
+		head = nil
+		head = node.InsertAfter(head, nil, space)
+		head = node.InsertAfter(head, space, tbl)
+		padded := node.NewVList()
+		padded.List = head
+		if got := splittableTable(padded); got != nil {
+			t.Errorf("table behind %s with a width: got %v, want nil", name, got)
+		}
 	}
 }
 

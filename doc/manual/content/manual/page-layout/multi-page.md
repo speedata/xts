@@ -8,10 +8,10 @@ linktitle: Multi-Page Content
 
 ## Tables across pages
 
-A table with a `<TableHead>` breaks across frames and pages. Its rows are laid
-out down the frame, and when the next row does not fit, the table continues in
-the next frame of the area, or on a new page once the frames are used up. The
-header rows are repeated at the top of every continuation:
+A table breaks across frames and pages. Its rows are laid out down the frame,
+and when the next row does not fit, the table continues in the next frame of
+the area, or on a new page once the frames are used up. The rows of a
+`<TableHead>` are repeated at the top of every continuation:
 
 ```xml
 <Table>
@@ -26,11 +26,9 @@ A `<TableFoot>` works the other way around: its rows are placed at the end of
 the table, and when the table breaks, they are repeated at the bottom of every
 fragment.
 
-Two conditions apply. The table needs a `<TableHead>`: without one there is
-nothing to repeat and the table is placed as a single object. And it has to be
-placed on the grid, which is the default. A table placed at an absolute
-position (`<PlaceObject column="2cm" row="5cm">`) is put where it was asked for
-and is not broken up.
+The table has to be placed on the grid, which is the default. A table placed
+at an absolute position (`<PlaceObject column="2cm" row="5cm">`) is put where
+it was asked for and is not broken up.
 
 Individual table cells are *never* split -- each cell is rendered as a single
 box. If a row doesn't fit on the current page, it moves to the next one. A row

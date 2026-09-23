@@ -13,6 +13,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 - **A CSS float stays with its text at a page break.**<br>
   A float reserved no height of its own, so at a page break a margin note or a floated figure could stay at the bottom of the page while the paragraph beside it moved to the next one. The band a figure leaves beside itself also ran across the break and narrowed the first lines on the next page next to nothing. A float now stays on the same page as the block beside it, or both move to the next page together, and the band ends at the page break: the lines of a split paragraph on the next page run at full width again. Also, the `id` attribute of a paragraph, table row or table cell in HTML content is now carried onto the box it produces and shows up as `attr-id` in the dump output.
+- **A table without a TableHead breaks across frames and pages too.**<br>
+  A table taller than the frame that had no `<TableHead>` was placed as a single object and drawn past the bottom margin. It is now split row by row like a table with a head, continuing in the next frame of the area or on a new page; there are just no header rows to repeat. A table with only a `<TableFoot>` is split as well, with its footer repeated. This also changes a short table without a head that does not fit the space left in the frame: it starts where it is and breaks, as a table with a head already did, where before it moved whole to the next frame ([#29](https://github.com/speedata/xts/issues/29)).
 
 ## 0.1.1 (2026-09-22)
 
