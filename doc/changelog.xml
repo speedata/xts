@@ -24,7 +24,7 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
-    <entry version="0.1.1" date="2026-09-23">
+    <entry version="0.1.2" date="2026-09-23">
       <en summary="A CSS float stays with its text at a page break.">A float reserved no height of its own, so at a page break a margin note or a floated figure could stay at the bottom of the page while the paragraph beside it moved to the next one. The band a figure leaves beside itself also ran across the break and narrowed the first lines on the next page next to nothing. A float now stays on the same page as the block beside it, or both move to the next page together, and the band ends at the page break: the lines of a split paragraph on the next page run at full width again. Also, the <tt>id</tt> attribute of a paragraph, table row or table cell in HTML content is now carried onto the box it produces and shows up as <tt>attr-id</tt> in the dump output.</en>
     </entry>
     <entry version="0.1.1" date="2026-09-22">
