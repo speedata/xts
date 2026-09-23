@@ -1,0 +1,29 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+
+    <!-- NextRow in an area with two frames. The rows run down the left frame,
+         then the right one, and the NextRow that passes the end of the right
+         frame starts page 2. The text placed next belongs at the top of the
+         left frame of page 2, where every page of the area starts. -->
+
+    <PageFormat width="105mm" height="148mm"/>
+    <SetGrid nx="21" ny="30"/>
+    <DefineMasterPage name="page" test="true()" margin="10mm">
+        <PositioningArea name="cols">
+            <PositioningFrame column="1" row="1" width="10" height="30"/>
+            <PositioningFrame column="12" row="1" width="10" height="30"/>
+        </PositioningArea>
+    </DefineMasterPage>
+
+    <Record match="data">
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Page 1, left frame.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <Loop select="54">
+            <NextRow area="cols"/>
+        </Loop>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Page 2, left frame.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+    </Record>
+</Layout>

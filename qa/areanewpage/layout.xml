@@ -1,0 +1,23 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+
+    <!-- A page with a header placed at page creation, and boxes that run onto
+         a second page. Page 2 looks like page 1: the first box on it starts
+         below the header rather than on top of it, and the ones after it
+         follow in the same column. -->
+
+    <PageFormat width="105mm" height="148mm"/>
+    <SetGrid nx="21" ny="30"/>
+    <DefineMasterPage name="page" test="true()" margin="10mm">
+        <AtPageCreation>
+            <PlaceObject row="1" column="1"><Box width="21" height="3" backgroundcolor="gray"/></PlaceObject>
+        </AtPageCreation>
+    </DefineMasterPage>
+
+    <Record match="data">
+        <Loop select="12" variable="i">
+            <PlaceObject><Box width="10" height="4" backgroundcolor="lightgray"/></PlaceObject>
+            <PlaceObject><TextBlock width="8"><Paragraph><Value>Box <Value select="$i"/></Value></Paragraph></TextBlock></PlaceObject>
+        </Loop>
+    </Record>
+</Layout>

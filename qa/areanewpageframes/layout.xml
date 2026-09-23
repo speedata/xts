@@ -1,0 +1,25 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+
+    <!-- An area of two frames on a page whose left frame is filled at page
+         creation. The boxes go in the right frame on every page, page 2
+         included, and never over the grey column. -->
+
+    <PageFormat width="105mm" height="148mm"/>
+    <SetGrid nx="21" ny="30"/>
+    <DefineMasterPage name="page" test="true()" margin="10mm">
+        <PositioningArea name="cols">
+            <PositioningFrame column="1" row="1" width="10" height="30"/>
+            <PositioningFrame column="12" row="1" width="10" height="30"/>
+        </PositioningArea>
+        <AtPageCreation>
+            <PlaceObject row="1" column="1"><Box width="10" height="30" backgroundcolor="gray"/></PlaceObject>
+        </AtPageCreation>
+    </DefineMasterPage>
+
+    <Record match="data">
+        <Loop select="4" variable="i">
+            <PlaceObject area="cols"><Box width="10" height="12" backgroundcolor="lightgray"/></PlaceObject>
+        </Loop>
+    </Record>
+</Layout>

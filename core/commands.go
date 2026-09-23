@@ -1781,10 +1781,10 @@ func cmdNextRow(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	if attValues.Row != nil {
 		area.SetCurrentRow(coord(*attValues.Row))
 	} else if r := attValues.Rows; r != nil {
-		xd.currentGrid.nextRow(area)
+		area = xd.currentGrid.nextRow(area)
 		area.SetCurrentRow(area.CurrentRow() + coord(*r-1))
 	} else {
-		xd.currentGrid.nextRow(area)
+		area = xd.currentGrid.nextRow(area)
 	}
 	area.SetCurrentCol(1)
 	return nil, nil
@@ -2125,8 +2125,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 				row = xd.currentGrid.findSuitableRow(wdCols, 1, col, area)
 			}
 			if row == -1 {
-				xd.currentGrid.nextArea(area)
-				row = 1
+				area, row = xd.advanceToFit(area, wdCols, htCols, fitRows(htCols, splitTable), col)
 			}
 			rowInt = int(row)
 		}
@@ -2154,8 +2153,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 			row = xd.currentGrid.findSuitableRow(wdCols, 1, startCol, area)
 		}
 		if row == -1 {
-			xd.currentGrid.nextArea(area)
-			row = 1
+			area, row = xd.advanceToFit(area, wdCols, htCols, fitRows(htCols, splitTable), startCol)
 		}
 		slog.Debug(fmt.Sprintf("looking for free space for %s", origin))
 		col = startCol
@@ -2223,6 +2221,15 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		}
 	}
 	return nil, nil
+}
+
+// fitRows is how many free rows an object ht rows high needs to start in: all
+// of them, or one for a table the splitter can continue.
+func fitRows(ht coord, splitTable *node.VList) coord {
+	if splitTable != nil {
+		return 1
+	}
+	return ht
 }
 
 // splittableTable returns the table VList frontend.BuildTable built,
@@ -2393,13 +2400,14 @@ func (xd *xtsDocument) splitTable(tableVL *node.VList, areaName string, col, row
 			// Next frame of the area first; nextArea falls through to a new
 			// page when this was the last frame, which is the <NextFrame>
 			// contract.
-			xd.currentGrid.nextArea(area)
-			if area, ok = xd.currentGrid.areas[areaName]; !ok {
+			// A continuation needs one free row, and does not go over what the
+			// next frame or a new page already holds.
+			area, row = xd.advanceToFit(area, xd.currentGrid.widthToColumns(tableWidth), 1, 1, col)
+			if _, ok = xd.currentGrid.areas[areaName]; !ok {
 				return fmt.Errorf("area %s not found after page break", areaName)
 			}
 			// Keep the column: a table placed with column="3" continues in
 			// column 3, matching what nextArea does for a single object.
-			row = 1
 			y = xd.currentGrid.posY(row, area)
 			bottom = xd.currentGrid.frameBottom(area)
 			placed, mayBreak = 0, false

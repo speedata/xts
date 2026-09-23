@@ -272,7 +272,9 @@ func (g *grid) findSuitableRow(wdCols coord, htRows coord, startColumn coord, ar
 	return -1
 }
 
-func (g *grid) nextRow(area *area) {
+// nextRow moves the area to its next free row, into the next frame or onto a
+// new page when the current frame has none, and returns the area to go on in.
+func (g *grid) nextRow(area *area) *area {
 	wd := area.frame[area.currentFrame].width
 
 	if area.CurrentCol() == 1 {
@@ -280,10 +282,14 @@ func (g *grid) nextRow(area *area) {
 	}
 	r := g.findSuitableRow(wd, 1, 1, area)
 	if r == -1 {
-		g.nextArea(area)
-		r = 1
+		if g.inSlate {
+			area, r = g.nextArea(area), 1
+		} else {
+			area, r = g.page.xd.advanceToFit(area, 0, 1, 1, 1)
+		}
 	}
 	area.SetCurrentRow(r)
+	return area
 }
 
 func (g *grid) fitsInRow(col coord, row coord, wdCols coord, area *area) bool {
@@ -298,20 +304,77 @@ func (g *grid) fitsInRow(col coord, row coord, wdCols coord, area *area) bool {
 	return true
 }
 
-// Go to the next area
-func (g *grid) nextArea(area *area) {
+// nextArea moves the area to its next frame, or past the last one onto a new
+// page, and returns the area to go on in. After a page break that is the new
+// page's area of the same name: the new page has a grid of its own, so the
+// area passed in belongs to the page that was just shipped.
+func (g *grid) nextArea(area *area) *area {
 	currentFrameNumber := area.currentFrame
 	if currentFrameNumber+1 >= len(area.frame) {
 		if g.inSlate {
 			// Slates don't have pages, so we can't create a new page.
 			// The content simply overflows.
-			return
+			return area
 		}
 		clearPage(g.page.xd)
 		g.page.xd.setupPage()
-		return
+		if next, ok := g.page.xd.currentGrid.areas[area.name]; ok {
+			return next
+		}
+		return area
 	}
 	area.currentFrame++
+	return area
+}
+
+// advanceToFit moves the area on until an object fits at column col, and
+// returns the area and the row. The object is wd columns by ht rows; minHt
+// rows are enough to start in (fewer than ht for a table the splitter can
+// continue). A wd of 0 means the full width of each frame. An object larger
+// than a frame is measured as the frame, so it takes the next frame that is
+// entirely free instead of none. A frame without room, for instance one that
+// starts beside content placed earlier on the page, is passed over rather
+// than written on top of. After a page break the new page's frames are
+// searched the same way, so content the page already carries (from
+// AtPageCreation) is not covered, but no further page is started: if none
+// has room the object goes to row 1 of the first frame. In a slate it goes
+// to row 1 of the next frame.
+func (xd *xtsDocument) advanceToFit(area *area, wd, ht, minHt, col coord) (*area, coord) {
+	fits := func() coord {
+		f := area.frame[area.currentFrame]
+		w, h := min(wd, f.width), min(ht, f.height)
+		if w <= 0 {
+			w = f.width
+		}
+		for _, rows := range []coord{h, min(minHt, h)} {
+			if row := xd.currentGrid.findSuitableRow(w, rows, col, area); row != -1 {
+				return row
+			}
+		}
+		return -1
+	}
+	for {
+		pg, inSlate := xd.currentPage, xd.currentGrid.inSlate
+		area = xd.currentGrid.nextArea(area)
+		if inSlate {
+			return area, 1
+		}
+		if xd.currentPage == pg {
+			if row := fits(); row != -1 {
+				return area, row
+			}
+			continue
+		}
+		// A new page: its frames in order, without breaking another.
+		for i := range area.frame {
+			area.currentFrame = i
+			if row := fits(); row != -1 {
+				return area, row
+			}
+		}
+		area.currentFrame = 0
+		return area, 1
+	}
 }
 
 // frameBottom returns the vertical offset of the bottom edge of the area's

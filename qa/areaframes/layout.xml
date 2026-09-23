@@ -1,0 +1,98 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+
+    <!-- An area with two frames, filled past its end. The paragraphs fill the left
+         frame, continue at the top of the right one and, once both are full,
+         go on in the left frame of page 2, then the right one. Every page
+         starts in its left frame. -->
+
+    <PageFormat width="105mm" height="148mm"/>
+    <SetGrid nx="21" ny="30"/>
+    <DefineMasterPage name="page" test="true()" margin="10mm">
+        <PositioningArea name="cols">
+            <PositioningFrame column="1" row="1" width="10" height="30"/>
+            <PositioningFrame column="12" row="1" width="10" height="30"/>
+        </PositioningArea>
+    </DefineMasterPage>
+
+    <Record match="data">
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 1, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 2, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 3, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 4, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 5, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 6, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 7, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 8, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 9, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 10, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 11, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 12, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 13, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 14, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 15, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 16, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 17, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 18, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 19, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 20, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 21, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 22, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 23, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 24, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 25, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject area="cols">
+            <TextBlock><Paragraph><Value>Paragraph 26, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+    </Record>
+</Layout>
