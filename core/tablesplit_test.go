@@ -115,3 +115,25 @@ func TestFrameBottom(t *testing.T) {
 		t.Errorf("frameBottom = %s, want four rows below the first: %s", got, want)
 	}
 }
+
+// TestKeepsWithNext checks which rows the splitter holds to the row after
+// them: an HList that frontend.BuildTable marked for a rowspan, and nothing
+// else.
+func TestKeepsWithNext(t *testing.T) {
+	marked := node.NewHList()
+	marked.Attributes = node.H{"_keepWithNext": true}
+	if !keepsWithNext(marked) {
+		t.Error("a row marked _keepWithNext does not keep with the next")
+	}
+	if keepsWithNext(node.NewHList()) {
+		t.Error("an unmarked row keeps with the next")
+	}
+	unmarked := node.NewHList()
+	unmarked.Attributes = node.H{"_keepWithNext": false}
+	if keepsWithNext(unmarked) {
+		t.Error("a row marked false keeps with the next")
+	}
+	if keepsWithNext(node.NewGlue()) {
+		t.Error("glue between rows keeps with the next")
+	}
+}

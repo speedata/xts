@@ -9,8 +9,10 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
-## 0.1.2 (2026-09-23)
+## 0.1.2 (2026-09-24)
 
+- **A table does not break between rows a cell spans.**<br>
+  When a table was split across frames or pages, the break could fall between rows joined by a cell with `rowspan`. The spanning cell is drawn whole with its first row, so it hung past the bottom of the frame and left a gap beside the rows continued in the next one. The rows a rowspan joins now go to the next frame together; a group taller than an empty frame still overflows, as a single row taller than the frame always has.
 - **Text that exactly fills its line is no longer pushed 1pt to the right.**<br>
   A line whose contents were exactly as wide as the measure had its glue stretched fully instead of not at all. In tables that hit the widest cell of a column, the one the column width is taken from: its text started 1pt further right than the other cells and ran 1pt past the cell. Such lines are now set at their natural width. Also, a line breaking at a soft hyphen right before a space was chosen as if the hyphen were set and the space kept on the next line; both lines are now measured the way they are set, without the hyphen and the space.
 - **An object that no longer fits continues where there is room: in the next frame of its area, or below what a new page already carries.**<br>
