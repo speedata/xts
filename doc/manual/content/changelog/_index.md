@@ -9,8 +9,10 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
-## 0.1.2 (2026-09-24)
+## 0.1.2 (2026-09-25)
 
+- **Justified lines end at the right edge of the text instead of running past it.**<br>
+  Glyph widths were measured with the font size divided by the units per em rounded down, so every glyph was measured slightly narrower than it is drawn: 0.3% for a font with 2048 units per em, 0.05% for one with 1000. Justified lines printed past their measure by that amount. Glyphs are now measured at their exact width, so text comes out slightly wider and a few lines break differently. Also, an OpenType font with CFF outlines whose units per em are not 1000 was drawn at the wrong size and spacing, four times too large at 4000 units per em.
 - **A table does not break between rows a cell spans.**<br>
   When a table was split across frames or pages, the break could fall between rows joined by a cell with `rowspan`. The spanning cell is drawn whole with its first row, so it hung past the bottom of the frame and left a gap beside the rows continued in the next one. The rows a rowspan joins now go to the next frame together; a group taller than a frame is still broken inside, so none of its rows are lost.
 - **Text that exactly fills its line is no longer pushed 1pt to the right.**<br>

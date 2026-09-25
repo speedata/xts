@@ -106,6 +106,7 @@ CSS properties supported by XTS for styling layout elements and HTML content. Le
 | `-bag-leading-model` | `half` (CSS line boxes, the default), `trailing` (TeX style) | `-bag-leading-model: trailing;` |
 | `-bag-linebreak-tolerance` | Number, the TeX tolerance for line breaking | `-bag-linebreak-tolerance: 500;` |
 | `-bag-linebreak-hyphen-penalty` | Number, the TeX hyphen penalty | `-bag-linebreak-hyphen-penalty: 200;` |
+| `-bag-tab-stops` | `none`, or a comma separated list of stops: a length or percentage of the line width, optionally `start`, `end`, `center`, `decimal` or `decimal(",")`, optionally `leader(" . ")` (or `dotted`, `solid`, `space`). Inherited. A tab advances to the next stop past the text before it, `left` and `right` are synonyms of `start` and `end`. Tabs within a line survive any `white-space` mode, whitespace with a newline stays source formatting | `-bag-tab-stops: 12mm, 100% end leader(dotted);` |
 | `-bag-bookmark` | `none`, or a level number optionally followed by `open` or `closed`, see [Bookmarks](/manual/advanced/pdf-options#bookmarks). Adds the element to the PDF outline | `-bag-bookmark: 2 closed;` |
 
 ## Selectors
