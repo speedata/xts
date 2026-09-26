@@ -2223,6 +2223,17 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	return nil, nil
 }
 
+// keepsWithNext reports a table row that a rowspan joins to the row after it,
+// which frontend.BuildTable marks.
+func keepsWithNext(n node.Node) bool {
+	hl, ok := n.(*node.HList)
+	if !ok || hl.Attributes == nil {
+		return false
+	}
+	keep, _ := hl.Attributes["_keepWithNext"].(bool)
+	return keep
+}
+
 // fitRows is how many free rows an object ht rows high needs to start in: all
 // of them, or one for a table the splitter can continue.
 func fitRows(ht coord, splitTable *node.VList) coord {
@@ -2368,8 +2379,21 @@ func (xd *xtsDocument) splitTable(tableVL *node.VList, areaName string, col, row
 	// a row taller than a frame overflows once instead of looping.
 	placed := 0
 	mayBreak := row > 1
+	// groupAtTop is set when the rows a rowspan joins start at the top of a
+	// frame: moving them on gains nothing, so they break like other rows.
+	groupAtTop := false
 	for i, r := range rows {
 		h := nodeHeight(r)
+		// Rows a rowspan joins go to a frame together, so the break is only
+		// taken before the first of them, and only if all of them fit. A group
+		// taller than a frame is broken inside, or its rows would run past the
+		// bottom of the frame.
+		joined := i > 0 && keepsWithNext(rows[i-1])
+		held := joined && !groupAtTop
+		need := h
+		for j := i; !joined && j+1 < len(rows) && keepsWithNext(rows[j]); j++ {
+			need += nodeHeight(rows[j+1])
+		}
 		// A <TableFoot> is repeated at the bottom of every fragment, so its
 		// height stays reserved while the body rows are laid out. The final
 		// footer rows are the tail of rows itself: once they are reached, the
@@ -2378,7 +2402,7 @@ func (xd *xtsDocument) splitTable(tableVL *node.VList, areaName string, col, row
 		if i >= len(rows)-footerCount {
 			reserve = 0
 		}
-		if i >= headerCount && (placed > 0 || mayBreak) && y+h+reserve > bottom {
+		if !held && i >= headerCount && (placed > 0 || mayBreak) && y+need+reserve > bottom {
 			if placed == 0 {
 				// Nothing but header rows is pending. Flushing them would
 				// leave a lone table head at the bottom of the frame, so drop
@@ -2421,6 +2445,9 @@ func (xd *xtsDocument) splitTable(tableVL *node.VList, areaName string, col, row
 					y += nodeHeight(hdr)
 				}
 			}
+		}
+		if !joined {
+			groupAtTop = placed == 0 && !mayBreak
 		}
 		pending = append(pending, r)
 		y += h

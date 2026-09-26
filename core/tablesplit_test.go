@@ -1,9 +1,12 @@
 package core
 
 import (
+	"reflect"
 	"testing"
 
+	"github.com/boxesandglue/boxesandglue/backend/document"
 	"github.com/boxesandglue/boxesandglue/backend/node"
+	"github.com/boxesandglue/boxesandglue/frontend"
 )
 
 // wrapVList nests vl inside n plain VLists, the way CSSBuilder.CreateVlist
@@ -113,5 +116,82 @@ func TestFrameBottom(t *testing.T) {
 	}
 	if got, want := g.frameBottom(a), g.posY(1, a)+4*g.gridHeight; got != want {
 		t.Errorf("frameBottom = %s, want four rows below the first: %s", got, want)
+	}
+}
+
+// TestKeepsWithNext checks which rows the splitter holds to the row after
+// them: an HList that frontend.BuildTable marked for a rowspan, and nothing
+// else.
+func TestKeepsWithNext(t *testing.T) {
+	marked := node.NewHList()
+	marked.Attributes = node.H{"_keepWithNext": true}
+	if !keepsWithNext(marked) {
+		t.Error("a row marked _keepWithNext does not keep with the next")
+	}
+	if keepsWithNext(node.NewHList()) {
+		t.Error("an unmarked row keeps with the next")
+	}
+	unmarked := node.NewHList()
+	unmarked.Attributes = node.H{"_keepWithNext": false}
+	if keepsWithNext(unmarked) {
+		t.Error("a row marked false keeps with the next")
+	}
+	if keepsWithNext(node.NewGlue()) {
+		t.Error("glue between rows keeps with the next")
+	}
+}
+
+// splitRows splits a table of n rows, each one grid row high, across three
+// frames six rows high, with rows first..last joined by a rowspan. It returns
+// the row numbers each fragment holds.
+func splitRows(t *testing.T, n, first, last int) [][]int {
+	t.Helper()
+	xd, _ := threeFrames(5, 5, 5)
+	g := xd.currentGrid
+	g.gridWidth, g.gridHeight = 10*65536, 10*65536
+	xd.currentPage.bagPage = &document.Page{}
+
+	table := node.NewVList()
+	table.Width = g.width(5)
+	var tail node.Node
+	for i := 1; i <= n; i++ {
+		r := node.NewHList()
+		r.Height = g.gridHeight
+		r.Attributes = node.H{"row": i, "_keepWithNext": i >= first && i < last}
+		table.List = node.InsertAfter(table.List, tail, r)
+		tail = r
+	}
+
+	var fragments [][]int
+	record := func(vl *node.VList) {
+		var rows []int
+		for r := vl.List; r != nil; r = r.Next() {
+			rows = append(rows, r.(*node.HList).Attributes["row"].(int))
+		}
+		fragments = append(fragments, rows)
+	}
+	if err := xd.splitTable(table, "cols", 1, 1, "", false, frontend.HAlignLeft, record); err != nil {
+		t.Fatal(err)
+	}
+	return fragments
+}
+
+// TestSplitTableRowspan checks that the rows a rowspan joins go to the next
+// frame together, and that a group taller than a frame is broken inside
+// instead of running past the bottom of the frame.
+func TestSplitTableRowspan(t *testing.T) {
+	for _, tc := range []struct {
+		name              string
+		rows, first, last int
+		want              [][]int
+	}{
+		{"group fits a frame", 10, 5, 7, [][]int{{1, 2, 3, 4}, {5, 6, 7, 8, 9, 10}}},
+		{"group taller than a frame", 14, 3, 12, [][]int{{1, 2}, {3, 4, 5, 6, 7, 8}, {9, 10, 11, 12, 13, 14}}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := splitRows(t, tc.rows, tc.first, tc.last); !reflect.DeepEqual(got, tc.want) {
+				t.Errorf("fragments %v, want %v", got, tc.want)
+			}
+		})
 	}
 }
