@@ -16,7 +16,7 @@ require (
 	github.com/speedata/go-lua v0.1.10
 	github.com/speedata/goxlsx v1.0.2
 	github.com/speedata/goxml v1.0.11
-	github.com/speedata/goxpath v1.0.18
+	github.com/speedata/goxpath v1.0.21
 	github.com/speedata/goxslt v0.0.2
 	github.com/speedata/optionparser v1.2.1
 	github.com/yuin/goldmark v1.7.16

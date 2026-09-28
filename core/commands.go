@@ -749,7 +749,7 @@ func cmdForall(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 	// position() and last() are the loop's for its body and are given back when
 	// it ends: a ForAll run from a page callback sits inside another one's row.
 	oldPos, oldSize := xd.data.Ctx.Pos, xd.data.Ctx.Size()
-	eval, err = xd.data.Evaluate(attValues.Select)
+	eval, err = evaluateXPath(xd, layoutelt.Namespaces, attValues.Select)
 	if err != nil {
 		return nil, newTypesettingErrorf("ForAll", layoutelt.Line, "error parsing select XPath expression %s", err)
 	}
@@ -1381,6 +1381,9 @@ func cmdProcessNode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	}
 
 	oldContext := xd.data.Ctx.SetContextSequence(xpath.Sequence{})
+	// position() and last() are the selected nodes' for their records and are
+	// given back when they are done, like in a ForAll.
+	oldPos, oldSize := xd.data.Ctx.Pos, xd.data.Ctx.Size()
 
 	if len(eval) == 0 {
 		slog.Debug(fmt.Sprintf("Call Record select %q mode %q (no items found)", attValues.Select, attValues.Mode))
@@ -1388,6 +1391,7 @@ func cmdProcessNode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 
 	for i, itm := range eval {
 		xd.data.Ctx.Pos = i + 1
+		xd.data.Ctx.SetSize(len(eval))
 		if elt, ok := itm.(*goxml.Element); ok {
 			xd.data.Ctx.SetContextSequence(xpath.Sequence{elt})
 			if rec := findRecord(xd, elt, attValues.Mode); rec != nil {
@@ -1397,6 +1401,8 @@ func cmdProcessNode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		}
 	}
 	xd.data.Ctx.SetContextSequence(oldContext)
+	xd.data.Ctx.Pos = oldPos
+	xd.data.Ctx.SetSize(oldSize)
 	return nil, nil
 }
 
@@ -1418,8 +1424,12 @@ func findRecord(xd *xtsDocument, elt *goxml.Element, mode string) *goxml.Element
 			}
 			continue
 		}
-		// Evaluate predicate against current context node
+		// Evaluate predicate against current context node, with the
+		// namespaces of the Record it belongs to.
+		oldNamespaces := xd.data.Ctx.Namespaces
+		xd.data.Ctx.Namespaces = rec.layout.Namespaces
 		seq, err := xd.data.Evaluate("self::*[" + rec.pred + "]")
+		xd.data.Ctx.Namespaces = oldNamespaces
 		if err != nil {
 			slog.Warn(fmt.Sprintf("Record predicate evaluation error: %s", err))
 			continue

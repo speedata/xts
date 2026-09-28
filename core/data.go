@@ -397,13 +397,14 @@ func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 }
 
 // evaluateXPath runs an XPath expression. It saves and restores the current
-// context.
+// context and namespaces.
 func evaluateXPath(xd *xtsDocument, namespaces map[string]string, xpath string) (xpath.Sequence, error) {
 	oldContext := xd.data.Ctx.GetContextSequence()
-	// goxpath leaves the position at 1 after a path of two or more steps
-	// (../x), which would make every later position() in a ForAll read 1.
-	oldPos, oldSize := xd.data.Ctx.Pos, xd.data.Ctx.Size()
-	defer func() { xd.data.Ctx.Pos = oldPos; xd.data.Ctx.SetSize(oldSize) }()
+	// An XPath function can run layout code in the middle of an expression
+	// (sd:current-page() sets up the page), and the expressions evaluated
+	// there must not take the namespaces of the outer one away.
+	oldNamespaces := xd.data.Ctx.Namespaces
+	defer func() { xd.data.Ctx.Namespaces = oldNamespaces }()
 	xd.data.Ctx.Namespaces = namespaces
 	seq, err := xd.data.Evaluate(xpath)
 	for _, itm := range seq {

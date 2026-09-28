@@ -11,8 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.3 (2026-09-28)
 
-- **position() and last() in a ForAll survive a path such as ../x.**<br>
-  Evaluating a path of two or more steps, such as `../x` or `count(../rec)`, left `position()` at 1 for the rest of the ForAll body, and an inner ForAll left its own `position()` and `last()` behind for the outer one. Each evaluation now restores both, a ForAll sets `last()` to the number of items it iterates over and gives the outer values back when it ends.
+- **position() and last() in ForAll and ProcessNode count the right items.**<br>
+  A path such as `../x` or `count(../rec)` left `position()` at 1 and `last()` at the number of nodes of its last step, for the rest of the expression and the rest of the loop body. goxpath 1.0.21 fixes this. ForAll and ProcessNode now set `last()` to the number of items they go through and give the outer `position()` and `last()` back when they end. Also, an expression that sets up the first page in its middle, such as `concat(sd:current-page(), sd:current-page())`, no longer loses its namespaces and fails with "Could not find namespace for prefix".
 
 ## 0.1.2 (2026-09-25)
 
