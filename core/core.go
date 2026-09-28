@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"maps"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -379,8 +381,10 @@ func (xd *xtsDocument) registerCallbacks() {
 			pdfinstructions := make([]string, 0, len(xd.currentGrid.allocatedBlocks))
 			pdfinstructions = append(pdfinstructions, "q 1 1 0 rg")
 
-			for k, v := range curGrid.allocatedBlocks {
-				if v > 0 {
+			// In the order of the cells, not of the map, so that the PDF
+			// is the same on every run.
+			for _, k := range slices.Sorted(maps.Keys(curGrid.allocatedBlocks)) {
+				if curGrid.allocatedBlocks[k] > 0 {
 					x, y := k.XY()
 					pdfinstructions = append(pdfinstructions, fmt.Sprintf("%s %s %s %s re f", curGrid.posX(x, pageArea), xtspage.pageHeight-curGrid.posY(y, pageArea), curGrid.gridWidth, -curGrid.gridHeight))
 				}
