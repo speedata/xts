@@ -141,7 +141,6 @@ type page struct {
 	pageHeight    bag.ScaledPoint // total height of the (PDF) page
 	pagegrid      *grid
 	markerid      int
-	markerids     chan int
 	atPageShipout func()
 }
 
@@ -258,10 +257,6 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 		}
 
 	}
-	// per page unique marker ids
-	pg.markerids = make(chan int)
-	go pg.genMarkerIDs(pg.markerids)
-
 	// CHECK
 	docPage := pg.bagPage
 	docPage.Userdata = make(map[any]any)
@@ -317,11 +312,13 @@ func parsePositioningFrames(xd *xtsDocument, elt *goxml.Element) ([]*gridRect, e
 	return rects, nil
 }
 
-func (p *page) genMarkerIDs(ids chan int) {
-	for {
-		ids <- p.markerid
-		p.markerid++
-	}
+// nextMarkerID returns the page's next marker id. It is a counter rather than
+// a goroutine feeding a channel, which never ended and kept the page, and
+// with it the whole document, alive.
+func (p *page) nextMarkerID() int {
+	id := p.markerid
+	p.markerid++
+	return id
 }
 
 func (p *page) outputAbsolute(x, y bag.ScaledPoint, vl *node.VList) {
