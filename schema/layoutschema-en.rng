@@ -980,6 +980,17 @@
                     <a:documentation>Gap between two grid cells (vertical).</a:documentation>
                 </attribute>
             </optional>
+            <optional>
+                <attribute name="rounding">
+                    <a:documentation>How the height of an object is turned into a number of grid rows. Without the attribute the page grid&#39;s setting is kept.</a:documentation>
+                    <choice>
+                        <value>up</value>
+                        <a:documentation>An object takes the next whole number of rows (default).</a:documentation>
+                        <value>nearest</value>
+                        <a:documentation>An object takes the nearest number of rows. What that gains or loses is carried into the next object placed on the row below it, so a run of objects on a fine grid keeps its exact height instead of growing by up to a row per object.</a:documentation>
+                    </choice>
+                </attribute>
+            </optional>
             <empty></empty>
         </element>
     </define>
@@ -2313,6 +2324,17 @@
             <optional>
                 <attribute name="dy">
                     <a:documentation>Gap between two grid cells (vertical)</a:documentation>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="rounding">
+                    <a:documentation>How the height of an object is turned into a number of grid rows. Without the attribute the setting is kept.</a:documentation>
+                    <choice>
+                        <value>up</value>
+                        <a:documentation>An object takes the next whole number of rows (default).</a:documentation>
+                        <value>nearest</value>
+                        <a:documentation>An object takes the nearest number of rows. What that gains or loses is carried into the next object placed on the row below it, so a run of objects on a fine grid keeps its exact height instead of growing by up to a row per object.</a:documentation>
+                    </choice>
                 </attribute>
             </optional>
             <empty></empty>

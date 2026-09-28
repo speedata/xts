@@ -926,12 +926,13 @@ func cmdCallTemplate(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence,
 // SetGrid instead.
 func cmdGrid(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	attValues := &struct {
-		Width  bag.ScaledPoint
-		Height bag.ScaledPoint
-		Dx     bag.ScaledPoint
-		Dy     bag.ScaledPoint
-		Nx     int
-		Ny     int
+		Width    bag.ScaledPoint
+		Height   bag.ScaledPoint
+		Dx       bag.ScaledPoint
+		Dy       bag.ScaledPoint
+		Nx       int
+		Ny       int
+		Rounding string
 	}{}
 	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -940,6 +941,13 @@ func cmdGrid(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 		return nil, newTypesettingErrorf("Grid", layoutelt.Line, "Grid can only be used inside a Slate")
 	}
 	xd.currentSlate.setGrid(attValues.Width, attValues.Height, attValues.Dx, attValues.Dy, attValues.Nx, attValues.Ny)
+	switch attValues.Rounding {
+	case "":
+	case "up", "nearest":
+		xd.currentSlate.grid.nearest = attValues.Rounding == "nearest"
+	default:
+		return nil, newTypesettingErrorf("Grid", layoutelt.Line, "rounding must be up or nearest, not %q", attValues.Rounding)
+	}
 	return nil, nil
 }
 
@@ -1797,8 +1805,12 @@ func cmdNextRow(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	if attValues.Row != nil {
 		area.SetCurrentRow(coord(*attValues.Row))
 	} else if r := attValues.Rows; r != nil {
+		frame, from, pg := area.currentFrame, area.CurrentRow(), xd.currentPage
 		area = xd.currentGrid.nextRow(area)
 		area.SetCurrentRow(area.CurrentRow() + coord(*r-1))
+		if xd.currentPage == pg {
+			keepCarry(area, frame, from)
+		}
 	} else {
 		area = xd.currentGrid.nextRow(area)
 	}
@@ -2232,7 +2244,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		// allocate="no" the cursor must stay where it was, as the reference
 		// promises, so that the next object can be placed on top of it.
 		if attValues.Allocate && col+xd.currentGrid.widthToColumns(vl.Width) > area.frame[area.currentFrame].width {
-			area.SetCurrentRow(row + xd.currentGrid.heightToRows(vl.Height+vl.Depth))
+			area.SetCurrentRow(area.frame[area.currentFrame].below)
 			area.SetCurrentCol(1)
 		}
 	}
@@ -2558,12 +2570,13 @@ func cmdSection(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 
 func cmdSetGrid(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	attValues := &struct {
-		Nx     int
-		Ny     int
-		Dx     bag.ScaledPoint
-		Dy     bag.ScaledPoint
-		Width  bag.ScaledPoint
-		Height bag.ScaledPoint
+		Nx       int
+		Ny       int
+		Dx       bag.ScaledPoint
+		Dy       bag.ScaledPoint
+		Width    bag.ScaledPoint
+		Height   bag.ScaledPoint
+		Rounding string
 	}{}
 	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -2586,6 +2599,13 @@ func cmdSetGrid(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	}
 	if ny := attValues.Ny; ny > 0 {
 		xd.defaultGridNy = ny
+	}
+	switch attValues.Rounding {
+	case "":
+	case "up", "nearest":
+		xd.defaultGridNearest = attValues.Rounding == "nearest"
+	default:
+		return nil, newTypesettingErrorf("SetGrid", layoutelt.Line, "rounding must be up or nearest, not %q", attValues.Rounding)
 	}
 	return nil, nil
 }

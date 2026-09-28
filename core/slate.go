@@ -37,7 +37,7 @@ func (xd *xtsDocument) newSlate(slatename string) *slate {
 	g.allocatedBlocks = make(allocationMatrix)
 	g.areas[pageAreaName] = &area{
 		name:  pageAreaName,
-		frame: []*gridRect{{1, 1, coord(g.nx), coord(g.ny), 1, 1}},
+		frame: []*gridRect{{row: 1, col: 1, width: coord(g.nx), height: coord(g.ny), currentCol: 1, currentRow: 1}},
 	}
 	g.inSlate = true
 	s := slate{
@@ -70,7 +70,7 @@ func (s *slate) setGrid(width, height, dx, dy bag.ScaledPoint, nx, ny int) {
 	if ny > 0 {
 		g.ny = ny
 	}
-	g.areas[pageAreaName].frame = []*gridRect{{1, 1, coord(g.nx), coord(g.ny), 1, 1}}
+	g.areas[pageAreaName].frame = []*gridRect{{row: 1, col: 1, width: coord(g.nx), height: coord(g.ny), currentCol: 1, currentRow: 1}}
 }
 
 // appendItem puts an object onto the slate and invalidates the cached

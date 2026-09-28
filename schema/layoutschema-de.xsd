@@ -662,6 +662,17 @@
           <xs:documentation>Abstand zwischen zwei Rasterzellen (vertikal).</xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="rounding">
+        <xs:annotation>
+          <xs:documentation>Wie die Höhe eines Objekts in eine Anzahl von Rasterzeilen umgerechnet wird. Ohne das Attribut bleibt die Einstellung des Seitenrasters erhalten.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="up"></xs:enumeration>
+            <xs:enumeration value="nearest"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
   <xs:element name="Slate">
@@ -1565,6 +1576,17 @@
         <xs:annotation>
           <xs:documentation>Abstand zwischen zwei Rasterzellen (vertikal)</xs:documentation>
         </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="rounding">
+        <xs:annotation>
+          <xs:documentation>Wie die Höhe eines Objekts in eine Anzahl von Rasterzeilen umgerechnet wird. Ohne das Attribut bleibt die Einstellung erhalten.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="up"></xs:enumeration>
+            <xs:enumeration value="nearest"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
       </xs:attribute>
     </xs:complexType>
   </xs:element>

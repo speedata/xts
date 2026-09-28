@@ -66,6 +66,7 @@ type xtsDocument struct {
 	defaultGridGapY    bag.ScaledPoint
 	defaultGridNx      int
 	defaultGridNy      int
+	defaultGridNearest bool
 	masterpages        []*pagetype
 	marker             mapmarker
 	aux                *auxfile // contents of the previous run, if available

@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.3 (2026-09-28)
 
+- **New attribute rounding on SetGrid and Grid rounds object heights to the nearest row.**<br>
+  An object takes the next whole number of grid rows, so on a fine grid each object moves everything after it down by half a row on average. With `rounding="nearest"` an object takes the nearest number of rows instead, and what that gains or loses is carried into the next object placed on the row below it (also across `NextRow rows`), so a run of objects keeps its exact height. The default, `up`, is unchanged.
 - **A tab stop's leader is drawn in a Paragraph.**<br>
   With `-bag-tab-stops` and `leader()`, the leader showed only in `<HTML>` text and came out blank in a `Paragraph`, because the tab lost its leader when the lines were copied for placing ([#38](https://github.com/speedata/xts/issues/38)).
 - **margin-left and margin-right of a paragraph work in a table cell.**<br>

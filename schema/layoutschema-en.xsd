@@ -662,6 +662,17 @@
           <xs:documentation>Gap between two grid cells (vertical).</xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="rounding">
+        <xs:annotation>
+          <xs:documentation>How the height of an object is turned into a number of grid rows. Without the attribute the page grid&#39;s setting is kept.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="up"></xs:enumeration>
+            <xs:enumeration value="nearest"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
   <xs:element name="Slate">
@@ -1565,6 +1576,17 @@
         <xs:annotation>
           <xs:documentation>Gap between two grid cells (vertical)</xs:documentation>
         </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="rounding">
+        <xs:annotation>
+          <xs:documentation>How the height of an object is turned into a number of grid rows. Without the attribute the setting is kept.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="up"></xs:enumeration>
+            <xs:enumeration value="nearest"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
       </xs:attribute>
     </xs:complexType>
   </xs:element>

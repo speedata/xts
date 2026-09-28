@@ -52,6 +52,12 @@ type gridRect struct {
 	height     coord
 	currentCol coord
 	currentRow coord
+	// below is the row under the last object allocated in the frame. With
+	// rounding="nearest", carry is how far the exact bottom of that object
+	// lies below the top of that row, for the next object placed there.
+	below     coord
+	carry     bag.ScaledPoint
+	carryPage *page
 }
 
 func (gr *gridRect) String() string {
@@ -138,6 +144,9 @@ type grid struct {
 	allocatedBlocks allocationMatrix
 	areas           map[string]*area
 	inSlate         bool
+	// nearest rounds an object's height to the nearest number of rows
+	// instead of up (SetGrid and Grid rounding="nearest").
+	nearest bool
 }
 
 func newGrid(xd *xtsDocument) *grid {
@@ -148,6 +157,7 @@ func newGrid(xd *xtsDocument) *grid {
 		gridGapY:   xd.defaultGridGapY,
 		areas:      make(map[string]*area),
 		inSlate:    true,
+		nearest:    xd.defaultGridNearest,
 	}
 
 	return g
@@ -160,7 +170,7 @@ func (g *grid) setPage(p *page) {
 	g.allocatedBlocks = make(allocationMatrix)
 	g.areas[pageAreaName] = &area{
 		name:  pageAreaName,
-		frame: []*gridRect{{1, 1, coord(g.nx), coord(g.ny), 1, 1}},
+		frame: []*gridRect{{row: 1, col: 1, width: coord(g.nx), height: coord(g.ny), currentCol: 1, currentRow: 1}},
 	}
 }
 
@@ -207,7 +217,43 @@ func (g *grid) widthToColumns(width bag.ScaledPoint) coord {
 
 func (g *grid) heightToRows(height bag.ScaledPoint) coord {
 	r := float64(height) / float64(g.gridHeight+g.gridGapY)
+	if g.nearest {
+		return coord(math.Ceil(r - 0.5))
+	}
 	return coord(math.Ceil(r - 0.005))
+}
+
+// flowRows is how many rows an object ht high takes at row y, and records the
+// row below it. Rounding to the nearest row (rounding="nearest"), what
+// rounding an object gained or lost is carried into the next object placed on
+// the row below, so a run of paragraphs keeps its exact height rather than
+// drifting by a rounding per paragraph.
+func (g *grid) flowRows(area *area, y coord, ht bag.ScaledPoint) coord {
+	f := area.frame[area.currentFrame]
+	step := g.gridHeight + g.gridGapY
+	if !g.nearest || step <= 0 {
+		f.below, f.carry, f.carryPage = y+g.heightToRows(ht), 0, nil
+		return g.heightToRows(ht)
+	}
+	exact := ht
+	if f.carryPage == g.page && f.below == y {
+		exact += f.carry
+	}
+	rows := coord(math.Floor(float64(exact)/float64(step) + 0.5))
+	if rows < 0 {
+		rows = 0
+	}
+	f.below, f.carry, f.carryPage = y+rows, exact-bag.ScaledPoint(rows)*step, g.page
+	return rows
+}
+
+// keepCarry moves a frame's carry along with a move of its current row by
+// whole rows, as NextRow makes: the flow's exact position moves with it.
+func keepCarry(area *area, frame int, from coord) {
+	f := area.frame[frame]
+	if area.currentFrame == frame && f.below == from {
+		f.below = f.currentRow
+	}
 }
 
 func (g *grid) allocate(x, y coord, area *area, wd, ht bag.ScaledPoint) {
@@ -218,8 +264,9 @@ func (g *grid) allocate(x, y coord, area *area, wd, ht bag.ScaledPoint) {
 	offsetX = area.frame[area.currentFrame].col
 	offsetY = area.frame[area.currentFrame].row
 
+	rows := g.flowRows(area, y, ht)
 	for col := coord(1); col <= g.widthToColumns(wd); col++ {
-		for row := coord(1); row <= g.heightToRows(ht); row++ {
+		for row := coord(1); row <= rows; row++ {
 			if posX, posY := col+x+offsetX-2, row+y+offsetY-2; posX >= 1 && posY >= 1 && posX <= coord(g.nx) && posY <= coord(g.ny) {
 				g.allocatedBlocks.allocate(posX, posY)
 			} else {
@@ -245,7 +292,7 @@ func (g *grid) allocate(x, y coord, area *area, wd, ht bag.ScaledPoint) {
 	col := x + g.widthToColumns(wd)
 	if col > coord(g.nx) {
 		area.SetCurrentCol(1)
-		area.SetCurrentRow(y + g.heightToRows(ht))
+		area.SetCurrentRow(y + rows)
 	} else {
 		area.SetCurrentCol(col)
 		area.SetCurrentRow(y)

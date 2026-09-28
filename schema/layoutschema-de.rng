@@ -980,6 +980,17 @@
                     <a:documentation>Abstand zwischen zwei Rasterzellen (vertikal).</a:documentation>
                 </attribute>
             </optional>
+            <optional>
+                <attribute name="rounding">
+                    <a:documentation>Wie die Höhe eines Objekts in eine Anzahl von Rasterzeilen umgerechnet wird. Ohne das Attribut bleibt die Einstellung des Seitenrasters erhalten.</a:documentation>
+                    <choice>
+                        <value>up</value>
+                        <a:documentation>Ein Objekt belegt die nächste ganze Anzahl von Zeilen (Voreinstellung).</a:documentation>
+                        <value>nearest</value>
+                        <a:documentation>Ein Objekt belegt die nächstliegende Anzahl von Zeilen. Was dabei gewonnen oder verloren wird, wird an das nächste Objekt in der Zeile darunter weitergegeben, so dass eine Folge von Objekten auf einem feinen Raster ihre genaue Höhe behält, statt pro Objekt um bis zu eine Zeile zu wachsen.</a:documentation>
+                    </choice>
+                </attribute>
+            </optional>
             <empty></empty>
         </element>
     </define>
@@ -2313,6 +2324,17 @@
             <optional>
                 <attribute name="dy">
                     <a:documentation>Abstand zwischen zwei Rasterzellen (vertikal)</a:documentation>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="rounding">
+                    <a:documentation>Wie die Höhe eines Objekts in eine Anzahl von Rasterzeilen umgerechnet wird. Ohne das Attribut bleibt die Einstellung erhalten.</a:documentation>
+                    <choice>
+                        <value>up</value>
+                        <a:documentation>Ein Objekt belegt die nächste ganze Anzahl von Zeilen (Voreinstellung).</a:documentation>
+                        <value>nearest</value>
+                        <a:documentation>Ein Objekt belegt die nächstliegende Anzahl von Zeilen. Was dabei gewonnen oder verloren wird, wird an das nächste Objekt in der Zeile darunter weitergegeben, so dass eine Folge von Objekten auf einem feinen Raster ihre genaue Höhe behält, statt pro Objekt um bis zu eine Zeile zu wachsen.</a:documentation>
+                    </choice>
                 </attribute>
             </optional>
             <empty></empty>

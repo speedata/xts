@@ -1,0 +1,18 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+    <!-- Forty objects 14.63pt high on a 0.25pt grid, beside a ruler with a
+         mark every 14.63pt. Rounded to the nearest row with the difference carried, each ends on its mark. -->
+    <SetGrid width="5mm" height="0.25pt" rounding="nearest"/>
+    <Record match="data">
+        <Loop select="40" variable="i">
+            <PlaceObject column="1">
+                <Box width="2cm" height="14.63pt" backgroundcolor="{if ($i mod 2 = 0) then 'lightgray' else 'gray'}"/>
+            </PlaceObject>
+        </Loop>
+        <Loop select="41" variable="i">
+            <PlaceObject column="1cm" row="{28.3465 + ($i - 1) * 14.63 - 0.2}pt">
+                <Box width="3cm" height="0.4pt" backgroundcolor="red"/>
+            </PlaceObject>
+        </Loop>
+    </Record>
+</Layout>

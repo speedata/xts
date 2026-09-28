@@ -2075,6 +2075,30 @@
         <para>Abstand zwischen zwei Rasterzellen (vertikal).</para>
       </description>
     </attribute>
+    <attribute en="rounding" optional="yes">
+      <description xml:lang="en">
+        <para>How the height of an object is turned into a number of grid rows. Without the attribute the page grid's setting is kept.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Wie die Höhe eines Objekts in eine Anzahl von Rasterzeilen umgerechnet wird. Ohne das Attribut bleibt die Einstellung des Seitenrasters erhalten.</para>
+      </description>
+      <choice en="up">
+        <description xml:lang="en">
+          <para>An object takes the next whole number of rows (default).</para>
+        </description>
+        <description xml:lang="de">
+          <para>Ein Objekt belegt die nächste ganze Anzahl von Zeilen (Voreinstellung).</para>
+        </description>
+      </choice>
+      <choice en="nearest">
+        <description xml:lang="en">
+          <para>An object takes the nearest number of rows. What that gains or loses is carried into the next object placed on the row below it, so a run of objects on a fine grid keeps its exact height instead of growing by up to a row per object.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Ein Objekt belegt die nächstliegende Anzahl von Zeilen. Was dabei gewonnen oder verloren wird, wird an das nächste Objekt in der Zeile darunter weitergegeben, so dass eine Folge von Objekten auf einem feinen Raster ihre genaue Höhe behält, statt pro Objekt um bis zu eine Zeile zu wachsen.</para>
+        </description>
+      </choice>
+    </attribute>
     <example xml:lang="en">
       <listing><![CDATA[<Slate name="calendar">
   <Grid width="5mm" height="5mm"/>
@@ -4181,6 +4205,30 @@
       <description xml:lang="de">
         <para>Abstand zwischen zwei Rasterzellen (vertikal)</para>
       </description>
+    </attribute>
+    <attribute en="rounding" optional="yes">
+      <description xml:lang="en">
+        <para>How the height of an object is turned into a number of grid rows. Without the attribute the setting is kept.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Wie die Höhe eines Objekts in eine Anzahl von Rasterzeilen umgerechnet wird. Ohne das Attribut bleibt die Einstellung erhalten.</para>
+      </description>
+      <choice en="up">
+        <description xml:lang="en">
+          <para>An object takes the next whole number of rows (default).</para>
+        </description>
+        <description xml:lang="de">
+          <para>Ein Objekt belegt die nächste ganze Anzahl von Zeilen (Voreinstellung).</para>
+        </description>
+      </choice>
+      <choice en="nearest">
+        <description xml:lang="en">
+          <para>An object takes the nearest number of rows. What that gains or loses is carried into the next object placed on the row below it, so a run of objects on a fine grid keeps its exact height instead of growing by up to a row per object.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Ein Objekt belegt die nächstliegende Anzahl von Zeilen. Was dabei gewonnen oder verloren wird, wird an das nächste Objekt in der Zeile darunter weitergegeben, so dass eine Folge von Objekten auf einem feinen Raster ihre genaue Höhe behält, statt pro Objekt um bis zu eine Zeile zu wachsen.</para>
+        </description>
+      </choice>
     </attribute>
     <example xml:lang="en">
       <listing><![CDATA[<SetGrid width="4mm" height="14pt"/>]]></listing>
