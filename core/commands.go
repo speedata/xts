@@ -746,6 +746,9 @@ func cmdForall(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 	}
 	var eval xpath.Sequence
 	oldContext := xd.data.Ctx.GetContextSequence()
+	// position() and last() are the loop's for its body and are given back when
+	// it ends: a ForAll run from a page callback sits inside another one's row.
+	oldPos, oldSize := xd.data.Ctx.Pos, xd.data.Ctx.Size()
 	eval, err = xd.data.Evaluate(attValues.Select)
 	if err != nil {
 		return nil, newTypesettingErrorf("ForAll", layoutelt.Line, "error parsing select XPath expression %s", err)
@@ -756,6 +759,7 @@ func cmdForall(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 	for i, itm := range eval {
 		xd.data.Ctx.SetContextSequence(xpath.Sequence{itm})
 		xd.data.Ctx.Pos = i + 1
+		xd.data.Ctx.SetSize(len(eval))
 		neval, err := dispatch(xd, layoutelt)
 		if err != nil {
 			return nil, err
@@ -765,6 +769,8 @@ func cmdForall(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 		}
 	}
 	xd.data.Ctx.SetContextSequence(oldContext)
+	xd.data.Ctx.Pos = oldPos
+	xd.data.Ctx.SetSize(oldSize)
 	return ret, nil
 }
 

@@ -11,8 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.3 (2026-09-28)
 
-- **A finished run no longer keeps its document in memory.**<br>
-  Every page started a goroutine that handed out its marker ids and never ended. It held the page, and the page the whole document, so a process that renders more than once, such as `xts watch` or a run with `--runs`, grew by every document it had made. The marker ids now come from a counter on the page.
+- **position() and last() in a ForAll survive a path such as ../x.**<br>
+  Evaluating a path of two or more steps, such as `../x` or `count(../rec)`, left `position()` at 1 for the rest of the ForAll body, and an inner ForAll left its own `position()` and `last()` behind for the outer one. Each evaluation now restores both, a ForAll sets `last()` to the number of items it iterates over and gives the outer values back when it ends.
 
 ## 0.1.2 (2026-09-25)
 

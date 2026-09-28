@@ -400,6 +400,10 @@ func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 // context.
 func evaluateXPath(xd *xtsDocument, namespaces map[string]string, xpath string) (xpath.Sequence, error) {
 	oldContext := xd.data.Ctx.GetContextSequence()
+	// goxpath leaves the position at 1 after a path of two or more steps
+	// (../x), which would make every later position() in a ForAll read 1.
+	oldPos, oldSize := xd.data.Ctx.Pos, xd.data.Ctx.Size()
+	defer func() { xd.data.Ctx.Pos = oldPos; xd.data.Ctx.SetSize(oldSize) }()
 	xd.data.Ctx.Namespaces = namespaces
 	seq, err := xd.data.Evaluate(xpath)
 	for _, itm := range seq {
