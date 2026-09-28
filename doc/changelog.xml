@@ -25,6 +25,30 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.3" date="2026-09-28">
+      <en summary="A tab stop's leader is drawn in a Paragraph.">With <tt>-bag-tab-stops</tt> and <tt>leader()</tt>, the leader showed only in <tt>&lt;HTML&gt;</tt> text and came out blank in a <tt>Paragraph</tt>, because the tab lost its leader when the lines were copied for placing (#38).</en>
+    </entry>
+    <entry version="0.1.3" date="2026-09-28">
+      <en summary="margin-left and margin-right of a paragraph work in a table cell.">A paragraph with a side margin was indented on the page but not in a <tt>Td</tt>. It is now indented in a cell too, and the height of the cell does not change.</en>
+    </entry>
+    <entry version="0.1.3" date="2026-09-28">
+      <en summary="The right border of a table cell stands at the edge of the cell.">Content narrower than the cell, such as a fixed-width box or a paragraph with a side margin, put the right padding and border just after the content instead of at the edge of the cell.</en>
+    </entry>
+    <entry version="0.1.3" date="2026-09-28">
+      <en summary="New CSS property font-synthesis-style slants the upright for a missing italic.">With <tt>font-synthesis-style: auto</tt> (or <tt>font-synthesis: style</tt>) a font family without an italic sets italic text in its upright slanted by 12 degrees, as browsers do. Unlike CSS, the default is <tt>none</tt>, so existing layouts keep the upright.</en>
+    </entry>
+    <entry version="0.1.3" date="2026-09-28">
+      <en summary="A missing font style is reported once, not for every run of text.">A family without an italic logged &quot;Style italic not found&quot; for each italic run of text. The warning now comes once for each missing weight and style.</en>
+    </entry>
+    <entry version="0.1.3" date="2026-09-28">
+      <en summary="A span that holds only white space no longer breaks the line in two.">A paragraph whose only content was white space inside a span, such as a colored space or a lone tab, could break at the invisible start and end of the span and set as two lines.</en>
+    </entry>
+    <entry version="0.1.3" date="2026-09-28">
+      <en summary="A table with fixed columns no longer collapses on x86 computers.">When a line or row was one scaled point too narrow or too wide for its glue, the arithmetic produced a value that is 0 on ARM and a huge negative number on x86. On x86 a table with fixed column widths could set every column to nothing. The glue now keeps its natural width in that case, as in TeX.</en>
+    </entry>
+    <entry version="0.1.3" date="2026-09-28">
+      <en summary="Text selection and extraction get the right line height for fonts whose units per em are not 1000.">The ascent, descent and font bounding box in the PDF font descriptor were written in the units of the font instead of 1/1000 of the em, so viewers took each line of a 2048-unit TrueType font for twice its height and could merge table rows when copying text. Nothing drawn changes.</en>
+    </entry>
+    <entry version="0.1.3" date="2026-09-28">
       <en summary="position() and last() in ForAll and ProcessNode count the right items.">A path such as <tt>../x</tt> or <tt>count(../rec)</tt> left <tt>position()</tt> at 1 and <tt>last()</tt> at the number of nodes of its last step, for the rest of the expression and the rest of the loop body. goxpath 1.0.21 fixes this. ForAll and ProcessNode now set <tt>last()</tt> to the number of items they go through and give the outer <tt>position()</tt> and <tt>last()</tt> back when they end. Also, an expression that sets up the first page in its middle, such as <tt>concat(sd:current-page(), sd:current-page())</tt>, no longer loses its namespaces and fails with "Could not find namespace for prefix".</en>
     </entry>
     <entry version="0.1.3" date="2026-09-28">

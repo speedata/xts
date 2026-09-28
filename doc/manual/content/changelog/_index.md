@@ -11,6 +11,22 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.3 (2026-09-28)
 
+- **A tab stop's leader is drawn in a Paragraph.**<br>
+  With `-bag-tab-stops` and `leader()`, the leader showed only in `<HTML>` text and came out blank in a `Paragraph`, because the tab lost its leader when the lines were copied for placing ([#38](https://github.com/speedata/xts/issues/38)).
+- **margin-left and margin-right of a paragraph work in a table cell.**<br>
+  A paragraph with a side margin was indented on the page but not in a `Td`. It is now indented in a cell too, and the height of the cell does not change.
+- **The right border of a table cell stands at the edge of the cell.**<br>
+  Content narrower than the cell, such as a fixed-width box or a paragraph with a side margin, put the right padding and border just after the content instead of at the edge of the cell.
+- **New CSS property font-synthesis-style slants the upright for a missing italic.**<br>
+  With `font-synthesis-style: auto` (or `font-synthesis: style`) a font family without an italic sets italic text in its upright slanted by 12 degrees, as browsers do. Unlike CSS, the default is `none`, so existing layouts keep the upright.
+- **A missing font style is reported once, not for every run of text.**<br>
+  A family without an italic logged "Style italic not found" for each italic run of text. The warning now comes once for each missing weight and style.
+- **A span that holds only white space no longer breaks the line in two.**<br>
+  A paragraph whose only content was white space inside a span, such as a colored space or a lone tab, could break at the invisible start and end of the span and set as two lines.
+- **A table with fixed columns no longer collapses on x86 computers.**<br>
+  When a line or row was one scaled point too narrow or too wide for its glue, the arithmetic produced a value that is 0 on ARM and a huge negative number on x86. On x86 a table with fixed column widths could set every column to nothing. The glue now keeps its natural width in that case, as in TeX.
+- **Text selection and extraction get the right line height for fonts whose units per em are not 1000.**<br>
+  The ascent, descent and font bounding box in the PDF font descriptor were written in the units of the font instead of 1/1000 of the em, so viewers took each line of a 2048-unit TrueType font for twice its height and could merge table rows when copying text. Nothing drawn changes.
 - **position() and last() in ForAll and ProcessNode count the right items.**<br>
   A path such as `../x` or `count(../rec)` left `position()` at 1 and `last()` at the number of nodes of its last step, for the rest of the expression and the rest of the loop body. goxpath 1.0.21 fixes this. ForAll and ProcessNode now set `last()` to the number of items they go through and give the outer `position()` and `last()` back when they end. Also, an expression that sets up the first page in its middle, such as `concat(sd:current-page(), sd:current-page())`, no longer loses its namespaces and fails with "Could not find namespace for prefix".
 - **Trace gridallocation gives the same PDF on every run.**<br>
