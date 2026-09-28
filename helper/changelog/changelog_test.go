@@ -1,6 +1,8 @@
 package changelog
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -43,6 +45,25 @@ func TestValidateOrder(t *testing.T) {
 	}}}}
 	if err := cl.Validate(); err == nil {
 		t.Error("ascending versions must be rejected")
+	}
+}
+
+// Two changes written into one entry must be rejected, not reduced to the
+// last one.
+func TestValidateOneTextPerEntry(t *testing.T) {
+	f := filepath.Join(t.TempDir(), "changelog.xml")
+	src := `<changelog xmlns="urn:speedata.de:2014/changelog"><chapter version="0.1">
+<entry version="0.1.3" date="2026-09-28"><en summary="First.">One.</en><en summary="Second.">Two.</en></entry>
+</chapter></changelog>`
+	if err := os.WriteFile(f, []byte(src), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	cl, err := Parse(f)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := cl.Validate(); err == nil || !strings.Contains(err.Error(), "2 <en> elements") {
+		t.Errorf("Validate() = %v, want an error about 2 <en> elements", err)
 	}
 }
 

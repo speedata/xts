@@ -32,6 +32,29 @@ type Entry struct {
 	Date    string `xml:"date,attr"`
 	SHA1    string `xml:"sha1,attr"`
 	En      Text   `xml:"en"`
+	// enCount is the number of <en> elements in the file, which Validate
+	// requires to be one.
+	enCount int
+}
+
+// UnmarshalXML reads an entry and counts its <en> elements. encoding/xml
+// keeps only the last of several, so a second change written into an
+// existing entry would silently replace the first.
+func (e *Entry) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	var raw struct {
+		Version string `xml:"version,attr"`
+		Date    string `xml:"date,attr"`
+		SHA1    string `xml:"sha1,attr"`
+		En      []Text `xml:"en"`
+	}
+	if err := d.DecodeElement(&raw, &start); err != nil {
+		return err
+	}
+	e.Version, e.Date, e.SHA1, e.enCount = raw.Version, raw.Date, raw.SHA1, len(raw.En)
+	if len(raw.En) > 0 {
+		e.En = raw.En[0]
+	}
+	return nil
 }
 
 // Chapter groups the entries of a minor version.
@@ -129,6 +152,9 @@ func (cl *Changelog) Validate() error {
 			prev = v
 			if _, err := time.Parse("2006-01-02", e.Date); err != nil {
 				return fmt.Errorf("%s: bad date: %w", where, err)
+			}
+			if e.enCount > 1 {
+				return fmt.Errorf("%s: %d <en> elements, one <entry> per change", where, e.enCount)
 			}
 			if strings.TrimSpace(e.En.Summary) == "" {
 				return fmt.Errorf("%s: missing summary", where)
