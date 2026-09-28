@@ -92,6 +92,23 @@ task :qa => [:build] do
 	sh XTSBIN.to_s, "compare", INSTALDIR.join("qa").to_s
 end
 
+desc "Regenerate reference.pdf of every QA case (or of one: rake regenerateqa[tablesplit])"
+task :regenerateqa, [:only] => [:build] do |t, args|
+	# The same run as xts compare makes (--suppressinfo, jobname xts), so an
+	# unchanged build reproduces the reference byte for byte and the
+	# comparison needs no rendering.
+	qadir = INSTALDIR.join("qa")
+	dirs = args[:only] ? [qadir.join(args[:only])] : qadir.children.sort
+	dirs = dirs.select { |d| d.join("layout.xml").exist? }
+	abort "no QA case #{args[:only]}" if dirs.empty?
+	dirs.each do |dir|
+		sh XTSBIN.to_s, "--suppressinfo", "--quiet", chdir: dir.to_s
+		FileUtils.cp dir.join("xts.pdf"), dir.join("reference.pdf")
+		FileUtils.rm_f Dir.glob(dir.join("reference-*.png").to_s)
+		puts "regenerated #{dir.basename}"
+	end
+end
+
 desc "Clean QA intermediate files"
 task :cleanqa do
 	FileUtils.rm Dir.glob("qa/**/pagediff-*.png")
