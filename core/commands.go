@@ -265,7 +265,7 @@ func cmdAction(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 				startStop := n.(*node.StartStop)
 				cp := startStop.Attributes["page"].(*page)
 				m.pagenumber = cp.pagenumber
-				m.id = <-cp.markerids
+				m.id = cp.nextMarkerID()
 				xd.marker[m.name] = m
 				return ""
 			}

@@ -9,6 +9,11 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
+## 0.1.3 (2026-09-28)
+
+- **A finished run no longer keeps its document in memory.**<br>
+  Every page started a goroutine that handed out its marker ids and never ended. It held the page, and the page the whole document, so a process that renders more than once, such as `xts watch` or a run with `--runs`, grew by every document it had made. The marker ids now come from a counter on the page.
+
 ## 0.1.2 (2026-09-25)
 
 - **Justified lines end at the right edge of the text instead of running past it.**<br>
