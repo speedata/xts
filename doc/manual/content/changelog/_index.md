@@ -13,6 +13,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 - **position() and last() in ForAll and ProcessNode count the right items.**<br>
   A path such as `../x` or `count(../rec)` left `position()` at 1 and `last()` at the number of nodes of its last step, for the rest of the expression and the rest of the loop body. goxpath 1.0.21 fixes this. ForAll and ProcessNode now set `last()` to the number of items they go through and give the outer `position()` and `last()` back when they end. Also, an expression that sets up the first page in its middle, such as `concat(sd:current-page(), sd:current-page())`, no longer loses its namespaces and fails with "Could not find namespace for prefix".
+- **A finished run no longer keeps its document in memory.**<br>
+  Every page started a goroutine that handed out its marker ids and never ended. It held the page, and the page the whole document, so a process that renders more than once, such as `xts watch` or a run with `--runs`, grew by every document it had made. The marker ids now come from a counter on the page.
 
 ## 0.1.2 (2026-09-25)
 
