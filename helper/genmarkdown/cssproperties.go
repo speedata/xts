@@ -18,6 +18,13 @@ var manualLinks = map[string]string{
 	"-bag-bookmark": "see [Bookmarks](/manual/advanced/pdf-options#bookmarks)",
 }
 
+// noteOverrides replaces htmlbag's note on a property where XTS behaves
+// differently, so the reference does not promise what htmlbag's pagination
+// does but XTS doesn't.
+var noteOverrides = map[string]string{
+	"page-break-inside": "XTS does not split a table row: a row that does not fit moves to the next page whole",
+}
+
 type cssProperty struct {
 	Names   string
 	Values  string
@@ -40,8 +47,12 @@ func cssGroupFor(g htmlbag.PropertyGroup) cssGroup {
 		if link, ok := manualLinks[spec.Name]; ok {
 			values += ", " + link
 		}
-		if spec.Note != "" {
-			values += ". " + spec.Note
+		note := spec.Note
+		if o, ok := noteOverrides[spec.Name]; ok {
+			note = o
+		}
+		if note != "" {
+			values += ". " + note
 		}
 		grp.Properties = append(grp.Properties, cssProperty{
 			Names:   strings.Join(names, ", "),

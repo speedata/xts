@@ -86,7 +86,7 @@ CSS properties supported by XTS for styling layout elements and HTML content. Le
 | `z-index` | Integer or `auto`, with `position` | `z-index: 1;` |
 | `page-break-before`, `break-before` | `auto`, `always`, `avoid`; `break-before` also takes `page`, `left`, `right`, `recto`, `verso`. The page side variants break the page but do not pick a side | `page-break-before: always;` |
 | `page-break-after`, `break-after` | Same values as `page-break-before` | `page-break-after: avoid;` |
-| `page-break-inside`, `break-inside` | `auto`, `avoid` | `page-break-inside: avoid;` |
+| `page-break-inside`, `break-inside` | `auto`, `avoid`. XTS does not split a table row: a row that does not fit moves to the next page whole | `page-break-inside: avoid;` |
 
 ## Lists and generated content
 
