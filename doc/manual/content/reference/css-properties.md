@@ -106,7 +106,7 @@ CSS properties supported by XTS for styling layout elements and HTML content. Le
 | `-bag-font-expansion` | Percentage of allowed glyph stretching, `0%` turns it off | `-bag-font-expansion: 0%;` |
 | `-bag-italic-correction` | `auto`, `none` | `-bag-italic-correction: none;` |
 | `-bag-leading-model` | `half` (CSS line boxes, the default), `trailing` (TeX style) | `-bag-leading-model: trailing;` |
-| `-bag-linebreak-tolerance` | Number, the TeX tolerance for line breaking | `-bag-linebreak-tolerance: 500;` |
+| `-bag-linebreak-tolerance` | Number, the largest adjustment ratio a line may have, default 4. How far the spaces of a line may stretch, as a multiple of their stretchability. A ratio, not a badness as TeX's `\tolerance`: TeX's 200 is about 1.26 | `-bag-linebreak-tolerance: 8;` |
 | `-bag-linebreak-hyphen-penalty` | Number, the TeX hyphen penalty | `-bag-linebreak-hyphen-penalty: 200;` |
 | `-bag-tab-stops` | `none`, or a comma separated list of stops: a length or percentage of the line width, optionally `start`, `end`, `center`, `decimal` or `decimal(",")`, optionally `leader(" . ")` (or `dotted`, `solid`, `space`). Inherited. A tab advances to the next stop past the text before it, `left` and `right` are synonyms of `start` and `end`. Tabs within a line survive any `white-space` mode, whitespace with a newline stays source formatting | `-bag-tab-stops: 12mm, 100% end leader(dotted);` |
 | `-bag-bookmark` | `none`, or a level number optionally followed by `open` or `closed`, see [Bookmarks](/manual/advanced/pdf-options#bookmarks). Adds the element to the PDF outline | `-bag-bookmark: 2 closed;` |
