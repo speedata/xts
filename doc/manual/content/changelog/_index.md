@@ -9,8 +9,10 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
-## 0.1.3 (2026-09-28)
+## 0.1.3 (2026-09-29)
 
+- **xts compare catches a missing page and a page of a different size.**<br>
+  xts compare only looked at as many pages as the new PDF has, so a reference with more pages passed, and with ImageMagick 6, as on Ubuntu, two pages of different sizes counted as equal. A page missing on either side and a page whose size differs from the reference now count as bad pages. Rendering errors of the new PDF are reported instead of being ignored.
 - **A tab stop's leader is drawn in a Paragraph.**<br>
   With `-bag-tab-stops` and `leader()`, the leader showed only in `<HTML>` text and came out blank in a `Paragraph`, because the tab lost its leader when the lines were copied for placing ([#38](https://github.com/speedata/xts/issues/38)).
 - **margin-left and margin-right of a paragraph work in a table cell.**<br>

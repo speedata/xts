@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"html/template"
+	"image/png"
 	"io"
 	"log"
 	"math"
@@ -95,6 +96,12 @@ func compareTwoPages(sourcefile, referencefile, dummyfile, path string) float64 
 	if !fileExists(filepath.Join(path, sourcefile)) || !fileExists(filepath.Join(path, referencefile)) {
 		return 99.0
 	}
+	// ImageMagick 6 reports two images of different sizes as equal, and the
+	// pages are trimmed, so a page with other content usually has another
+	// size.
+	if !sameSize(filepath.Join(path, sourcefile), filepath.Join(path, referencefile)) {
+		return 99.0
+	}
 
 	cmd := exec.Command("compare"+exeSuffix, "-metric", "mae", sourcefile, referencefile, dummyfile)
 	cmd.Dir = path
@@ -137,6 +144,28 @@ func compareTwoPages(sourcefile, referencefile, dummyfile, path string) float64 
 		}
 	}
 	return 0.0
+}
+
+// sameSize reports whether two PNG files have the same width and height.
+func sameSize(a, b string) bool {
+	size := func(fn string) (int, int, error) {
+		f, err := os.Open(fn)
+		if err != nil {
+			return 0, 0, err
+		}
+		defer f.Close()
+		cfg, err := png.DecodeConfig(f)
+		return cfg.Width, cfg.Height, err
+	}
+	wa, ha, err := size(a)
+	if err != nil {
+		return false
+	}
+	wb, hb, err := size(b)
+	if err != nil {
+		return false
+	}
+	return wa == wb && ha == hb
 }
 
 func newer(pdf, png string) bool {
@@ -228,15 +257,20 @@ func runComparison(path string, statuschan chan []compareStatus) {
 
 	cmd = exec.Command("convert"+exeSuffix, "-density", "150", "-trim", "xts.pdf", "source-%02d.png")
 	cmd.Dir = path
-	cmd.Run()
-	if err != nil {
-		log.Fatal(err)
+	if err = cmd.Run(); err != nil {
+		log.Fatal("Error converting xts.pdf. Do you have ghostscript installed? ", err)
 	}
 
 	// convert the reference pdf to png for later comparisons
 	// we only do that when the pdf is newer than the png files
 	// (that is: the pdf has been updated)
 	if newer(filepath.Join(path, fmt.Sprintf("%s.pdf", referencefilename)), filepath.Join(path, "reference-00.png")) {
+		// Pages of an earlier, longer reference would count as pages of
+		// this one.
+		oldFiles, _ := filepath.Glob(filepath.Join(path, referencefilename+"-*.png"))
+		for _, name := range oldFiles {
+			os.Remove(name)
+		}
 		cmd := exec.Command("convert"+exeSuffix, "-density", "150", "-trim", fmt.Sprintf("%s.pdf", referencefilename), referencefilename+"-%02d.png")
 		cmd.Dir = path
 		err = cmd.Run()
@@ -249,8 +283,14 @@ func runComparison(path string, statuschan chan []compareStatus) {
 	if err != nil {
 		log.Fatal("No source files found. ", err)
 	}
+	referenceFiles, err := filepath.Glob(filepath.Join(path, referencefilename+"-*.png"))
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	for i := 0; i < len(sourceFiles); i++ {
+	// Up to the longer of the two, so that a page missing on either side
+	// counts as a bad page.
+	for i := 0; i < max(len(sourceFiles), len(referenceFiles)); i++ {
 		sourceFile := fmt.Sprintf("source-%02d.png", i)
 		referenceFile := fmt.Sprintf("%s-%02d.png", referencefilename, i)
 		dummyFile := fmt.Sprintf("pagediff-%02d.png", i)
