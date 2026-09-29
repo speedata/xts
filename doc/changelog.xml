@@ -25,7 +25,7 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.3" date="2026-09-29">
-      <en summary="sd:current-row() before the first page no longer crashes.">Before anything had created a page, <tt>sd:current-row()</tt>, <tt>sd:number-of-columns()</tt> and <tt>sd:number-of-rows()</tt> read a grid that did not exist yet and XTS stopped with a panic. <tt>sd:current-row()</tt> now returns 1, the row the first object will start in, without creating a page; the other two report an error.</en>
+      <en summary="sd:current-row(), sd:number-of-columns() and sd:number-of-rows() work before the first page.">Before anything had created a page, these functions read a grid that did not exist yet and XTS stopped with a panic. Like <tt>sd:current-page()</tt> and the other grid functions, they now set up the page first and report its grid. A page type test that cannot be evaluated, such as one that does not give true or false, or one that asks for the grid while the first page is being set up, is reported as an error and does not match, instead of stopping XTS.</en>
     </entry>
     <entry version="0.1.3" date="2026-09-29">
       <en summary="xts compare catches a missing page and a page of a different size.">xts compare only looked at as many pages as the new PDF has, so a reference with more pages passed, and with ImageMagick 6, as on Ubuntu, two pages of different sizes counted as equal. A page missing on either side and a page whose size differs from the reference now count as bad pages. Rendering errors of the new PDF are reported instead of being ignored.</en>

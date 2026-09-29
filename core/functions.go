@@ -227,10 +227,10 @@ func fnCurrentRow(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequen
 	var area *area
 	var ok bool
 	xd := ctx.Store["xd"].(*xtsDocument)
+	xd.setupPage()
 	if xd.currentGrid == nil {
-		// No page yet. Asking must not create one, and the next object starts
-		// at the top of the page it creates.
-		return goxpath.Sequence{1}, nil
+		// Asked while the first page is set up, in the test of a page type.
+		return nil, fmt.Errorf("sd:current-row(): no page yet")
 	}
 	if area, ok = xd.currentGrid.areas[areaname]; !ok {
 		return nil, fmt.Errorf("area %s unknown", areaname)
@@ -430,7 +430,9 @@ func fnNumberOfColumns(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.S
 	var area *area
 	var ok bool
 	xd := ctx.Store["xd"].(*xtsDocument)
+	xd.setupPage()
 	if xd.currentGrid == nil {
+		// Asked while the first page is set up, in the test of a page type.
 		return nil, fmt.Errorf("sd:number-of-columns(): no page yet")
 	}
 	if area, ok = xd.currentGrid.areas[areaname]; !ok {
@@ -489,7 +491,9 @@ func fnNumberOfRows(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequ
 	var area *area
 	var ok bool
 	xd := ctx.Store["xd"].(*xtsDocument)
+	xd.setupPage()
 	if xd.currentGrid == nil {
+		// Asked while the first page is set up, in the test of a page type.
 		return nil, fmt.Errorf("sd:number-of-rows(): no page yet")
 	}
 	if area, ok = xd.currentGrid.areas[areaname]; !ok {
