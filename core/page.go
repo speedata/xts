@@ -113,15 +113,20 @@ func (xd *xtsDocument) detectPagetype() (*pagetype, error) {
 		thispagetype = xd.masterpages[i]
 
 		seq, err := evaluateXPath(xd, xd.layoutNS, thispagetype.test)
-		if err != nil {
-			return nil, err
-		}
-		if len(seq) != 1 {
-			return nil, fmt.Errorf("something is wrong with the page type")
-		}
 		var eval, ok bool
-		if eval, ok = seq[0].(bool); !ok {
-			return nil, fmt.Errorf("something is wrong with the page type: could not evaluate test to boolean value")
+		if err == nil && len(seq) != 1 {
+			err = fmt.Errorf("the test gives %d values instead of one", len(seq))
+		}
+		if err == nil {
+			if eval, ok = seq[0].(bool); !ok {
+				err = fmt.Errorf("the test does not give true or false")
+			}
+		}
+		if err != nil {
+			// A test that cannot be evaluated does not match, so the page
+			// gets another type. Returning the error left the page nil.
+			slog.Error(fmt.Sprintf("page type %q, test %q: %s", thispagetype.name, thispagetype.test, err))
+			continue
 		}
 		if eval {
 			break
