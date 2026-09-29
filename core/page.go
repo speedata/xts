@@ -147,6 +147,9 @@ type page struct {
 	pagegrid      *grid
 	markerid      int
 	atPageShipout func()
+	// underlay counts the objects the page's AtPageCreation drew: what
+	// layer="behind" goes over, and everything placed since goes over it.
+	underlay int
 }
 
 func clearPage(xd *xtsDocument) {
@@ -330,12 +333,24 @@ func (p *page) outputAbsolute(x, y bag.ScaledPoint, vl *node.VList) {
 	p.bagPage.OutputAt(x, p.pageHeight-y, vl)
 }
 
+// outputBehind places vl under everything on the page but what its
+// AtPageCreation drew, in the order such objects are placed.
+func (p *page) outputBehind(x, y bag.ScaledPoint, vl *node.VList) {
+	objs := p.bagPage.Objects
+	at := min(p.underlay, len(objs))
+	objs = append(objs, document.Object{})
+	copy(objs[at+1:], objs[at:])
+	objs[at] = document.Object{X: x, Y: p.pageHeight - y, Vlist: vl}
+	p.bagPage.Objects = objs
+	p.underlay = at + 1
+}
+
 func (p *page) String() string {
 	g := p.pagegrid
 	return fmt.Sprintf("XTS page %d wd/ht: %s/%s margins: %s %s %s %s", p.pagenumber, p.pageWidth, p.pageHeight, g.marginLeft, g.marginTop, g.marginRight, g.marginBottom)
 }
 
-func (xd *xtsDocument) OutputAt(vl *node.VList, col coord, row coord, allocate bool, area *area, what string, halign frontend.HorizontalAlignment) error {
+func (xd *xtsDocument) OutputAt(vl *node.VList, col coord, row coord, allocate, behind bool, area *area, what string, halign frontend.HorizontalAlignment) error {
 	var currentSlate *slate
 	if currentSlate = xd.currentSlate; currentSlate != nil {
 		if area.name != pageAreaName {
@@ -351,7 +366,7 @@ func (xd *xtsDocument) OutputAt(vl *node.VList, col coord, row coord, allocate b
 		// the page margins built into posX/posY are removed again.
 		x := g.posX(col, area) - g.marginLeft + shiftRight
 		y := g.posY(row, area) - g.marginTop
-		currentSlate.appendItem(slateItem{x: x, y: y, vl: vl, noRoom: !allocate})
+		currentSlate.appendItem(slateItem{x: x, y: y, vl: vl, noRoom: !allocate, behind: behind})
 	} else {
 		slog.Info("PlaceObject", "obj", what, "col", col, "row", row, "area", area.name)
 
@@ -363,7 +378,11 @@ func (xd *xtsDocument) OutputAt(vl *node.VList, col coord, row coord, allocate b
 
 		columnLength := xd.currentGrid.posX(col, area)
 		rowLength := xd.currentGrid.posY(row, area)
-		xd.currentPage.outputAbsolute(columnLength+shiftRight, rowLength, vl)
+		if behind {
+			xd.currentPage.outputBehind(columnLength+shiftRight, rowLength, vl)
+		} else {
+			xd.currentPage.outputAbsolute(columnLength+shiftRight, rowLength, vl)
+		}
 	}
 	if allocate {
 		xd.currentGrid.allocate(col, row, area, vl.Width, vl.Height+vl.Depth)

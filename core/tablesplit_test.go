@@ -170,7 +170,7 @@ func splitRows(t *testing.T, n, first, last int) [][]int {
 		}
 		fragments = append(fragments, rows)
 	}
-	if err := xd.splitTable(table, "cols", 1, 1, "", false, frontend.HAlignLeft, record); err != nil {
+	if err := xd.splitTable(table, "cols", 1, 1, "", false, false, frontend.HAlignLeft, record); err != nil {
 		t.Fatal(err)
 	}
 	return fragments

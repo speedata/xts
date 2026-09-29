@@ -3596,6 +3596,30 @@
         <para>Ein Bezeichner für diese Platzierung. Er wird dem platzierten Objekt mitgegeben und als <tt>attr-id</tt> in die XML-Ausgabe (<tt>--dumpoutput</tt>) geschrieben, damit externe Werkzeuge die ausgegebenen Boxen dem erzeugenden Layoutelement zuordnen können. Es ist keine CSS-id: er kann nicht in Stylesheets angesprochen werden und erzeugt kein Verweisziel.</para>
       </description>
     </attribute>
+    <attribute en="layer" optional="yes">
+      <description xml:lang="en">
+        <para>Whether the object is drawn over or under the other objects. <tt>layer="behind"</tt> is meant for decoration such as panels, tints and rules, not for content: an object placed behind moves earlier in the content stream, so in a tagged PDF it is also read before the text above it.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Ob das Objekt über oder unter den anderen Objekten gezeichnet wird. <tt>layer="behind"</tt> ist für Dekoration wie Flächen, Tönungen und Linien gedacht, nicht für Inhalt: Ein dahinter platziertes Objekt rückt im Content-Stream nach vorne und wird deshalb in einem getaggten PDF auch vor dem Text darüber gelesen.</para>
+      </description>
+      <choice en="front">
+        <description xml:lang="en">
+          <para>Over everything placed before it (default).</para>
+        </description>
+        <description xml:lang="de">
+          <para>Über allem vorher Platzierten (Voreinstellung).</para>
+        </description>
+      </choice>
+      <choice en="behind">
+        <description xml:lang="en">
+          <para>On a page, under everything placed on it since its <cmd name="AtPageCreation"/> ran, and over what that drew. In a <cmd name="Slate"/>, under the slate's other objects.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Auf einer Seite unter allem, was seit ihrem <cmd name="AtPageCreation"/> platziert wurde, und über dem, was dieses gezeichnet hat. In einem <cmd name="Slate"/> unter dessen anderen Objekten.</para>
+        </description>
+      </choice>
+    </attribute>
     <attribute en="slate" type="text" optional="yes">
       <description xml:lang="en">
         <para>The name of the slate that gets output. When given, PlaceObject should not contain any objects.</para>

@@ -16,6 +16,8 @@ type slateItem struct {
 	// noRoom (allocate="no") draws the object at x, y, either of which may
 	// be negative, without sizing the slate or moving what follows.
 	noRoom bool
+	// behind draws the object under the slate's other objects.
+	behind bool
 }
 
 type slate struct {
@@ -86,7 +88,8 @@ func (s *slate) appendItem(itm slateItem) {
 // buildContents composes the placed objects into a single VList and caches
 // the result. The objects are stacked top to bottom with kerns in between, a
 // negative kern moves back up for overlapping objects. The horizontal offset
-// is a kern in an hbox around the object. An empty slate returns nil.
+// is a kern in an hbox around the object. Objects placed behind come first in
+// the list, so they are drawn under the others. An empty slate returns nil.
 func (s *slate) buildContents() *node.VList {
 	if s.contents != nil {
 		return s.contents
@@ -96,7 +99,12 @@ func (s *slate) buildContents() *node.VList {
 	}
 	items := make([]slateItem, len(s.items))
 	copy(items, s.items)
-	sort.SliceStable(items, func(i, j int) bool { return items[i].y < items[j].y })
+	sort.SliceStable(items, func(i, j int) bool {
+		if items[i].behind != items[j].behind {
+			return items[i].behind
+		}
+		return items[i].y < items[j].y
+	})
 
 	var head, tail node.Node
 	appendNode := func(n node.Node) {
