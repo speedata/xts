@@ -3212,15 +3212,14 @@ func appendCellContents(xd *xtsDocument, td *html.Node, seq xpath.Sequence) {
 }
 
 // vlistPlaceholder is an element standing for the pre-rendered VList vlid.
+// htmlbag keeps it among the cell's children although it is empty and sets
+// the VList in its place.
 func vlistPlaceholder(vlid string) *html.Node {
-	div := &html.Node{
+	return &html.Node{
 		Data: "div",
 		Type: html.ElementNode,
 		Attr: []html.Attribute{{Key: "data-vlist-id", Val: vlid}},
 	}
-	// An element without content is dropped before htmlbag sees it.
-	div.AppendChild(&html.Node{Type: html.TextNode, Data: "\u200b"})
-	return div
 }
 
 func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
