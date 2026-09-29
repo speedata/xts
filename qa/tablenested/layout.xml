@@ -1,0 +1,26 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+    <!-- Nested tables keep their place among the paragraphs of a cell:
+         text A, table 1, text B, table 2 from top to bottom. -->
+    <StyleSheet>
+        td { border: 0.5pt solid black; padding: 3pt; vertical-align: top; }
+    </StyleSheet>
+    <Record match="data">
+        <PlaceObject>
+            <Table width="10">
+                <Tr>
+                    <Td>
+                        <Paragraph><Value>Text A, before table 1</Value></Paragraph>
+                        <Table>
+                            <Tr><Td><Paragraph><Value>Table 1</Value></Paragraph></Td></Tr>
+                        </Table>
+                        <Paragraph><Value>Text B, between the tables</Value></Paragraph>
+                        <Table>
+                            <Tr><Td><Paragraph><Value>Table 2</Value></Paragraph></Td></Tr>
+                        </Table>
+                    </Td>
+                </Tr>
+            </Table>
+        </PlaceObject>
+    </Record>
+</Layout>
