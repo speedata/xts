@@ -1891,12 +1891,12 @@
                 <group>
                     <optional>
                         <attribute name="allocate">
-                            <a:documentation>Determines if the area of the object is marked as “allocated”. With allocate=&#34;no&#34;, the cursor position is not changed.</a:documentation>
+                            <a:documentation>Determines if the area of the object is marked as “allocated”. With allocate=&#34;no&#34;, the cursor position is not changed. In a Slate, an object with allocate=&#34;no&#34; takes no room: it is drawn where it is placed, at lengths or in the grid, negative offsets included, but it does not make the slate larger or move the objects placed after it. Without it, an object placed at lengths in a slate takes room there like one placed in the grid.</a:documentation>
                             <choice>
                                 <value>yes</value>
                                 <a:documentation>Occupy space in the grid (default for grid positioning).</a:documentation>
                                 <value>no</value>
-                                <a:documentation>Don&#39;t allocate space in the grid (default for absolute positioning).</a:documentation>
+                                <a:documentation>Don&#39;t allocate space in the grid. An object placed at lengths on a page never allocates grid cells.</a:documentation>
                             </choice>
                         </attribute>
                     </optional>

@@ -1,0 +1,21 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+    <!-- Objects placed at lengths in a slate are measured from the slate's
+         top left corner, like objects placed in its grid. The dark box sits
+         100mm right of the band's left edge and 2mm below its top. -->
+    <Record match="data">
+        <Slate name="band">
+            <Contents>
+                <PlaceObject>
+                    <TextBlock width="10">
+                        <Paragraph><Value>A band with a box placed at lengths in it.</Value></Paragraph>
+                    </TextBlock>
+                </PlaceObject>
+                <PlaceObject column="100mm" row="2mm">
+                    <Box width="20mm" height="14mm" backgroundcolor="darkblue"/>
+                </PlaceObject>
+            </Contents>
+        </Slate>
+        <PlaceObject column="3" row="5" slate="band" frame="yes"/>
+    </Record>
+</Layout>

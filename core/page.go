@@ -351,7 +351,7 @@ func (xd *xtsDocument) OutputAt(vl *node.VList, col coord, row coord, allocate b
 		// the page margins built into posX/posY are removed again.
 		x := g.posX(col, area) - g.marginLeft + shiftRight
 		y := g.posY(row, area) - g.marginTop
-		currentSlate.appendItem(x, y, vl)
+		currentSlate.appendItem(slateItem{x: x, y: y, vl: vl, noRoom: !allocate})
 	} else {
 		slog.Info("PlaceObject", "obj", what, "col", col, "row", row, "area", area.name)
 

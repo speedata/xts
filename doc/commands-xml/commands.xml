@@ -3526,10 +3526,10 @@
     </childelements>
     <attribute en="allocate" optional="yes">
       <description xml:lang="en">
-        <para>Determines if the area of the object is marked as “allocated”. With <tt>allocate="no"</tt>, the cursor position is not changed.</para>
+        <para>Determines if the area of the object is marked as “allocated”. With <tt>allocate="no"</tt>, the cursor position is not changed. In a <cmd name="Slate"/>, an object with <tt>allocate="no"</tt> takes no room: it is drawn where it is placed, at lengths or in the grid, negative offsets included, but it does not make the slate larger or move the objects placed after it. Without it, an object placed at lengths in a slate takes room there like one placed in the grid.</para>
       </description>
       <description xml:lang="de">
-        <para>Bestimmt, ob im Raster der Platz für das Objekt als »belegt« markiert wird. Bei <tt>allocate="no"</tt> wird auch die aktuelle Zeile im Raster nicht verändert.</para>
+        <para>Bestimmt, ob im Raster der Platz für das Objekt als »belegt« markiert wird. Bei <tt>allocate="no"</tt> wird auch die aktuelle Zeile im Raster nicht verändert. In einem <cmd name="Slate"/> belegt ein Objekt mit <tt>allocate="no"</tt> keinen Platz: Es wird dort gezeichnet, wo es platziert wird, an Längen oder im Raster, auch mit negativen Abständen, vergrößert den Slate aber nicht und verschiebt die danach platzierten Objekte nicht. Ohne diese Angabe belegt ein an Längen platziertes Objekt im Slate Platz wie eines im Raster.</para>
       </description>
       <choice en="yes">
         <description xml:lang="en">
@@ -3541,10 +3541,10 @@
       </choice>
       <choice en="no">
         <description xml:lang="en">
-          <para>Don't allocate space in the grid (default for absolute positioning).</para>
+          <para>Don't allocate space in the grid. An object placed at lengths on a page never allocates grid cells.</para>
         </description>
         <description xml:lang="de">
-          <para>Bereich nicht als Belegt markieren (Voreinstellung für absolute Positionierung)</para>
+          <para>Bereich nicht als Belegt markieren. Ein an Längen platziertes Objekt auf einer Seite belegt nie Rasterzellen.</para>
         </description>
       </choice>
     </attribute>

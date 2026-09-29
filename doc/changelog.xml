@@ -25,6 +25,12 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.3" date="2026-09-29">
+      <en summary="In a Slate, allocate=&quot;no&quot; makes an object take no room.">An object placed with <tt>allocate="no"</tt> in a <tt>Slate</tt>, at lengths or in the grid, is drawn where it is placed, negative offsets included, without making the slate larger or moving the objects placed after it. Before, it still counted towards the size of the slate.</en>
+    </entry>
+    <entry version="0.1.3" date="2026-09-29">
+      <en summary="An object placed at lengths in a Slate is placed in the slate.">A <tt>PlaceObject</tt> with <tt>column</tt> and <tt>row</tt> given as lengths inside a <tt>Slate</tt> was drawn on the current page, measured from the page&#39;s top left corner. It now goes into the slate, measured from the slate&#39;s top left corner as grid positions already are, and the slate grows to hold it.</en>
+    </entry>
+    <entry version="0.1.3" date="2026-09-29">
       <en summary="A tab after a Br is kept where tab stops apply.">With <tt>-bag-tab-stops</tt> in force, a tab right after a <tt>Br</tt> was dropped with the white space that starts the new line, so the text after it began at the margin instead of at the first stop. The tab is now kept.</en>
     </entry>
     <entry version="0.1.3" date="2026-09-29">

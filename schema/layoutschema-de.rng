@@ -1891,12 +1891,12 @@
                 <group>
                     <optional>
                         <attribute name="allocate">
-                            <a:documentation>Bestimmt, ob im Raster der Platz für das Objekt als »belegt« markiert wird. Bei allocate=&#34;no&#34; wird auch die aktuelle Zeile im Raster nicht verändert.</a:documentation>
+                            <a:documentation>Bestimmt, ob im Raster der Platz für das Objekt als »belegt« markiert wird. Bei allocate=&#34;no&#34; wird auch die aktuelle Zeile im Raster nicht verändert. In einem Slate belegt ein Objekt mit allocate=&#34;no&#34; keinen Platz: Es wird dort gezeichnet, wo es platziert wird, an Längen oder im Raster, auch mit negativen Abständen, vergrößert den Slate aber nicht und verschiebt die danach platzierten Objekte nicht. Ohne diese Angabe belegt ein an Längen platziertes Objekt im Slate Platz wie eines im Raster.</a:documentation>
                             <choice>
                                 <value>yes</value>
                                 <a:documentation>Platz im Raster reservieren (Voreinstellung für Platzierung im Raster).</a:documentation>
                                 <value>no</value>
-                                <a:documentation>Bereich nicht als Belegt markieren (Voreinstellung für absolute Positionierung)</a:documentation>
+                                <a:documentation>Bereich nicht als Belegt markieren. Ein an Längen platziertes Objekt auf einer Seite belegt nie Rasterzellen.</a:documentation>
                             </choice>
                         </attribute>
                     </optional>

@@ -11,6 +11,10 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.3 (2026-09-29)
 
+- **In a Slate, allocate="no" makes an object take no room.**<br>
+  An object placed with `allocate="no"` in a `Slate`, at lengths or in the grid, is drawn where it is placed, negative offsets included, without making the slate larger or moving the objects placed after it. Before, it still counted towards the size of the slate.
+- **An object placed at lengths in a Slate is placed in the slate.**<br>
+  A `PlaceObject` with `column` and `row` given as lengths inside a `Slate` was drawn on the current page, measured from the page's top left corner. It now goes into the slate, measured from the slate's top left corner as grid positions already are, and the slate grows to hold it.
 - **A tab after a Br is kept where tab stops apply.**<br>
   With `-bag-tab-stops` in force, a tab right after a `Br` was dropped with the white space that starts the new line, so the text after it began at the margin instead of at the first stop. The tab is now kept.
 - **Nested tables keep their place among the paragraphs of a cell.**<br>

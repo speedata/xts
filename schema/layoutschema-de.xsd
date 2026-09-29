@@ -1288,7 +1288,7 @@
       </xs:choice>
       <xs:attribute name="allocate">
         <xs:annotation>
-          <xs:documentation>Bestimmt, ob im Raster der Platz für das Objekt als »belegt« markiert wird. Bei allocate=&#34;no&#34; wird auch die aktuelle Zeile im Raster nicht verändert.</xs:documentation>
+          <xs:documentation>Bestimmt, ob im Raster der Platz für das Objekt als »belegt« markiert wird. Bei allocate=&#34;no&#34; wird auch die aktuelle Zeile im Raster nicht verändert. In einem Slate belegt ein Objekt mit allocate=&#34;no&#34; keinen Platz: Es wird dort gezeichnet, wo es platziert wird, an Längen oder im Raster, auch mit negativen Abständen, vergrößert den Slate aber nicht und verschiebt die danach platzierten Objekte nicht. Ohne diese Angabe belegt ein an Längen platziertes Objekt im Slate Platz wie eines im Raster.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
           <xs:restriction base="xs:string">

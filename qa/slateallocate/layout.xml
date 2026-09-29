@@ -1,0 +1,29 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+    <!-- A framed header band as tall as its line of text. The dark box is
+         placed at negative lengths and the grey one in the grid, both with
+         allocate="no": they overhang the band without making it larger. -->
+    <Record match="data">
+        <Slate name="band">
+            <Contents>
+                <PlaceObject column="-22mm" row="-5mm" allocate="no">
+                    <Box width="20mm" height="14mm" backgroundcolor="darkblue"/>
+                </PlaceObject>
+                <PlaceObject>
+                    <TextBlock width="10">
+                        <Paragraph><Value>The header band, as tall as this line.</Value></Paragraph>
+                    </TextBlock>
+                </PlaceObject>
+                <PlaceObject column="8" row="1" allocate="no">
+                    <Box width="4" height="3" backgroundcolor="gray"/>
+                </PlaceObject>
+            </Contents>
+        </Slate>
+        <PlaceObject column="4" row="3" slate="band" frame="yes"/>
+        <PlaceObject column="4">
+            <TextBlock width="10">
+                <Paragraph><Value>This text follows the band.</Value></Paragraph>
+            </TextBlock>
+        </PlaceObject>
+    </Record>
+</Layout>
