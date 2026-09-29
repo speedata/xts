@@ -75,8 +75,8 @@ func (s *slate) setGrid(width, height, dx, dy bag.ScaledPoint, nx, ny int) {
 
 // appendItem puts an object onto the slate and invalidates the cached
 // contents.
-func (s *slate) appendItem(x, y bag.ScaledPoint, vl *node.VList) {
-	s.items = append(s.items, slateItem{x: x, y: y, vl: vl})
+func (s *slate) appendItem(itm slateItem) {
+	s.items = append(s.items, itm)
 	s.contents = nil
 }
 
