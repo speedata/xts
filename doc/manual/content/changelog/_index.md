@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.3 (2026-09-29)
 
+- **Nested tables keep their place among the paragraphs of a cell.**<br>
+  A table inside a `Td` was set above all of the cell's paragraphs, and a second nested table in the same cell replaced the first. Each nested table now appears where it stands in the cell, so text and tables can alternate.
 - **sd:current-row(), sd:number-of-columns() and sd:number-of-rows() work before the first page.**<br>
   Before anything had created a page, these functions read a grid that did not exist yet and XTS stopped with a panic. Like `sd:current-page()` and the other grid functions, they now set up the page first and report its grid. A page type test that cannot be evaluated, such as one that does not give true or false, or one that asks for the grid while the first page is being set up, is reported as an error and does not match, instead of stopping XTS.
 - **xts compare catches a missing page and a page of a different size.**<br>

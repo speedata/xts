@@ -3182,6 +3182,46 @@ func cmdTr(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	return xpath.Sequence{tr}, nil
 }
 
+// appendCellContents appends the items of a Td to the cell. A pre-rendered box
+// (a nested table) goes in as a placeholder element in its place among the
+// cell's paragraphs, which htmlbag replaces with the box.
+func appendCellContents(xd *xtsDocument, td *html.Node, seq xpath.Sequence) {
+	for _, itm := range seq {
+		switch t := itm.(type) {
+		case string:
+			TextNode := &html.Node{
+				Data: t,
+				Type: html.TextNode,
+			}
+			td.AppendChild(TextNode)
+		case *html.Node:
+			td.AppendChild(t)
+		case *node.HList:
+			vl := node.Vpack(t)
+			vlid := fmt.Sprintf("vl-%p", vl)
+			xd.cssbuilder.PendingVLists[vlid] = vl
+			td.AppendChild(vlistPlaceholder(vlid))
+		case *node.VList:
+			vlid := fmt.Sprintf("vl-%p", t)
+			xd.cssbuilder.PendingVLists[vlid] = t
+			td.AppendChild(vlistPlaceholder(vlid))
+		default:
+			slog.Error(fmt.Sprintf("Unknown item type %T", t))
+		}
+	}
+}
+
+// vlistPlaceholder is an element standing for the pre-rendered VList vlid.
+// htmlbag keeps it among the cell's children although it is empty and sets
+// the VList in its place.
+func vlistPlaceholder(vlid string) *html.Node {
+	return &html.Node{
+		Data: "div",
+		Type: html.ElementNode,
+		Attr: []html.Attribute{{Key: "data-vlist-id", Val: vlid}},
+	}
+}
+
 func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	var err error
 	attValues := &struct {
@@ -3220,29 +3260,7 @@ func cmdTd(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		html.Attribute{Key: "style", Val: style},
 		html.Attribute{Key: "class", Val: attValues.Class},
 		html.Attribute{Key: "id", Val: attValues.ID})
-	for _, itm := range seq {
-		switch t := itm.(type) {
-		case string:
-			TextNode := &html.Node{
-				Data: t,
-				Type: html.TextNode,
-			}
-			td.AppendChild(TextNode)
-		case *html.Node:
-			td.AppendChild(t)
-		case *node.HList:
-			vl := node.Vpack(t)
-			vlid := fmt.Sprintf("vl-%p", vl)
-			xd.cssbuilder.PendingVLists[vlid] = vl
-			td.Attr = append(td.Attr, html.Attribute{Key: "data-vlist-id", Val: vlid})
-		case *node.VList:
-			vlid := fmt.Sprintf("vl-%p", t)
-			xd.cssbuilder.PendingVLists[vlid] = t
-			td.Attr = append(td.Attr, html.Attribute{Key: "data-vlist-id", Val: vlid})
-		default:
-			slog.Error(fmt.Sprintf("Unknown item type %T", t))
-		}
-	}
+	appendCellContents(xd, td, seq)
 	return xpath.Sequence{td}, nil
 }
 
