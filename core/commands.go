@@ -1945,6 +1945,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		Column          string
 		Frame           bool
 		ID              string
+		Layer           string
 		Row             string
 		Slate           string
 		HAlign          string
@@ -1954,6 +1955,12 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
+	switch attValues.Layer {
+	case "", "front", "behind":
+	default:
+		return nil, newTypesettingErrorf("PlaceObject", layoutelt.Line, "layer must be front or behind, not %q", attValues.Layer)
+	}
+	behind := attValues.Layer == "behind"
 	if attValues.Area == "" {
 		attValues.Area = defaultAreaName
 	}
@@ -2197,7 +2204,9 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		columnLength += shiftX
 		rowLength += shiftY
 		if xd.currentSlate != nil {
-			xd.currentSlate.appendItem(slateItem{x: columnLength, y: rowLength, vl: vl, noRoom: !attValues.Allocate})
+			xd.currentSlate.appendItem(slateItem{x: columnLength, y: rowLength, vl: vl, noRoom: !attValues.Allocate, behind: behind})
+		} else if behind {
+			xd.currentPage.outputBehind(columnLength, rowLength, vl)
 		} else {
 			xd.currentPage.outputAbsolute(columnLength, rowLength, vl)
 		}
@@ -2227,9 +2236,9 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		// Only grid placement splits. An absolutely positioned table is placed
 		// where the layout asked for it and keeps overflowing, as before.
 		if splitTable != nil && xd.currentGrid.posY(row, area)+vl.Height+vl.Depth > xd.currentGrid.frameBottom(area) {
-			return nil, xd.splitTable(splitTable, attValues.Area, col, row, attValues.ID, attValues.Allocate, halign, decorate)
+			return nil, xd.splitTable(splitTable, attValues.Area, col, row, attValues.ID, attValues.Allocate, behind, halign, decorate)
 		}
-		xd.OutputAt(vl, col, row, attValues.Allocate, area, origin, halign)
+		xd.OutputAt(vl, col, row, attValues.Allocate, behind, area, origin, halign)
 
 		// If the object reaches the right edge of the area, go to the start
 		// of the next row below it. Only when the object allocates: with
@@ -2343,7 +2352,7 @@ func nodeHeight(n node.Node) bag.ScaledPoint {
 // so the geometry dump records one box per frame the table spans rather than
 // one box for the whole table. decorate, when non-nil, applies the frame and
 // background rules of the PlaceObject to every fragment.
-func (xd *xtsDocument) splitTable(tableVL *node.VList, areaName string, col, row coord, id string, allocate bool, halign frontend.HorizontalAlignment, decorate func(*node.VList)) error {
+func (xd *xtsDocument) splitTable(tableVL *node.VList, areaName string, col, row coord, id string, allocate, behind bool, halign frontend.HorizontalAlignment, decorate func(*node.VList)) error {
 	area, ok := xd.currentGrid.areas[areaName]
 	if !ok {
 		return fmt.Errorf("area %s not found", areaName)
@@ -2387,7 +2396,7 @@ func (xd *xtsDocument) splitTable(tableVL *node.VList, areaName string, col, row
 			wrap.Attributes["id"] = id
 		}
 		pending = pending[:0]
-		return xd.OutputAt(wrap, col, row, allocate, area, "table (split)", halign)
+		return xd.OutputAt(wrap, col, row, allocate, behind, area, "table (split)", halign)
 	}
 
 	y := xd.currentGrid.posY(row, area)

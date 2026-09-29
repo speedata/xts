@@ -108,6 +108,22 @@ Outputs a rectangular object (image, table, box or textblock).
 
 
 
+`layer` (optional)
+:   Whether the object is drawn over or under the other objects. `layer="behind"` is meant for decoration such as panels, tints and rules, not for content: an object placed behind moves earlier in the content stream, so in a tagged PDF it is also read before the text above it.
+
+
+
+    `front`
+    :    Over everything placed before it (default).
+
+
+
+    `behind`
+    :    On a page, under everything placed on it since its [AtPageCreation](../atpagecreation) ran, and over what that drew. In a [Slate](../slate), under the slate's other objects.
+
+
+
+
 `row` (number or length, optional)
 :   The row where the object is placed. If none given, the publisher tries to find a row by itself. You can give a number (in grid cells) or an absolute value (from top left).
 

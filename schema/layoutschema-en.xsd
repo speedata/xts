@@ -1339,6 +1339,17 @@
           <xs:documentation>An identifier for this placement. It is attached to the placed object and written to the XML dump (--dumpoutput) as attr-id, so external tools can map the output boxes back to the layout element that produced them. It is not a CSS id: it cannot be matched in stylesheets and does not create a link target.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="layer">
+        <xs:annotation>
+          <xs:documentation>Whether the object is drawn over or under the other objects. layer=&#34;behind&#34; is meant for decoration such as panels, tints and rules, not for content: an object placed behind moves earlier in the content stream, so in a tagged PDF it is also read before the text above it.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="front"></xs:enumeration>
+            <xs:enumeration value="behind"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
       <xs:attribute name="slate">
         <xs:annotation>
           <xs:documentation>The name of the slate that gets output. When given, PlaceObject should not contain any objects.</xs:documentation>

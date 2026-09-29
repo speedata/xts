@@ -1941,6 +1941,17 @@
                         </attribute>
                     </optional>
                     <optional>
+                        <attribute name="layer">
+                            <a:documentation>Ob das Objekt über oder unter den anderen Objekten gezeichnet wird. layer=&#34;behind&#34; ist für Dekoration wie Flächen, Tönungen und Linien gedacht, nicht für Inhalt: Ein dahinter platziertes Objekt rückt im Content-Stream nach vorne und wird deshalb in einem getaggten PDF auch vor dem Text darüber gelesen.</a:documentation>
+                            <choice>
+                                <value>front</value>
+                                <a:documentation>Über allem vorher Platzierten (Voreinstellung).</a:documentation>
+                                <value>behind</value>
+                                <a:documentation>Auf einer Seite unter allem, was seit ihrem AtPageCreation platziert wurde, und über dem, was dieses gezeichnet hat. In einem Slate unter dessen anderen Objekten.</a:documentation>
+                            </choice>
+                        </attribute>
+                    </optional>
+                    <optional>
                         <attribute name="slate">
                             <a:documentation>Wenn ein Slate ausgegeben werden soll, muss der Name hier angegeben werden.</a:documentation>
                             <lsp:references symbol="slate"></lsp:references>

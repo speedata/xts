@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.3" date="2026-09-29">
+      <en summary="New PlaceObject attribute layer draws an object behind the others.">With <tt>layer="behind"</tt>, an object is drawn under everything placed on the page since its <tt>AtPageCreation</tt> ran, but over what that drew, and in a <tt>Slate</tt> under the slate&#39;s other objects. It is meant for decoration such as panels, tints and rules. <tt>layer="front"</tt> is the default.</en>
+    </entry>
+    <entry version="0.1.3" date="2026-09-29">
       <en summary="In a Slate, allocate=&quot;no&quot; makes an object take no room.">An object placed with <tt>allocate="no"</tt> in a <tt>Slate</tt>, at lengths or in the grid, is drawn where it is placed, negative offsets included, without making the slate larger or moving the objects placed after it. Before, it still counted towards the size of the slate.</en>
     </entry>
     <entry version="0.1.3" date="2026-09-29">

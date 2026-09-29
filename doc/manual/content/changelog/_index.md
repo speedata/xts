@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.3 (2026-09-29)
 
+- **New PlaceObject attribute layer draws an object behind the others.**<br>
+  With `layer="behind"`, an object is drawn under everything placed on the page since its `AtPageCreation` ran, but over what that drew, and in a `Slate` under the slate's other objects. It is meant for decoration such as panels, tints and rules. `layer="front"` is the default.
 - **In a Slate, allocate="no" makes an object take no room.**<br>
   An object placed with `allocate="no"` in a `Slate`, at lengths or in the grid, is drawn where it is placed, negative offsets included, without making the slate larger or moving the objects placed after it. Before, it still counted towards the size of the slate.
 - **An object placed at lengths in a Slate is placed in the slate.**<br>

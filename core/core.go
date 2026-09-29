@@ -170,6 +170,7 @@ func (xd *xtsDocument) setupPage() {
 	if atPageCreation != nil {
 		atPageCreation()
 	}
+	p.underlay = len(p.bagPage.Objects)
 }
 
 // PublishingInfo contains information about a previous publishing run.

@@ -1,0 +1,36 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+    <!-- A grey panel placed after the text with layer="behind" goes under
+         the text but over the page's tint from AtPageCreation. In the slate,
+         a panel placed behind goes under the slate's text. -->
+    <DefineMasterPage name="page" test="true()">
+        <AtPageCreation>
+            <PlaceObject column="0mm" row="0mm">
+                <Box width="210mm" height="55mm" backgroundcolor="lightgray"/>
+            </PlaceObject>
+        </AtPageCreation>
+    </DefineMasterPage>
+    <Record match="data">
+        <PlaceObject column="3" row="3">
+            <TextBlock width="10">
+                <Paragraph><Value>This text is placed first. The panel under it is placed after it with layer="behind".</Value></Paragraph>
+            </TextBlock>
+        </PlaceObject>
+        <PlaceObject column="25mm" row="31mm" layer="behind">
+            <Box width="60mm" height="12mm" backgroundcolor="gray"/>
+        </PlaceObject>
+        <Slate name="band">
+            <Contents>
+                <PlaceObject column="1" row="1">
+                    <TextBlock width="10">
+                        <Paragraph><Value>Text in a slate, with a panel placed after it with layer="behind".</Value></Paragraph>
+                    </TextBlock>
+                </PlaceObject>
+                <PlaceObject column="1" row="1" layer="behind">
+                    <Box width="6" height="1" backgroundcolor="gray"/>
+                </PlaceObject>
+            </Contents>
+        </Slate>
+        <PlaceObject column="3" row="12" slate="band"/>
+    </Record>
+</Layout>
