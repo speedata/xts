@@ -2197,7 +2197,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		columnLength += shiftX
 		rowLength += shiftY
 		if xd.currentSlate != nil {
-			xd.currentSlate.appendItem(slateItem{x: columnLength, y: rowLength, vl: vl})
+			xd.currentSlate.appendItem(slateItem{x: columnLength, y: rowLength, vl: vl, noRoom: !attValues.Allocate})
 		} else {
 			xd.currentPage.outputAbsolute(columnLength, rowLength, vl)
 		}

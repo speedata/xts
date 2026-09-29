@@ -20,7 +20,7 @@ Outputs a rectangular object (image, table, box or textblock).
 
 
 `allocate` (optional)
-:   Determines if the area of the object is marked as “allocated”. With `allocate="no"`, the cursor position is not changed.
+:   Determines if the area of the object is marked as “allocated”. With `allocate="no"`, the cursor position is not changed. In a [Slate](../slate), an object with `allocate="no"` takes no room: it is drawn where it is placed, at lengths or in the grid, negative offsets included, but it does not make the slate larger or move the objects placed after it. Without it, an object placed at lengths in a slate takes room there like one placed in the grid.
 
 
 
@@ -30,7 +30,7 @@ Outputs a rectangular object (image, table, box or textblock).
 
 
     `no`
-    :    Don't allocate space in the grid (default for absolute positioning).
+    :    Don't allocate space in the grid. An object placed at lengths on a page never allocates grid cells.
 
 
 

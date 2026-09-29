@@ -119,3 +119,78 @@ func TestSlateLengthsGoIntoTheSlate(t *testing.T) {
 		t.Errorf("slate height %.2f, want %.2f", bht, 35*mm)
 	}
 }
+
+// ids lists the PlaceObject ids under n in the order they are drawn.
+func (n dumpNode) ids() []string {
+	var out []string
+	for _, c := range n.Children {
+		if id := c.attr("attr-id"); id != "" {
+			out = append(out, id)
+		}
+		out = append(out, c.ids()...)
+	}
+	return out
+}
+
+// With allocate="no" an object in a slate takes no room: at lengths or in
+// the grid, negative offsets included, it neither sizes the slate nor moves
+// what follows.
+func TestSlateAllocateNoTakesNoRoom(t *testing.T) {
+	root := renderDump(t, `<Layout xmlns="urn:speedata.de/2021/xts/en">
+  <Record match="data">
+    <Slate name="s">
+      <Contents>
+        <PlaceObject id="logo" column="-20mm" row="-5mm" allocate="no"><Box width="100mm" height="40mm"/></PlaceObject>
+        <PlaceObject id="text"><TextBlock width="5"><Paragraph><Value>Band</Value></Paragraph></TextBlock></PlaceObject>
+        <PlaceObject id="tint" column="1" row="2" allocate="no"><Box width="12" height="6"/></PlaceObject>
+        <PlaceObject id="next" column="1"><TextBlock width="5"><Paragraph><Value>Next</Value></Paragraph></TextBlock></PlaceObject>
+      </Contents>
+    </Slate>
+    <PlaceObject id="band" column="3" row="4" slate="s"/>
+  </Record>
+</Layout>`)
+	bx, by, bwd, bht, _ := dumpBox(t, root, "band")
+	_, ty, twd, _, _ := dumpBox(t, root, "text")
+	_, ny, _, nht, _ := dumpBox(t, root, "next")
+	lx, ly, _, _, parent := dumpBox(t, root, "logo")
+	if parent != "band" {
+		t.Fatalf("logo is in %q, want it in the slate", parent)
+	}
+	const mm = 72 / 25.4
+	if !near(lx, bx-20*mm) || !near(ly, by+5*mm) {
+		t.Errorf("logo at %.2f, %.2f, want %.2f, %.2f", lx, ly, bx-20*mm, by+5*mm)
+	}
+	// The tint covers the rows below the text, and next still starts in
+	// the first of them.
+	_, iy, _, _, _ := dumpBox(t, root, "tint")
+	if !near(ny, iy) || ny >= ty {
+		t.Errorf("next at %.2f, want %.2f, the tint's row", ny, iy)
+	}
+	if !near(bwd, twd) || !near(bht, by-ny+nht) {
+		t.Errorf("slate %.2f by %.2f, want %.2f by %.2f", bwd, bht, twd, by-ny+nht)
+	}
+	got := strings.Join(root.ids(), " ")
+	if want := "band logo text tint next"; got != want {
+		t.Errorf("drawn in the order %q, want %q", got, want)
+	}
+}
+
+// An object with allocate="no" in a slate is drawn in the order it was
+// placed, as on a page: a background placed first lies under the text.
+func TestSlateAllocateNoDrawsInOrder(t *testing.T) {
+	root := renderDump(t, `<Layout xmlns="urn:speedata.de/2021/xts/en">
+  <Record match="data">
+    <Slate name="band">
+      <Contents>
+        <PlaceObject id="bg" column="1" row="1" allocate="no"><Box width="60mm" height="10mm" backgroundcolor="orange"/></PlaceObject>
+        <PlaceObject id="text"><TextBlock width="10"><Paragraph><Value>Text over a background.</Value></Paragraph></TextBlock></PlaceObject>
+      </Contents>
+    </Slate>
+    <PlaceObject id="band" column="1" row="1" slate="band"/>
+  </Record>
+</Layout>`)
+	got := strings.Join(root.ids(), " ")
+	if want := "band bg text"; got != want {
+		t.Errorf("drawn in the order %q, want %q", got, want)
+	}
+}

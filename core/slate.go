@@ -13,6 +13,9 @@ type slateItem struct {
 	x  bag.ScaledPoint
 	y  bag.ScaledPoint
 	vl *node.VList
+	// noRoom (allocate="no") draws the object at x, y, either of which may
+	// be negative, without sizing the slate or moving what follows.
+	noRoom bool
 }
 
 type slate struct {
@@ -106,6 +109,18 @@ func (s *slate) buildContents() *node.VList {
 			k := node.NewKern()
 			k.Kern = delta
 			appendNode(k)
+		}
+		if itm.noRoom {
+			// A box of no size around the object keeps the list around it
+			// running on as if it were not there.
+			k := node.NewKern()
+			k.Kern = itm.x
+			node.InsertAfter(k, k, itm.vl)
+			wrap := node.Vpack(node.Hpack(k))
+			wrap.Width, wrap.Height, wrap.Depth = 0, 0, 0
+			appendNode(wrap)
+			curY = itm.y
+			continue
 		}
 		var n node.Node = itm.vl
 		if itm.x != 0 {

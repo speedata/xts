@@ -1288,7 +1288,7 @@
       </xs:choice>
       <xs:attribute name="allocate">
         <xs:annotation>
-          <xs:documentation>Determines if the area of the object is marked as “allocated”. With allocate=&#34;no&#34;, the cursor position is not changed.</xs:documentation>
+          <xs:documentation>Determines if the area of the object is marked as “allocated”. With allocate=&#34;no&#34;, the cursor position is not changed. In a Slate, an object with allocate=&#34;no&#34; takes no room: it is drawn where it is placed, at lengths or in the grid, negative offsets included, but it does not make the slate larger or move the objects placed after it. Without it, an object placed at lengths in a slate takes room there like one placed in the grid.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
           <xs:restriction base="xs:string">
