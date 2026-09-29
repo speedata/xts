@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.3 (2026-09-29)
 
+- **A table row with break-inside: auto breaks across pages.**<br>
+  A row taller than the room left on a page used to move to the next page whole, and a row taller than a page ran past its bottom and was cut. With `break-inside: auto` on the `<Tr>` the row is split where the frame ends, between the lines of its cells, and the rest continues in the next frame under the repeated `TableHead`, as often as it needs. Both parts keep the cells' borders, padding and background. Rows a `rowspan` joins stay whole. Without the property, or with `avoid`, rows break as before.
 - **Nested tables keep their place among the paragraphs of a cell.**<br>
   A table inside a `Td` was set above all of the cell's paragraphs, and a second nested table in the same cell replaced the first. Each nested table now appears where it stands in the cell, so text and tables can alternate.
 - **sd:current-row(), sd:number-of-columns() and sd:number-of-rows() work before the first page.**<br>

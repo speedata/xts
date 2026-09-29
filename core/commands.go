@@ -2330,10 +2330,11 @@ func nodeHeight(n node.Node) bag.ScaledPoint {
 // page) whenever the next row would not fit, and repeating the header rows at
 // the top of every continuation.
 //
-// This is htmlbag's outputTableRows in xts's page model. Rows are atomic: a
-// row is never split, which matches the "individual table cells are never
-// split" rule in the manual. A row taller than an empty frame is placed and
-// allowed to overflow rather than looping forever.
+// This is htmlbag's outputTableRows in xts's page model. A row is atomic
+// unless it asks to break inside (`break-inside: auto` on the <Tr>): then it
+// is split where the frame ends, each cell's lines running on in the next
+// frame. An atomic row taller than an empty frame is placed and allowed to
+// overflow rather than looping forever.
 //
 // Each continuation goes out as one vpacked VList carrying the PlaceObject id,
 // so the geometry dump records one box per frame the table spans rather than
@@ -2398,7 +2399,8 @@ func (xd *xtsDocument) splitTable(tableVL *node.VList, areaName string, col, row
 	// groupAtTop is set when the rows a rowspan joins start at the top of a
 	// frame: moving them on gains nothing, so they break like other rows.
 	groupAtTop := false
-	for i, r := range rows {
+	for i := 0; i < len(rows); i++ {
+		r := rows[i]
 		h := nodeHeight(r)
 		// Rows a rowspan joins go to a frame together, so the break is only
 		// taken before the first of them, and only if all of them fit. A group
@@ -2418,7 +2420,21 @@ func (xd *xtsDocument) splitTable(tableVL *node.VList, areaName string, col, row
 		if i >= len(rows)-footerCount {
 			reserve = 0
 		}
-		if !held && i >= headerCount && (placed > 0 || mayBreak) && y+need+reserve > bottom {
+		// A row that may break inside is split where the frame ends, if a
+		// line of it fits there; what is left goes on in the next frame.
+		var rest *node.HList
+		var split frontend.RowSplitter
+		if hl, ok := r.(*node.HList); ok {
+			split, _ = hl.Attributes["_split"].(frontend.RowSplitter)
+		}
+		if split != nil && !joined && !keepsWithNext(r) && i >= headerCount && i < len(rows)-footerCount && y+h+reserve > bottom {
+			if first, more, ok := split(bottom - reserve - y); ok {
+				pending = append(pending, first)
+				placed++
+				rest = more
+			}
+		}
+		if rest != nil || !held && i >= headerCount && (placed > 0 || mayBreak) && y+need+reserve > bottom {
 			if placed == 0 {
 				// Nothing but header rows is pending. Flushing them would
 				// leave a lone table head at the bottom of the frame, so drop
@@ -2460,6 +2476,11 @@ func (xd *xtsDocument) splitTable(tableVL *node.VList, areaName string, col, row
 					pending = append(pending, hdr)
 					y += nodeHeight(hdr)
 				}
+			}
+			if rest != nil {
+				rows[i] = rest
+				i--
+				continue
 			}
 		}
 		if !joined {

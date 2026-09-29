@@ -1,9 +1,11 @@
 package core
 
 import (
+	"io"
 	"reflect"
 	"testing"
 
+	"github.com/boxesandglue/boxesandglue/backend/bag"
 	"github.com/boxesandglue/boxesandglue/backend/document"
 	"github.com/boxesandglue/boxesandglue/backend/node"
 	"github.com/boxesandglue/boxesandglue/frontend"
@@ -194,4 +196,98 @@ func TestSplitTableRowspan(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestSplitTableBreaksInsideARow checks that a body row that may break inside
+// and does not fit is split where the frame ends, the rest running on in the
+// next frame under the repeated header row, without losing a line of it.
+func TestSplitTableBreaksInsideARow(t *testing.T) {
+	for _, breakInside := range []bool{true, false} {
+		xd, _ := threeFrames(5, 5, 5)
+		g := xd.currentGrid
+		g.gridWidth, g.gridHeight = 10*65536, 20*65536
+		xd.currentPage.bagPage = &document.Page{}
+
+		fe, err := frontend.NewForWriter(io.Discard)
+		if err != nil {
+			t.Fatal(err)
+		}
+		line := func() any {
+			return frontend.FormatToVList(func(bag.ScaledPoint) (*node.VList, error) {
+				r := node.NewRule()
+				r.Width, r.Height = 20*65536, 10*65536
+				return node.Vpack(r), nil
+			})
+		}
+		var lines []any
+		for range 20 {
+			lines = append(lines, line())
+		}
+		tbl := &frontend.Table{
+			ColSpec: []frontend.ColSpec{{ColumnWidth: &node.Glue{Width: g.width(5)}}},
+			Rows: frontend.TableRows{
+				&frontend.TableRow{ID: "head", Cells: []*frontend.TableCell{{Contents: []any{line()}}}},
+				&frontend.TableRow{ID: "body", BreakInside: breakInside, Cells: []*frontend.TableCell{{Contents: lines}}},
+			},
+		}
+		vls, err := fe.BuildTable(tbl)
+		if err != nil {
+			t.Fatal(err)
+		}
+		table := vls[0]
+		head := table.List.(*node.HList)
+		table.Attributes["_headerCount"] = 1
+		table.Attributes["_buildHeaders"] = func() ([]*node.HList, error) {
+			return []*node.HList{head.Copy().(*node.HList)}, nil
+		}
+
+		var fragments [][]string
+		total := 0
+		record := func(vl *node.VList) {
+			var ids []string
+			for r := vl.List; r != nil; r = r.Next() {
+				ids = append(ids, r.(*node.HList).Attributes["id"].(string))
+				if r.(*node.HList).Attributes["id"] == "body" {
+					total += countRules(r)
+				}
+			}
+			if ht := vl.Height + vl.Depth; breakInside && ht > g.height(6) {
+				t.Errorf("a fragment is %s high, taller than its frame", ht)
+			}
+			fragments = append(fragments, ids)
+		}
+		if err := xd.splitTable(table, "cols", 1, 1, "", false, frontend.HAlignLeft, record); err != nil {
+			t.Fatal(err)
+		}
+		want := [][]string{{"head", "body"}}
+		if breakInside {
+			want = [][]string{{"head", "body"}, {"head", "body"}}
+		}
+		if !reflect.DeepEqual(fragments, want) {
+			t.Errorf("break inside %v: fragments %v, want %v", breakInside, fragments, want)
+		}
+		if total != 20 {
+			t.Errorf("break inside %v: the fragments hold %d lines of the row, want 20", breakInside, total)
+		}
+	}
+}
+
+func countRules(n node.Node) int {
+	switch t := n.(type) {
+	case *node.Rule:
+		return 1
+	case *node.HList:
+		c := 0
+		for e := t.List; e != nil; e = e.Next() {
+			c += countRules(e)
+		}
+		return c
+	case *node.VList:
+		c := 0
+		for e := t.List; e != nil; e = e.Next() {
+			c += countRules(e)
+		}
+		return c
+	}
+	return 0
 }

@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.3" date="2026-09-29">
+      <en summary="A table row with break-inside: auto breaks across pages.">A row taller than the room left on a page used to move to the next page whole, and a row taller than a page ran past its bottom and was cut. With <tt>break-inside: auto</tt> on the <tt>&lt;Tr&gt;</tt> the row is split where the frame ends, between the lines of its cells, and the rest continues in the next frame under the repeated <tt>TableHead</tt>, as often as it needs. Both parts keep the cells' borders, padding and background. Rows a <tt>rowspan</tt> joins stay whole. Without the property, or with <tt>avoid</tt>, rows break as before.</en>
+    </entry>
+    <entry version="0.1.3" date="2026-09-29">
       <en summary="Nested tables keep their place among the paragraphs of a cell.">A table inside a <tt>Td</tt> was set above all of the cell's paragraphs, and a second nested table in the same cell replaced the first. Each nested table now appears where it stands in the cell, so text and tables can alternate.</en>
     </entry>
     <entry version="0.1.3" date="2026-09-29">

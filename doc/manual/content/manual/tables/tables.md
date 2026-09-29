@@ -182,7 +182,13 @@ Table cells can hold more than just text:
 </Td>
 ```
 
-Individual cells are never split across pages -- they're always rendered as a single rectangular box.
+A row is not split across pages: it moves to the next page whole. To let a tall row break inside, between the lines of its cells, set `break-inside: auto` on it:
+
+```xml
+<Tr style="break-inside: auto">
+```
+
+The part that fits ends the page and the rest continues on the next one, under the repeated table head. Rows joined by a `rowspan` always stay whole.
 
 ## Data-driven tables
 
