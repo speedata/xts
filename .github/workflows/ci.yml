@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    # arm64 like the machine the QA references are made on. Today amd64
+    # reproduces them byte for byte as well, but Go may fuse x*y+z into one
+    # FMA instruction on arm64 and not on amd64, so the same architecture is
+    # the safe choice. Byte identical PDFs need no rendering in rake qa.
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: Install rake, ImageMagick and Ghostscript
+        # ImageMagick and Ghostscript are only used by rake qa when a PDF
+        # differs from its reference by checksum.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rake imagemagick ghostscript
+          # Some ImageMagick packages forbid reading PDF files, and xts compare
+          # rasterizes the PDFs with ImageMagick. Ubuntu 24.04 has no such
+          # rule; lift it wherever a policy has one.
+          sudo sed -i 's/rights="none" pattern="PDF"/rights="read|write" pattern="PDF"/' /etc/ImageMagick-*/policy.xml
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: go test
+        # Includes the check of doc/changelog.xml.
+        run: go test ./...
+
+      - name: Compare the QA cases with their references
+        run: rake qa
+
+      - name: Upload the comparison report on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: compare-report
+          path: |
+            compare-report.html
+            qa/**/pagediff-*.png
+            qa/**/source-*.png
+            qa/**/reference-*.png
+            qa/**/xts.pdf
+          if-no-files-found: ignore
