@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.3 (2026-09-29)
 
+- **A tab after a Br is kept where tab stops apply.**<br>
+  With `-bag-tab-stops` in force, a tab right after a `Br` was dropped with the white space that starts the new line, so the text after it began at the margin instead of at the first stop. The tab is now kept.
 - **Nested tables keep their place among the paragraphs of a cell.**<br>
   A table inside a `Td` was set above all of the cell's paragraphs, and a second nested table in the same cell replaced the first. Each nested table now appears where it stands in the cell, so text and tables can alternate.
 - **sd:current-row(), sd:number-of-columns() and sd:number-of-rows() work before the first page.**<br>
