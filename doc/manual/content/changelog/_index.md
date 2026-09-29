@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.3 (2026-09-29)
 
+- **sd:current-row() before the first page no longer crashes.**<br>
+  Before anything had created a page, `sd:current-row()`, `sd:number-of-columns()` and `sd:number-of-rows()` read a grid that did not exist yet and XTS stopped with a panic. `sd:current-row()` now returns 1, the row the first object will start in, without creating a page; the other two report an error.
 - **xts compare catches a missing page and a page of a different size.**<br>
   xts compare only looked at as many pages as the new PDF has, so a reference with more pages passed, and with ImageMagick 6, as on Ubuntu, two pages of different sizes counted as equal. A page missing on either side and a page whose size differs from the reference now count as bad pages. Rendering errors of the new PDF are reported instead of being ignored.
 - **A tab stop's leader is drawn in a Paragraph.**<br>
