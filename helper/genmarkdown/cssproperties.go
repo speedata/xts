@@ -22,7 +22,17 @@ var manualLinks = map[string]string{
 // differently, so the reference does not promise what htmlbag's pagination
 // does but XTS doesn't.
 var noteOverrides = map[string]string{
-	"page-break-inside": "XTS does not split a table row: a row that does not fit moves to the next page whole",
+	"page-break-inside":  "XTS does not split a table row: a row that does not fit moves to the next page whole",
+	"widows":             "No effect in XTS yet: `PlaceObject` does not split a paragraph across pages",
+	"orphans":            "No effect in XTS yet, as with `widows`",
+	"vertical-align":     "",
+	"-bag-leading-model": "",
+}
+
+// valueOverrides replaces htmlbag's value description where it names Go API
+// that XTS does not offer to the layout author.
+var valueOverrides = map[string]string{
+	"-bag-leading-model": "`half` (CSS line boxes, the default), `trailing` (TeX style)",
 }
 
 type cssProperty struct {
@@ -44,6 +54,9 @@ func cssGroupFor(g htmlbag.PropertyGroup) cssGroup {
 			names = append(names, "`"+n+"`")
 		}
 		values := spec.Values
+		if o, ok := valueOverrides[spec.Name]; ok {
+			values = o
+		}
 		if link, ok := manualLinks[spec.Name]; ok {
 			values += ", " + link
 		}

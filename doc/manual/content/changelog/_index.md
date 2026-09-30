@@ -9,8 +9,12 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
-## 0.1.3 (2026-09-29)
+## 0.1.3 (2026-09-30)
 
+- **A Span with position: relative moves by top or bottom.**<br>
+  A `Span` with `position: relative` is moved down by `top` or up by `bottom` after the lines are set, and the lines and the neighboring text stay where they are. `top` wins over `bottom`, nested offsets add up, and a percentage has no effect. Before, the offsets were ignored. `left` and `right` still have no effect on inline text.
+- **Raised text keeps its position across a color change.**<br>
+  Inside a `Span` with `vertical-align`, text after a color change, such as a nested `Span` with `color: red`, was drawn on the baseline instead of raised. The same happened to the horizontal scaling of font expansion. Both now stay in effect.
 - **New PlaceObject attribute layer draws an object behind the others.**<br>
   With `layer="behind"`, an object is drawn under everything placed on the page since its `AtPageCreation` ran, but over what that drew, and in a `Slate` under the slate's other objects. It is meant for decoration such as panels, tints and rules. `layer="front"` is the default.
 - **In a Slate, allocate="no" makes an object take no room.**<br>
