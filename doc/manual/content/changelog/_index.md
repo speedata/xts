@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.3 (2026-09-30)
 
+- **Go callers can register line models for -bag-leading-model.**<br>
+  The new `XTSConfig.LineModels` field maps `-bag-leading-model` names to `htmlbag.LineModelFunc` values, which XTS registers with its CSS builder through `CSSBuilder.RegisterLineModel` before the layout is read. A reserved or empty name makes `RunXTS` return an error. Layouts that do not use a registered name are not affected.
 - **A Span with position: relative moves by top or bottom.**<br>
   A `Span` with `position: relative` is moved down by `top` or up by `bottom` after the lines are set, and the lines and the neighboring text stay where they are. `top` wins over `bottom`, nested offsets add up, and a percentage has no effect. Before, the offsets were ignored. `left` and `right` still have no effect on inline text.
 - **Raised text keeps its position across a color change.**<br>

@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.3" date="2026-09-30">
+      <en summary="Go callers can register line models for -bag-leading-model.">The new <tt>XTSConfig.LineModels</tt> field maps <tt>-bag-leading-model</tt> names to <tt>htmlbag.LineModelFunc</tt> values, which XTS registers with its CSS builder through <tt>CSSBuilder.RegisterLineModel</tt> before the layout is read. A reserved or empty name makes <tt>RunXTS</tt> return an error. Layouts that do not use a registered name are not affected.</en>
+    </entry>
+    <entry version="0.1.3" date="2026-09-30">
       <en summary="A Span with position: relative moves by top or bottom.">A <tt>Span</tt> with <tt>position: relative</tt> is moved down by <tt>top</tt> or up by <tt>bottom</tt> after the lines are set, and the lines and the neighboring text stay where they are. <tt>top</tt> wins over <tt>bottom</tt>, nested offsets add up, and a percentage has no effect. Before, the offsets were ignored. <tt>left</tt> and <tt>right</tt> still have no effect on inline text.</en>
     </entry>
     <entry version="0.1.3" date="2026-09-30">
