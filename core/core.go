@@ -199,6 +199,9 @@ type XTSConfig struct {
 	Pdfua string
 	Pdfa  string
 	Pdfx  string
+	// LineModels are registered with the CSSBuilder by -bag-leading-model
+	// name; see htmlbag.CSSBuilder.RegisterLineModel.
+	LineModels map[string]htmlbag.LineModelFunc
 }
 
 // RunXTS is the entry point
@@ -223,6 +226,12 @@ func RunXTS(cfg *XTSConfig) error {
 	d.cssbuilder, err = htmlbag.New(d.document, d.layoutcss)
 	if err != nil {
 		return err
+	}
+	// Sorted, so that names differing only in case resolve the same way each run.
+	for _, name := range slices.Sorted(maps.Keys(cfg.LineModels)) {
+		if err = d.cssbuilder.RegisterLineModel(name, cfg.LineModels[name]); err != nil {
+			return err
+		}
 	}
 
 	if cfg.SuppressInfo {

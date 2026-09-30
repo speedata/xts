@@ -32,7 +32,7 @@ var noteOverrides = map[string]string{
 // valueOverrides replaces htmlbag's value description where it names Go API
 // that XTS does not offer to the layout author.
 var valueOverrides = map[string]string{
-	"-bag-leading-model": "`half` (CSS line boxes, the default), `trailing` (TeX style)",
+	"-bag-leading-model": "`half` (CSS line boxes, the default), `trailing` (TeX style), or a name that the Go program running XTS registered in `XTSConfig.LineModels`",
 }
 
 type cssProperty struct {
