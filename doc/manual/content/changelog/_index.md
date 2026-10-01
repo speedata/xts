@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.3 (2026-10-01)
 
+- **New command Tab inserts a tab.**<br>
+  A `<Tab/>` in a `Paragraph` or another text command moves the text after it to the next stop of `-bag-tab-stops`, and without stops it advances by `tab-size`. Unlike a tab character in the text, which `white-space: normal` collapses to a space where no stops are set, it always stays a tab. The new manual page on tab stops shows a table of contents and a price list ([#39](https://github.com/speedata/xts/issues/39)).
 - **A Slate draws its objects in the order they were placed.**<br>
   A `Slate` sorted its objects by their vertical position before drawing them, so an object placed later but higher up, such as a background with `allocate="no"`, was drawn under the objects below its top edge. A slate now draws its objects in the order they were placed, as a page does, and `layer="behind"` still puts an object under the others. The positions of the objects and the size of the slate do not change ([#49](https://github.com/speedata/xts/issues/49)).
 - **Go callers can register line models for -bag-leading-model.**<br>

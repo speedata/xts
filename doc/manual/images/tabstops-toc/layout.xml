@@ -1,0 +1,26 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+        xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+  <!-- Source of manual/img/tabstops-toc.png, see ../Readme.md -->
+  <PageFormat width="180mm" height="50mm"/>
+  <StyleSheet>
+    p { font-family: serif; font-size: 14pt; line-height: 20pt; margin: 0; }
+    p.toc { -bag-tab-stops: 10mm, 100% end leader(dotted); }
+    p.section { -bag-tab-stops: 10mm, 22mm, 100% end leader(dotted); }
+  </StyleSheet>
+  <Record match="data">
+    <PlaceObject column="10mm" row="7mm">
+      <TextBlock width="140mm">
+        <ForAll select="chapter">
+          <Paragraph class="toc">
+            <Value select="@no"/><Tab/><Value select="@title"/><Tab/><Value select="@page"/>
+          </Paragraph>
+          <ForAll select="section">
+            <Paragraph class="section">
+              <Tab/><Value select="@no"/><Tab/><Value select="@title"/><Tab/><Value select="@page"/>
+            </Paragraph>
+          </ForAll>
+        </ForAll>
+      </TextBlock>
+    </PlaceObject>
+  </Record>
+</Layout>

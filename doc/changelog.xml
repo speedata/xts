@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.3" date="2026-10-01">
+      <en summary="New command Tab inserts a tab.">A <tt>&lt;Tab/&gt;</tt> in a <tt>Paragraph</tt> or another text command moves the text after it to the next stop of <tt>-bag-tab-stops</tt>, and without stops it advances by <tt>tab-size</tt>. Unlike a tab character in the text, which <tt>white-space: normal</tt> collapses to a space where no stops are set, it always stays a tab. The new manual page on tab stops shows a table of contents and a price list (#39).</en>
+    </entry>
+    <entry version="0.1.3" date="2026-10-01">
       <en summary="A Slate draws its objects in the order they were placed.">A <tt>Slate</tt> sorted its objects by their vertical position before drawing them, so an object placed later but higher up, such as a background with <tt>allocate="no"</tt>, was drawn under the objects below its top edge. A slate now draws its objects in the order they were placed, as a page does, and <tt>layer="behind"</tt> still puts an object under the others. The positions of the objects and the size of the slate do not change (#49).</en>
     </entry>
     <entry version="0.1.3" date="2026-09-30">

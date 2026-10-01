@@ -1,0 +1,20 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+        xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+  <!-- Source of manual/img/tabstops-pricelist.png, see ../Readme.md -->
+  <PageFormat width="180mm" height="38mm"/>
+  <StyleSheet>
+    p { font-family: serif; font-size: 14pt; line-height: 20pt; margin: 0; }
+    p.price { -bag-tab-stops: 105mm decimal leader(dotted), 115mm; }
+  </StyleSheet>
+  <Record match="data">
+    <PlaceObject column="10mm" row="6mm">
+      <TextBlock width="140mm">
+        <ForAll select="item">
+          <Paragraph class="price">
+            <Value select="@name"/><Tab/><Value select="@price"/><Tab/><Value select="@unit"/>
+          </Paragraph>
+        </ForAll>
+      </TextBlock>
+    </PlaceObject>
+  </Record>
+</Layout>

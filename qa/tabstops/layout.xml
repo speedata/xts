@@ -1,0 +1,38 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+    <!-- Tab stops (#38, #39): <Tab/> with and without -bag-tab-stops,
+         every alignment, leaders, percentages, a tab after <Br/> and
+         tab characters in Value, HTML and white-space: pre. -->
+    <SetGrid height="14pt" width="1cm"/>
+    <StyleSheet>
+        p { margin: 0; font-family: serif; font-size: 11pt; }
+        p.toc     { -bag-tab-stops: 10mm, 100% end leader(dotted); }
+        p.align   { -bag-tab-stops: 20mm, 60mm center, 100% end; }
+        p.decimal { -bag-tab-stops: 40mm decimal leader(solid), 80mm decimal(",") leader(" - "); }
+        p.past    { -bag-tab-stops: 15mm; }
+        p.size    { tab-size: 10mm; }
+        p.none    { -bag-tab-stops: none; }
+        p.pre     { white-space: pre; }
+    </StyleSheet>
+    <Record match="data">
+        <PlaceObject>
+            <TextBlock width="10">
+                <Paragraph class="toc"><Value>1</Value><Tab/><Value>Tab command</Value><Tab/><Value>3</Value></Paragraph>
+                <Paragraph class="toc"><Value>2</Value><Value select="'&#9;'"/><Value>Tab character</Value><Value select="'&#9;'"/><Value>17</Value></Paragraph>
+                <Paragraph class="toc"><Value>3</Value><Tab/><Value>A title that breaks</Value><Br/><Tab/><Value>after a Br</Value><Tab/><Value>42</Value></Paragraph>
+                <Paragraph class="align"><Value>start</Value><Tab/><Value>left</Value><Tab/><Value>center</Value><Tab/><Value>end</Value></Paragraph>
+                <Paragraph class="decimal"><Value>1</Value><Tab/><Value>3.50</Value><Tab/><Value>3,50</Value></Paragraph>
+                <Paragraph class="decimal"><Value>2</Value><Tab/><Value>123.4</Value><Tab/><Value>123,4</Value></Paragraph>
+                <Paragraph class="decimal"><Value>3</Value><Tab/><Value>12</Value><Tab/><Value>12</Value></Paragraph>
+                <Paragraph class="past"><Value>text past the last stop</Value><Tab/><Value>tab-size</Value></Paragraph>
+                <Paragraph><Value>a</Value><Tab/><Value>b</Value><Tab/><Tab/><Value>c (no stops)</Value></Paragraph>
+                <Paragraph><Tab/><Value>leading tab, no stops</Value></Paragraph>
+                <Paragraph class="size"><Value>a</Value><Tab/><Value>b (tab-size: 10mm)</Value></Paragraph>
+                <Paragraph class="none"><Value>a</Value><Value select="'&#9;'"/><Value>b (character, collapsed)</Value></Paragraph>
+                <Paragraph class="none"><Value>a</Value><Tab/><Value>b (Tab, none)</Value></Paragraph>
+                <Paragraph class="pre"><Value>a</Value><Value select="'&#9;'"/><Value>b (character, pre)</Value></Paragraph>
+                <HTML><p class="toc">4&#9;HTML paragraph&#9;99</p></HTML>
+            </TextBlock>
+        </PlaceObject>
+    </Record>
+</Layout>

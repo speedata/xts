@@ -8,7 +8,7 @@ Switch to italic text.
 
 ##  Child elements
 
-[A](../a), [Action](../action), [B](../b), [Br](../br), [CopyOf](../copyof), [HTML](../html), [I](../i), [Ol](../ol), [Span](../span), [U](../u), [Ul](../ul), [Value](../value)
+[A](../a), [Action](../action), [B](../b), [Br](../br), [CopyOf](../copyof), [HTML](../html), [I](../i), [Ol](../ol), [Span](../span), [Tab](../tab), [U](../u), [Ul](../ul), [Value](../value)
 
 ##  Parent elements
 

@@ -49,6 +49,7 @@
                                     <ref name="e_Value"></ref>
                                     <ref name="e_CopyOf"></ref>
                                     <ref name="e_Span"></ref>
+                                    <ref name="e_Tab"></ref>
                                     <text></text>
                                 </choice>
                             </zeroOrMore>
@@ -270,6 +271,7 @@
                             <ref name="e_Value"></ref>
                             <ref name="e_CopyOf"></ref>
                             <ref name="e_Span"></ref>
+                            <ref name="e_Tab"></ref>
                             <text></text>
                         </choice>
                     </zeroOrMore>
@@ -1035,6 +1037,7 @@
                             <ref name="e_Value"></ref>
                             <ref name="e_CopyOf"></ref>
                             <ref name="e_Span"></ref>
+                            <ref name="e_Tab"></ref>
                             <text></text>
                         </choice>
                     </zeroOrMore>
@@ -1169,6 +1172,7 @@
                             <ref name="e_Value"></ref>
                             <ref name="e_CopyOf"></ref>
                             <ref name="e_Span"></ref>
+                            <ref name="e_Tab"></ref>
                             <text></text>
                         </choice>
                     </zeroOrMore>
@@ -1771,6 +1775,7 @@
                             <ref name="e_Value"></ref>
                             <ref name="e_CopyOf"></ref>
                             <ref name="e_Span"></ref>
+                            <ref name="e_Tab"></ref>
                             <text></text>
                         </choice>
                     </zeroOrMore>
@@ -2544,6 +2549,7 @@
                             <ref name="e_Value"></ref>
                             <ref name="e_CopyOf"></ref>
                             <ref name="e_Span"></ref>
+                            <ref name="e_Tab"></ref>
                             <text></text>
                         </choice>
                     </zeroOrMore>
@@ -2584,6 +2590,13 @@
                 </group>
                 <ref name="foreign-nodes"></ref>
             </interleave>
+        </element>
+    </define>
+    <define name="e_Tab">
+        <element name="Tab">
+            <a:documentation>Insert a tab. The text after it continues at the next tab stop set with the CSS property -bag-tab-stops. Without tab stops, the tab advances by tab-size. Unlike a tab character in the text, this command is never collapsed to a space.</a:documentation>
+            <lsp:doc href="https://doc.speedata.de/xts/reference/commands/tab/"></lsp:doc>
+            <empty></empty>
         </element>
     </define>
     <define name="e_Table">
@@ -3058,6 +3071,7 @@
                             <ref name="e_Value"></ref>
                             <ref name="e_CopyOf"></ref>
                             <ref name="e_Span"></ref>
+                            <ref name="e_Tab"></ref>
                             <text></text>
                         </choice>
                     </zeroOrMore>

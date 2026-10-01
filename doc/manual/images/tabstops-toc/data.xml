@@ -1,0 +1,8 @@
+<data>
+  <chapter no="1" title="Getting started" page="3">
+    <section no="1.1" title="Installation" page="4"/>
+    <section no="1.2" title="The first layout" page="7"/>
+  </chapter>
+  <chapter no="2" title="Text and styling" page="15"/>
+  <chapter no="3" title="Tables" page="32"/>
+</data>

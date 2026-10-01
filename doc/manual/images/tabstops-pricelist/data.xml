@@ -1,0 +1,6 @@
+<data>
+  <item name="Coffee" unit="per cup" price="3.50"/>
+  <item name="Espresso" unit="per cup" price="2.9"/>
+  <item name="Cheese platter" unit="per plate" price="12.75"/>
+  <item name="Water" unit="per bottle" price="1.80"/>
+</data>

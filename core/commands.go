@@ -108,6 +108,7 @@ func init() {
 		"Span":             cmdSpan,
 		"StyleSheet":       cmdStyleSheet,
 		"Switch":           cmdSwitch,
+		"Tab":              cmdTab,
 		"TableFoot":        cmdTableFoot,
 		"TableHead":        cmdTableHead,
 		"TableRule":        cmdTableRule,
@@ -168,7 +169,7 @@ func init() {
 
 		// Everything else (Element, Attribute, Column, Columns, CopyOf, Value,
 		// Box, TextBlock, Table, Tr, Td, TableHead, TableRule, Image, Paragraph,
-		// Span, A, B, I, U, Br, Li, Ol, Ul, Circle, HTML, SlateContents) is a
+		// Span, A, B, I, U, Br, Tab, Li, Ol, Ul, Circle, HTML, SlateContents) is a
 		// constructor by default.
 	}
 }
@@ -309,6 +310,14 @@ func cmdB(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 
 func cmdBr(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	n, err := xd.textValuesToHTMLNode("br", xpath.Sequence{}, map[string]string{}, "cmdBr", layoutelt.Line)
+	return xpath.Sequence{n}, err
+}
+
+// cmdTab inserts a tab. It is wrapped in white-space: pre, so it stays a tab
+// where white-space: normal would collapse it to a space: without
+// -bag-tab-stops it advances by tab-size.
+func cmdTab(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	n, err := xd.textValuesToHTMLNode("span", xpath.Sequence{"\t"}, map[string]string{"style": "white-space: pre"}, "cmdTab", layoutelt.Line)
 	return xpath.Sequence{n}, err
 }
 

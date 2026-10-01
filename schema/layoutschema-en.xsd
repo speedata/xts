@@ -18,6 +18,7 @@
         <xs:element ref="en:Value"></xs:element>
         <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:Span"></xs:element>
+        <xs:element ref="en:Tab"></xs:element>
         <xs:element ref="en:Box"></xs:element>
         <xs:element ref="en:Circle"></xs:element>
       </xs:choice>
@@ -164,6 +165,7 @@
         <xs:element ref="en:Value"></xs:element>
         <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:Span"></xs:element>
+        <xs:element ref="en:Tab"></xs:element>
       </xs:choice>
     </xs:complexType>
   </xs:element>
@@ -712,6 +714,7 @@
         <xs:element ref="en:Value"></xs:element>
         <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:Span"></xs:element>
+        <xs:element ref="en:Tab"></xs:element>
       </xs:choice>
     </xs:complexType>
   </xs:element>
@@ -813,6 +816,7 @@
         <xs:element ref="en:Value"></xs:element>
         <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:Span"></xs:element>
+        <xs:element ref="en:Tab"></xs:element>
       </xs:choice>
       <xs:attribute name="class">
         <xs:annotation>
@@ -1152,6 +1156,7 @@
         <xs:element ref="en:Value"></xs:element>
         <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:Span"></xs:element>
+        <xs:element ref="en:Tab"></xs:element>
       </xs:choice>
       <xs:attribute name="class">
         <xs:annotation>
@@ -1693,6 +1698,7 @@
         <xs:element ref="en:Value"></xs:element>
         <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:Span"></xs:element>
+        <xs:element ref="en:Tab"></xs:element>
       </xs:choice>
       <xs:attribute name="class">
         <xs:annotation>
@@ -1733,6 +1739,12 @@
         </xs:annotation>
       </xs:attribute>
     </xs:complexType>
+  </xs:element>
+  <xs:element name="Tab">
+    <xs:annotation>
+      <xs:documentation>Insert a tab. The text after it continues at the next tab stop set with the CSS property -bag-tab-stops. Without tab stops, the tab advances by tab-size. Unlike a tab character in the text, this command is never collapsed to a space.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType></xs:complexType>
   </xs:element>
   <xs:element name="Table">
     <xs:annotation>
@@ -2097,6 +2109,7 @@
         <xs:element ref="en:Value"></xs:element>
         <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:Span"></xs:element>
+        <xs:element ref="en:Tab"></xs:element>
       </xs:choice>
       <xs:attribute name="class">
         <xs:annotation>

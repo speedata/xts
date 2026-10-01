@@ -84,6 +84,7 @@
         <cmd name="Value"/>
         <cmd name="CopyOf"/>
         <cmd name="Span"/>
+        <cmd name="Tab"/>
         <text/>
       </choice>
     </zeroOrMore>
@@ -4708,6 +4709,54 @@
     background-color: red;
   }
 </StyleSheet>]]></listing>
+    </example>
+  </command>
+
+
+  <!--
+      ****************************************************************************************
+      * Tab
+      ****************************************************************************************
+  -->
+  <command en="Tab">
+    <description xml:lang="en">
+      <para>Insert a tab. The text after it continues at the next tab stop set with the CSS property <tt>-bag-tab-stops</tt>. Without tab stops, the tab advances by <tt>tab-size</tt>. Unlike a tab character in the text, this command is never collapsed to a space.</para>
+    </description>
+    <description xml:lang="de">
+      <para>Fügt einen Tabulator ein. Der Text danach geht am nächsten Tabstopp weiter, der mit der CSS-Eigenschaft <tt>-bag-tab-stops</tt> gesetzt ist. Ohne Tabstopps rückt der Tabulator um <tt>tab-size</tt> vor. Anders als ein Tabulatorzeichen im Text wird dieser Befehl nie zu einem Leerzeichen zusammengefasst.</para>
+    </description>
+    <childelements/>
+    <example xml:lang="en">
+      <listing><![CDATA[<StyleSheet>
+  p.toc { -bag-tab-stops: 8mm, 100% end leader(dotted) }
+</StyleSheet>
+
+<Record match="data">
+  <PlaceObject>
+    <TextBlock>
+      <Paragraph class="toc">
+        <Value>1</Value><Tab/><Value>Introduction</Value><Tab/><Value>3</Value>
+      </Paragraph>
+    </TextBlock>
+  </PlaceObject>
+</Record>
+]]></listing>
+    </example>
+    <example xml:lang="de">
+      <listing><![CDATA[<StyleSheet>
+  p.toc { -bag-tab-stops: 8mm, 100% end leader(dotted) }
+</StyleSheet>
+
+<Record match="data">
+  <PlaceObject>
+    <TextBlock>
+      <Paragraph class="toc">
+        <Value>1</Value><Tab/><Value>Einleitung</Value><Tab/><Value>3</Value>
+      </Paragraph>
+    </TextBlock>
+  </PlaceObject>
+</Record>
+]]></listing>
     </example>
   </command>
 
