@@ -9,8 +9,10 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
-## 0.1.3 (2026-09-30)
+## 0.1.3 (2026-10-01)
 
+- **A Slate draws its objects in the order they were placed.**<br>
+  A `Slate` sorted its objects by their vertical position before drawing them, so an object placed later but higher up, such as a background with `allocate="no"`, was drawn under the objects below its top edge. A slate now draws its objects in the order they were placed, as a page does, and `layer="behind"` still puts an object under the others. The positions of the objects and the size of the slate do not change ([#49](https://github.com/speedata/xts/issues/49)).
 - **Go callers can register line models for -bag-leading-model.**<br>
   The new `XTSConfig.LineModels` field maps `-bag-leading-model` names to `htmlbag.LineModelFunc` values, which XTS registers with its CSS builder through `CSSBuilder.RegisterLineModel` before the layout is read. A reserved or empty name makes `RunXTS` return an error. Layouts that do not use a registered name are not affected.
 - **A Span with position: relative moves by top or bottom.**<br>

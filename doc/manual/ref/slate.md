@@ -6,6 +6,8 @@ Create a virtual page (a slate) that behaves like a real page but is not placed 
 
 The slate starts with a copy of the page grid. With a [Grid](../grid) child element the slate can use its own grid independent of the page.
 
+As on a page, the objects in a slate are drawn in the order they are placed: an object placed later lies over one placed earlier, unless it is placed with `layer="behind"`.
+
 
 
 ##  Child elements

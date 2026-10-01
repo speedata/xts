@@ -667,7 +667,8 @@
   <xs:element name="Slate">
     <xs:annotation>
       <xs:documentation>Create a virtual page (a slate) that behaves like a real page but is not placed into the PDF. Think of it as a magic slate — you draw on it, inspect the result, and then place it on the page.
-      The slate starts with a copy of the page grid. With a Grid child element the slate can use its own grid independent of the page.</xs:documentation>
+      The slate starts with a copy of the page grid. With a Grid child element the slate can use its own grid independent of the page.
+      As on a page, the objects in a slate are drawn in the order they are placed: an object placed later lies over one placed earlier, unless it is placed with layer=&#34;behind&#34;.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">

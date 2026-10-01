@@ -24,6 +24,9 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
+    <entry version="0.1.3" date="2026-10-01">
+      <en summary="A Slate draws its objects in the order they were placed.">A <tt>Slate</tt> sorted its objects by their vertical position before drawing them, so an object placed later but higher up, such as a background with <tt>allocate="no"</tt>, was drawn under the objects below its top edge. A slate now draws its objects in the order they were placed, as a page does, and <tt>layer="behind"</tt> still puts an object under the others. The positions of the objects and the size of the slate do not change (#49).</en>
+    </entry>
     <entry version="0.1.3" date="2026-09-30">
       <en summary="Go callers can register line models for -bag-leading-model.">The new <tt>XTSConfig.LineModels</tt> field maps <tt>-bag-leading-model</tt> names to <tt>htmlbag.LineModelFunc</tt> values, which XTS registers with its CSS builder through <tt>CSSBuilder.RegisterLineModel</tt> before the layout is read. A reserved or empty name makes <tt>RunXTS</tt> return an error. Layouts that do not use a registered name are not affected.</en>
     </entry>

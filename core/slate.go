@@ -86,10 +86,12 @@ func (s *slate) appendItem(itm slateItem) {
 }
 
 // buildContents composes the placed objects into a single VList and caches
-// the result. The objects are stacked top to bottom with kerns in between, a
-// negative kern moves back up for overlapping objects. The horizontal offset
-// is a kern in an hbox around the object. Objects placed behind come first in
-// the list, so they are drawn under the others. An empty slate returns nil.
+// the result. The objects follow each other in the order they were placed,
+// with kerns in between that move down to the next object's top edge, or back
+// up when it starts higher. The horizontal offset is a kern in an hbox around
+// the object. Objects placed behind come first in the list, so they are drawn
+// under the others; otherwise a later object is drawn over an earlier one, as
+// on a page. An empty slate returns nil.
 func (s *slate) buildContents() *node.VList {
 	if s.contents != nil {
 		return s.contents
@@ -100,10 +102,7 @@ func (s *slate) buildContents() *node.VList {
 	items := make([]slateItem, len(s.items))
 	copy(items, s.items)
 	sort.SliceStable(items, func(i, j int) bool {
-		if items[i].behind != items[j].behind {
-			return items[i].behind
-		}
-		return items[i].y < items[j].y
+		return items[i].behind && !items[j].behind
 	})
 
 	var head, tail node.Node

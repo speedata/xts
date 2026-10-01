@@ -2104,10 +2104,12 @@
     <description xml:lang="en">
       <para>Create a virtual page (a slate) that behaves like a real page but is not placed into the PDF. Think of it as a magic slate — you draw on it, inspect the result, and then place it on the page.</para>
       <para>The slate starts with a copy of the page grid. With a <cmd name="Grid"/> child element the slate can use its own grid independent of the page.</para>
+      <para>As on a page, the objects in a slate are drawn in the order they are placed: an object placed later lies over one placed earlier, unless it is placed with <tt>layer="behind"</tt>.</para>
     </description>
     <description xml:lang="de">
       <para>Erzeugt einen virtuellen Bereich (Slate), in dem Elemente platziert werden können. Wie bei einer Zaubertafel wird der Inhalt zunächst unsichtbar aufgebaut und dann mit <cmd name="PlaceObject"/> auf der Seite platziert.</para>
       <para>Das Slate beginnt mit einer Kopie des Seitenrasters. Mit einem <cmd name="Grid"/>-Kindelement kann das Slate ein eigenes, von der Seite unabhängiges Raster verwenden.</para>
+      <para>Wie auf einer Seite werden die Objekte eines Slates in der Reihenfolge gezeichnet, in der sie platziert werden: Ein später platziertes Objekt liegt über einem früher platzierten, außer es wird mit <tt>layer="behind"</tt> platziert.</para>
     </description>
     <childelements>
         <optional><cmd name="Grid"/></optional>

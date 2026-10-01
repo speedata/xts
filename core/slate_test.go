@@ -194,3 +194,41 @@ func TestSlateAllocateNoDrawsInOrder(t *testing.T) {
 		t.Errorf("drawn in the order %q, want %q", got, want)
 	}
 }
+
+// A slate draws its objects in the order they were placed, as a page does:
+// a box placed after the text but higher up is drawn over the text, and the
+// text still lands where it was placed.
+func TestSlateDrawsInPlacementOrder(t *testing.T) {
+	root := renderDump(t, `<Layout xmlns="urn:speedata.de/2021/xts/en">
+  <Record match="data">
+    <Slate name="band">
+      <Contents>
+        <PlaceObject id="text" column="1" row="3">
+          <TextBlock width="10"><Paragraph><Value>Text in row 3.</Value></Paragraph></TextBlock>
+        </PlaceObject>
+        <PlaceObject id="box" column="1" row="1" allocate="no">
+          <Box width="60mm" height="30mm" backgroundcolor="orange"/>
+        </PlaceObject>
+      </Contents>
+    </Slate>
+    <PlaceObject id="slate" column="1" row="1" slate="band"/>
+  </Record>
+</Layout>`)
+	got := strings.Join(root.ids(), " ")
+	if want := "slate text box"; got != want {
+		t.Errorf("drawn in the order %q, want %q", got, want)
+	}
+	_, sy, _, sht, _ := dumpBox(t, root, "slate")
+	_, ty, _, tht, _ := dumpBox(t, root, "text")
+	_, by, _, _, _ := dumpBox(t, root, "box")
+	if !near(by, sy) {
+		t.Errorf("box at %.2f, want the slate's top %.2f", by, sy)
+	}
+	if ty >= by {
+		t.Errorf("text at %.2f, want it below the box's top %.2f", ty, by)
+	}
+	// The box takes no room, so the text decides the slate's height.
+	if !near(sht, sy-ty+tht) {
+		t.Errorf("slate height %.2f, want %.2f", sht, sy-ty+tht)
+	}
+}
