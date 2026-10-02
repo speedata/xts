@@ -1,12 +1,12 @@
 <Layout xmlns="urn:speedata.de/2021/xts/en"
     xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
 
-    <!-- A table taller than the page with a TableHead and a TableFoot: the
-         head is repeated at the top and the foot at the bottom of every
-         fragment the table is broken into. -->
+    <!-- A table in a Flow, taller than the page, with a TableHead and a
+         TableFoot: the head is repeated at the top and the foot at the
+         bottom of every fragment the table is broken into. -->
 
     <Record match="data">
-        <PlaceObject>
+        <Flow>
             <Table stretch="max">
                 <TableHead>
                     <Tr><Td><Paragraph><Value>Head A</Value></Paragraph></Td><Td><Paragraph><Value>Head B</Value></Paragraph></Td></Tr>
@@ -135,11 +135,7 @@
                     <Tr><Td><Paragraph><Value>row 119</Value></Paragraph></Td><Td><Paragraph><Value>value 119</Value></Paragraph></Td></Tr>
                     <Tr><Td><Paragraph><Value>row 120</Value></Paragraph></Td><Td><Paragraph><Value>value 120</Value></Paragraph></Td></Tr>
             </Table>
-        </PlaceObject>
-        <PlaceObject>
-            <TextBlock>
-                <Paragraph><Value>After the table.</Value></Paragraph>
-            </TextBlock>
-        </PlaceObject>
+            <Paragraph><Value>After the table.</Value></Paragraph>
+        </Flow>
     </Record>
 </Layout>

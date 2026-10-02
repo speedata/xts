@@ -19,7 +19,7 @@ Create a repeating table foot.
 (none)
 
 ## Remarks
-The rows of the table foot are placed at the end of the table. When a table with a [TableHead](../tablehead) is broken across frames or pages, the table foot is repeated at the bottom of every fragment.
+The rows of the table foot are placed at the end of the table. When a table in a [Flow](../flow) is broken across frames or pages, the table foot is repeated at the bottom of every fragment.
 
 
 ## Example

@@ -1787,7 +1787,8 @@
   </xs:element>
   <xs:element name="Table">
     <xs:annotation>
-      <xs:documentation>Erzeugt eine Tabelle, die in etwa dem HTML Tabellenmodell entspricht.</xs:documentation>
+      <xs:documentation>Erzeugt eine Tabelle, die in etwa dem HTML Tabellenmodell entspricht.
+      In einem Flow wird eine Tabelle zwischen Zeilen über Rahmen und Seiten umbrochen, wobei TableHead und TableFoot wiederholt werden. Eine mit PlaceObject platzierte Tabelle bleibt ganz: Passt sie nicht, kommt sie in den nächsten Rahmen oder auf die nächste Seite, und eine Tabelle, die höher ist als jeder Rahmen ihres Bereichs, ist ein Fehler.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">

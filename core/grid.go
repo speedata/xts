@@ -321,7 +321,7 @@ func (g *grid) nextRow(area *area) *area {
 		if g.inSlate {
 			area, r = g.nextArea(area), 1
 		} else {
-			area, r = g.page.xd.advanceToFit(area, 0, 1, 1, 1)
+			area, r = g.page.xd.advanceToFit(area, 0, 1, 1)
 		}
 	}
 	area.SetCurrentRow(r)
@@ -364,30 +364,32 @@ func (g *grid) nextArea(area *area) *area {
 }
 
 // advanceToFit moves the area on until an object fits at column col, and
-// returns the area and the row. The object is wd columns by ht rows; minHt
-// rows are enough to start in (fewer than ht for a table the splitter can
-// continue). A wd of 0 means the full width of each frame. An object larger
-// than a frame is measured as the frame, so it takes the next frame that is
-// entirely free instead of none. A frame without room, for instance one that
-// starts beside content placed earlier on the page, is passed over rather
-// than written on top of. After a page break the new page's frames are
-// searched the same way, so content the page already carries (from
-// AtPageCreation) is not covered, but no further page is started: if none
-// has room the object goes to row 1 of the first frame. In a slate it goes
-// to row 1 of the next frame.
-func (xd *xtsDocument) advanceToFit(area *area, wd, ht, minHt, col coord) (*area, coord) {
+// returns the area and the row. The object is wd columns by ht rows. A wd of
+// 0 means the full width of each frame. A frame lower than the object is
+// passed over while another frame of the area is high enough for it. An
+// object higher than every frame is measured as the frame, so it takes the
+// next frame that is entirely free instead of none. A frame without room,
+// for instance one that starts beside content placed earlier on the page, is
+// passed over rather than written on top of. After a page break the new
+// page's frames are searched the same way, so content the page already
+// carries (from AtPageCreation) is not covered, but no further page is
+// started: if none has room the object goes to row 1 of the first frame. In
+// a slate it goes to row 1 of the next frame.
+func (xd *xtsDocument) advanceToFit(area *area, wd, ht, col coord) (*area, coord) {
 	fits := func() coord {
 		f := area.frame[area.currentFrame]
-		w, h := min(wd, f.width), min(ht, f.height)
+		var tallest coord
+		for _, fr := range area.frame {
+			tallest = max(tallest, fr.height)
+		}
+		w, h := min(wd, f.width), min(ht, tallest)
+		if h > f.height {
+			return -1
+		}
 		if w <= 0 {
 			w = f.width
 		}
-		for _, rows := range []coord{h, min(minHt, h)} {
-			if row := xd.currentGrid.findSuitableRow(w, rows, col, area); row != -1 {
-				return row
-			}
-		}
-		return -1
+		return xd.currentGrid.findSuitableRow(w, h, col, area)
 	}
 	for {
 		pg, inSlate := xd.currentPage, xd.currentGrid.inSlate
@@ -413,8 +415,11 @@ func (xd *xtsDocument) advanceToFit(area *area, wd, ht, minHt, col coord) (*area
 	}
 }
 
-// frameBottom returns the vertical offset of the bottom edge of the area's
-// current frame, measured from the page top like posY.
-func (g *grid) frameBottom(area *area) bag.ScaledPoint {
-	return g.posY(area.frame[area.currentFrame].height, area) + g.gridHeight
+// tallestFrame returns the height of the area's tallest frame.
+func (g *grid) tallestFrame(area *area) bag.ScaledPoint {
+	var ht bag.ScaledPoint
+	for _, f := range area.frame {
+		ht = max(ht, g.height(f.height))
+	}
+	return ht
 }

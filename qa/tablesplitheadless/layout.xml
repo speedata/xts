@@ -1,19 +1,15 @@
 <Layout xmlns="urn:speedata.de/2021/xts/en"
     xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
 
-    <!-- A table without a TableHead, taller than the page: the rows are laid
-         out down the frame and continued on the next page. The text
-         before and after the table checks that the table starts below the
-         first block and that the following block lands under the last
-         fragment rather than on top of it. -->
+    <!-- A table without a TableHead, taller than the page, in a Flow: the
+         rows are laid out down the frame and continued on the next page.
+         The paragraphs before and after the table check that the table
+         starts below the first block and that the following block lands
+         under the last fragment rather than on top of it. -->
 
     <Record match="data">
-        <PlaceObject>
-            <TextBlock>
-                <Paragraph><Value>Before the table.</Value></Paragraph>
-            </TextBlock>
-        </PlaceObject>
-        <PlaceObject>
+        <Flow>
+            <Paragraph><Value>Before the table.</Value></Paragraph>
             <Table stretch="max" width="10">
                     <Tr><Td><Paragraph><Value>row 1</Value></Paragraph></Td><Td><Paragraph><Value>value 1</Value></Paragraph></Td></Tr>
                     <Tr><Td><Paragraph><Value>row 2</Value></Paragraph></Td><Td><Paragraph><Value>value 2</Value></Paragraph></Td></Tr>
@@ -76,11 +72,7 @@
                     <Tr><Td><Paragraph><Value>row 59</Value></Paragraph></Td><Td><Paragraph><Value>value 59</Value></Paragraph></Td></Tr>
                     <Tr><Td><Paragraph><Value>row 60</Value></Paragraph></Td><Td><Paragraph><Value>value 60</Value></Paragraph></Td></Tr>
             </Table>
-        </PlaceObject>
-        <PlaceObject>
-            <TextBlock>
-                <Paragraph><Value>After the table.</Value></Paragraph>
-            </TextBlock>
-        </PlaceObject>
+            <Paragraph><Value>After the table.</Value></Paragraph>
+        </Flow>
     </Record>
 </Layout>

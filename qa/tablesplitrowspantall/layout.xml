@@ -1,13 +1,14 @@
 <Layout xmlns="urn:speedata.de/2021/xts/en"
     xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
 
-    <!-- A cell spanning 80 rows, taller than a page. Moving the rows it joins
-         to the next page would not make them fit, so they break inside like
-         other rows and none of them runs past the bottom margin: page 2 ends
-         with value 74 and page 3 continues with value 75. -->
+    <!-- A cell spanning 80 rows of a table in a Flow, taller than a page.
+         Moving the rows it joins to the next page would not make them fit,
+         so they break inside like other rows and none of them runs past
+         the bottom margin: page 2 ends with value 74 and page 3 continues
+         with value 75. -->
 
     <Record match="data">
-        <PlaceObject>
+        <Flow>
             <Table stretch="max" width="10">
                 <Tr><Td><Paragraph><Value>row 1</Value></Paragraph></Td><Td><Paragraph><Value>value 1</Value></Paragraph></Td></Tr>
                 <Tr><Td><Paragraph><Value>row 2</Value></Paragraph></Td><Td><Paragraph><Value>value 2</Value></Paragraph></Td></Tr>
@@ -115,6 +116,6 @@
                 <Tr><Td><Paragraph><Value>row 104</Value></Paragraph></Td><Td><Paragraph><Value>value 104</Value></Paragraph></Td></Tr>
                 <Tr><Td><Paragraph><Value>row 105</Value></Paragraph></Td><Td><Paragraph><Value>value 105</Value></Paragraph></Td></Tr>
             </Table>
-        </PlaceObject>
+        </Flow>
     </Record>
 </Layout>

@@ -2116,24 +2116,14 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		}
 		vl.Attributes["id"] = attValues.ID
 	}
-	// A table can be laid out row by row and continued in the next frame or
-	// on the next page. Detecting it here changes how the row search below
-	// treats a table that is taller than the frame: without
-	// this it would give up, advance the area and start the table on a fresh
-	// frame that it still does not fit into. The check runs before the trace
-	// box and the frame/background rules are added, since those sit next to
-	// the table wrapper and would defeat the sole-content test.
-	var splitTable *node.VList
-	if xd.currentSlate == nil {
-		splitTable = splittableTable(vl)
-	}
+	// Before the trace box and the frame and background rules sit beside it.
+	isTable := xd.currentSlate == nil && placedTable(vl)
 	if xd.IsTrace(VTraceObjects) {
 		vl = node.Boxit(vl).(*node.VList)
 	}
-	// frame="yes" and background="yes" draw on the whole object. The split
-	// path discards the outer VList and re-applies them to every fragment,
-	// so they are built as a decorator. The insertion order keeps the
-	// background rule at the head of the list, painted below the frame.
+	// frame="yes" and background="yes" draw on the whole object. The
+	// insertion order keeps the background rule at the head of the list,
+	// painted below the frame.
 	var decorate func(*node.VList)
 	if attValues.Frame {
 		decorate = func(v *node.VList) {
@@ -2174,16 +2164,8 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 			wdCols := xd.currentGrid.widthToColumns(vl.Width)
 			htCols := xd.currentGrid.heightToRows(vl.Height + vl.Depth)
 			row = xd.currentGrid.findSuitableRow(wdCols, htCols, col, area)
-			if row == -1 && splitTable != nil {
-				// The whole table does not fit in this frame. Look again for
-				// a single free row: the splitter starts there and fills the
-				// rest of the frame instead of shipping it half empty. A
-				// table that does fit keeps the full-height search and with
-				// it the check against blocks allocated further down.
-				row = xd.currentGrid.findSuitableRow(wdCols, 1, col, area)
-			}
 			if row == -1 {
-				area, row = xd.advanceToFit(area, wdCols, htCols, fitRows(htCols, splitTable), col)
+				area, row = xd.advanceToFit(area, wdCols, htCols, col)
 			}
 			rowInt = int(row)
 		}
@@ -2205,13 +2187,8 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		wdCols := xd.currentGrid.widthToColumns(vl.Width)
 		htCols := xd.currentGrid.heightToRows(vl.Height + vl.Depth)
 		row = xd.currentGrid.findSuitableRow(wdCols, htCols, startCol, area)
-		if row == -1 && splitTable != nil {
-			// See above: fall back to a single-row search so the splitter
-			// can fill the rest of this frame.
-			row = xd.currentGrid.findSuitableRow(wdCols, 1, startCol, area)
-		}
 		if row == -1 {
-			area, row = xd.advanceToFit(area, wdCols, htCols, fitRows(htCols, splitTable), startCol)
+			area, row = xd.advanceToFit(area, wdCols, htCols, startCol)
 		}
 		slog.Debug(fmt.Sprintf("looking for free space for %s", origin))
 		col = startCol
@@ -2268,10 +2245,11 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		if shiftY != 0 {
 			row += xd.currentGrid.heightToRows(shiftY)
 		}
-		// Only grid placement splits. An absolutely positioned table is placed
-		// where the layout asked for it and keeps overflowing, as before.
-		if splitTable != nil && xd.currentGrid.posY(row, area)+vl.Height+vl.Depth > xd.currentGrid.frameBottom(area) {
-			return nil, xd.splitTable(splitTable, attValues.Area, col, row, attValues.ID, attValues.Allocate, behind, halign, decorate)
+		// A placed table is kept whole, as any other object: a table that
+		// may break goes into a Flow. One taller than every frame of the
+		// area cannot be placed on the grid.
+		if ht, frameHt := vl.Height+vl.Depth, xd.currentGrid.tallestFrame(area); isTable && ht > frameHt {
+			return nil, newTypesettingErrorf("PlaceObject", layoutelt.Line, "the table is %spt high, taller than any frame of the area (%spt); a table that breaks across frames and pages goes into a Flow", ht, frameHt)
 		}
 		xd.OutputAt(vl, col, row, attValues.Allocate, behind, area, origin, halign)
 
@@ -2287,40 +2265,16 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	return nil, nil
 }
 
-// keepsWithNext reports a table row that a rowspan joins to the row after it,
-// which frontend.BuildTable marks.
-func keepsWithNext(n node.Node) bool {
-	hl, ok := n.(*node.HList)
-	if !ok || hl.Attributes == nil {
-		return false
-	}
-	keep, _ := hl.Attributes["_keepWithNext"].(bool)
-	return keep
-}
-
-// fitRows is how many free rows an object ht rows high needs to start in: all
-// of them, or one for a table the splitter can continue.
-func fitRows(ht coord, splitTable *node.VList) coord {
-	if splitTable != nil {
-		return 1
-	}
-	return ht
-}
-
-// splittableTable returns the table VList frontend.BuildTable built,
-// unwrapping the html/body VLists that CSSBuilder.CreateVlist puts around it.
-// The descent only follows wrappers whose sole content is a single VList (glue
-// and kern of no width are tolerated): a table that sits next to other
-// material, e.g. inside mixed <HTML> content, must keep the single-placement
-// path, because splitTable lays out the table alone and would drop its
-// siblings. So must a wrapper that spaces the table, e.g. a padded <div>,
-// whose spacing would be lost with the wrapper. It returns nil when the
-// object is not such a table.
-func splittableTable(vl *node.VList) *node.VList {
+// placedTable reports whether vl is a table, the VList frontend.BuildTable
+// built inside the html/body VLists that CSSBuilder.CreateVlist puts around
+// it. The descent only follows wrappers whose sole content is a single VList
+// (glue and kern of no width are tolerated), so a table among other material,
+// such as in mixed <HTML> content, is not one.
+func placedTable(vl *node.VList) bool {
 	for depth := 0; depth <= 4; depth++ {
 		if vl.Attributes != nil {
 			if o, _ := vl.Attributes["origin"].(string); o == "table" {
-				return vl
+				return true
 			}
 		}
 		var sole *node.VList
@@ -2328,208 +2282,27 @@ func splittableTable(vl *node.VList) *node.VList {
 			switch t := c.(type) {
 			case *node.VList:
 				if sole != nil {
-					return nil
+					return false
 				}
 				sole = t
 			case *node.Glue:
 				if t.Width != 0 {
-					return nil
+					return false
 				}
 			case *node.Kern:
 				if t.Kern != 0 {
-					return nil
+					return false
 				}
 			default:
-				return nil
+				return false
 			}
 		}
 		if sole == nil {
-			return nil
+			return false
 		}
 		vl = sole
 	}
-	return nil
-}
-
-// hlistsAsNodes widens a row slice to the node slice pending uses.
-func hlistsAsNodes(rows []*node.HList) []node.Node {
-	nodes := make([]node.Node, len(rows))
-	for i, r := range rows {
-		nodes[i] = r
-	}
-	return nodes
-}
-
-// nodeHeight returns the height a table row occupies.
-func nodeHeight(n node.Node) bag.ScaledPoint {
-	switch t := n.(type) {
-	case *node.VList:
-		return t.Height + t.Depth
-	case *node.HList:
-		return t.Height + t.Depth
-	case *node.Rule:
-		return t.Height + t.Depth
-	}
-	return 0
-}
-
-// splitTable places a table's rows down the frame from (col, row), continuing
-// in the next frame of the area (and, once the frames are used up, on a new
-// page) whenever the next row would not fit, and repeating the header rows at
-// the top of every continuation.
-//
-// This is htmlbag's outputTableRows in xts's page model. Rows are atomic: a
-// row is never split, which matches the "individual table cells are never
-// split" rule in the manual. A row taller than an empty frame is placed and
-// allowed to overflow rather than looping forever.
-//
-// Each continuation goes out as one vpacked VList carrying the PlaceObject id,
-// so the geometry dump records one box per frame the table spans rather than
-// one box for the whole table. decorate, when non-nil, applies the frame and
-// background rules of the PlaceObject to every fragment.
-func (xd *xtsDocument) splitTable(tableVL *node.VList, areaName string, col, row coord, id string, allocate, behind bool, halign frontend.HorizontalAlignment, decorate func(*node.VList)) error {
-	area, ok := xd.currentGrid.areas[areaName]
-	if !ok {
-		return fmt.Errorf("area %s not found", areaName)
-	}
-	headerCount, _ := tableVL.Attributes["_headerCount"].(int)
-	buildHeaders, _ := tableVL.Attributes["_buildHeaders"].(func() ([]*node.HList, error))
-	footerCount, _ := tableVL.Attributes["_footerCount"].(int)
-	buildFooters, _ := tableVL.Attributes["_buildFooters"].(func() ([]*node.HList, error))
-	footerHeight, _ := tableVL.Attributes["_footerHeight"].(bag.ScaledPoint)
-	tableWidth := tableVL.Width
-
-	var rows []node.Node
-	for n := tableVL.List; n != nil; n = n.Next() {
-		rows = append(rows, n)
-	}
-
-	var pending []node.Node
-	// flush places what has accumulated as a single object at (col, row) of the
-	// frame that is current now, which is not the frame the rows were measured
-	// against once a break has happened.
-	flush := func() error {
-		if len(pending) == 0 {
-			return nil
-		}
-		var head, tail node.Node
-		for _, r := range pending {
-			r.SetPrev(nil)
-			r.SetNext(nil)
-			head = node.InsertAfter(head, tail, r)
-			tail = r
-		}
-		wrap := node.Vpack(head)
-		wrap.Width = tableWidth
-		if decorate != nil {
-			decorate(wrap)
-		}
-		if id != "" {
-			if wrap.Attributes == nil {
-				wrap.Attributes = node.H{}
-			}
-			wrap.Attributes["id"] = id
-		}
-		pending = pending[:0]
-		return xd.OutputAt(wrap, col, row, allocate, behind, area, "table (split)", halign)
-	}
-
-	y := xd.currentGrid.posY(row, area)
-	bottom := xd.currentGrid.frameBottom(area)
-	// A break is only worth taking when it moves the row somewhere emptier.
-	// placed counts the data rows already on this frame; mayBreak covers the
-	// first frame, where the table may start below content placed earlier.
-	// Together they guarantee that every frame takes at least one data row, so
-	// a row taller than a frame overflows once instead of looping.
-	placed := 0
-	mayBreak := row > 1
-	// groupAtTop is set when the rows a rowspan joins start at the top of a
-	// frame: moving them on gains nothing, so they break like other rows.
-	groupAtTop := false
-	for i, r := range rows {
-		h := nodeHeight(r)
-		// Rows a rowspan joins go to a frame together, so the break is only
-		// taken before the first of them, and only if all of them fit. A group
-		// taller than a frame is broken inside, or its rows would run past the
-		// bottom of the frame.
-		joined := i > 0 && keepsWithNext(rows[i-1])
-		held := joined && !groupAtTop
-		need := h
-		for j := i; !joined && j+1 < len(rows) && keepsWithNext(rows[j]); j++ {
-			need += nodeHeight(rows[j+1])
-		}
-		// A <TableFoot> is repeated at the bottom of every fragment, so its
-		// height stays reserved while the body rows are laid out. The final
-		// footer rows are the tail of rows itself: once they are reached, the
-		// reservation is theirs to use.
-		reserve := footerHeight
-		if i >= len(rows)-footerCount {
-			reserve = 0
-		}
-		if !held && i >= headerCount && (placed > 0 || mayBreak) && y+need+reserve > bottom {
-			if placed == 0 {
-				// Nothing but header rows is pending. Flushing them would
-				// leave a lone table head at the bottom of the frame, so drop
-				// them and let buildHeaders re-create them at the top of the
-				// continuation.
-				pending = pending[:0]
-			} else {
-				if buildFooters != nil {
-					footers, err := buildFooters()
-					if err != nil {
-						return err
-					}
-					pending = append(pending, hlistsAsNodes(footers)...)
-				}
-				if err := flush(); err != nil {
-					return err
-				}
-			}
-			// Next frame of the area first; nextArea falls through to a new
-			// page when this was the last frame, which is the <NextFrame>
-			// contract.
-			// A continuation needs one free row, and does not go over what the
-			// next frame or a new page already holds.
-			area, row = xd.advanceToFit(area, xd.currentGrid.widthToColumns(tableWidth), 1, 1, col)
-			if _, ok = xd.currentGrid.areas[areaName]; !ok {
-				return fmt.Errorf("area %s not found after page break", areaName)
-			}
-			// Keep the column: a table placed with column="3" continues in
-			// column 3, matching what nextArea does for a single object.
-			y = xd.currentGrid.posY(row, area)
-			bottom = xd.currentGrid.frameBottom(area)
-			placed, mayBreak = 0, false
-			if buildHeaders != nil {
-				headers, err := buildHeaders()
-				if err != nil {
-					return err
-				}
-				for _, hdr := range headers {
-					pending = append(pending, hdr)
-					y += nodeHeight(hdr)
-				}
-			}
-		}
-		if !joined {
-			groupAtTop = placed == 0 && !mayBreak
-		}
-		pending = append(pending, r)
-		y += h
-		if i >= headerCount {
-			placed++
-		}
-	}
-	if err := flush(); err != nil {
-		return err
-	}
-	// Same fixup the single-placement path does: when the object does not
-	// reach the right edge of the frame, allocate leaves the cursor on the
-	// object's own row, so move it below the last fragment.
-	if allocate && col+xd.currentGrid.widthToColumns(tableWidth) <= area.frame[area.currentFrame].width {
-		area.SetCurrentRow(row + xd.currentGrid.heightToRows(y-xd.currentGrid.posY(row, area)))
-		area.SetCurrentCol(1)
-	}
-	return nil
+	return false
 }
 
 func cmdSaveXML(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {

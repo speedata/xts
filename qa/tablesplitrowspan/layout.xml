@@ -1,13 +1,13 @@
 <Layout xmlns="urn:speedata.de/2021/xts/en"
     xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
 
-    <!-- A table taller than the page with a cell spanning three rows where the
-         page would break. The three rows go to the next page together, so the
-         merged cell is not drawn past the bottom margin with a gap beside the
-         rows continued on the next page. -->
+    <!-- A table in a Flow, taller than the page, with a cell spanning three
+         rows where the page would break. The three rows go to the next page
+         together, so the merged cell is not drawn past the bottom margin
+         with a gap beside the rows continued on the next page. -->
 
     <Record match="data">
-        <PlaceObject>
+        <Flow>
             <Table stretch="max" width="10">
                 <Tr><Td><Paragraph><Value>row 1</Value></Paragraph></Td><Td><Paragraph><Value>value 1</Value></Paragraph></Td></Tr>
                 <Tr><Td><Paragraph><Value>row 2</Value></Paragraph></Td><Td><Paragraph><Value>value 2</Value></Paragraph></Td></Tr>
@@ -80,6 +80,6 @@
                 <Tr><Td><Paragraph><Value>row 69</Value></Paragraph></Td><Td><Paragraph><Value>value 69</Value></Paragraph></Td></Tr>
                 <Tr><Td><Paragraph><Value>row 70</Value></Paragraph></Td><Td><Paragraph><Value>value 70</Value></Paragraph></Td></Tr>
             </Table>
-        </PlaceObject>
+        </Flow>
     </Record>
 </Layout>

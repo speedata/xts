@@ -1787,7 +1787,8 @@
   </xs:element>
   <xs:element name="Table">
     <xs:annotation>
-      <xs:documentation>Create a table that is similar to the HTML table model.</xs:documentation>
+      <xs:documentation>Create a table that is similar to the HTML table model.
+      In a Flow, a table breaks between rows across frames and pages, with its TableHead and TableFoot repeated. A table placed with PlaceObject is kept whole: it moves to the next frame or page when it does not fit, and one taller than every frame of its area is an error.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">

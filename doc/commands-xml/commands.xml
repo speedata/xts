@@ -4846,9 +4846,11 @@
   <command en="Table">
     <description xml:lang="en">
       <para>Create a table that is similar to the HTML table model.</para>
+      <para>In a <cmd name="Flow"/>, a table breaks between rows across frames and pages, with its <cmd name="TableHead"/> and <cmd name="TableFoot"/> repeated. A table placed with <cmd name="PlaceObject"/> is kept whole: it moves to the next frame or page when it does not fit, and one taller than every frame of its area is an error.</para>
     </description>
     <description xml:lang="de">
       <para>Erzeugt eine Tabelle, die in etwa dem HTML Tabellenmodell entspricht.</para>
+      <para>In einem <cmd name="Flow"/> wird eine Tabelle zwischen Zeilen über Rahmen und Seiten umbrochen, wobei <cmd name="TableHead"/> und <cmd name="TableFoot"/> wiederholt werden. Eine mit <cmd name="PlaceObject"/> platzierte Tabelle bleibt ganz: Passt sie nicht, kommt sie in den nächsten Rahmen oder auf die nächste Seite, und eine Tabelle, die höher ist als jeder Rahmen ihres Bereichs, ist ein Fehler.</para>
     </description>
     <childelements>
       <oneOrMore>
@@ -5013,10 +5015,10 @@
       </oneOrMore>
     </childelements>
     <remark xml:lang="en">
-      <para>The rows of the table foot are placed at the end of the table. When a table with a <cmd name="TableHead"/> is broken across frames or pages, the table foot is repeated at the bottom of every fragment.</para>
+      <para>The rows of the table foot are placed at the end of the table. When a table in a <cmd name="Flow"/> is broken across frames or pages, the table foot is repeated at the bottom of every fragment.</para>
     </remark>
     <remark xml:lang="de">
-      <para>Die Zeilen des Tabellenfußes werden an das Ende der Tabelle gesetzt. Wird eine Tabelle mit <cmd name="TableHead"/> über Rahmen oder Seiten umbrochen, wird der Tabellenfuß am Ende jedes Fragments wiederholt.</para>
+      <para>Die Zeilen des Tabellenfußes werden an das Ende der Tabelle gesetzt. Wird eine Tabelle in einem <cmd name="Flow"/> über Rahmen oder Seiten umbrochen, wird der Tabellenfuß am Ende jedes Fragments wiederholt.</para>
     </remark>
     <example xml:lang="en">
       <para>See the explanation of <cmd name="Table"/>.</para>
