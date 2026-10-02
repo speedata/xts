@@ -68,6 +68,14 @@ type xtsDocument struct {
 	// (e.g. the body of a <SetVariable as="…"> or a <Function>). In that mode
 	// dispatch rejects action commands, see dispatchValueContext.
 	valueContext bool
+	// inFlow is set while the children of a Flow are dispatched, and
+	// tableDepth counts the tables being built, so only the flow's own
+	// tables become blocks of it.
+	inFlow     bool
+	tableDepth int
+	// flowOrigin is the command each node of a Flow's children came from,
+	// to name it when the node cannot be part of the flow.
+	flowOrigin map[node.Node]*goxml.Element
 	// for “global” variables
 	store map[any]any
 	// records are the <Record> commands of this run's layout.

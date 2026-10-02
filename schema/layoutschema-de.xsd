@@ -85,6 +85,7 @@
         <xs:element ref="en:AttachFile"></xs:element>
         <xs:element ref="en:CallTemplate"></xs:element>
         <xs:element ref="en:ClearPage"></xs:element>
+        <xs:element ref="en:Flow"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:Slate"></xs:element>
         <xs:element ref="en:LoadXML"></xs:element>
@@ -112,6 +113,7 @@
         <xs:element ref="en:AttachFile"></xs:element>
         <xs:element ref="en:CallTemplate"></xs:element>
         <xs:element ref="en:ClearPage"></xs:element>
+        <xs:element ref="en:Flow"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:Slate"></xs:element>
         <xs:element ref="en:LoadXML"></xs:element>
@@ -249,6 +251,7 @@
         <xs:element ref="en:CallTemplate"></xs:element>
         <xs:element ref="en:Column"></xs:element>
         <xs:element ref="en:ClearPage"></xs:element>
+        <xs:element ref="en:Flow"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:LoadXML"></xs:element>
@@ -429,6 +432,7 @@
         <xs:element ref="en:AttachFile"></xs:element>
         <xs:element ref="en:CallTemplate"></xs:element>
         <xs:element ref="en:ClearPage"></xs:element>
+        <xs:element ref="en:Flow"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:Slate"></xs:element>
         <xs:element ref="en:LoadXML"></xs:element>
@@ -562,6 +566,36 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
+  <xs:element name="Flow">
+    <xs:annotation>
+      <xs:documentation>Gibt eine Folge von Blöcken in die Rahmen eines Platzierungsbereichs aus, Seite für Seite. Absätze werden zwischen Zeilen umbrochen, mit den CSS-Eigenschaften widows und orphans, Tabellen zwischen Zeilen, wobei TableHead und TableFoot wiederholt werden. break-after: avoid hält einen Block mit dem nächsten zusammen, break-before und break-after mit column gehen im nächsten Rahmen weiter und mit page, left oder right auf der nächsten Seite.
+      Der Fluss beginnt in der aktuellen Zeile des Bereichs und füllt die freien Zeilen jedes Rahmens: Zeilen mit vorher platzierten Objekten werden übersprungen. Die Blöcke werden nicht auf das Raster gerundet; die Zeilen, in die sie hineinreichen, werden belegt. Ein freier Bereich beginnt nicht in der nächsten ganzen Zeile, sondern genau am unteren Rand der Objekte, die in der Zeile darüber enden, sodass der Beginn des Textes nicht von der Zeilenhöhe abhängt. Ein PlaceObject nach dem Fluss beginnt in der nächsten ganzen Zeile. Ein Flow, der direkt auf einen anderen folgt, ohne dass dazwischen etwas platziert wird, setzt genau dort fort, wo dieser endete, wobei dessen letzter Abstand mit dem des ersten Blocks zusammenfällt, und ebenso jeder Rahmen seines Bereichs, der auf derselben Seite von dort an frei ist.
+      Jedes Kindelement mit einer id behält sie, auch wenn es über Rahmen und Seiten umbrochen wird: Jeder Teil erscheint in --dumpoutput mit seiner Seite und Position.
+      Ein TextBlock, ein Image oder eine Box kann noch nicht Teil eines Flusses sein und wird mit einer Warnung ausgelassen. In einem Slate ist ein Fluss nicht möglich.
+      Die Kindelemente werden gelesen, bevor der Fluss gesetzt wird. Ein Befehl, der sofort auf die Seite wirkt, PlaceObject, ClearPage, NextFrame, NextRow oder Mark, ist in einem Fluss daher ein Fehler. Ein erzwungener Umbruch geht über CSS, etwa break-before: page. CallTemplate funktioniert wie überall.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="en:ForAll"></xs:element>
+        <xs:element ref="en:HTML"></xs:element>
+        <xs:element ref="en:Ol"></xs:element>
+        <xs:element ref="en:Paragraph"></xs:element>
+        <xs:element ref="en:Switch"></xs:element>
+        <xs:element ref="en:Table"></xs:element>
+        <xs:element ref="en:Ul"></xs:element>
+      </xs:choice>
+      <xs:attribute name="area">
+        <xs:annotation>
+          <xs:documentation>Name des Platzierungsbereichs, der gefüllt wird. Voreinstellung ist der Bereich der Seite.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="bottom">
+        <xs:annotation>
+          <xs:documentation>Name einer Variablen, die auf das Ende des Flusses gesetzt wird, in Punkt unterhalb des oberen Rands des Seitenrasters, als Zahl. Bei nebeneinanderliegenden Rahmen ist das das untere Ende des längsten auf der letzten Seite.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="ForAll">
     <xs:annotation>
       <xs:documentation>Ruft die Kindelemente für alle Daten-Elemente auf, die auf das Muster bei select passen.</xs:documentation>
@@ -571,6 +605,7 @@
         <xs:element ref="en:CallTemplate"></xs:element>
         <xs:element ref="en:Column"></xs:element>
         <xs:element ref="en:ClearPage"></xs:element>
+        <xs:element ref="en:Flow"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:LoadXML"></xs:element>
@@ -844,6 +879,7 @@
         <xs:element ref="en:CallTemplate"></xs:element>
         <xs:element ref="en:Column"></xs:element>
         <xs:element ref="en:ClearPage"></xs:element>
+        <xs:element ref="en:Flow"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:LoadXML"></xs:element>
@@ -1099,6 +1135,7 @@
         <xs:element ref="en:CallTemplate"></xs:element>
         <xs:element ref="en:Column"></xs:element>
         <xs:element ref="en:ClearPage"></xs:element>
+        <xs:element ref="en:Flow"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:LoadXML"></xs:element>
@@ -1453,6 +1490,7 @@
         <xs:element ref="en:AttachFile"></xs:element>
         <xs:element ref="en:CallTemplate"></xs:element>
         <xs:element ref="en:ClearPage"></xs:element>
+        <xs:element ref="en:Flow"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:Slate"></xs:element>
         <xs:element ref="en:LoadXML"></xs:element>
@@ -1595,6 +1633,7 @@
         <xs:element ref="en:AttachFile"></xs:element>
         <xs:element ref="en:CallTemplate"></xs:element>
         <xs:element ref="en:ClearPage"></xs:element>
+        <xs:element ref="en:Flow"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:Slate"></xs:element>
         <xs:element ref="en:LoadXML"></xs:element>
@@ -2137,6 +2176,7 @@
         <xs:element ref="en:CallTemplate"></xs:element>
         <xs:element ref="en:Column"></xs:element>
         <xs:element ref="en:ClearPage"></xs:element>
+        <xs:element ref="en:Flow"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:LoadXML"></xs:element>
@@ -2214,6 +2254,7 @@
         <xs:element ref="en:CallTemplate"></xs:element>
         <xs:element ref="en:Column"></xs:element>
         <xs:element ref="en:ClearPage"></xs:element>
+        <xs:element ref="en:Flow"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:LoadXML"></xs:element>

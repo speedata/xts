@@ -120,6 +120,9 @@
                             <ref name="e_ClearPage"></ref>
                         </optional>
                         <optional>
+                            <ref name="e_Flow"></ref>
+                        </optional>
+                        <optional>
                             <ref name="e_ForAll"></ref>
                         </optional>
                         <optional>
@@ -185,6 +188,9 @@
                         </optional>
                         <optional>
                             <ref name="e_ClearPage"></ref>
+                        </optional>
+                        <optional>
+                            <ref name="e_Flow"></ref>
                         </optional>
                         <optional>
                             <ref name="e_ForAll"></ref>
@@ -365,6 +371,9 @@
                         </optional>
                         <optional>
                             <ref name="e_ClearPage"></ref>
+                        </optional>
+                        <optional>
+                            <ref name="e_Flow"></ref>
                         </optional>
                         <optional>
                             <ref name="e_ForAll"></ref>
@@ -599,6 +608,9 @@
                             <ref name="e_ClearPage"></ref>
                         </optional>
                         <optional>
+                            <ref name="e_Flow"></ref>
+                        </optional>
+                        <optional>
                             <ref name="e_ForAll"></ref>
                         </optional>
                         <optional>
@@ -794,6 +806,57 @@
             </interleave>
         </element>
     </define>
+    <define name="e_Flow">
+        <element name="Flow">
+            <a:documentation>Pours a sequence of blocks into the frames of a positioning area, page after page. Paragraphs break between lines, with the CSS properties widows and orphans, and tables between rows, their TableHead and TableFoot repeated. break-after: avoid keeps a block with the next one, break-before and break-after with column go on in the next frame and with page, left or right on the next page.
+      The flow starts at the area&#39;s current row and fills the free rows of each frame: rows that hold objects placed earlier are passed over. The blocks are not rounded to the grid; the rows they reach into are allocated. A free band does not start on the next whole row but at the exact bottom of the objects that end in the row above it, so where the text starts does not depend on the row height. A PlaceObject after the flow starts on the next whole row. A Flow that follows another directly, with nothing placed in between, goes on exactly where it ended, its last margin collapsing with the first block&#39;s, and so does every frame of its area that is free from there on the same page.
+      Every child with an id keeps it, also when it breaks across frames and pages: each part shows up in --dumpoutput with its page and position.
+      A TextBlock, an Image or a Box cannot be part of a flow yet and is left out with a warning. A flow is not possible in a Slate.
+      The children are read before the flow is laid out, so a command that acts on the page at once, PlaceObject, ClearPage, NextFrame, NextRow or Mark, is an error inside a flow. A forced break goes through CSS, such as break-before: page. CallTemplate works as everywhere.</a:documentation>
+            <lsp:doc href="https://doc.speedata.de/xts/reference/commands/flow/"></lsp:doc>
+            <interleave>
+                <group>
+                    <optional>
+                        <attribute name="area">
+                            <a:documentation>Name of the positioning area to fill. Defaults to the page&#39;s area.</a:documentation>
+                            <lsp:references symbol="area"></lsp:references>
+                        </attribute>
+                    </optional>
+                    <optional>
+                        <attribute name="bottom">
+                            <a:documentation>Name of a variable that is set to where the flow ends, in points below the top of the page&#39;s grid, as a number. With frames side by side, that is the bottom of the longest one on the last page.</a:documentation>
+                        </attribute>
+                    </optional>
+                    <oneOrMore>
+                        <interleave>
+                            <optional>
+                                <ref name="e_ForAll"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_HTML"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_Ol"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_Paragraph"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_Switch"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_Table"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_Ul"></ref>
+                            </optional>
+                        </interleave>
+                    </oneOrMore>
+                </group>
+                <ref name="foreign-nodes"></ref>
+            </interleave>
+        </element>
+    </define>
     <define name="e_ForAll">
         <element name="ForAll">
             <a:documentation>Executes the given commands for all elements in the data XML file that match the contents of the attribute select.</a:documentation>
@@ -814,6 +877,9 @@
                             </optional>
                             <optional>
                                 <ref name="e_ClearPage"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_Flow"></ref>
                             </optional>
                             <optional>
                                 <ref name="e_ForAll"></ref>
@@ -1207,6 +1273,9 @@
                             </optional>
                             <optional>
                                 <ref name="e_ClearPage"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_Flow"></ref>
                             </optional>
                             <optional>
                                 <ref name="e_ForAll"></ref>
@@ -1663,6 +1732,9 @@
                         </optional>
                         <optional>
                             <ref name="e_ClearPage"></ref>
+                        </optional>
+                        <optional>
+                            <ref name="e_Flow"></ref>
                         </optional>
                         <optional>
                             <ref name="e_ForAll"></ref>
@@ -2134,6 +2206,9 @@
                             <ref name="e_ClearPage"></ref>
                         </optional>
                         <optional>
+                            <ref name="e_Flow"></ref>
+                        </optional>
+                        <optional>
                             <ref name="e_ForAll"></ref>
                         </optional>
                         <optional>
@@ -2359,6 +2434,9 @@
                             </optional>
                             <optional>
                                 <ref name="e_ClearPage"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_Flow"></ref>
                             </optional>
                             <optional>
                                 <ref name="e_ForAll"></ref>
@@ -3102,6 +3180,9 @@
                                 <ref name="e_ClearPage"></ref>
                             </optional>
                             <optional>
+                                <ref name="e_Flow"></ref>
+                            </optional>
+                            <optional>
                                 <ref name="e_ForAll"></ref>
                             </optional>
                             <optional>
@@ -3229,6 +3310,9 @@
                             </optional>
                             <optional>
                                 <ref name="e_ClearPage"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_Flow"></ref>
                             </optional>
                             <optional>
                                 <ref name="e_ForAll"></ref>

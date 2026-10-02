@@ -76,6 +76,7 @@ func init() {
 		"DefineColor":      cmdDefineColor,
 		"DefineMasterPage": cmdDefineMasterPage,
 		"Element":          cmdElement,
+		"Flow":             cmdFlow,
 		"ForAll":           cmdForall,
 		"Grid":             cmdGrid,
 		"Function":         cmdFunction,
@@ -134,6 +135,7 @@ func init() {
 		"ClearPage":        kindAction,
 		"DefineColor":      kindAction,
 		"DefineMasterPage": kindAction,
+		"Flow":             kindAction,
 		"Grid":             kindAction,
 		"LoadXML":          kindAction,
 		"Mark":             kindAction,
@@ -183,6 +185,16 @@ func ignoreFunction(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	return nil, nil
 }
 
+// flowRejects are the commands that act on the page while a Flow's children
+// are dispatched, before the flow is laid out.
+var flowRejects = map[string]bool{
+	"ClearPage":   true,
+	"Mark":        true,
+	"NextFrame":   true,
+	"NextRow":     true,
+	"PlaceObject": true,
+}
+
 func dispatch(xd *xtsDocument, layoutelement *goxml.Element) (xpath.Sequence, error) {
 	var retSequence xpath.Sequence
 	for _, cld := range layoutelement.Children() {
@@ -191,10 +203,20 @@ func dispatch(xd *xtsDocument, layoutelement *goxml.Element) (xpath.Sequence, er
 				if xd.valueContext && kindOf(elt.Name) == kindAction {
 					return nil, newTypesettingErrorf(elt.Name, elt.Line, "action %q is not allowed in a value context", elt.Name)
 				}
+				if xd.inFlow && flowRejects[elt.Name] {
+					return nil, newTypesettingError(elt.Name, elt.Line, "not allowed inside a Flow")
+				}
 				slog.Debug("Command", "cmd", elt.Name, "line", elt.Line)
 				seq, err := f(xd, elt)
 				if err != nil {
 					return nil, err
+				}
+				if xd.flowOrigin != nil {
+					for _, itm := range seq {
+						if n, ok := itm.(node.Node); ok && xd.flowOrigin[n] == nil {
+							xd.flowOrigin[n] = elt
+						}
+					}
 				}
 				retSequence = append(retSequence, seq...)
 			} else {
@@ -1575,6 +1597,7 @@ func cmdNextFrame(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		return nil, err
 	}
 	xd.setupPage()
+	xd.currentGrid.flowEnd = nil
 	if area, ok := xd.currentPage.pagegrid.areas[attValues.Area]; ok {
 		area.currentFrame++
 		if area.currentFrame == len(area.frame) {
@@ -1785,6 +1808,7 @@ func cmdPDFOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 
 func cmdNextRow(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	xd.setupPage()
+	xd.currentGrid.flowEnd = nil
 	var err error
 	attValues := &struct {
 		Area string
@@ -1944,6 +1968,9 @@ func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 
 func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	xd.setupPage()
+	if xd.currentGrid != nil {
+		xd.currentGrid.flowEnd = nil
+	}
 	var err error
 	attValues := &struct {
 		Allocate        bool `sdxml:"default:yes"`
@@ -2875,6 +2902,7 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
 	}
+	explicitWidth := attValues.Width
 	if attValues.Width == 0 {
 		var mw coord
 		if mwInt, ok := xd.store["maxwidth"].(int); ok {
@@ -2885,14 +2913,24 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		attValues.Width = xd.currentGrid.width(mw)
 	}
 
+	// A table of a Flow is one of its blocks, laid out by the flow; one in
+	// its cells is built here as before.
+	flowTable := xd.inFlow && xd.tableDepth == 0
+	xd.tableDepth++
 	seq, err := dispatch(xd, layoutelt)
+	xd.tableDepth--
 	if err != nil {
 		return nil, err
 	}
 
 	tableStyle := attValues.Style
 	if attValues.Stretch == "max" {
-		tableStyle = "width: 100%; " + tableStyle
+		// In a flow, 100% is the frame, not the width the table asks for.
+		width := "100%"
+		if flowTable && explicitWidth != 0 {
+			width = strconv.FormatFloat(explicitWidth.ToPT(), 'f', -1, 64) + "pt"
+		}
+		tableStyle = "width: " + width + "; " + tableStyle
 	}
 
 	tableNode := &html.Node{
@@ -2958,6 +2996,12 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		tableNode.AppendChild(tableColgroupNode)
 	}
 	tableNode.AppendChild(tableBodyNode)
+	if flowTable {
+		if explicitWidth != 0 && attValues.Stretch != "max" {
+			prependStyle(tableNode, fmt.Sprintf("width: %spt", strconv.FormatFloat(explicitWidth.ToPT(), 'f', -1, 64)))
+		}
+		return xpath.Sequence{tableNode}, nil
+	}
 
 	doc := &html.Node{
 		Type: html.DocumentNode,

@@ -1,0 +1,40 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+
+    <!-- A Flow into an area of two frames side by side. It starts where the
+         introduction, a Flow across the page, ended, part way down a row,
+         and both columns start there. A forced break-before: column moves
+         the last paragraph to the next frame, here on the next page. The
+         Flow after it continues below, and its bottom attribute is written
+         into the page. -->
+
+    <PageFormat width="105mm" height="148mm"/>
+    <SetGrid nx="21" height="12pt"/>
+    <DefineMasterPage name="page" test="true()" margin="10mm">
+        <PositioningArea name="cols">
+            <PositioningFrame column="1" row="1" width="10" height="27"/>
+            <PositioningFrame column="12" row="1" width="10" height="27"/>
+        </PositioningArea>
+    </DefineMasterPage>
+    <StyleSheet>
+        p { margin: 0 0 4pt 0; font-size: 9pt; line-height: 11pt }
+        .brk { break-before: column }
+    </StyleSheet>
+    <Record match="data">
+        <Flow>
+            <Paragraph><Value>An introduction across the width of the page, which ends part way down a grid row.</Value></Paragraph>
+        </Flow>
+        <Flow area="cols">
+            <ForAll select="para">
+                <Paragraph id="{concat('p', @n)}"><Value select="concat('Paragraph ', @n, ': ')"/><Value>lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Value></Paragraph>
+            </ForAll>
+            <Paragraph class="brk" id="last"><Value>After a column break.</Value></Paragraph>
+        </Flow>
+        <Flow bottom="end">
+            <Paragraph><Value>Below, across the page again.</Value></Paragraph>
+        </Flow>
+        <Flow>
+            <Paragraph><Value select="concat('The last Flow ends ', round($end), 'pt below the top of the grid.')"/></Paragraph>
+        </Flow>
+    </Record>
+</Layout>
