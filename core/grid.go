@@ -138,6 +138,33 @@ type grid struct {
 	allocatedBlocks allocationMatrix
 	areas           map[string]*area
 	inSlate         bool
+	// flowEnd is where the last Flow on the page ended, nil once anything
+	// else is placed or the cursor moves.
+	flowEnd *flowEnd
+	// ends records the exact bottom of every allocation on the page, where
+	// a Flow below it starts.
+	ends []allocationEnd
+}
+
+// allocationEnd is the exact bottom y, from the page top, of an allocation
+// whose last row is the page row row, over the page columns col1 to col2.
+type allocationEnd struct {
+	row, col1, col2 coord
+	y               bag.ScaledPoint
+}
+
+// exactTop returns the lowest exact bottom of the allocations that end in
+// the page row above row of the current frame and share a column with it,
+// or ok false when there is none.
+func (g *grid) exactTop(a *area, row coord) (y bag.ScaledPoint, ok bool) {
+	f := a.frame[a.currentFrame]
+	above := row + f.row - 2
+	for _, e := range g.ends {
+		if e.row == above && e.col1 < f.col+f.width && e.col2 >= f.col && (!ok || e.y > y) {
+			y, ok = e.y, true
+		}
+	}
+	return y, ok
 }
 
 func newGrid(xd *xtsDocument) *grid {
@@ -217,6 +244,15 @@ func (g *grid) allocate(x, y coord, area *area, wd, ht bag.ScaledPoint) {
 
 	offsetX = area.frame[area.currentFrame].col
 	offsetY = area.frame[area.currentFrame].row
+	if rows := g.heightToRows(ht); rows > 0 && wd > 0 {
+		col1 := x + offsetX - 1
+		g.ends = append(g.ends, allocationEnd{
+			row:  y + offsetY - 1 + rows - 1,
+			col1: col1,
+			col2: col1 + g.widthToColumns(wd) - 1,
+			y:    g.posY(y, area) + ht,
+		})
+	}
 
 	for col := coord(1); col <= g.widthToColumns(wd); col++ {
 		for row := coord(1); row <= g.heightToRows(ht); row++ {
