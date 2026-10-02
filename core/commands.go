@@ -50,7 +50,6 @@ const (
 )
 
 var (
-	dataRecords   []recordEntry
 	dispatchTable map[string]commandFunc
 	// cmdKinds classifies each dispatchTable entry. A command missing from this
 	// map defaults to kindConstructor (the safe, bindable default).
@@ -337,7 +336,7 @@ func cmdBookmark(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, err
 		return nil, newTypesettingErrorf("Bookmark", layoutelt.Line, "error parsing select XPath expression %s", err)
 	}
 
-	dest := getNumDest()
+	dest := xd.getNumDest()
 
 	// this callback turns the dest object into an outline object by adding the
 	// dest to the Outlines slice of the PDFWriter.
@@ -1204,7 +1203,7 @@ func cmdImage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		return xpath.Sequence{hl}, nil
 	}
 
-	filename, err := xd.cfg.FindFile(attValues.Href)
+	filename, err := xd.lookupFile(attValues.Href)
 	if err != nil {
 		// A missing image always falls back to the file-not-found placeholder
 		// so the run still produces a PDF. With imagenotfound="error" the issue
@@ -1338,7 +1337,7 @@ func cmdLoadXML(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	} else if attValues.Href != nil {
 		filename = *attValues.Href
 	}
-	xmlPath, err := xd.cfg.FindFile(filename)
+	xmlPath, err := xd.lookupFile(filename)
 	if xmlPath == "" {
 		slog.Info(fmt.Sprintf("LoadXML file %s does not exist", filename))
 		return nil, nil
@@ -1364,7 +1363,7 @@ func cmdLoadXML(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 	}
 	dataroot := rootNode.Stringvalue()
 	xd.data.Evaluate("/*")
-	if rec := findRecordByName(dataroot); rec != nil {
+	if rec := xd.findRecordByName(dataroot); rec != nil {
 		_, err = dispatch(xd, rec)
 	}
 	xd.data.Ctx.SetContextSequence(oldContext)
@@ -1422,8 +1421,8 @@ func cmdProcessNode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 func findRecord(xd *xtsDocument, elt *goxml.Element, mode string) *goxml.Element {
 	var fallback *goxml.Element
 	// Iterate in reverse: last registered = highest priority
-	for i := len(dataRecords) - 1; i >= 0; i-- {
-		rec := dataRecords[i]
+	for i := len(xd.records) - 1; i >= 0; i-- {
+		rec := xd.records[i]
 		if rec.elemName != elt.Name || rec.mode != mode {
 			continue
 		}
@@ -1461,7 +1460,7 @@ func cmdRecord(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 	}
 
 	elemName, pred := parseMatch(attValues.Match)
-	dataRecords = append(dataRecords, recordEntry{
+	xd.records = append(xd.records, recordEntry{
 		elemName: elemName,
 		pred:     pred,
 		mode:     attValues.Mode,
@@ -1637,7 +1636,7 @@ func cmdAttachFile(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 		return nil, err
 	}
 
-	filename, err := xd.cfg.FindFile(attValues.Href)
+	filename, err := xd.lookupFile(attValues.Href)
 	if err != nil {
 		return nil, newTypesettingErrorf("AttachFile", layoutelt.Line, "file not found: %s", attValues.Href)
 	}
@@ -2693,7 +2692,7 @@ func cmdStyleSheet(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 		}
 	} else {
 		var loc string
-		loc, err = FindFile(attrHref)
+		loc, err = xd.findFile(attrHref)
 		if err != nil {
 			return nil, newTypesettingError("StyleSheet", layoutelt.Line, err.Error())
 		}

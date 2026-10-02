@@ -14,10 +14,11 @@ import (
 
 // getNumDest returns a new start stop node with a ActionDest action and a
 // distinct numeric Value
-func getNumDest() *node.StartStop {
+func (xd *xtsDocument) getNumDest() *node.StartStop {
 	dest := node.NewStartStop()
 	dest.Action = node.ActionDest
-	dest.Value = <-destinationNumbers
+	dest.Value = xd.nextDestination
+	xd.nextDestination++
 	return dest
 }
 

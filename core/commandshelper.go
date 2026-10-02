@@ -12,9 +12,9 @@ import (
 
 // findRecordByName finds a Record matching the element name with default mode
 // and no predicate conditions (used for root element dispatch).
-func findRecordByName(elemName string) *goxml.Element {
-	for i := len(dataRecords) - 1; i >= 0; i-- {
-		rec := dataRecords[i]
+func (xd *xtsDocument) findRecordByName(elemName string) *goxml.Element {
+	for i := len(xd.records) - 1; i >= 0; i-- {
+		rec := xd.records[i]
 		if rec.elemName == elemName && rec.mode == "" && rec.pred == "" {
 			return rec.layout
 		}

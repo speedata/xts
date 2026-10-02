@@ -179,7 +179,7 @@ func fnAspectRatio(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Seque
 		return nil, fmt.Errorf("You cannot use unit in sd:aspect-ratio()")
 	}
 	var p string
-	if p, err = FindFile(fn); err != nil {
+	if p, err = xd.findFile(fn); err != nil {
 		return nil, err
 	}
 	imgf, err := xd.document.Doc.LoadImageFileWithBox(p, pdfbox, pagenumber)
@@ -297,7 +297,7 @@ func fnImageHeight(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Seque
 		return nil, err
 	}
 	var p string
-	if p, err = FindFile(fn); err != nil {
+	if p, err = xd.findFile(fn); err != nil {
 		return nil, err
 	}
 	imgf, err := xd.document.Doc.LoadImageFileWithBox(p, pdfbox, pagenum)
@@ -338,7 +338,7 @@ func fnImageWidth(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequen
 		return nil, err
 	}
 	var p string
-	if p, err = FindFile(fn); err != nil {
+	if p, err = xd.findFile(fn); err != nil {
 		return nil, err
 	}
 	imgf, err := xd.document.Doc.LoadImageFileWithBox(p, pdfbox, pagenum)
@@ -470,7 +470,7 @@ func fnToUnit(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, 
 func fnTotalPages(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
 	xd := ctx.Store["xd"].(*xtsDocument)
 	fn := args[0].Stringvalue()
-	fullPath, err := FindFile(fn)
+	fullPath, err := xd.findFile(fn)
 	if err != nil {
 		return nil, err
 	}

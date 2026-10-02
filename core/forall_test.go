@@ -17,9 +17,6 @@ func runForAll(t *testing.T, snippet string) string {
 // and returns $out.
 func runCommand(t *testing.T, cmd commandFunc, snippet string, records ...string) string {
 	t.Helper()
-	saved := dataRecords
-	t.Cleanup(func() { dataRecords = saved })
-	dataRecords = nil
 	parser, err := xpath.NewParser(strings.NewReader("<root><rec/><rec/><rec/><rec/><rec/></root>"))
 	if err != nil {
 		t.Fatal(err)

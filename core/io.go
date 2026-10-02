@@ -15,18 +15,6 @@ import (
 
 var filelist = make(map[string]string)
 
-// statCache holds the absolute paths of the files FindFile found by looking
-// at the file system during the current run. A layout that places the same
-// image on hundreds of pages would otherwise stat the file (and resolve the
-// working directory) for every placement. RunXTS clears it, so a file that
-// disappears between two runs in watch mode is noticed.
-var statCache = make(map[string]string)
-
-// resetStatCache forgets the files found on the file system.
-func resetStatCache() {
-	statCache = make(map[string]string)
-}
-
 // AddDir recursively adds a directory to the file list
 func AddDir(dirname string) error {
 	slog.Debug("Add directory to recursive file list", "dir", dirname)
@@ -74,8 +62,31 @@ func urldownloader(uri string) (string, error) {
 	return w.Name(), nil
 }
 
-// FindFile returns the full path to the file name.
+// FindFile returns the full path to the file name. It caches nothing.
 func FindFile(filename string) (string, error) {
+	return findFile(filename, nil)
+}
+
+// lookupFile resolves a file name of the layout with the caller's FindFile,
+// or with findFile when there is none.
+func (xd *xtsDocument) lookupFile(filename string) (string, error) {
+	if xd.cfg != nil && xd.cfg.FindFile != nil {
+		return xd.cfg.FindFile(filename)
+	}
+	return xd.findFile(filename)
+}
+
+// findFile is FindFile with the run's statCache: a layout that places the same
+// image on hundreds of pages would otherwise stat the file (and resolve the
+// working directory) for every placement. The cache lives as long as the run,
+// so a file that disappears between two runs in watch mode is noticed.
+func (xd *xtsDocument) findFile(filename string) (string, error) {
+	return findFile(filename, xd.statCache)
+}
+
+// findFile looks the file up and, when statCache is not nil, keeps the paths
+// found on the file system in it.
+func findFile(filename string, statCache map[string]string) (string, error) {
 	if fn, ok := filelist[filename]; ok {
 		slog.Debug("File lookup", "src", filename, "found", fn)
 		return fn, nil
@@ -99,7 +110,9 @@ func FindFile(filename string) (string, error) {
 			return "", err
 		}
 		slog.Debug("File lookup", "src", filename, "found", fn)
-		statCache[filename] = fn
+		if statCache != nil {
+			statCache[filename] = fn
+		}
 		return fn, nil
 	}
 	slog.Debug("File lookup (not found)", "src", filename)

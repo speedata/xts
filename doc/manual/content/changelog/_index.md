@@ -9,6 +9,11 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
+## 0.1.4 (2026-10-02)
+
+- **A run no longer uses the Records of an earlier run in the same process.**<br>
+  The `Record` commands of every layout were kept for the lifetime of the process, so a second `RunXTS` with a different layout, as in `xts watch` or a program that calls XTS several times, fell back to a Record of an earlier layout when its own layout had no match, and kept the earlier layout trees in memory. The Records, the cache of files found on disk and the numbering of destinations now belong to the run, and every run starts as a fresh process does ([#51](https://github.com/speedata/xts/issues/51)).
+
 ## 0.1.3 (2026-10-02)
 
 - **font-variant-caps: small-caps sets small capitals.**<br>

@@ -468,7 +468,6 @@ func runPublisher(dumpOutputFileName string, configFileRead []string) error {
 		dr.Seek(0, io.SeekStart)
 		xc := &core.XTSConfig{
 			Datafile:     dr,
-			FindFile:     core.FindFile,
 			Layoutfile:   lr,
 			Mode:         configuration.Mode,
 			OutFilename:  configuration.Jobname + ".pdf",
