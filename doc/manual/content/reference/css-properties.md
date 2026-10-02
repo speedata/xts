@@ -19,8 +19,11 @@ CSS properties supported by XTS for styling layout elements and HTML content. Le
 | `font-weight` | `normal`, `bold`, `bolder`, `lighter`, the names `thin` to `black`, or a number from 100 to 900 | `font-weight: 600;` |
 | `font-style` | `normal`, `italic`. `oblique` is not recognized | `font-style: italic;` |
 | `font-synthesis-style` | `auto`, `none`. `auto` slants a family's upright for an italic it lacks; the default is `none`, where the upright is used as it is | `font-synthesis-style: auto;` |
-| `font-synthesis` | `none`, or any of `weight`, `style`, `small-caps`, `position`. Only `style` is read, as `font-synthesis-style: auto` | `font-synthesis: style;` |
-| `font` | Shorthand: optional `font-style` and `font-weight`, then the size with an optional `/line-height`, then the family. Style, weight and line height reset to `normal` when omitted, as in CSS. Size and family are required | `font: italic bold 10pt/12pt serif;` |
+| `font-synthesis` | `none`, or any of `weight`, `style`, `small-caps`, `position`. Only `style` and `small-caps` are read, as `font-synthesis-style` and `font-synthesis-small-caps` | `font-synthesis: style;` |
+| `font-synthesis-small-caps` | `auto`, `none`. `auto` (the default) sets small caps for a face without `smcp` as capitals at 70% of the size; `none` leaves the text as it is. Synthesised small caps are capitals in the PDF, so text extraction and search see `SMALL CAPS`, not `Small Caps`; a face with `smcp` keeps the original text | `font-synthesis-small-caps: none;` |
+| `font-variant-caps` | `normal`, `small-caps`. Inherited. The face's `smcp` feature when it has one, else synthesised (see `font-synthesis-small-caps`). Other values are read as `normal` | `font-variant-caps: small-caps;` |
+| `font-variant` | `normal`, or values including `small-caps`. Only `small-caps` is read, as `font-variant-caps` | `font-variant: small-caps;` |
+| `font` | Shorthand: optional `font-style`, `small-caps` and `font-weight`, then the size with an optional `/line-height`, then the family. Style, caps, weight and line height reset to `normal` when omitted, as in CSS. Size and family are required | `font: italic bold 10pt/12pt serif;` |
 | `font-feature-settings` | Comma separated OpenType feature tags, each optionally followed by `on`, `off` or a number. `normal` removes all features | `font-feature-settings: "smcp", "onum";` |
 | `font-variation-settings` | Comma separated pairs of an axis tag and a number, for variable fonts | `font-variation-settings: "wght" 650;` |
 | `color` | Color value or a defined color name | `color: #333;` |

@@ -6,12 +6,12 @@ github.com/andybalholm/cascadia v1.3.4 h1:vM2lgh0Vru9Vwyfm4cQqWP2HHMW0u0+2PAW7Q3
 github.com/andybalholm/cascadia v1.3.4/go.mod h1:BLRmbRjpEtNKieZOCCvYj4RqN+KRA41GBe/5O+G93kM=
 github.com/boxesandglue/baseline-pdf v1.1.25 h1:8e1c00V5s8LAhTBd9gmvQzo7ZuWHkMUUnG90a7Ks6Aw=
 github.com/boxesandglue/baseline-pdf v1.1.25/go.mod h1:s4HKQ1fw78LlJNCrJuinrLcm0RXD0M/PhQcqLbqRm2k=
-github.com/boxesandglue/boxesandglue v0.2.69 h1:qLeXy5cYyzKa4KfgJyDmFEO5jHOUl2Kj12vgZVmUhIM=
-github.com/boxesandglue/boxesandglue v0.2.69/go.mod h1:fDz9oDfITDiPce9X7f7rsKZJzcC5n3OMIDXpnf8uw9A=
+github.com/boxesandglue/boxesandglue v0.2.73 h1:SkJZ1DnRAVw9Dt1l25c/BylNKPumuUQmKbuRDMxh7zQ=
+github.com/boxesandglue/boxesandglue v0.2.73/go.mod h1:9mj35AkKDwzH9DrUIDWdp2OUTtZadusCrml3KDipwOM=
 github.com/boxesandglue/gofpdi v1.0.24 h1:7Q0v4dkmByemj8PyIYi8ylIYrUnNhY/L/Ed6MRGwlro=
 github.com/boxesandglue/gofpdi v1.0.24/go.mod h1:U26faV5/yQf8ivQS0Tt2TdpU7Y8X9wpLLB2T/5oI+u4=
-github.com/boxesandglue/htmlbag v0.0.70 h1:qhc5mbOlt3Gi9qV9Z/S+j9Vl40Pt1W9HVuhZ23Cywe0=
-github.com/boxesandglue/htmlbag v0.0.70/go.mod h1:G9nwIpLyq/nBu0fwoRDgBAj5aT7vSxLAil788Ia3yCI=
+github.com/boxesandglue/htmlbag v0.0.72 h1:wYeQ5HfUDQUkVvnBDhNfQw3M3EHmc/+hSr9dT3rglJg=
+github.com/boxesandglue/htmlbag v0.0.72/go.mod h1:OtTA22Hb9E3xIENsRLSpYUkK3d/0Uzr9pJcQtYx1wHw=
 github.com/boxesandglue/svgreader v0.0.5 h1:yUvFP+T66l2YjRjFs7aLQ4lAfimDSLRssy6wZcfOTGc=
 github.com/boxesandglue/svgreader v0.0.5/go.mod h1:EGGvqEiNQsKBrnLYqDfMznN044fFcKkCHrXDLYJ56IY=
 github.com/boxesandglue/textshape v0.0.17 h1:w0lJNSjw6mJ+a0cbiHcahbOAHlSzQkwpUB5XC1MeWhM=
@@ -51,8 +51,8 @@ github.com/speedata/goxpath v1.0.21 h1:0FgiSh4OC1gCsj5vZYXF9tJ1eZHaB9iRIQLCak00+
 github.com/speedata/goxpath v1.0.21/go.mod h1:pHarVNKeRc0jWFBPHo3JuxP3qxpwMKlHqScsJO0mLAo=
 github.com/speedata/goxslt v0.0.2 h1:fzARLRHAb0xmAifWJGMD75hfrhRGK7K4iB1u899Rf2k=
 github.com/speedata/goxslt v0.0.2/go.mod h1:LZO9C6pwKTc+blNPA0ELO0+G2DhcsMLNqxCWNYO2Usw=
-github.com/speedata/hyphenation v1.0.2 h1:2rDCtAqNfbf+E56SsqbmNApsVx9CH+4fwIh1RZuu3B8=
-github.com/speedata/hyphenation v1.0.2/go.mod h1:vwrKKvBvJWFll0sVZw99hyWS/+r4YlMI7MAYjnje0nM=
+github.com/speedata/hyphenation v1.0.3 h1:zhCgxf5orzVDVXhd1Q1KElfpZQt4l8JTsttENnJxFss=
+github.com/speedata/hyphenation v1.0.3/go.mod h1:H//ORhH5NNDACrRQkyw9ny+9XoyjVLbEObfu2K7bcLI=
 github.com/speedata/optionparser v1.2.1 h1:h/fN19txdNyY6esRvLAEvh5ntic79r80fDI8D8+6y8g=
 github.com/speedata/optionparser v1.2.1/go.mod h1:JzOMd1kGlM5gtPBy7reOayfHsTXCvd6P4JU8BW0LicE=
 github.com/speedata/pdfdisassembler v0.0.7 h1:n8gPHlHun8l8JmdB+HORG1SFipQbMnqwoW2f5w/lZYI=

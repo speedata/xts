@@ -9,8 +9,18 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
-## 0.1.3 (2026-10-01)
+## 0.1.3 (2026-10-02)
 
+- **font-variant-caps: small-caps sets small capitals.**<br>
+  A text with `font-variant-caps: small-caps` uses the small capitals of the font (OpenType feature `smcp`) when it has them. Otherwise the small capitals are synthesized: every letter that changes when uppercased becomes its capital at 70% of the size, with the case mapping of the language, so ß becomes SS. `font-synthesis-small-caps: none` switches the synthesis off, and the `font` shorthand reads and resets `small-caps` as well.
+- **A paragraph in a table cell draws its background and border.**<br>
+  A `background-color` or `border` on a `Paragraph` inside a `Td` had no effect, only the cell itself drew one. The paragraph's box is now drawn as on the page.
+- **A background-color on a span that holds only spaces is painted.**<br>
+  A `Span` with a `background-color` whose text is only spaces painted nothing. The background now covers the space, as high as the font, like on a span with text.
+- **A collapsed column border is drawn in one piece.**<br>
+  With `border-collapse: collapse`, a vertical border between two columns was drawn as one segment per row, which some PDF viewers show with fine gaps between the rows. Where the rows agree on the border's width and color, it is now drawn as one line from top to bottom.
+- **Hyphenation is two to three times faster.**<br>
+  The hyphenation patterns are now matched once per word and language, so a word that appears again is hyphenated from a cache. The hyphenation points do not change.
 - **New command Tab inserts a tab.**<br>
   A `<Tab/>` in a `Paragraph` or another text command moves the text after it to the next stop of `-bag-tab-stops`, and without stops it advances by `tab-size`. Unlike a tab character in the text, which `white-space: normal` collapses to a space where no stops are set, it always stays a tab. The new manual page on tab stops shows a table of contents and a price list ([#39](https://github.com/speedata/xts/issues/39)).
 - **A Slate draws its objects in the order they were placed.**<br>
