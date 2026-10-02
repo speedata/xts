@@ -108,12 +108,14 @@ CSS properties supported by XTS for styling layout elements and HTML content. Le
 
 | Property | Values | Example |
 |----------|--------|---------|
-| `-bag-font-expansion` | Percentage of allowed glyph stretching, `0%` turns it off | `-bag-font-expansion: 0%;` |
+| `-bag-font-expansion` | Percentage of allowed glyph stretching, `0%` turns it off. Only justified text uses it; ragged text is set at its natural width | `-bag-font-expansion: 0%;` |
+| `-bag-horizontal-scale` | A positive percentage or number, `90%` and `0.9` are the same, default `100%`. Inherited. Draws the glyphs narrower or wider by a fixed factor (PDF horizontal scaling, `Tz`); the advances, kerns and spaces are scaled, so the line breaker sees the scaled width. The factor does not compound, `90%` inside `90%` stays 90%, so an element inside a scaled one returns to normal with `100%`. `letter-spacing` is not scaled, it stays an absolute length. Font expansion applies on top. Zero, negative or unparsable values are ignored with a warning | `-bag-horizontal-scale: 90%;` |
 | `-bag-italic-correction` | `auto`, `none` | `-bag-italic-correction: none;` |
 | `-bag-leading-model` | `half` (CSS line boxes, the default), `trailing` (TeX style), or a name that the Go program running XTS registered in `XTSConfig.LineModels` | `-bag-leading-model: trailing;` |
 | `-bag-linebreak-tolerance` | Number, the largest adjustment ratio a line may have, default 4. How far the spaces of a line may stretch, as a multiple of their stretchability. A ratio, not a badness as TeX's `\tolerance`: TeX's 200 is about 1.26 | `-bag-linebreak-tolerance: 8;` |
 | `-bag-linebreak-hyphen-penalty` | Number, the TeX hyphen penalty | `-bag-linebreak-hyphen-penalty: 200;` |
 | `-bag-tab-stops` | `none`, or a comma separated list of stops: a length or percentage of the line width, optionally `start`, `end`, `center`, `decimal` or `decimal(",")`, optionally `leader(" . ")` (or `dotted`, `solid`, `space`). Inherited. A tab advances to the next stop past the text before it, `left` and `right` are synonyms of `start` and `end`. Tabs within a line survive any `white-space` mode, whitespace with a newline stays source formatting | `-bag-tab-stops: 12mm, 100% end leader(dotted);` |
+| `-bag-fixed-height` | Length, or `none` (the default). On table rows only, not inherited. The row is exactly this high and never breaks inside: content that does not fit draws past the row, background and borders keep the height. Wins over `height` on the same row, and a cell's `height` in a fixed row is ignored. On a cell the property has no effect | `-bag-fixed-height: 16pt;` |
 | `-bag-bookmark` | `none`, or a level number optionally followed by `open` or `closed`, see [Bookmarks](/manual/advanced/pdf-options#bookmarks). Adds the element to the PDF outline | `-bag-bookmark: 2 closed;` |
 
 ## Selectors

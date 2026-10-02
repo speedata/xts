@@ -27,6 +27,18 @@
     <entry version="0.1.4" date="2026-10-02">
       <en summary="A run no longer uses the Records of an earlier run in the same process.">The <tt>Record</tt> commands of every layout were kept for the lifetime of the process, so a second <tt>RunXTS</tt> with a different layout, as in <tt>xts watch</tt> or a program that calls XTS several times, fell back to a Record of an earlier layout when its own layout had no match, and kept the earlier layout trees in memory. The Records, the cache of files found on disk and the numbering of destinations now belong to the run, and every run starts as a fresh process does (#51).</en>
     </entry>
+    <entry version="0.1.4" date="2026-10-02">
+      <en summary="Ragged text is set at its natural width.">With <tt>text-align</tt> left, right, center, start or end (the default), the word spaces of a line could shrink by up to a third and the glyphs were condensed by the font expansion, so a line kept a word that does not fit at its natural width. Ragged lines are now set at their natural width and such a word moves to the next line, so line breaks in ragged text change. Justified text is unchanged, and <tt>-bag-font-expansion</tt> only acts on justified text.</en>
+    </entry>
+    <entry version="0.1.4" date="2026-10-02">
+      <en summary="letter-spacing also widens the spaces.">A space now gets the <tt>letter-spacing</tt> like any other character, so a letter-spaced line no longer sets its words closer than its letters. This holds for preserved spaces under <tt>white-space: pre</tt> and <tt>pre-wrap</tt> as well.</en>
+    </entry>
+    <entry version="0.1.4" date="2026-10-02">
+      <en summary="New CSS property -bag-horizontal-scale.">Draws the glyphs narrower or wider by a fixed factor, a percentage or a number (<tt>90%</tt> or <tt>0.9</tt>). It is inherited and does not compound, so <tt>100%</tt> inside a scaled element returns to normal width. The line breaker sees the scaled width.</en>
+    </entry>
+    <entry version="0.1.4" date="2026-10-02">
+      <en summary="New CSS property -bag-fixed-height for table rows.">On a <tt>Tr</tt>, <tt>-bag-fixed-height</tt> takes a length and makes the row exactly that high: content that does not fit draws past the row, and the row never breaks inside. Unlike <tt>height</tt>, which stays a minimum, it also limits the row. It is not inherited and has no effect on a <tt>Td</tt>.</en>
+    </entry>
     <entry version="0.1.3" date="2026-10-02">
       <en summary="font-variant-caps: small-caps sets small capitals.">A text with <tt>font-variant-caps: small-caps</tt> uses the small capitals of the font (OpenType feature <tt>smcp</tt>) when it has them. Otherwise the small capitals are synthesized: every letter that changes when uppercased becomes its capital at 70% of the size, with the case mapping of the language, so ß becomes SS. <tt>font-synthesis-small-caps: none</tt> switches the synthesis off, and the <tt>font</tt> shorthand reads and resets <tt>small-caps</tt> as well.</en>
     </entry>

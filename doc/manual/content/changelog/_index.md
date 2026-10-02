@@ -13,6 +13,14 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 - **A run no longer uses the Records of an earlier run in the same process.**<br>
   The `Record` commands of every layout were kept for the lifetime of the process, so a second `RunXTS` with a different layout, as in `xts watch` or a program that calls XTS several times, fell back to a Record of an earlier layout when its own layout had no match, and kept the earlier layout trees in memory. The Records, the cache of files found on disk and the numbering of destinations now belong to the run, and every run starts as a fresh process does ([#51](https://github.com/speedata/xts/issues/51)).
+- **Ragged text is set at its natural width.**<br>
+  With `text-align` left, right, center, start or end (the default), the word spaces of a line could shrink by up to a third and the glyphs were condensed by the font expansion, so a line kept a word that does not fit at its natural width. Ragged lines are now set at their natural width and such a word moves to the next line, so line breaks in ragged text change. Justified text is unchanged, and `-bag-font-expansion` only acts on justified text.
+- **letter-spacing also widens the spaces.**<br>
+  A space now gets the `letter-spacing` like any other character, so a letter-spaced line no longer sets its words closer than its letters. This holds for preserved spaces under `white-space: pre` and `pre-wrap` as well.
+- **New CSS property -bag-horizontal-scale.**<br>
+  Draws the glyphs narrower or wider by a fixed factor, a percentage or a number (`90%` or `0.9`). It is inherited and does not compound, so `100%` inside a scaled element returns to normal width. The line breaker sees the scaled width.
+- **New CSS property -bag-fixed-height for table rows.**<br>
+  On a `Tr`, `-bag-fixed-height` takes a length and makes the row exactly that high: content that does not fit draws past the row, and the row never breaks inside. Unlike `height`, which stays a minimum, it also limits the row. It is not inherited and has no effect on a `Td`.
 
 ## 0.1.3 (2026-10-02)
 
