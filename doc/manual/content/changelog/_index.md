@@ -9,10 +9,13 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
-## 0.1.3 (2026-10-02)
+## 0.1.4 (2026-10-02)
 
 - **A run no longer uses the Records of an earlier run in the same process.**<br>
   The `Record` commands of every layout were kept for the lifetime of the process, so a second `RunXTS` with a different layout, as in `xts watch` or a program that calls XTS several times, fell back to a Record of an earlier layout when its own layout had no match, and kept the earlier layout trees in memory. The Records, the cache of files found on disk and the numbering of destinations now belong to the run, and every run starts as a fresh process does ([#51](https://github.com/speedata/xts/issues/51)).
+
+## 0.1.3 (2026-10-02)
+
 - **font-variant-caps: small-caps sets small capitals.**<br>
   A text with `font-variant-caps: small-caps` uses the small capitals of the font (OpenType feature `smcp`) when it has them. Otherwise the small capitals are synthesized: every letter that changes when uppercased becomes its capital at 70% of the size, with the case mapping of the language, so ß becomes SS. `font-synthesis-small-caps: none` switches the synthesis off, and the `font` shorthand reads and resets `small-caps` as well.
 - **A paragraph in a table cell draws its background and border.**<br>

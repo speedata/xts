@@ -24,7 +24,7 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
-    <entry version="0.1.3" date="2026-10-02">
+    <entry version="0.1.4" date="2026-10-02">
       <en summary="A run no longer uses the Records of an earlier run in the same process.">The <tt>Record</tt> commands of every layout were kept for the lifetime of the process, so a second <tt>RunXTS</tt> with a different layout, as in <tt>xts watch</tt> or a program that calls XTS several times, fell back to a Record of an earlier layout when its own layout had no match, and kept the earlier layout trees in memory. The Records, the cache of files found on disk and the numbering of destinations now belong to the run, and every run starts as a fresh process does (#51).</en>
     </entry>
     <entry version="0.1.3" date="2026-10-02">
