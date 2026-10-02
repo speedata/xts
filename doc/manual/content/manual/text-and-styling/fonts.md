@@ -39,6 +39,18 @@ A font family groups the regular, bold, italic, and bold-italic variants under o
 
 You only need to define the variants you actually use. If you never use bold italic, skip it.
 
+When the text asks for a variant the family does not have, XTS uses the closest one it has. A missing weight falls back to the nearest defined weight without a message. A missing italic uses the upright face and writes a warning to the protocol, once per family and style. With `font-synthesis-style: auto` the upright is slanted by 12° instead, as browsers and word processors do:
+
+```xml
+<StyleSheet>
+  body {
+      font-synthesis-style: auto;
+  }
+</StyleSheet>
+```
+
+`@font-face` also takes `size-adjust`, which scales a face so that it matches the size of its neighbors, and `ascent-override`, `descent-override` and `line-gap-override`. The overrides are only read by a line model registered from Go (see [Running XTS from Go](../../running-xts/go)). The [CSS reference](/reference/css-properties) lists all descriptors.
+
 ## Selecting fonts
 
 Once loaded, use the font family name in your CSS rules:

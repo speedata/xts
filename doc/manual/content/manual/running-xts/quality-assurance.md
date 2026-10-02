@@ -42,6 +42,8 @@ Comparison failed. Bad pages are: [0]
 Max delta is 2162.76
 ```
 
+A page that exists in only one of the two PDFs counts as a bad page, and so does a page whose image has another size than the reference, for example because the page size changed.
+
 XTS generates difference images, one set per page (`-00`, `-01`, ...):
 
 ```

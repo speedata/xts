@@ -184,6 +184,8 @@ Table cells can hold more than just text:
 </Td>
 ```
 
+A paragraph in a cell keeps its own margins, background and border, so a class such as `.note { margin-left: 1em; background-color: #eef; }` looks the same in a cell as on the page.
+
 Individual cells are never split across pages -- they're always rendered as a single rectangular box.
 
 ## Data-driven tables

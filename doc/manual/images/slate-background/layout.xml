@@ -1,0 +1,24 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+        xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+  <!-- Source of manual/img/slate-background.png, see ../Readme.md -->
+  <PageFormat width="180mm" height="36mm"/>
+  <SetGrid width="5mm" height="5mm"/>
+  <StyleSheet>
+    p { font-family: serif; font-size: 12pt; line-height: 15pt; margin: 0; }
+  </StyleSheet>
+  <Record match="data">
+    <Slate name="card">
+      <Contents>
+        <PlaceObject column="4mm" row="4mm">
+          <TextBlock width="72mm">
+            <Paragraph><Value>The text is placed first. The panel is placed after it, with allocate="no" and layer="behind".</Value></Paragraph>
+          </TextBlock>
+        </PlaceObject>
+        <PlaceObject column="0mm" row="0mm" allocate="no" layer="behind">
+          <Box width="80mm" height="22mm" background-color="#dde6f0"/>
+        </PlaceObject>
+      </Contents>
+    </Slate>
+    <PlaceObject slate="card" column="8mm" row="7mm"/>
+  </Record>
+</Layout>

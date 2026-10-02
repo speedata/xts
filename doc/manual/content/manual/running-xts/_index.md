@@ -14,3 +14,4 @@ Everything about the operational side: command line usage, configuration files, 
 - [Schema Validation](schema-validation) -- Editor integration for auto-complete
 - [Quality Assurance](quality-assurance) -- PDF comparison testing
 - [Versions](versions) -- Version numbers, compatibility, deprecation
+- [Running XTS from Go](go) -- Calling XTS from a Go program, line models

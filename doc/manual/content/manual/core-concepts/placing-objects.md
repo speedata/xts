@@ -56,6 +56,21 @@ You can also overlay a ready-made page with dynamic content, like adding page nu
 </PlaceObject>
 ```
 
+Sometimes the background can only be placed after the content, for example because its size depends on the text. `layer="behind"` draws an object under everything placed on the page since its `AtPageCreation` ran, and over what that drew:
+
+```xml
+<PlaceObject row="1" column="1">
+    <TextBlock width="6">
+        <Paragraph><Value>Text placed first</Value></Paragraph>
+    </TextBlock>
+</PlaceObject>
+<PlaceObject row="1" column="1" allocate="no" layer="behind">
+    <Box width="6" height="2" background-color="lightyellow"/>
+</PlaceObject>
+```
+
+Use it for decoration such as panels, tints and rules, not for content: an object placed behind moves earlier in the PDF, so in a tagged PDF it is also read before the text above it. In a [slate](../../advanced/slates), `layer="behind"` draws an object under the slate's other objects.
+
 ## Width and height
 
 How dimensions work depends on the object type:

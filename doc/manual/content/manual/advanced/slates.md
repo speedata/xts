@@ -59,6 +59,34 @@ By default a slate copies the page grid. A `<Grid>` child element (with the same
 
 Widths given in grid cells (such as `width="10"` above) use the slate's cell size, so the text block is 5&#8239;cm wide regardless of the page grid.
 
+## Placing at lengths and backgrounds
+
+Inside a slate, `column` and `row` can also be lengths. They are measured from the slate's top left corner, and the slate grows to hold the object, as it does for grid positions.
+
+An object placed with `allocate="no"` takes no room: it is drawn where it is placed, negative offsets included, but it does not make the slate larger or move the objects placed after it. That is the way to put a panel behind content whose size you only know once it is set:
+
+```xml
+<Slate name="card">
+    <Contents>
+        <PlaceObject column="4mm" row="4mm">
+            <TextBlock width="72mm">
+                <Paragraph><Value>The text is placed first. The panel is placed after it, with allocate="no" and layer="behind".</Value></Paragraph>
+            </TextBlock>
+        </PlaceObject>
+        <PlaceObject column="0mm" row="0mm" allocate="no" layer="behind">
+            <Box width="80mm" height="22mm" background-color="#dde6f0"/>
+        </PlaceObject>
+    </Contents>
+</Slate>
+
+<PlaceObject slate="card"/>
+```
+
+![A text with a tinted panel behind it](/manual/img/slate-background.png)
+<figcaption>The panel is placed after the text, but <code>layer="behind"</code> draws it underneath. Because of <code>allocate="no"</code> the slate is as large as the text with its offset, not as large as the panel.</figcaption>
+
+A slate draws its objects in the order they were placed, as a page does, so without `layer="behind"` the panel would cover the text. With `layer="behind"` an object is drawn under the slate's other objects.
+
 ## Why use slates?
 
 - **Independent cursor**: A slate works on its own copy of the page grid, so sketching content does not move the page cursor.
