@@ -39,6 +39,12 @@
     <entry version="0.1.3" date="2026-10-02">
       <en summary="Hyphenation is two to three times faster.">The hyphenation patterns are now matched once per word and language, so a word that appears again is hyphenated from a cache. The hyphenation points do not change.</en>
     </entry>
+    <entry version="0.1.3" date="2026-10-02">
+      <en summary="A table is moved by its margin-left.">A <tt>margin-left</tt> on a <tt>Table</tt> had no effect. The table is now moved to the right by it, with its borders, also when it is split across pages and its header is repeated.</en>
+    </entry>
+    <entry version="0.1.3" date="2026-10-01">
+      <en summary="A negative margin-left moves a paragraph in a table cell to the left.">A <tt>Paragraph</tt> in a <tt>Td</tt> with a negative <tt>margin-left</tt> was widened but stayed at the left edge of the cell, so its text ran out on the right. It now starts left of the cell's content edge by that amount, as in CSS.</en>
+    </entry>
     <entry version="0.1.3" date="2026-10-01">
       <en summary="New command Tab inserts a tab.">A <tt>&lt;Tab/&gt;</tt> in a <tt>Paragraph</tt> or another text command moves the text after it to the next stop of <tt>-bag-tab-stops</tt>, and without stops it advances by <tt>tab-size</tt>. Unlike a tab character in the text, which <tt>white-space: normal</tt> collapses to a space where no stops are set, it always stays a tab. The new manual page on tab stops shows a table of contents and a price list (#39).</en>
     </entry>

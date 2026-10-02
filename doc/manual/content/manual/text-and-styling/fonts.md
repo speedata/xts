@@ -108,8 +108,8 @@ OpenType fonts often include optional features like old-style figures, small cap
     .regular {
         font-feature-settings: "lnum", "tnum";
     }
-    .smcp {
-        font-feature-settings: "smcp";
+    .oldstyle {
+        font-feature-settings: "onum";
     }
 </StyleSheet>
 
@@ -119,16 +119,39 @@ OpenType fonts often include optional features like old-style figures, small cap
             <Paragraph class="regular">
                 <Value>Tabular figures: 1234567890</Value>
             </Paragraph>
-            <Paragraph class="smcp">
-                <Value>Small caps: 1234567890</Value>
+            <Paragraph class="oldstyle">
+                <Value>Old-style figures: 1234567890</Value>
             </Paragraph>
         </TextBlock>
     </PlaceObject>
 </Record>
 ```
 
-![opentype features](/manual/img/osfsmcp.png)
-<figcaption>Tabular figures (top) have equal width for column alignment. Small caps (bottom) are properly designed, not just shrunken capitals.</figcaption>
+![opentype features](/manual/img/opentype-features.png)
+<figcaption>Tabular figures (top) have equal width for column alignment. Old-style figures (bottom) have ascenders and descenders like lowercase letters.</figcaption>
+
+A feature only has an effect when the font has it. The built-in `serif` font has old-style figures, but no small caps, so `font-feature-settings: "smcp"` leaves its text unchanged.
+
+### Small caps
+
+For small caps, use `font-variant-caps` instead of the feature tag:
+
+```xml
+<StyleSheet>
+    .sc {
+        font-variant-caps: small-caps;
+    }
+</StyleSheet>
+```
+
+XTS uses the small caps of the font (`smcp`) when it has them. Otherwise it synthesizes them: every letter that changes when uppercased becomes its capital at 70% of the size, with the case rules of the language, so ß becomes SS. `font-synthesis-small-caps: none` switches the synthesis off, and the `font` shorthand accepts `small-caps` as well.
+
+![small caps](/manual/img/small-caps.png)
+<figcaption>The same line without and with <code>font-variant-caps: small-caps</code> in the built-in <code>serif</code> font, which has no small caps of its own, so they are synthesized.</figcaption>
+
+Synthesized small caps are capitals in the PDF, so a search or a copy of the text sees `SEBASTIAN` instead of `Sebastian`. Small caps from the font keep the original text.
+
+### Other features
 
 You can also set features inline:
 

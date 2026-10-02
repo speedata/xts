@@ -20,8 +20,8 @@ CSS properties supported by XTS for styling layout elements and HTML content. Le
 | `font-style` | `normal`, `italic`. `oblique` is not recognized | `font-style: italic;` |
 | `font-synthesis-style` | `auto`, `none`. `auto` slants a family's upright for an italic it lacks; the default is `none`, where the upright is used as it is | `font-synthesis-style: auto;` |
 | `font-synthesis` | `none`, or any of `weight`, `style`, `small-caps`, `position`. Only `style` and `small-caps` are read, as `font-synthesis-style` and `font-synthesis-small-caps` | `font-synthesis: style;` |
-| `font-synthesis-small-caps` | `auto`, `none`. `auto` (the default) sets small caps for a face without `smcp` as capitals at 70% of the size; `none` leaves the text as it is. Synthesised small caps are capitals in the PDF, so text extraction and search see `SMALL CAPS`, not `Small Caps`; a face with `smcp` keeps the original text | `font-synthesis-small-caps: none;` |
-| `font-variant-caps` | `normal`, `small-caps`. Inherited. The face's `smcp` feature when it has one, else synthesised (see `font-synthesis-small-caps`). Other values are read as `normal` | `font-variant-caps: small-caps;` |
+| `font-synthesis-small-caps` | `auto`, `none`. `auto` (the default) sets small caps for a face without `smcp` as capitals at 70% of the size; `none` leaves the text as it is. Synthesized small caps are capitals in the PDF, so text extraction and search see `SMALL CAPS`, not `Small Caps`; a face with `smcp` keeps the original text | `font-synthesis-small-caps: none;` |
+| `font-variant-caps` | `normal`, `small-caps`. Inherited. The face's `smcp` feature when it has one, else synthesized (see `font-synthesis-small-caps`). Other values are read as `normal` | `font-variant-caps: small-caps;` |
 | `font-variant` | `normal`, or values including `small-caps`. Only `small-caps` is read, as `font-variant-caps` | `font-variant: small-caps;` |
 | `font` | Shorthand: optional `font-style`, `small-caps` and `font-weight`, then the size with an optional `/line-height`, then the family. Style, caps, weight and line height reset to `normal` when omitted, as in CSS. Size and family are required | `font: italic bold 10pt/12pt serif;` |
 | `font-feature-settings` | Comma separated OpenType feature tags, each optionally followed by `on`, `off` or a number. `normal` removes all features | `font-feature-settings: "smcp", "onum";` |
@@ -165,9 +165,9 @@ Defines a font face, see [Fonts](/manual/text-and-styling/fonts). The descriptor
 | `font-feature-settings` | OpenType features switched on for this face, as on elements | `font-feature-settings: "onum";` |
 | `font-variation-settings` | Axis values of a variable font, as on elements | `font-variation-settings: "wght" 450;` |
 | `size-adjust` | Percentage that scales the glyphs of this face | `size-adjust: 95%;` |
-| `ascent-override` | `normal` or a percentage of the em, in place of the face's ascent when setting lines | `ascent-override: 107.91%;` |
-| `descent-override` | `normal` or a percentage of the em, in place of the face's descent when setting lines | `descent-override: 25.1%;` |
-| `line-gap-override` | `normal` or a percentage of the em, in place of the face's line gap when setting lines | `line-gap-override: 0%;` |
+| `ascent-override` | `normal` or a percentage of the em, in place of the face's ascent. Read only by a line model registered with `CSSBuilder.RegisterLineModel` (see `-bag-leading-model`); the built-in `half` and `trailing` models do not use it | `ascent-override: 107.91%;` |
+| `descent-override` | `normal` or a percentage of the em, in place of the face's descent. Read only by a line model registered with `CSSBuilder.RegisterLineModel` (see `-bag-leading-model`); the built-in `half` and `trailing` models do not use it | `descent-override: 25.1%;` |
+| `line-gap-override` | `normal` or a percentage of the em, in place of the face's line gap. Read only by a line model registered with `CSSBuilder.RegisterLineModel` (see `-bag-leading-model`); the built-in `half` and `trailing` models do not use it | `line-gap-override: 0%;` |
 
 ### @-bag-color
 

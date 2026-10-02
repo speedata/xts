@@ -107,12 +107,14 @@ Tables support full CSS styling:
 
 ```xml
 <StyleSheet>
-    table { font-family: sans; font-size: 10pt; }
+    table { font-family: sans; font-size: 10pt; border-collapse: collapse; }
     thead { font-weight: bold; background-color: #e0e0e0; }
     td { padding: 4pt 8pt; border-bottom: 0.5pt solid #ccc; }
     tr:nth-child(even) { background-color: #f8f8f8; }
 </StyleSheet>
 ```
+
+Tables follow the two border models of CSS. The default, `border-collapse: separate`, keeps the cells apart by `border-spacing` (2pt unless set), and every cell draws all of its borders, so backgrounds and lines show small gaps between the cells. `border-collapse: collapse` draws the border between two cells once, the wider one wins, and the cells touch. Use it for tables with ruled or shaded rows, as in the examples on this page.
 
 ### Cell alignment
 
@@ -198,7 +200,7 @@ Generate tables from XML data using `<ForAll>`:
 
 ```xml title="layout.xml"
 <StyleSheet>
-    table { font-family: sans; font-size: 10pt; }
+    table { font-family: sans; font-size: 10pt; border-collapse: collapse; }
     thead { font-weight: bold; background-color: #333; color: white; }
     td { padding: 4pt 8pt; border-bottom: 0.5pt solid #ddd; }
     .right { text-align: right; }
@@ -280,6 +282,8 @@ Or use `<Switch>/<Case>` inside cells for more complex logic:
     table { width: 100%; }
 </StyleSheet>
 ```
+
+A `margin-left` moves the table to the right, with its borders, also when it is split across pages.
 
 ## See also
 

@@ -1,0 +1,27 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+        xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+  <!-- Source of manual/img/opentype-features.png, see ../Readme.md -->
+  <PageFormat width="180mm" height="30mm"/>
+  <StyleSheet>
+    p {
+      font-family: serif;
+      font-size: 20pt;
+      line-height: 28pt;
+      margin: 0;
+    }
+    .regular {
+      font-feature-settings: "lnum", "tnum";
+    }
+    .oldstyle {
+      font-feature-settings: "onum";
+    }
+  </StyleSheet>
+  <Record match="data">
+    <PlaceObject column="8mm" row="4mm">
+      <TextBlock width="164mm">
+        <Paragraph class="regular"><Value>Tabular figures: 1234567890</Value></Paragraph>
+        <Paragraph class="oldstyle"><Value>Old-style figures: 1234567890</Value></Paragraph>
+      </TextBlock>
+    </PlaceObject>
+  </Record>
+</Layout>

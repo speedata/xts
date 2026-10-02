@@ -21,6 +21,10 @@ All user visible changes of XTS, newest first. The version at the top may not be
   With `border-collapse: collapse`, a vertical border between two columns was drawn as one segment per row, which some PDF viewers show with fine gaps between the rows. Where the rows agree on the border's width and color, it is now drawn as one line from top to bottom.
 - **Hyphenation is two to three times faster.**<br>
   The hyphenation patterns are now matched once per word and language, so a word that appears again is hyphenated from a cache. The hyphenation points do not change.
+- **A table is moved by its margin-left.**<br>
+  A `margin-left` on a `Table` had no effect. The table is now moved to the right by it, with its borders, also when it is split across pages and its header is repeated.
+- **A negative margin-left moves a paragraph in a table cell to the left.**<br>
+  A `Paragraph` in a `Td` with a negative `margin-left` was widened but stayed at the left edge of the cell, so its text ran out on the right. It now starts left of the cell's content edge by that amount, as in CSS.
 - **New command Tab inserts a tab.**<br>
   A `<Tab/>` in a `Paragraph` or another text command moves the text after it to the next stop of `-bag-tab-stops`, and without stops it advances by `tab-size`. Unlike a tab character in the text, which `white-space: normal` collapses to a space where no stops are set, it always stays a tab. The new manual page on tab stops shows a table of contents and a price list ([#39](https://github.com/speedata/xts/issues/39)).
 - **A Slate draws its objects in the order they were placed.**<br>
