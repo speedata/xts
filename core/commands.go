@@ -2925,7 +2925,12 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 
 	tableStyle := attValues.Style
 	if attValues.Stretch == "max" {
-		tableStyle = "width: 100%; " + tableStyle
+		// In a flow, 100% is the frame, not the width the table asks for.
+		width := "100%"
+		if flowTable && explicitWidth != 0 {
+			width = strconv.FormatFloat(explicitWidth.ToPT(), 'f', -1, 64) + "pt"
+		}
+		tableStyle = "width: " + width + "; " + tableStyle
 	}
 
 	tableNode := &html.Node{
@@ -2992,7 +2997,7 @@ func cmdTable(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	}
 	tableNode.AppendChild(tableBodyNode)
 	if flowTable {
-		if explicitWidth != 0 {
+		if explicitWidth != 0 && attValues.Stretch != "max" {
 			prependStyle(tableNode, fmt.Sprintf("width: %spt", strconv.FormatFloat(explicitWidth.ToPT(), 'f', -1, 64)))
 		}
 		return xpath.Sequence{tableNode}, nil

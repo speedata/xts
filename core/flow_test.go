@@ -111,3 +111,23 @@ func TestFlowNamesLeftOutChild(t *testing.T) {
 		}
 	}
 }
+
+// A table with stretch="max" and a width is that wide in a flow, as it is in
+// a PlaceObject, not as wide as the frame.
+func TestFlowTableStretchKeepsItsWidth(t *testing.T) {
+	root := renderDump(t, layoutHead+`
+  <SetGrid width="5mm" height="12pt"/>
+  <Record match="data">
+    <Flow>
+      <Table id="t" stretch="max" width="10"><Tr><Td><Paragraph><Value>A</Value></Paragraph></Td></Tr></Table>
+    </Flow>
+  </Record>
+</Layout>`)
+	n, _, ok := root.find("t", "")
+	if !ok {
+		t.Fatal("no table t in the dump")
+	}
+	if wd := n.attr("width"); wd != "141.73" {
+		t.Errorf("the table is %spt wide, want 141.73 (10 columns of 5mm)", wd)
+	}
+}
