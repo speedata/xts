@@ -46,6 +46,16 @@ func (n dumpNode) find(id, parent string) (dumpNode, string, bool) {
 // renderDump typesets layout and returns its geometry dump.
 func renderDump(t *testing.T, layout string) dumpNode {
 	t.Helper()
+	root, err := runDump(t, layout)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return root
+}
+
+// runDump is renderDump that returns the error of RunXTS.
+func runDump(t *testing.T, layout string) (dumpNode, error) {
+	t.Helper()
 	jobname := filepath.Join(t.TempDir(), "out")
 	out, err := os.Create(jobname + ".pdf")
 	if err != nil {
@@ -62,13 +72,13 @@ func renderDump(t *testing.T, layout string) dumpNode {
 		OutFilename: out.Name(),
 	})
 	if err != nil {
-		t.Fatal(err)
+		return dumpNode{}, err
 	}
 	var root dumpNode
 	if err := xml.Unmarshal(dump.Bytes(), &root); err != nil {
 		t.Fatal(err)
 	}
-	return root
+	return root, nil
 }
 
 // dumpBox finds the box with the given id in the dump and returns its position
@@ -230,5 +240,33 @@ func TestSlateDrawsInPlacementOrder(t *testing.T) {
 	// The box takes no room, so the text decides the slate's height.
 	if !near(sht, sy-ty+tht) {
 		t.Errorf("slate height %.2f, want %.2f", sht, sy-ty+tht)
+	}
+}
+
+// A run does not see the Records of an earlier run's layout (#51).
+func TestProbeStaleRecord(t *testing.T) {
+	renderDump(t, `<Layout xmlns="urn:speedata.de/2021/xts/en">
+  <Record match="data"><PlaceObject id="a"><TextBlock width="5"><Paragraph><Value>A</Value></Paragraph></TextBlock></PlaceObject></Record>
+</Layout>`)
+	root, err := runDump(t, `<Layout xmlns="urn:speedata.de/2021/xts/en">
+  <Record match="other"/>
+</Layout>`)
+	if _, _, ok := root.find("a", ""); ok {
+		t.Errorf("run 2 placed box a from run 1's layout")
+	}
+	if err == nil || !strings.Contains(err.Error(), "cannot find <Record> for root element data") {
+		t.Errorf("run 2: got error %v, want the missing Record for data", err)
+	}
+}
+
+// Each run numbers its destinations from 0, as a fresh process does.
+func TestRunsNumberDestinationsFromZero(t *testing.T) {
+	for run := 1; run <= 2; run++ {
+		xd := newXTSDocument()
+		for want := range 2 {
+			if got := xd.getNumDest().Value; got != want {
+				t.Errorf("run %d: destination number %v, want %d", run, got, want)
+			}
+		}
 	}
 }

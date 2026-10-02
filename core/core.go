@@ -23,9 +23,8 @@ import (
 
 var (
 	// XPath escape sequence for attributes
-	attributeValueRE   = regexp.MustCompile(`\{(.*?)\}`)
-	oneCM              = bag.MustSP("1cm")
-	destinationNumbers = make(chan int)
+	attributeValueRE = regexp.MustCompile(`\{(.*?)\}`)
+	oneCM            = bag.MustSP("1cm")
 	// Version is a semantic version
 	Version string
 )
@@ -38,18 +37,6 @@ const (
 	// LevelNotice is used for messages from Message
 	LevelNotice = slog.Level(2)
 )
-
-func init() {
-	go genIntegerSequence(destinationNumbers)
-}
-
-func genIntegerSequence(ids chan int) {
-	i := int(0)
-	for {
-		ids <- i
-		i++
-	}
-}
 
 type xtsDocument struct {
 	cfg                *XTSConfig
@@ -83,6 +70,11 @@ type xtsDocument struct {
 	valueContext bool
 	// for “global” variables
 	store map[any]any
+	// records are the <Record> commands of this run's layout.
+	records         []recordEntry
+	inSetupPage     bool
+	nextDestination int
+	statCache       map[string]string
 }
 
 func newXTSDocument() *xtsDocument {
@@ -96,8 +88,9 @@ func newXTSDocument() *xtsDocument {
 		templates:         make(map[string]*goxml.Element),
 		store:             make(map[any]any),
 		marker:            make(mapmarker),
+		statCache:         make(map[string]string),
 	}
-	xd.layoutcss.FileFinder = FindFile
+	xd.layoutcss.FileFinder = xd.findFile
 	return xd
 }
 
@@ -146,8 +139,6 @@ func parseVersionParts(s string) ([]int, error) {
 	return parts, nil
 }
 
-var inSetupPage bool
-
 func (xd *xtsDocument) setupPage() {
 	if xd.currentSlate != nil {
 		return
@@ -155,10 +146,10 @@ func (xd *xtsDocument) setupPage() {
 	if xd.currentPage != nil {
 		return
 	}
-	if inSetupPage {
+	if xd.inSetupPage {
 		return
 	}
-	inSetupPage = true
+	xd.inSetupPage = true
 	p, atPageCreation, err := newPage(xd)
 	if err != nil {
 		slog.Error(err.Error())
@@ -166,7 +157,7 @@ func (xd *xtsDocument) setupPage() {
 	slog.Info("Page created", "wd", p.pagegrid.nx, "ht", p.pagegrid.ny, "page", p.pagenumber, "type", p.pagetype.name)
 	xd.pages = append(xd.pages, p)
 	xd.currentPage = p
-	inSetupPage = false
+	xd.inSetupPage = false
 	if atPageCreation != nil {
 		atPageCreation()
 	}
@@ -181,8 +172,10 @@ type PublishingInfo struct {
 
 // XTSConfig is the configuration file for PDF generation.
 type XTSConfig struct {
-	Datafile     io.Reader
-	DumpFile     io.Writer
+	Datafile io.Reader
+	DumpFile io.Writer
+	// FindFile resolves the file names in the layout. When it is nil, RunXTS
+	// uses FindFile and keeps the paths found on the file system for the run.
 	FindFile     func(string) (string, error)
 	Jobname      string
 	Layoutfile   io.Reader
@@ -206,7 +199,6 @@ type XTSConfig struct {
 
 // RunXTS is the entry point
 func RunXTS(cfg *XTSConfig) error {
-	resetStatCache()
 	var err error
 	var layoutxml *goxml.XMLDocument
 	slog.Info(fmt.Sprintf("XTS start version %s", Version))
@@ -327,7 +319,7 @@ func RunXTS(cfg *XTSConfig) error {
 	}
 
 	d.data.Ctx.Root()
-	startDispatcher := findRecordByName(rootname)
+	startDispatcher := d.findRecordByName(rootname)
 	if startDispatcher == nil {
 		return fmt.Errorf("cannot find <Record> for root element %s", rootname)
 	}
