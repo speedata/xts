@@ -1,0 +1,28 @@
+<data>
+  <chapter n="1" title="Getting started">
+    <para n="1"/>
+    <para n="2"/>
+    <para n="3"/>
+    <para n="4"/>
+    <para n="5"/>
+  </chapter>
+  <chapter n="2" title="Placing objects">
+    <para n="1"/>
+    <para n="2"/>
+    <para n="3"/>
+    <para n="4"/>
+    <para n="5"/>
+    <para n="6"/>
+  </chapter>
+  <chapter n="3" title="Flowing text">
+    <para n="1"/>
+    <para n="2"/>
+  </chapter>
+  <chapter n="4" title="Tables">
+    <para n="1"/>
+    <para n="2"/>
+    <para n="3"/>
+    <para n="4"/>
+    <para n="5"/>
+  </chapter>
+</data>

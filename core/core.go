@@ -73,6 +73,9 @@ type xtsDocument struct {
 	// tables become blocks of it.
 	inFlow     bool
 	tableDepth int
+	// flowDepth counts the commands of a Flow's children that build a
+	// block, around whose children a Mark has no page of its own.
+	flowDepth int
 	// flowOrigin is the command each node of a Flow's children came from,
 	// to name it when the node cannot be part of the flow.
 	flowOrigin map[node.Node]*goxml.Element

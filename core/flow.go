@@ -3,9 +3,13 @@ package core
 import (
 	"fmt"
 	"log/slog"
+	"maps"
+	"slices"
+	"strings"
 
 	"github.com/boxesandglue/boxesandglue/backend/bag"
 	"github.com/boxesandglue/boxesandglue/backend/node"
+	"github.com/boxesandglue/boxesandglue/frontend"
 	"github.com/boxesandglue/htmlbag"
 	"github.com/speedata/goxml"
 	xpath "github.com/speedata/goxpath"
@@ -42,6 +46,22 @@ type flowRegions struct {
 	// ends on, and endMargin the margin below it.
 	endPage        *page
 	end, endMargin bag.ScaledPoint
+	// marks holds the Mark and Bookmark nodes waiting for the flow child of
+	// that Fragment.Index to begin.
+	marks map[int][]*node.StartStop
+}
+
+// placeMarks ships the mark and bookmark nodes ss out at y, measured from the
+// page top, and x on the current page, so they take its number and position.
+func (r *flowRegions) placeMarks(ss []*node.StartStop, x, y bag.ScaledPoint) {
+	for _, s := range ss {
+		if s.Attributes != nil {
+			if _, ok := s.Attributes["page"]; ok {
+				s.Attributes["page"] = r.xd.currentPage
+			}
+		}
+		r.xd.currentPage.outputAbsolute(x, y, node.Vpack(s))
+	}
 }
 
 // absRow is the page row of the frame row row.
@@ -202,6 +222,12 @@ func (r *flowRegions) startTop() bag.ScaledPoint {
 func (r *flowRegions) Filled(f htmlbag.Filled) error {
 	xd := r.xd
 	g := xd.currentGrid
+	for _, fr := range f.Fragments {
+		if ss, ok := r.marks[fr.Index]; ok && !fr.Continued {
+			r.placeMarks(ss, r.left, r.top+fr.Top)
+			delete(r.marks, fr.Index)
+		}
+	}
 	if f.Box != nil && f.Used > 0 {
 		xd.currentPage.outputAbsolute(r.left, r.top, f.Box)
 		ht := r.top - g.posY(r.row, r.area) + f.Used
@@ -255,14 +281,30 @@ func cmdFlow(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 		return nil, err
 	}
 	body := &html.Node{Data: "body", Type: html.ElementNode}
+	// pending are the marks and bookmarks waiting for the next child, before
+	// holds them by the child they wait for.
+	var pending []*node.StartStop
+	before := map[*html.Node][]*node.StartStop{}
+	appendChild := func(n *html.Node) {
+		if len(pending) > 0 {
+			before[n] = append(before[n], pending...)
+			pending = nil
+		}
+		body.AppendChild(n)
+	}
 	for _, itm := range seq {
 		switch t := itm.(type) {
 		case *html.Node:
-			body.AppendChild(t)
+			appendChild(t)
 		case *goxml.Element:
-			body.AppendChild(goxmlToHTMLNode(t))
+			appendChild(goxmlToHTMLNode(t))
 		case goxml.Element:
-			body.AppendChild(goxmlToHTMLNode(&t))
+			appendChild(goxmlToHTMLNode(&t))
+		case marker:
+			pending = append(pending, xd.markDest(t))
+		case *node.StartStop:
+			// From an Action with a Mark, or a Bookmark.
+			pending = append(pending, t)
 		default:
 			if n, ok := itm.(node.Node); ok && origin[n] != nil {
 				elt := origin[n]
@@ -277,12 +319,32 @@ func cmdFlow(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 	root.AppendChild(&html.Node{Data: "head", Type: html.ElementNode})
 	root.AppendChild(body)
 	doc.AppendChild(root)
+	trailing := pending
 	te, err := xd.cssbuilder.ParseHTMLFromNode(doc)
 	if err != nil {
 		return nil, newTypesettingError("Flow", layoutelt.Line, err.Error())
 	}
 
 	r := &flowRegions{xd: xd, name: attValues.Area, area: area, next: area.CurrentRow()}
+	if len(before) > 0 {
+		r.marks = map[int][]*node.StartStop{}
+		index := flowChildIndices(body, te)
+		for c := body.FirstChild; c != nil; c = c.NextSibling {
+			if ss, ok := before[c]; ok {
+				if i, ok := index[c]; ok {
+					r.marks[i] = append(r.marks[i], ss...)
+				} else {
+					// A child that makes no block, such as an empty one: the
+					// marks wait for the next one.
+					if n := c.NextSibling; n != nil {
+						before[n] = append(ss, before[n]...)
+					} else {
+						trailing = append(ss, trailing...)
+					}
+				}
+			}
+		}
+	}
 	if area.CurrentCol() != 1 {
 		// The row is taken in part already.
 		r.next++
@@ -292,6 +354,21 @@ func cmdFlow(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 	}
 	if err := xd.cssbuilder.FlowText(te, r); err != nil {
 		return nil, newTypesettingError("Flow", layoutelt.Line, err.Error())
+	}
+
+	// Marks after the last child, or before a child that never began, take
+	// the page where the flow ends.
+	var rest []*node.StartStop
+	for _, i := range slices.Sorted(maps.Keys(r.marks)) {
+		rest = append(rest, r.marks[i]...)
+	}
+	rest = append(rest, trailing...)
+	if len(rest) > 0 {
+		end := r.end
+		if !r.started {
+			end = r.startTop()
+		}
+		r.placeMarks(rest, xd.currentGrid.posX(1, r.area), end)
 	}
 
 	if r.endPage == xd.currentPage {
@@ -316,4 +393,95 @@ func cmdFlow(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 		xd.data.SetVariable(attValues.Bottom, xpath.Sequence{(end - xd.currentGrid.marginTop).ToPT()})
 	}
 	return nil, nil
+}
+
+// flowChildIndices maps the children of body to the Fragment.Index of the flow
+// child each one becomes in te, the Text htmlbag made of the document. An
+// element htmlbag sets as a block is a child of its own; text and inline
+// elements between blocks make one anonymous child together. A child that
+// makes no block, such as an empty paragraph, has no index.
+func flowChildIndices(body *html.Node, te *frontend.Text) map[*html.Node]int {
+	// The body Text, inside the html one.
+	for range 2 {
+		if len(te.Items) != 1 {
+			break
+		}
+		inner, ok := te.Items[0].(*frontend.Text)
+		if !ok {
+			break
+		}
+		te = inner
+	}
+	// htmlbag counts the body's Texts, but not the whitespace between blocks.
+	type item struct {
+		tag   string
+		index int
+	}
+	var items []item
+	for _, itm := range te.Items {
+		t, ok := itm.(*frontend.Text)
+		if !ok {
+			continue
+		}
+		tag, _ := t.Settings[frontend.SettingDebug].(string)
+		if tag == "" && whitespaceText(t) {
+			continue
+		}
+		items = append(items, item{tag, len(items)})
+	}
+	index := map[*html.Node]int{}
+	j, inRun := 0, false
+	for c := body.FirstChild; c != nil && j <= len(items); c = c.NextSibling {
+		if c.Type == html.ElementNode && j < len(items) && items[j].tag == c.Data {
+			index[c] = items[j].index
+			j++
+			inRun = false
+			continue
+		}
+		if c.Type == html.TextNode && strings.TrimSpace(c.Data) == "" {
+			continue
+		}
+		if c.Type == html.ElementNode && isBlockElement(c.Data) {
+			// A block htmlbag dropped.
+			inRun = false
+			continue
+		}
+		if !inRun {
+			if j >= len(items) || items[j].tag != "" {
+				continue
+			}
+			inRun = true
+			j++
+		}
+		index[c] = items[j-1].index
+	}
+	return index
+}
+
+// whitespaceText reports whether t holds nothing but whitespace.
+func whitespaceText(t *frontend.Text) bool {
+	for _, itm := range t.Items {
+		switch v := itm.(type) {
+		case string:
+			if strings.TrimSpace(v) != "" {
+				return false
+			}
+		case *frontend.Text:
+			if !whitespaceText(v) {
+				return false
+			}
+		default:
+			return false
+		}
+	}
+	return true
+}
+
+// isBlockElement reports whether an element of a Flow's children is a block.
+func isBlockElement(tag string) bool {
+	switch tag {
+	case "p", "div", "table", "ul", "ol", "li", "h1", "h2", "h3", "h4", "h5", "h6", "pre", "blockquote", "section", "article", "hr", "dl", "figure":
+		return true
+	}
+	return false
 }
