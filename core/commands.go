@@ -189,10 +189,24 @@ func ignoreFunction(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 // are dispatched, before the flow is laid out.
 var flowRejects = map[string]bool{
 	"ClearPage":   true,
-	"Mark":        true,
 	"NextFrame":   true,
 	"NextRow":     true,
 	"PlaceObject": true,
+}
+
+// flowTransparent reports whether a command leaves a Flow's children at the
+// level of the flow's blocks: the control flow commands of cmdKinds, Action
+// and CallTemplate. A Mark or a Bookmark is only possible there, where it
+// takes the page of the block that follows it. SetVariable, Param and
+// Function collect a value instead, which a Mark would never leave.
+func flowTransparent(name string) bool {
+	switch name {
+	case "Action", "CallTemplate":
+		return true
+	case "SetVariable", "Param", "Function":
+		return false
+	}
+	return kindOf(name) == kindControlFlow
 }
 
 func dispatch(xd *xtsDocument, layoutelement *goxml.Element) (xpath.Sequence, error) {
@@ -206,8 +220,18 @@ func dispatch(xd *xtsDocument, layoutelement *goxml.Element) (xpath.Sequence, er
 				if xd.inFlow && flowRejects[elt.Name] {
 					return nil, newTypesettingError(elt.Name, elt.Line, "not allowed inside a Flow")
 				}
+				if xd.inFlow && xd.flowDepth > 0 && (elt.Name == "Mark" || elt.Name == "Bookmark") {
+					return nil, newTypesettingError(elt.Name, elt.Line, "not allowed inside a block of a Flow, only between its blocks")
+				}
 				slog.Debug("Command", "cmd", elt.Name, "line", elt.Line)
+				inBlock := xd.inFlow && !flowTransparent(elt.Name)
+				if inBlock {
+					xd.flowDepth++
+				}
 				seq, err := callCommand(xd, f, elt)
+				if inBlock {
+					xd.flowDepth--
+				}
 				if err != nil {
 					return nil, err
 				}
@@ -281,32 +305,34 @@ func cmdAction(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 	}
 	var ret xpath.Sequence
 	for _, itm := range seq {
-		if m, ok := itm.(marker); !ok {
-			continue
-		} else {
-			var dest *node.StartStop
-			if m.pdftarget {
-				dest = getNameDest(m.name)
-			} else {
-				dest = node.NewStartStop()
-			}
-
-			dest.Attributes = node.H{
-				"page": xd.currentPage,
-			}
-			dest.ShipoutCallback = func(n node.Node) string {
-				startStop := n.(*node.StartStop)
-				cp := startStop.Attributes["page"].(*page)
-				m.pagenumber = cp.pagenumber
-				m.id = cp.nextMarkerID()
-				xd.marker[m.name] = m
-				return ""
-			}
-
-			ret = append(ret, dest)
+		if m, ok := itm.(marker); ok {
+			ret = append(ret, xd.markDest(m))
 		}
 	}
 	return ret, nil
+}
+
+// markDest is the node that sets the mark m to the page it is shipped out
+// on, and with pdftarget is a named destination there.
+func (xd *xtsDocument) markDest(m marker) *node.StartStop {
+	var dest *node.StartStop
+	if m.pdftarget {
+		dest = getNameDest(m.name)
+	} else {
+		dest = node.NewStartStop()
+	}
+	dest.Attributes = node.H{
+		"page": xd.currentPage,
+	}
+	dest.ShipoutCallback = func(n node.Node) string {
+		startStop := n.(*node.StartStop)
+		cp := startStop.Attributes["page"].(*page)
+		m.pagenumber = cp.pagenumber
+		m.id = cp.nextMarkerID()
+		xd.marker[m.name] = m
+		return ""
+	}
+	return dest
 }
 
 func cmdAttribute(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {

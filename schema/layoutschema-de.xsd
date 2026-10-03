@@ -572,12 +572,16 @@
       Der Fluss beginnt in der aktuellen Zeile des Bereichs und füllt die freien Zeilen jedes Rahmens: Zeilen mit vorher platzierten Objekten werden übersprungen. Die Blöcke werden nicht auf das Raster gerundet; die Zeilen, in die sie hineinreichen, werden belegt. Ein freier Bereich beginnt nicht in der nächsten ganzen Zeile, sondern genau am unteren Rand der Objekte, die in der Zeile darüber enden, sodass der Beginn des Textes nicht von der Zeilenhöhe abhängt. Ein PlaceObject nach dem Fluss beginnt in der nächsten ganzen Zeile. Ein Flow, der direkt auf einen anderen folgt, ohne dass dazwischen etwas platziert wird, setzt genau dort fort, wo dieser endete, wobei dessen letzter Abstand mit dem des ersten Blocks zusammenfällt, und ebenso jeder Rahmen seines Bereichs, der auf derselben Seite von dort an frei ist.
       Jedes Kindelement mit einer id behält sie, auch wenn es über Rahmen und Seiten umbrochen wird: Jeder Teil erscheint in --dumpoutput mit seiner Seite und Position.
       Ein TextBlock, ein Image oder eine Box kann noch nicht Teil eines Flusses sein und wird mit einer Warnung ausgelassen. In einem Slate ist ein Fluss nicht möglich.
-      Die Kindelemente werden gelesen, bevor der Fluss gesetzt wird. Ein Befehl, der sofort auf die Seite wirkt, PlaceObject, ClearPage, NextFrame, NextRow oder Mark, ist in einem Fluss daher ein Fehler. Ein erzwungener Umbruch geht über CSS, etwa break-before: page. CallTemplate funktioniert wie überall.</xs:documentation>
+      Die Kindelemente werden gelesen, bevor der Fluss gesetzt wird. Ein Befehl, der sofort auf die Seite wirkt, PlaceObject, ClearPage, NextFrame oder NextRow, ist in einem Fluss daher ein Fehler. Ein erzwungener Umbruch geht über CSS, etwa break-before: page. CallTemplate funktioniert wie überall.
+      Ein Mark zwischen den Blöcken eines Flusses, auch in einer Action, markiert die Seite des folgenden Blocks, wo immer dieser landet; nach dem letzten Block die Seite, auf der der Fluss endet. Mit pdftarget ist er ein benanntes Sprungziel am oberen Rand dieses Blocks. Ein Bookmark zwischen den Blöcken zeigt auf den oberen Rand des folgenden Blocks. Innerhalb eines Blocks, etwa eines Paragraph, sind beide vorerst ein Fehler.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="en:Action"></xs:element>
+        <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
+        <xs:element ref="en:Mark"></xs:element>
         <xs:element ref="en:Ol"></xs:element>
         <xs:element ref="en:Paragraph"></xs:element>
         <xs:element ref="en:Switch"></xs:element>
