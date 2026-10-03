@@ -9,8 +9,10 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
-## 0.1.4 (2026-10-02)
+## 0.1.4 (2026-10-04)
 
+- **A registered line model gets the paragraph's font.**<br>
+  A line model registered through `XTSConfig.LineModels` gets the paragraph's own font in `htmlbag.LineModelStyles.Font`, with the face, size and vertical metrics its glyphs are set in, so it can give a line without glyphs, such as the one between two `Br`, the height of the paragraph's font (CSS 2.1 §10.8.1).
 - **PlaceObject keeps a table whole; a table that breaks goes into a Flow.**<br>
   A table placed with `PlaceObject` was split across frames and pages. It is now kept whole, as any other object: when it does not fit below what is in the frame, it moves to the next frame or page as one piece, and a table taller than every frame of its area is an error that names the `PlaceObject` and points to `Flow`. A table that should break goes into a `<Flow>`, which breaks it between rows with its head and foot repeated and keeps the rows a `rowspan` joins together. This changes layouts that relied on the split ([#47](https://github.com/speedata/xts/issues/47)).
 - **New command Flow pours paragraphs and tables into an area, page after page.**<br>

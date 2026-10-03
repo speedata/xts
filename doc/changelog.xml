@@ -24,6 +24,9 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
+    <entry version="0.1.4" date="2026-10-04">
+      <en summary="A registered line model gets the paragraph's font.">A line model registered through <tt>XTSConfig.LineModels</tt> gets the paragraph's own font in <tt>htmlbag.LineModelStyles.Font</tt>, with the face, size and vertical metrics its glyphs are set in, so it can give a line without glyphs, such as the one between two <tt>Br</tt>, the height of the paragraph's font (CSS 2.1 §10.8.1).</en>
+    </entry>
     <entry version="0.1.4" date="2026-10-02">
       <en summary="PlaceObject keeps a table whole; a table that breaks goes into a Flow.">A table placed with <tt>PlaceObject</tt> was split across frames and pages. It is now kept whole, as any other object: when it does not fit below what is in the frame, it moves to the next frame or page as one piece, and a table taller than every frame of its area is an error that names the <tt>PlaceObject</tt> and points to <tt>Flow</tt>. A table that should break goes into a <tt>&lt;Flow&gt;</tt>, which breaks it between rows with its head and foot repeated and keeps the rows a <tt>rowspan</tt> joins together. This changes layouts that relied on the split (#47).</en>
     </entry>
