@@ -1,0 +1,41 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+
+    <!-- PlaceObject keeps a table whole. The table does not fit below the
+         grey box, so it moves to page 2 as one object, its head with it,
+         instead of breaking. A table that may break goes into a Flow (see
+         tablesplit). -->
+
+    <PageFormat width="105mm" height="148mm"/>
+    <SetGrid width="5mm" height="12pt"/>
+    <StyleSheet>
+        td { border: 0.5pt solid black; padding: 1pt 2pt }
+    </StyleSheet>
+    <Record match="data">
+        <PlaceObject>
+            <Box width="17" height="20" backgroundcolor="lightgray"/>
+        </PlaceObject>
+        <PlaceObject>
+            <Table width="10" stretch="max">
+                <TableHead>
+                    <Tr><Td><Paragraph><Value>Head A</Value></Paragraph></Td><Td><Paragraph><Value>Head B</Value></Paragraph></Td></Tr>
+                </TableHead>
+                <Tr><Td><Paragraph><Value>row 1</Value></Paragraph></Td><Td><Paragraph><Value>value 1</Value></Paragraph></Td></Tr>
+                <Tr><Td><Paragraph><Value>row 2</Value></Paragraph></Td><Td><Paragraph><Value>value 2</Value></Paragraph></Td></Tr>
+                <Tr><Td><Paragraph><Value>row 3</Value></Paragraph></Td><Td><Paragraph><Value>value 3</Value></Paragraph></Td></Tr>
+                <Tr><Td><Paragraph><Value>row 4</Value></Paragraph></Td><Td><Paragraph><Value>value 4</Value></Paragraph></Td></Tr>
+                <Tr><Td><Paragraph><Value>row 5</Value></Paragraph></Td><Td><Paragraph><Value>value 5</Value></Paragraph></Td></Tr>
+                <Tr><Td><Paragraph><Value>row 6</Value></Paragraph></Td><Td><Paragraph><Value>value 6</Value></Paragraph></Td></Tr>
+                <Tr><Td><Paragraph><Value>row 7</Value></Paragraph></Td><Td><Paragraph><Value>value 7</Value></Paragraph></Td></Tr>
+                <Tr><Td><Paragraph><Value>row 8</Value></Paragraph></Td><Td><Paragraph><Value>value 8</Value></Paragraph></Td></Tr>
+                <Tr><Td><Paragraph><Value>row 9</Value></Paragraph></Td><Td><Paragraph><Value>value 9</Value></Paragraph></Td></Tr>
+                <Tr><Td><Paragraph><Value>row 10</Value></Paragraph></Td><Td><Paragraph><Value>value 10</Value></Paragraph></Td></Tr>
+                <Tr><Td><Paragraph><Value>row 11</Value></Paragraph></Td><Td><Paragraph><Value>value 11</Value></Paragraph></Td></Tr>
+                <Tr><Td><Paragraph><Value>row 12</Value></Paragraph></Td><Td><Paragraph><Value>value 12</Value></Paragraph></Td></Tr>
+                <Tr><Td><Paragraph><Value>row 13</Value></Paragraph></Td><Td><Paragraph><Value>value 13</Value></Paragraph></Td></Tr>
+                <Tr><Td><Paragraph><Value>row 14</Value></Paragraph></Td><Td><Paragraph><Value>value 14</Value></Paragraph></Td></Tr>
+                <Tr><Td><Paragraph><Value>row 15</Value></Paragraph></Td><Td><Paragraph><Value>value 15</Value></Paragraph></Td></Tr>
+            </Table>
+        </PlaceObject>
+    </Record>
+</Layout>

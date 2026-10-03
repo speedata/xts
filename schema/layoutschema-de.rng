@@ -2679,7 +2679,8 @@
     </define>
     <define name="e_Table">
         <element name="Table">
-            <a:documentation>Erzeugt eine Tabelle, die in etwa dem HTML Tabellenmodell entspricht.</a:documentation>
+            <a:documentation>Erzeugt eine Tabelle, die in etwa dem HTML Tabellenmodell entspricht.
+      In einem Flow wird eine Tabelle zwischen Zeilen über Rahmen und Seiten umbrochen, wobei TableHead und TableFoot wiederholt werden. Eine mit PlaceObject platzierte Tabelle bleibt ganz: Passt sie nicht, kommt sie in den nächsten Rahmen oder auf die nächste Seite, und eine Tabelle, die höher ist als jeder Rahmen ihres Bereichs, ist ein Fehler.</a:documentation>
             <lsp:doc href="https://doc.speedata.de/xts/reference/commands/table/"></lsp:doc>
             <interleave>
                 <group>

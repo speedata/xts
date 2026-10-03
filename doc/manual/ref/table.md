@@ -4,6 +4,8 @@
 
 Create a table that is similar to the HTML table model.
 
+In a [Flow](../flow), a table breaks between rows across frames and pages, with its [TableHead](../tablehead) and [TableFoot](../tablefoot) repeated. A table placed with [PlaceObject](../placeobject) is kept whole: it moves to the next frame or page when it does not fit, and one taller than every frame of its area is an error.
+
 
 
 ##  Child elements

@@ -8,30 +8,33 @@ linktitle: Multi-Page Content
 
 ## Tables across pages
 
-A table breaks across frames and pages. Its rows are laid out down the frame,
-and when the next row does not fit, the table continues in the next frame of
-the area, or on a new page once the frames are used up. The rows of a
-`<TableHead>` are repeated at the top of every continuation:
+A table in a `<Flow>` breaks across frames and pages. Its rows are laid out
+down the frame, and when the next row does not fit, the table continues in the
+next frame of the area, or on a new page once the frames are used up. The rows
+of a `<TableHead>` are repeated at the top of every continuation:
 
 ```xml
-<Table>
-    <TableHead>
-        <Tr><Td><Paragraph><Value>Header</Value></Paragraph></Td></Tr>
-    </TableHead>
-    <!-- Hundreds of rows... they'll flow to new frames and pages automatically -->
-</Table>
+<Flow>
+    <Table>
+        <TableHead>
+            <Tr><Td><Paragraph><Value>Header</Value></Paragraph></Td></Tr>
+        </TableHead>
+        <!-- Hundreds of rows... they'll flow to new frames and pages automatically -->
+    </Table>
+</Flow>
 ```
 
 A `<TableFoot>` works the other way around: its rows are placed at the end of
 the table, and when the table breaks, they are repeated at the bottom of every
-fragment.
+fragment. Rows that a cell with `rowspan` joins go to the next frame together.
 
-The table has to be placed on the grid, which is the default. A table placed
-at an absolute position (`<PlaceObject column="2cm" row="5cm">`) is put where
-it was asked for and is not broken up.
+A table placed with `<PlaceObject>` is kept whole, like any other object: if it
+does not fit below what is already in the frame, it moves to the next frame or
+page as one piece. A table taller than every frame of its area cannot be placed
+whole and is an error; put it into a `<Flow>` to let it break.
 
 Individual table cells are *never* split -- each cell is rendered as a single
-box. If a row doesn't fit on the current page, it moves to the next one. A row
+box. If a row doesn't fit in the current frame, it moves to the next one. A row
 taller than an empty frame is placed and allowed to overflow.
 
 ## Page breaks

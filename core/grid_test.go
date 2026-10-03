@@ -35,7 +35,7 @@ func TestAdvanceToFitPassesOverAFullFrame(t *testing.T) {
 	// Something placed earlier covers the top four rows of the middle frame.
 	fill(xd.currentGrid, 7, 11, 1, 4)
 
-	got, row := xd.advanceToFit(a, 5, 3, 3, 1)
+	got, row := xd.advanceToFit(a, 5, 3, 1)
 	if got != a {
 		t.Fatalf("got another area %v, want the same one", got)
 	}
@@ -44,16 +44,9 @@ func TestAdvanceToFitPassesOverAFullFrame(t *testing.T) {
 	}
 
 	a.currentFrame = 0
-	got, row = xd.advanceToFit(a, 5, 1, 1, 1)
+	got, row = xd.advanceToFit(a, 5, 1, 1)
 	if got.currentFrame != 1 || row != 5 {
 		t.Errorf("frame %d row %d, want frame 1 row 5, the first free row below what is there", got.currentFrame, row)
-	}
-
-	// A table the splitter continues needs one free row to start in.
-	a.currentFrame = 0
-	got, row = xd.advanceToFit(a, 5, 3, 1, 1)
-	if got.currentFrame != 1 || row != 5 {
-		t.Errorf("splittable: frame %d row %d, want frame 1 row 5", got.currentFrame, row)
 	}
 }
 
@@ -62,7 +55,7 @@ func TestAdvanceToFitPassesOverAFullFrame(t *testing.T) {
 // rather than skip them all and leave the page empty.
 func TestAdvanceToFitTakesAFreeFrameForAnOversizedObject(t *testing.T) {
 	xd, a := threeFrames(5, 5, 5)
-	got, row := xd.advanceToFit(a, 5, 15, 15, 1)
+	got, row := xd.advanceToFit(a, 5, 15, 1)
 	if got.currentFrame != 1 || row != 1 {
 		t.Errorf("frame %d row %d, want frame 1 row 1", got.currentFrame, row)
 	}
