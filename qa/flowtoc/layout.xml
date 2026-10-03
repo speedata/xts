@@ -1,0 +1,34 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+
+    <!-- A table of contents from marks inside a Flow. Each chapter starts
+         with a Mark before its heading, which marks the page the heading
+         lands on: chapter 2 moves on to page 2 because its heading is kept
+         with its first lines, chapter 4 because of break-before: page.
+         The contents on page 1 read the marks of the previous run, so the
+         case runs twice (xts.cfg). -->
+
+    <PageFormat width="105mm" height="148mm"/>
+    <SetGrid width="5mm" height="12pt"/>
+    <StyleSheet>
+        p { margin: 0 0 4pt 0; font-size: 10pt; line-height: 13pt }
+        .toc { -bag-tab-stops: 100% end leader(dotted); }
+        .head { font-weight: bold; margin-top: 6pt; break-after: avoid }
+        .newpage { break-before: page }
+    </StyleSheet>
+    <Record match="data">
+        <Flow>
+            <Paragraph class="head"><Value>Contents</Value></Paragraph>
+            <ForAll select="chapter">
+                <Paragraph class="toc"><Value select="concat(@n, ' ', @title)"/><Tab/><Value select="sd:page-number(concat('chapter-', @n))"/></Paragraph>
+            </ForAll>
+            <ForAll select="chapter">
+                <Mark select="concat('chapter-', @n)"/>
+                <Paragraph class="{if (@n = 4) then 'head newpage' else 'head'}"><Value select="concat(@n, ' ', @title)"/></Paragraph>
+                <ForAll select="para">
+                    <Paragraph><Value select="concat('Paragraph ', @n, ' of chapter ', ../@n, ': lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.')"/></Paragraph>
+                </ForAll>
+            </ForAll>
+        </Flow>
+    </Record>
+</Layout>

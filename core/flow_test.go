@@ -17,8 +17,7 @@ func TestFlowRejectsPageActions(t *testing.T) {
 		{"ClearPage", `<ClearPage/>`},
 		{"NextFrame", `<NextFrame/>`},
 		{"NextRow", `<NextRow/>`},
-		{"Mark", `<Mark select="'m'"/>`},
-		{"Mark", `<ForAll select="."><Action><Mark select="'m'"/></Action></ForAll>`},
+		{"PlaceObject", `<ForAll select="."><PlaceObject><Box width="1cm" height="1cm"/></PlaceObject></ForAll>`},
 	} {
 		t.Run(c.name, func(t *testing.T) {
 			_, err := runDump(t, layoutHead+`
