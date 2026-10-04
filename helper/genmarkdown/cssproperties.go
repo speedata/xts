@@ -22,9 +22,11 @@ var manualLinks = map[string]string{
 // differently, so the reference does not promise what htmlbag's pagination
 // does but XTS doesn't.
 var noteOverrides = map[string]string{
-	"page-break-inside":  "XTS does not split a table row: a row that does not fit moves to the next page whole",
-	"widows":             "No effect in XTS yet: `PlaceObject` does not split a paragraph across pages",
-	"orphans":            "No effect in XTS yet, as with `widows`",
+	"page-break-before":  "In a `Flow`, `column` continues in the next frame of the area, `page` on the next page, and `left` and `right` on the next left or right page; `recto` and `verso` break the page but do not pick a side. A forced break is taken at any depth; on a block's first child it applies to the block itself",
+	"page-break-after":   "Acts in a `Flow` as `break-before` does, `avoid` keeps a block with the next one, such as a heading with its first paragraph. A forced break is taken at any depth; on a block's last child it applies to the block itself",
+	"page-break-inside":  "`avoid` keeps a container, such as a `div`, in one frame of a `Flow`. XTS does not split a table row: a row that does not fit moves to the next frame whole",
+	"widows":             "Acts in a `Flow`; a paragraph placed with `PlaceObject` is never split",
+	"orphans":            "Acts in a `Flow`, as with `widows`",
 	"vertical-align":     "",
 	"-bag-leading-model": "",
 }

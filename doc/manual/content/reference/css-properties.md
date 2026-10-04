@@ -87,11 +87,11 @@ CSS properties supported by XTS for styling layout elements and HTML content. Le
 | `position` | `static`, `relative`, `absolute`, `running(name)` for running elements that repeat in page margin boxes. `fixed` and `sticky` are not supported. A `relative` block is offset by `left` or `right` only; a `relative` inline element by `top` or `bottom` only, which moves its text after the lines are set | `position: absolute;` |
 | `top`, `right`, `bottom`, `left` | Length or `auto`, with `position`. On a `relative` inline element `top` wins over `bottom`, a percentage computes to `auto`, and `left` and `right` have no effect. The text and its background move; an underline stays where it was | `top: 1cm;` |
 | `z-index` | Integer or `auto`, with `position` | `z-index: 1;` |
-| `page-break-before`, `break-before` | `auto`, `always`, `avoid`; `break-before` also takes `page`, `left`, `right`, `recto`, `verso`. The page side variants break the page but do not pick a side. A forced break is taken at any depth; on a block's first child it applies to the block itself | `page-break-before: always;` |
-| `page-break-after`, `break-after` | Same values as `page-break-before`. A forced break is taken at any depth; on a block's last child it applies to the block itself | `page-break-after: avoid;` |
-| `page-break-inside`, `break-inside` | `auto`, `avoid`. XTS does not split a table row: a row that does not fit moves to the next page whole | `page-break-inside: avoid;` |
-| `widows` | Positive integer, the default is 2; `1` switches the control off. No effect in XTS yet: `PlaceObject` does not split a paragraph across pages | `widows: 3;` |
-| `orphans` | Positive integer, the default is 2; `1` switches the control off. No effect in XTS yet, as with `widows` | `orphans: 3;` |
+| `page-break-before`, `break-before` | `auto`, `always`, `avoid`; `break-before` also takes `page`, `left`, `right`, `recto`, `verso`. In a `Flow`, `column` continues in the next frame of the area, `page` on the next page, and `left` and `right` on the next left or right page; `recto` and `verso` break the page but do not pick a side. A forced break is taken at any depth; on a block's first child it applies to the block itself | `page-break-before: always;` |
+| `page-break-after`, `break-after` | Same values as `page-break-before`. Acts in a `Flow` as `break-before` does, `avoid` keeps a block with the next one, such as a heading with its first paragraph. A forced break is taken at any depth; on a block's last child it applies to the block itself | `page-break-after: avoid;` |
+| `page-break-inside`, `break-inside` | `auto`, `avoid`. `avoid` keeps a container, such as a `div`, in one frame of a `Flow`. XTS does not split a table row: a row that does not fit moves to the next frame whole | `page-break-inside: avoid;` |
+| `widows` | Positive integer, the default is 2; `1` switches the control off. Acts in a `Flow`; a paragraph placed with `PlaceObject` is never split | `widows: 3;` |
+| `orphans` | Positive integer, the default is 2; `1` switches the control off. Acts in a `Flow`, as with `widows` | `orphans: 3;` |
 
 ## Lists and generated content
 
