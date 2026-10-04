@@ -1,6 +1,10 @@
 package core
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/boxesandglue/boxesandglue/backend/bag"
+)
 
 // threeFrames is an area of three frames side by side on a bare grid, with the
 // document around it: enough for advanceToFit and nextRow without a page.
@@ -146,6 +150,33 @@ func TestFrameOutlinesEachAtItsPlace(t *testing.T) {
 	for i := range want {
 		if got[i] != want[i] {
 			t.Errorf("outline %d = %+v, want %+v", i, got[i], want[i])
+		}
+	}
+}
+
+// TestPositionsCountTheGaps: with gaps between the cells, column c starts
+// c-1 cells and c-1 gaps right of the margin, row r as many below it, also
+// in a frame that does not start in the first column or row.
+func TestPositionsCountTheGaps(t *testing.T) {
+	g := &grid{marginLeft: 100, marginTop: 200, gridWidth: 10, gridHeight: 20, gridGapX: 5, gridGapY: 2}
+	page := &gridRect{col: 1, row: 1, width: 10, height: 10}
+	frame := &gridRect{col: 3, row: 4, width: 2, height: 2}
+	for _, tc := range []struct {
+		f        *gridRect
+		col, row coord
+		x, y     bag.ScaledPoint
+	}{
+		{page, 1, 1, 100, 200},
+		{page, 2, 2, 115, 222},
+		{page, 3, 3, 130, 244},
+		{frame, 1, 1, 130, 266},
+		{frame, 2, 2, 145, 288},
+	} {
+		if x := g.frameX(tc.col, tc.f); x != tc.x {
+			t.Errorf("column %d of frame at column %d: x = %d, want %d", tc.col, tc.f.col, x, tc.x)
+		}
+		if y := g.frameY(tc.row, tc.f); y != tc.y {
+			t.Errorf("row %d of frame at row %d: y = %d, want %d", tc.row, tc.f.row, y, tc.y)
 		}
 	}
 }

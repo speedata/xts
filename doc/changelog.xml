@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.4" date="2026-10-04">
+      <en summary="Objects are placed on the cells of a grid with gaps.">With gaps between the grid cells (<tt>dx</tt> and <tt>dy</tt> of <tt>SetGrid</tt> or <tt>Grid</tt>), an object in column or row n was placed one gap too far left or up, and in a positioning frame that does not start in the first column or row, the gaps before the frame were not counted at all. Objects, frames and flows now start on their cells as the grid trace draws them. Layouts with <tt>dx</tt> or <tt>dy</tt> change.</en>
+    </entry>
+    <entry version="0.1.4" date="2026-10-04">
       <en summary="The grid trace draws every frame of an area where it is.">With <tt>&lt;Trace grid="yes"/&gt;</tt>, all frames of an area were outlined at the place of the area's current frame, so an area with two columns showed one of them twice and the other not at all. Every frame is now drawn at its own position, and the frames are drawn in a fixed order, so two runs with the trace on give the same PDF.</en>
     </entry>
     <entry version="0.1.4" date="2026-10-04">

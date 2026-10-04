@@ -1,0 +1,34 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+
+    <!-- A grid with gaps between the cells, 10mm cells with 5mm between the
+         columns and 3mm between the rows. Every box must fill its cells
+         exactly as the grid trace draws them: the boxes in the page area at
+         columns 1, 2 and 4, the box placed without coordinates next to them,
+         and the boxes and the flow in the frame of the area "right", which
+         starts at column 3 and row 4, so the gaps before it count too. -->
+
+    <PageFormat width="105mm" height="148mm"/>
+    <SetGrid width="10mm" dx="5mm" height="10mm" dy="3mm"/>
+    <Trace grid="yes"/>
+    <DefineMasterPage name="page" test="true()" margin="10mm">
+        <PositioningArea name="right">
+            <PositioningFrame column="3" row="4" width="3" height="5"/>
+        </PositioningArea>
+    </DefineMasterPage>
+    <StyleSheet>
+        p { margin: 0; font-size: 8pt; line-height: 10pt }
+    </StyleSheet>
+    <Record match="data">
+        <PlaceObject column="1" row="1"><Box width="1" height="1" background-color="red"/></PlaceObject>
+        <PlaceObject column="2" row="2"><Box width="1" height="1" background-color="green"/></PlaceObject>
+        <PlaceObject column="4" row="1"><Box width="2" height="2" background-color="blue"/></PlaceObject>
+        <PlaceObject><Box width="1" height="1" background-color="orange"/></PlaceObject>
+        <PlaceObject area="right" column="1" row="1"><Box width="1" height="1" background-color="black"/></PlaceObject>
+        <PlaceObject area="right" column="3" row="2"><Box width="1" height="1" background-color="gray"/></PlaceObject>
+        <NextRow area="right" row="3"/>
+        <Flow area="right">
+            <Paragraph id="text"><Value>A flow in the frame of the area right starts at the left edge of its first column.</Value></Paragraph>
+        </Flow>
+    </Record>
+</Layout>

@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.4 (2026-10-04)
 
+- **Objects are placed on the cells of a grid with gaps.**<br>
+  With gaps between the grid cells (`dx` and `dy` of `SetGrid` or `Grid`), an object in column or row n was placed one gap too far left or up, and in a positioning frame that does not start in the first column or row, the gaps before the frame were not counted at all. Objects, frames and flows now start on their cells as the grid trace draws them. Layouts with `dx` or `dy` change.
 - **The grid trace draws every frame of an area where it is.**<br>
   With `<Trace grid="yes"/>`, all frames of an area were outlined at the place of the area's current frame, so an area with two columns showed one of them twice and the other not at all. Every frame is now drawn at its own position, and the frames are drawn in a fixed order, so two runs with the trace on give the same PDF.
 - **An object without coordinates no longer lands on a cell that is taken in its last column.**<br>

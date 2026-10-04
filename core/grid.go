@@ -203,14 +203,10 @@ func (g *grid) posX(column coord, area *area) bag.ScaledPoint {
 	return g.frameX(column, area.frame[area.currentFrame])
 }
 
-// frameX is posX in the frame f.
+// frameX is posX in the frame f: the cells and the gaps between them left of
+// the column, counted from the first column of the page grid.
 func (g *grid) frameX(column coord, f *gridRect) bag.ScaledPoint {
-	offsetX := f.col
-	posx := g.marginLeft + bag.ScaledPoint(column+offsetX-2)*g.gridWidth
-	if column > 1 {
-		posx += bag.ScaledPoint(column-2) * g.gridGapX
-	}
-	return posx
+	return g.marginLeft + bag.ScaledPoint(column+f.col-2)*(g.gridWidth+g.gridGapX)
 }
 
 // posY returns the vertical offset relative to the top page border. Row 1
@@ -219,14 +215,10 @@ func (g *grid) posY(row coord, area *area) bag.ScaledPoint {
 	return g.frameY(row, area.frame[area.currentFrame])
 }
 
-// frameY is posY in the frame f.
+// frameY is posY in the frame f: the cells and the gaps between them above
+// the row, counted from the first row of the page grid.
 func (g *grid) frameY(row coord, f *gridRect) bag.ScaledPoint {
-	offsetY := f.row
-	posy := g.marginTop + bag.ScaledPoint(row+offsetY-2)*g.gridHeight
-	if row > 1 {
-		posy += bag.ScaledPoint(row-2) * g.gridGapY
-	}
-	return posy
+	return g.marginTop + bag.ScaledPoint(row+f.row-2)*(g.gridHeight+g.gridGapY)
 }
 
 // frameOutline is the outline of a frame: left and top from the top left
