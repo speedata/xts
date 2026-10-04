@@ -56,3 +56,9 @@ List item in an ordered or unordered list.
 
 
 
+
+## See also
+
+- Commands: [Ul](../ul), [Ol](../ol)
+- Manual: [Lists](/manual/text-and-styling/lists)
+

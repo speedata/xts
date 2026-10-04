@@ -19,7 +19,7 @@ Copies the result of an XPath expression as-is, preserving node structure. Analo
 
 
 
-`select` ([XPath expressions](/manual/data-processing/xpath))
+`select` ([XPath expressions](/programming/xpath))
 :   XPath expression whose result is passed through unchanged.
 
 
@@ -42,4 +42,10 @@ Use this command to pass structured content from sd:decode-html() or XML data in
 
 
 
+
+
+## See also
+
+- Commands: [SetVariable](../setvariable), [Value](../value)
+- Manual: [Values and types: Reuse with `<CopyOf>`](/programming/values-and-types#reuse-with-copyof), [Variables](/programming/variables)
 

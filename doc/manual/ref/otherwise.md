@@ -29,3 +29,9 @@ See the example at [Switch](../switch).
 
 
 
+
+## See also
+
+- Commands: [Switch](../switch), [Case](../case)
+- Manual: [Control flow](/programming/control-flow)
+

@@ -58,3 +58,9 @@ Defines a rectangular area for objects.
 
 
 
+
+## See also
+
+- Commands: [PositioningArea](../positioningarea), [DefineMasterPage](../definemasterpage)
+- Manual: [Positioning Areas](/manual/core-concepts/positioning-areas), [Multi-Page Content: Positioning frames for multi-column layouts](/manual/page-layout/multi-page#positioning-frames-for-multi-column-layouts)
+

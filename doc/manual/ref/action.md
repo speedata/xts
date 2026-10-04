@@ -58,3 +58,9 @@ Associates an action with a text. Once the text is placed on the page, the assoc
 
 
 
+
+## See also
+
+- Commands: [Mark](../mark), [A](../a), [Bookmark](../bookmark)
+- Manual: [PDF Options: Page destinations](/manual/advanced/pdf-options#page-destinations)
+

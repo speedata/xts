@@ -25,7 +25,7 @@ Executes all given nodes. The elements, that are to be executed, are given with 
 
 
 
-`select` ([XPath expressions](/manual/data-processing/xpath))
+`select` ([XPath expressions](/programming/xpath))
 :   Selection of child elements, that are to be processed.
 
 
@@ -40,4 +40,10 @@ Executes all given nodes. The elements, that are to be executed, are given with 
 
 
 
+
+
+## See also
+
+- Commands: [Record](../record), [ForAll](../forall)
+- Manual: [Records and dispatch](/programming/records-and-dispatch), [How It Works: ProcessNode vs. ForAll](/manual/core-concepts/how-it-works#processnode-vs-forall)
 

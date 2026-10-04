@@ -37,3 +37,9 @@ The contents of the element [AtPageCreation](../atpagecreation) is executed the 
 
 
 
+
+## See also
+
+- Commands: [AtPageShipout](../atpageshipout), [DefineMasterPage](../definemasterpage)
+- Manual: [Page Hooks](/manual/page-layout/page-hooks), [Master Pages](/manual/page-layout/master-pages)
+

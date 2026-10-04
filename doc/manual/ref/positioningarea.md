@@ -54,3 +54,9 @@ The frames can be wrapped in a [Switch](../switch) element. The Switch is evalua
 
 
 
+
+## See also
+
+- Commands: [PositioningFrame](../positioningframe), [DefineMasterPage](../definemasterpage), [Flow](../flow), [NextFrame](../nextframe)
+- Manual: [Positioning Areas](/manual/core-concepts/positioning-areas), [Master Pages: Master pages with areas](/manual/page-layout/master-pages#master-pages-with-areas)
+

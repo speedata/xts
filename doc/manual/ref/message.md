@@ -19,7 +19,7 @@ Writes a message onto the console and to the protocol file.
 
 
 
-`select` ([XPath expressions](/manual/data-processing/xpath), optional)
+`select` ([XPath expressions](/programming/xpath), optional)
 :   Contents of the message. You can alternatively specify the message by the child elements [Value](../value).
 
 
@@ -60,4 +60,10 @@ Writes a message onto the console and to the protocol file.
 
 
 
+
+
+## See also
+
+- Commands: [Trace](../trace)
+- Manual: [Execution model: Live state and introspection](/programming/execution-model#live-state-and-introspection)
 

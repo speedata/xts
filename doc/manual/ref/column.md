@@ -89,3 +89,9 @@ See the example at [Columns](../columns).
 
 
 
+
+## See also
+
+- Commands: [Columns](../columns), [Table](../table)
+- Manual: [Working with Tables: Defining column widths](/manual/tables/tables#defining-column-widths)
+

@@ -41,7 +41,7 @@ Sets an invisible mark into the output. This is helpful when you want to know on
 
 
 
-`select` ([XPath expressions](/manual/data-processing/xpath))
+`select` ([XPath expressions](/programming/xpath))
 :   The name of the mark to be set.
 
 
@@ -99,4 +99,10 @@ Marks get saved for subsequent runs.
 
 
 
+
+
+## See also
+
+- Commands: [Action](../action), [Bookmark](../bookmark)
+- Manual: [PDF Options: Page destinations](/manual/advanced/pdf-options#page-destinations), [XPath Functions: Page and position](/reference/xpath-functions#page-and-position)
 

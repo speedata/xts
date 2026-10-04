@@ -126,3 +126,9 @@ Takes the file name of the image from the contents of the current element in the
 
 
 
+
+## See also
+
+- Commands: [PlaceObject](../placeobject)
+- Manual: [Images](/manual/images-and-graphics/images), [File Organization](/manual/running-xts/file-organization)
+

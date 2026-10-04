@@ -25,7 +25,7 @@ Associates a value with a variable name. The value can be a simple value or a mo
 
 
 
-`select` ([XPath expressions](/manual/data-processing/xpath), optional)
+`select` ([XPath expressions](/programming/xpath), optional)
 :   The value of the contents.
 
 
@@ -102,4 +102,10 @@ The following example shows a more complex scenario: you can collect complex ele
 
 
 
+
+
+## See also
+
+- Commands: [CopyOf](../copyof), [Value](../value), [Element](../element)
+- Manual: [Variables](/programming/variables), [Values and types](/programming/values-and-types), [Maps and arrays](/programming/maps-and-arrays)
 

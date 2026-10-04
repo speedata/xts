@@ -46,3 +46,9 @@ Load an XML file previously written by [SaveXML](../savexml) (attribute name) or
 
 
 
+
+## See also
+
+- Commands: [SaveXML](../savexml), [Element](../element), [Attribute](../attribute)
+- Manual: [Records and dispatch](/programming/records-and-dispatch)
+

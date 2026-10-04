@@ -46,3 +46,9 @@ The `\*` widths in the command “Column” allow dynamic cell widths. For that 
 
 
 
+
+## See also
+
+- Commands: [Column](../column), [Table](../table)
+- Manual: [Working with Tables: Defining column widths](/manual/tables/tables#defining-column-widths)
+

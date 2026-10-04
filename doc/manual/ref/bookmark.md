@@ -41,7 +41,7 @@ Create a bookmark for the PDF viewer (e.g. Adobe Reader). When the user clicks o
 
 
 
-`select` ([XPath expressions](/manual/data-processing/xpath))
+`select` ([XPath expressions](/programming/xpath))
 :   Title of the bookmark
 
 
@@ -60,4 +60,10 @@ Create a bookmark on level 1 (top level) with the title stored in the variable `
 
 
 
+
+
+## See also
+
+- Commands: [A](../a), [Mark](../mark)
+- Manual: [PDF Options: Bookmarks](/manual/advanced/pdf-options#bookmarks)
 

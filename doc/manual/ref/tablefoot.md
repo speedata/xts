@@ -33,3 +33,9 @@ See the explanation of [Table](../table).
 
 
 
+
+## See also
+
+- Commands: [TableHead](../tablehead), [Table](../table), [Flow](../flow)
+- Manual: [Working with Tables: Tables across pages](/manual/tables/tables#tables-across-pages)
+

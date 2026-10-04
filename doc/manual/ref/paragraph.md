@@ -52,3 +52,9 @@ Insert a paragraph of text. The width of the paragraph is inherited from the sur
 
 
 
+
+## See also
+
+- Commands: [TextBlock](../textblock), [Flow](../flow), [Value](../value), [Span](../span)
+- Manual: [Text Formatting: Paragraphs and text blocks](/manual/text-and-styling/text-formatting#paragraphs-and-text-blocks), [Flowing Text](/manual/core-concepts/flow)
+

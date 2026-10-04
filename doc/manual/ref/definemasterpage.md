@@ -31,7 +31,7 @@ Define a master page. A master page is chosen depending on the criterion given w
 
 
 
-`test` ([XPath expressions](/manual/data-processing/xpath))
+`test` ([XPath expressions](/programming/xpath))
 :   If this xpath expression evaluates to true, this page is taken as a master page.
 
 
@@ -78,4 +78,10 @@ A CSS rule `@page name { ... }` in a [StyleSheet](../stylesheet) belongs to the 
 
 
 
+
+
+## See also
+
+- Commands: [PageFormat](../pageformat), [PositioningArea](../positioningarea), [AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout)
+- Manual: [Master Pages](/manual/page-layout/master-pages), [Positioning Areas](/manual/core-concepts/positioning-areas)
 

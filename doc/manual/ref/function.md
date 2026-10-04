@@ -61,3 +61,9 @@ Print out the number 7.
 
 
 
+
+## See also
+
+- Commands: [Template](../template), [Param](../param)
+- Manual: [Functions](/programming/functions), [Templates: Templates versus functions](/programming/templates#templates-versus-functions)
+

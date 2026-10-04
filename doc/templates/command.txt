@@ -38,3 +38,9 @@
 ## Info
 {{.}}
 {{end}}
+{{- with (.Command.SeeAlsoMarkdown) }}
+
+## See also
+
+{{.}}
+{{end}}

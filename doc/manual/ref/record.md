@@ -19,7 +19,7 @@ Contains the instructions to be executed when a data element matches the given m
 
 
 
-`match` ([XPath expressions](/manual/data-processing/xpath))
+`match` ([XPath expressions](/programming/xpath))
 :   An XPath match expression. This can be a simple element name (e.g. `data`) or an element name followed by an XPath predicate in brackets (e.g. `item[@type='invoice']` or `item[not(@hidden='true')]`). When multiple Records match the same element, Records with predicates take priority over those without. Among Records with predicates, the last defined one wins.
 
 
@@ -69,4 +69,10 @@ Contains the instructions to be executed when a data element matches the given m
 
 
 
+
+
+## See also
+
+- Commands: [ProcessNode](../processnode), [ForAll](../forall)
+- Manual: [Records and dispatch](/programming/records-and-dispatch), [How It Works](/manual/core-concepts/how-it-works)
 

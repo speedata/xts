@@ -49,3 +49,9 @@ Invoke a named [Template](../template). Parameters are passed with [Param](../pa
 
 
 
+
+## See also
+
+- Commands: [Template](../template), [Param](../param)
+- Manual: [Templates](/programming/templates)
+

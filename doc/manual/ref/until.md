@@ -19,7 +19,7 @@ Create a loop. All child elements are executed repeatedly until the given condit
 
 
 
-`test` ([XPath expressions](/manual/data-processing/xpath))
+`test` ([XPath expressions](/programming/xpath))
 :   Every time after the loop is executed, the condition is evaluated. If it is true, the loop exits.
 
 
@@ -51,4 +51,10 @@ Message: "$i is: 3"
 
 
 
+
+
+## See also
+
+- Commands: [While](../while), [Loop](../loop)
+- Manual: [Control flow](/programming/control-flow)
 

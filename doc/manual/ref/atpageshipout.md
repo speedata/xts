@@ -37,3 +37,9 @@ The enclosed instructions will be executed when the page is placed into the PDF 
 
 
 
+
+## See also
+
+- Commands: [AtPageCreation](../atpagecreation), [DefineMasterPage](../definemasterpage)
+- Manual: [Page Hooks](/manual/page-layout/page-hooks)
+

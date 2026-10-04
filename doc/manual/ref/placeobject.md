@@ -194,3 +194,9 @@ The objects can be placed in a grid (when the value in the attributes row and co
 
 
 
+
+## See also
+
+- Commands: [Flow](../flow), [TextBlock](../textblock), [NextRow](../nextrow), [PositioningArea](../positioningarea)
+- Manual: [Placing Objects](/manual/core-concepts/placing-objects), [The Grid](/manual/core-concepts/grid), [Flowing Text: PlaceObject, TextBlock or Flow?](/manual/core-concepts/flow#placeobject-textblock-or-flow)
+

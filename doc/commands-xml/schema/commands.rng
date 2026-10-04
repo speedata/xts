@@ -15,6 +15,7 @@
             <text />
           </element>
           <ref name="cmd"/>
+          <ref name="page"/>
           <element name="tt"><text/></element>
         </choice>
       </oneOrMore>
@@ -26,6 +27,16 @@
     <element name="cmd">
       <attribute name="name" />
       <empty />
+    </element>
+  </define>
+
+  <!-- A page of the manual, from its root, with an optional #anchor:
+       /manual/core-concepts/flow#flow-and-the-grid. The text is the link
+       text; an empty page element takes the title of the page. -->
+  <define name="page">
+    <element name="page">
+      <attribute name="href" />
+      <optional><text /></optional>
     </element>
   </define>
 
@@ -114,6 +125,7 @@
                 <text />
               </element>
               <ref name="cmd"/>
+              <ref name="page"/>
               <element name="tt"><text/></element>
             </choice>
           </oneOrMore>
@@ -392,6 +404,17 @@
               </element>
             </optional>
           </oneOrMore>
+          <optional>
+            <element name="seealso">
+              <oneOrMore>
+                <choice>
+                  <text />
+                  <ref name="cmd"/>
+                  <ref name="page"/>
+                </choice>
+              </oneOrMore>
+            </element>
+          </optional>
           <zeroOrMore>
             <element name="rules">
               <attribute name="xml:lang">

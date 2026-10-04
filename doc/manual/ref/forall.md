@@ -19,7 +19,7 @@ Executes the given commands for all elements in the data XML file that match the
 
 
 
-`select` ([XPath expressions](/manual/data-processing/xpath))
+`select` ([XPath expressions](/programming/xpath))
 :   Selects the child elements from the data XML
 
 
@@ -53,4 +53,10 @@ Creates a table row for all elements `entry` in the data element `data`. The dat
 
 
 
+
+
+## See also
+
+- Commands: [ProcessNode](../processnode), [Loop](../loop), [While](../while)
+- Manual: [Control flow](/programming/control-flow), [Records and dispatch: ProcessNode versus ForAll](/programming/records-and-dispatch#processnode-versus-forall)
 

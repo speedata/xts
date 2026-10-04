@@ -34,3 +34,9 @@ Switch to italic text.
 
 
 
+
+## See also
+
+- Commands: [B](../b), [U](../u), [Span](../span)
+- Manual: [Text Formatting: Bold, italic, underline](/manual/text-and-styling/text-formatting#bold-italic-underline)
+

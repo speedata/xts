@@ -136,3 +136,8 @@ A color defined with [DefineColor](../definecolor) can be used in CSS as well: `
 
 
 
+
+## See also
+
+- Manual: [Colors: Defining custom colors](/manual/advanced/colors#defining-custom-colors), [CSS Properties: @-bag-color](/reference/css-properties#-bag-color)
+

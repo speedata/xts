@@ -19,7 +19,7 @@ Repeat the contents of this element several times.
 
 
 
-`select` ([XPath expressions](/manual/data-processing/xpath))
+`select` ([XPath expressions](/programming/xpath))
 :   The number of loops. Must be a number or castable as a number.
 
 
@@ -49,4 +49,10 @@ Repeat the contents of this element several times.
 
 
 
+
+
+## See also
+
+- Commands: [While](../while), [Until](../until), [ForAll](../forall)
+- Manual: [Control flow](/programming/control-flow)
 

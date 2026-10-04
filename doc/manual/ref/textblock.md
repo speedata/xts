@@ -50,3 +50,9 @@ Create a rectangular piece of text.
 
 
 
+
+## See also
+
+- Commands: [Paragraph](../paragraph), [PlaceObject](../placeobject), [Flow](../flow)
+- Manual: [Text Formatting: Paragraphs and text blocks](/manual/text-and-styling/text-formatting#paragraphs-and-text-blocks), [Placing Objects: Text blocks](/manual/core-concepts/placing-objects#text-blocks)
+

@@ -57,3 +57,9 @@ A Switch may be part of nearly all commands. It dissolves and only the contents 
 
 
 
+
+## See also
+
+- Commands: [Case](../case), [Otherwise](../otherwise)
+- Manual: [Control flow](/programming/control-flow)
+

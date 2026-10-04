@@ -113,3 +113,9 @@ The list of languages and the short code known to the system are:
 
 
 
+
+## See also
+
+- Commands: [PDFOptions](../pdfoptions)
+- Manual: [Accessible PDF: A document language](/manual/accessibility#a-document-language), [Images: Placeholder images](/manual/images-and-graphics/images#placeholder-images)
+

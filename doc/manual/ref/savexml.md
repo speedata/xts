@@ -19,7 +19,7 @@ Saves an element/attribute structure to be used in the next publisher run. The c
 
 
 
-`attributes` ([XPath expressions](/manual/data-processing/xpath), optional)
+`attributes` ([XPath expressions](/programming/xpath), optional)
 :   A sequence of attributes (created with [Attribute](../attribute)) that is set on the root element. Example: `$attributesvar`
 
 
@@ -43,7 +43,7 @@ Saves an element/attribute structure to be used in the next publisher run. The c
 
 
 
-`select` ([XPath expressions](/manual/data-processing/xpath), optional)
+`select` ([XPath expressions](/programming/xpath), optional)
 :   Alternative to giving the data structure in the child elements.
 
 
@@ -94,4 +94,9 @@ is equivalent to
 
 
 
+
+
+## See also
+
+- Commands: [Element](../element), [Attribute](../attribute), [LoadXML](../loadxml)
 

@@ -29,3 +29,9 @@ See the example at [Slate](../slate).
 
 
 
+
+## See also
+
+- Commands: [Slate](../slate), [SlateContents](../slatecontents), [Grid](../grid)
+- Manual: [Slates](/manual/advanced/slates)
+

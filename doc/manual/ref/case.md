@@ -19,7 +19,7 @@ Part of a [Switch](../switch) construct. All cases up to the first case which ev
 
 
 
-`test` ([XPath expressions](/manual/data-processing/xpath))
+`test` ([XPath expressions](/programming/xpath))
 :   The test that gets evaluated.
 
 
@@ -35,4 +35,10 @@ See the example at [Switch](../switch).
 
 
 
+
+
+## See also
+
+- Commands: [Switch](../switch), [Otherwise](../otherwise)
+- Manual: [Control flow](/programming/control-flow)
 

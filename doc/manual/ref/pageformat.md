@@ -41,3 +41,9 @@ The size of the PDF pages. Defaults to 210mm width and 297mm height (A4).
 
 
 
+
+## See also
+
+- Commands: [DefineMasterPage](../definemasterpage), [SetGrid](../setgrid)
+- Manual: [Master Pages: Page format](/manual/page-layout/master-pages#page-format), [Defaults: Page size and margin](/reference/defaults#page-size-and-margin)
+

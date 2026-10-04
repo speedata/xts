@@ -25,7 +25,7 @@ Create an attribute for the [Element](../element) data structure that can be sav
 
 
 
-`select` ([XPath expressions](/manual/data-processing/xpath))
+`select` ([XPath expressions](/programming/xpath))
 :   The contents of the attribute
 
 
@@ -51,4 +51,10 @@ creates the following structure:
 
 
 
+
+
+## See also
+
+- Commands: [Element](../element), [SaveXML](../savexml), [LoadXML](../loadxml)
+- Manual: [Variables: Storing complex content](/programming/variables#storing-complex-content)
 

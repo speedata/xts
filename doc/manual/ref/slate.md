@@ -60,3 +60,9 @@ As on a page, the objects in a slate are drawn in the order they are placed: an 
 
 
 
+
+## See also
+
+- Commands: [Contents](../contents), [SlateContents](../slatecontents), [Grid](../grid), [PlaceObject](../placeobject)
+- Manual: [Slates](/manual/advanced/slates)
+

@@ -74,3 +74,9 @@ Set the grid of the surrounding [Slate](../slate). Settings not given here keep 
 
 
 
+
+## See also
+
+- Commands: [Slate](../slate), [SetGrid](../setgrid)
+- Manual: [Slates: A slate with its own grid](/manual/advanced/slates#a-slate-with-its-own-grid), [The Grid: Grids in slates](/manual/core-concepts/grid#grids-in-slates)
+

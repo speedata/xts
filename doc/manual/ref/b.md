@@ -33,3 +33,9 @@ Switch to font weight “bold”
 
 
 
+
+## See also
+
+- Commands: [I](../i), [U](../u), [Span](../span)
+- Manual: [Text Formatting: Bold, italic, underline](/manual/text-and-styling/text-formatting#bold-italic-underline)
+

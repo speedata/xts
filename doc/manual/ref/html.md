@@ -25,7 +25,7 @@ Insert HTML content, either inline or retrieved via an XPath expression.
 
 
 
-`select` ([XPath expressions](/manual/data-processing/xpath), optional)
+`select` ([XPath expressions](/programming/xpath), optional)
 :   XPath expression that yields an XML/HTML fragment.
 
 
@@ -60,4 +60,10 @@ Insert HTML content, either inline or retrieved via an XPath expression.
 
 
 
+
+
+## See also
+
+- Commands: [Paragraph](../paragraph), [TextBlock](../textblock), [Flow](../flow)
+- Manual: [CSS and HTML: HTML content](/manual/text-and-styling/css-html#html-content), [CSS and HTML: Loading HTML from data](/manual/text-and-styling/css-html#loading-html-from-data), [Barcodes](/manual/images-and-graphics/barcodes)
 

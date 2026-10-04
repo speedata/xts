@@ -61,3 +61,9 @@ Pours a heading, the paragraphs and a table into the frames of the area `text`, 
 
 
 
+
+## See also
+
+- Commands: [PlaceObject](../placeobject), [PositioningArea](../positioningarea), [Table](../table), [Paragraph](../paragraph)
+- Manual: [Flowing Text](/manual/core-concepts/flow), [Multi-Page Content](/manual/page-layout/multi-page), [Working with Tables: Tables across pages](/manual/tables/tables#tables-across-pages)
+

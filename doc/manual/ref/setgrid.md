@@ -65,3 +65,9 @@ Set size of the grid cells. All objects are placed in the grid.
 
 
 
+
+## See also
+
+- Commands: [Grid](../grid), [PageFormat](../pageformat), [Trace](../trace)
+- Manual: [The Grid: Setting up the grid](/manual/core-concepts/grid#setting-up-the-grid)
+

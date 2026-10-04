@@ -19,7 +19,7 @@ Create a loop. All child elements are executed as long as the condition in the t
 
 
 
-`test` ([XPath expressions](/manual/data-processing/xpath))
+`test` ([XPath expressions](/programming/xpath))
 :   Every time before the the loop is executed, this condition must evaluate to true. See the command [Until](../until) for a loop with an exit test.
 
 
@@ -55,4 +55,10 @@ The following example creates a textblock with three times the contents 'Text Te
 
 
 
+
+
+## See also
+
+- Commands: [Until](../until), [Loop](../loop), [ForAll](../forall)
+- Manual: [Control flow](/programming/control-flow)
 

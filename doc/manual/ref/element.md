@@ -41,3 +41,9 @@ Create a data structure that can be used to save on the hard-drive between conse
 
 
 
+
+## See also
+
+- Commands: [Attribute](../attribute), [SaveXML](../savexml), [SetVariable](../setvariable)
+- Manual: [Variables: Storing complex content](/programming/variables#storing-complex-content)
+

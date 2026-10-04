@@ -4,6 +4,7 @@ package commandsxml
 import (
 	"bytes"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io"
 	"net/url"
@@ -62,6 +63,8 @@ func (p *para) Markdown() string {
 					}
 				}
 				ret = append(ret, fmt.Sprintf(`[%s](%s)`, cmdname, x.CmdLink()))
+			case "page":
+				ret = append(ret, c.pageMarkdown(dec, &v))
 			case "tt":
 				ret = append(ret, "`")
 			}
@@ -97,7 +100,8 @@ outer:
 		}
 		switch v := tok.(type) {
 		case xml.StartElement:
-			if v.Name.Local == "cmd" {
+			switch v.Name.Local {
+			case "cmd":
 				var cmdname string
 				for _, attribute := range v.Attr {
 					if attribute.Name.Local == "name" {
@@ -105,6 +109,12 @@ outer:
 					}
 				}
 				ret = append(ret, cmdname)
+			case "page":
+				pl := &pageLink{}
+				if err := dec.DecodeElement(pl, &v); err != nil {
+					panic(err)
+				}
+				ret = append(ret, pl.Text)
 			}
 		case xml.CharData:
 			ret = append(ret, string(v.Copy()))
@@ -270,6 +280,84 @@ type example struct {
 type seealso struct {
 	commands *Commands
 	Text     []byte `xml:",innerxml"`
+}
+
+// pageLink is a <page href="/manual/..."/> that points to a page of the
+// manual, with an optional #anchor. Its text is the link text; without one
+// the title of the page is used.
+type pageLink struct {
+	Href string `xml:"href,attr"`
+	Text string `xml:",chardata"`
+}
+
+// pageMarkdown decodes the <page> element start and returns it as a Markdown
+// link. A page that does not exist is recorded as an error of c.
+func (c *Commands) pageMarkdown(dec *xml.Decoder, start *xml.StartElement) string {
+	pl := &pageLink{}
+	if err := dec.DecodeElement(pl, start); err != nil {
+		panic(err)
+	}
+	text := strings.TrimSpace(pl.Text)
+	if c.PageTitle != nil {
+		title, err := c.PageTitle(pl.Href)
+		if err != nil {
+			c.errs = append(c.errs, err)
+		}
+		if text == "" {
+			text = title
+		}
+	}
+	if text == "" {
+		text = pl.Href
+	}
+	return fmt.Sprintf("[%s](%s)", text, pl.Href)
+}
+
+// SeeAlsoMarkdown returns the commands and manual pages of the seealso
+// element, each group on a line of a list, or "" when there is none.
+func (c *Command) SeeAlsoMarkdown() string {
+	if c.seealso == nil {
+		return ""
+	}
+	var cmds, pages []string
+	dec := xml.NewDecoder(bytes.NewReader(c.seealso.Text))
+	for {
+		tok, err := dec.Token()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			panic(err)
+		}
+		v, ok := tok.(xml.StartElement)
+		if !ok {
+			continue
+		}
+		switch v.Name.Local {
+		case "cmd":
+			for _, attribute := range v.Attr {
+				if attribute.Name.Local != "name" {
+					continue
+				}
+				x := c.commands.commandsEn[attribute.Value]
+				if x == nil {
+					c.commands.errs = append(c.commands.errs, fmt.Errorf("%s: unknown command %q in seealso", c.Name, attribute.Value))
+					continue
+				}
+				cmds = append(cmds, fmt.Sprintf("[%s](%s)", x.Name, x.CmdLink()))
+			}
+		case "page":
+			pages = append(pages, c.commands.pageMarkdown(dec, &v))
+		}
+	}
+	var ret []string
+	if len(cmds) > 0 {
+		ret = append(ret, "- Commands: "+strings.Join(cmds, ", "))
+	}
+	if len(pages) > 0 {
+		ret = append(ret, "- Manual: "+strings.Join(pages, ", "))
+	}
+	return strings.Join(ret, "\n")
 }
 
 type description struct {
@@ -835,9 +923,19 @@ func (c *Commands) Commands() []*Command {
 
 // Commands is the root structure of all Commands
 type Commands struct {
+	// PageTitle returns the title of the manual page a <page href> points
+	// to, or an error when the page or its anchor does not exist. Without
+	// it the links are not checked.
+	PageTitle        func(href string) (string, error)
 	commandsEn       map[string]*Command
 	commandsSortedEn []*Command
 	defines          map[string]*define
+	errs             []error
+}
+
+// Err returns the broken references the Markdown methods came across.
+func (c *Commands) Err() error {
+	return errors.Join(c.errs...)
 }
 
 // sorting (de, en)

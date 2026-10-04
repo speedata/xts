@@ -62,3 +62,9 @@ This is a complete example for a layout rule set. The first part is the data fil
 
 
 
+
+## See also
+
+- Commands: [Section](../section)
+- Manual: [How It Works: The namespace boilerplate](/manual/core-concepts/how-it-works#the-namespace-boilerplate), [Versions: Declaring the version in the layout](/manual/running-xts/versions#declaring-the-version-in-the-layout), [Schema Validation](/manual/running-xts/schema-validation)
+

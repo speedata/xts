@@ -32,6 +32,9 @@ func DoThings(cfg *config.Config) error {
 	if err != nil {
 		return err
 	}
+	c.PageTitle = func(href string) (string, error) {
+		return pageTitle(filepath.Join(cfg.Basedir(), "doc", "manual", "content"), href)
+	}
 	funcMap := template.FuncMap{
 		"childelements":  childelements,
 		"parentelements": parentelements,
@@ -56,11 +59,14 @@ func DoThings(cfg *config.Config) error {
 			return err
 		}
 		fmt.Fprintf(w, "---\ntype: docs\nlinktitle: %s\n---\n", v.Name)
-		fmt.Fprintf(w, "{{%% include \"%s\" %%}}\n\n\n## See also\n", v.MDlink())
+		fmt.Fprintf(w, "{{%% include \"%s\" %%}}\n", v.MDlink())
 		w.Close()
 
 		fullpath := filepath.Join(refdir, v.MDlink())
 		builddoc(c, v, fullpath)
+	}
+	if err = c.Err(); err != nil {
+		return err
 	}
 
 	if err = writeCSSProperties(cfg); err != nil {
@@ -105,7 +111,7 @@ func childelements(children []*commandsxml.Command) string {
 func atttypeinfo(att *commandsxml.Attribute) string {
 	atttypesEn := map[string]string{
 		"boolean":                "yes or no",
-		"xpath":                  `[XPath expressions](/manual/data-processing/xpath)`,
+		"xpath":                  `[XPath expressions](/programming/xpath)`,
 		"numberorlength":         "number or length",
 		"numberlengthorstar":     "Number, length or *-numbers",
 		"yesnolength":            "yes, no or length",

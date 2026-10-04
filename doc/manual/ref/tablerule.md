@@ -56,3 +56,9 @@ Draw a horizontal rule spanning the full table width. Default thickness is 0.4pt
 
 
 
+
+## See also
+
+- Commands: [Table](../table), [Tr](../tr)
+- Manual: [Working with Tables: Styling tables with CSS](/manual/tables/tables#styling-tables-with-css)
+

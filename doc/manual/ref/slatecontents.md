@@ -32,3 +32,9 @@ Insert the contents of a previously created slate.
 
 
 
+
+## See also
+
+- Commands: [Slate](../slate), [Contents](../contents)
+- Manual: [Slates](/manual/advanced/slates)
+

@@ -52,3 +52,9 @@ Underline text.
 
 
 
+
+## See also
+
+- Commands: [B](../b), [I](../i), [Span](../span)
+- Manual: [Text Formatting: Bold, italic, underline](/manual/text-and-styling/text-formatting#bold-italic-underline)
+

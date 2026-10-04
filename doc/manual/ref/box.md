@@ -75,3 +75,9 @@ looks like
 
 
 
+
+## See also
+
+- Commands: [Circle](../circle), [PlaceObject](../placeobject)
+- Manual: [Boxes and Shapes](/manual/images-and-graphics/boxes-and-shapes), [Placing Objects: Boxes](/manual/core-concepts/placing-objects#boxes), [Colors](/manual/advanced/colors)
+

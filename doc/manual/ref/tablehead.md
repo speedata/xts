@@ -33,3 +33,9 @@ See the explanation of [Table](../table).
 
 
 
+
+## See also
+
+- Commands: [TableFoot](../tablefoot), [Table](../table), [Flow](../flow)
+- Manual: [Working with Tables: Table headers](/manual/tables/tables#table-headers)
+

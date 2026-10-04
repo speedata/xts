@@ -19,7 +19,7 @@ Contains a text value that is passed to the surrounding element (always as plain
 
 
 
-`select` ([XPath expressions](/manual/data-processing/xpath), optional)
+`select` ([XPath expressions](/programming/xpath), optional)
 :   Value to be passed to the outer element.
 
 
@@ -67,4 +67,10 @@ hich is the same as
 
 
 
+
+
+## See also
+
+- Commands: [CopyOf](../copyof), [Paragraph](../paragraph), [SetVariable](../setvariable)
+- Manual: [XPath basics](/programming/xpath-basics), [Text Formatting](/manual/text-and-styling/text-formatting)
 

@@ -60,3 +60,9 @@ Surround text by styling options.
 
 
 
+
+## See also
+
+- Commands: [B](../b), [I](../i), [U](../u), [Paragraph](../paragraph)
+- Manual: [Text Formatting: Spans](/manual/text-and-styling/text-formatting#spans)
+
