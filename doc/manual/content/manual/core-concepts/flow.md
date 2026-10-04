@@ -67,7 +67,8 @@ Forced breaks use `break-before` and `break-after`:
 |-------|------------------|
 | `column` | continue in the next frame of the area |
 | `page` | continue on the next page |
-| `left`, `right` | continue on the next left or right (even or odd) page |
+| `left`, `verso` | continue on the next left (even) page |
+| `right`, `recto` | continue on the next right (odd) page |
 
 ```xml
 <StyleSheet>

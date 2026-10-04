@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.4 (2026-10-04)
 
+- **In a Flow, break-before and break-after with recto and verso pick the page side.**<br>
+  A forced break with `recto` or `verso` in a `Flow` started a new page without looking at its side, unlike `right` and `left`. `recto` now goes on to the next right (odd) page and `verso` to the next left (even) one ([#60](https://github.com/speedata/xts/issues/60)).
 - **Objects are placed on the cells of a grid with gaps.**<br>
   With gaps between the grid cells (`dx` and `dy` of `SetGrid` or `Grid`), an object in column or row n was placed one gap too far left or up, and in a positioning frame that does not start in the first column or row, the gaps before the frame were not counted at all. Objects, frames and flows now start on their cells as the grid trace draws them. Layouts with `dx` or `dy` change.
 - **The grid trace draws every frame of an area where it is.**<br>

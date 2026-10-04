@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.4" date="2026-10-04">
+      <en summary="In a Flow, break-before and break-after with recto and verso pick the page side.">A forced break with <tt>recto</tt> or <tt>verso</tt> in a <tt>Flow</tt> started a new page without looking at its side, unlike <tt>right</tt> and <tt>left</tt>. <tt>recto</tt> now goes on to the next right (odd) page and <tt>verso</tt> to the next left (even) one (#60).</en>
+    </entry>
+    <entry version="0.1.4" date="2026-10-04">
       <en summary="Objects are placed on the cells of a grid with gaps.">With gaps between the grid cells (<tt>dx</tt> and <tt>dy</tt> of <tt>SetGrid</tt> or <tt>Grid</tt>), an object in column or row n was placed one gap too far left or up, and in a positioning frame that does not start in the first column or row, the gaps before the frame were not counted at all. Objects, frames and flows now start on their cells as the grid trace draws them. Layouts with <tt>dx</tt> or <tt>dy</tt> change.</en>
     </entry>
     <entry version="0.1.4" date="2026-10-04">

@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"path/filepath"
 	"regexp"
 	"slices"
@@ -129,5 +130,45 @@ func TestFlowTableStretchKeepsItsWidth(t *testing.T) {
 	}
 	if wd := n.attr("width"); wd != "141.73" {
 		t.Errorf("the table is %spt wide, want 141.73 (10 columns of 5mm)", wd)
+	}
+}
+
+// A forced break to a page side goes to the next page of that side: recto
+// is a right (odd) page and verso a left (even) one, as right and left (#60).
+func TestFlowBreakToPageSide(t *testing.T) {
+	for _, tc := range []struct {
+		value     string
+		startPage int // the page the flow starts on
+		want      string
+	}{
+		{"right", 1, "3"},
+		{"recto", 1, "3"},
+		{"left", 1, "2"},
+		{"verso", 1, "2"},
+		{"right", 2, "3"},
+		{"recto", 2, "3"},
+		{"left", 2, "4"},
+		{"verso", 2, "4"},
+		{"page", 1, "2"},
+	} {
+		t.Run(fmt.Sprintf("%s from page %d", tc.value, tc.startPage), func(t *testing.T) {
+			clear := ""
+			if tc.startPage == 2 {
+				clear = `<PlaceObject><TextBlock><Paragraph><Value>1</Value></Paragraph></TextBlock></PlaceObject><ClearPage/>`
+			}
+			log := runLayoutLog(t, layoutHead+`
+  <Record match="data">`+clear+`
+    <Flow>
+      <Paragraph><Value>Before</Value></Paragraph>
+      <Paragraph style="break-before: `+tc.value+`"><Value>After</Value></Paragraph>
+    </Flow>
+    <Message select="concat('endpage=', sd:current-page())"/>
+  </Record>
+</Layout>`)
+			m := regexp.MustCompile(`endpage=(\d+)`).FindStringSubmatch(log)
+			if m == nil || m[1] != tc.want {
+				t.Errorf("flow ends on page %v, want %s", m, tc.want)
+			}
+		})
 	}
 }

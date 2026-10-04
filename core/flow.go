@@ -105,9 +105,23 @@ func (r *flowRegions) nextPage() error {
 	return nil
 }
 
+// pageSide reports whether the forced break brk asks for a right (odd) page,
+// and whether it asks for a side at all. recto is the right page and verso
+// the left one, as htmlbag counts them.
+func pageSide(brk string) (right, ok bool) {
+	switch brk {
+	case "right", "recto":
+		return true, true
+	case "left", "verso":
+		return false, true
+	}
+	return false, false
+}
+
 // Next returns the next free band: below the last region in its frame, in
 // the next frame, or on the next page. A forced break to a column takes the
-// next frame, any other the next page (left and right one of that parity).
+// next frame, any other the next page (left, right, verso and recto one of
+// that side).
 func (r *flowRegions) Next(brk string) (htmlbag.Region, error) {
 	xd := r.xd
 	if r.started {
@@ -118,7 +132,7 @@ func (r *flowRegions) Next(brk string) (htmlbag.Region, error) {
 			err = r.nextFrame()
 		default:
 			if err = r.nextPage(); err == nil {
-				if odd := xd.currentPage.pagenumber%2 == 1; (brk == "left" && odd) || (brk == "right" && !odd) {
+				if right, ok := pageSide(brk); ok && right != (xd.currentPage.pagenumber%2 == 1) {
 					err = r.nextPage()
 				}
 			}
