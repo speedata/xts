@@ -213,6 +213,9 @@ type XTSConfig struct {
 	// LineModels are registered with the CSSBuilder by -bag-leading-model
 	// name; see htmlbag.CSSBuilder.RegisterLineModel.
 	LineModels map[string]htmlbag.LineModelFunc
+	// Breakers are registered with the CSSBuilder by -bag-line-breaker name;
+	// see htmlbag.CSSBuilder.RegisterBreaker.
+	Breakers map[string]htmlbag.BreakerFunc
 }
 
 // RunXTS is the entry point
@@ -240,6 +243,11 @@ func RunXTS(cfg *XTSConfig) error {
 	// Sorted, so that names differing only in case resolve the same way each run.
 	for _, name := range slices.Sorted(maps.Keys(cfg.LineModels)) {
 		if err = d.cssbuilder.RegisterLineModel(name, cfg.LineModels[name]); err != nil {
+			return err
+		}
+	}
+	for _, name := range slices.Sorted(maps.Keys(cfg.Breakers)) {
+		if err = d.cssbuilder.RegisterBreaker(name, cfg.Breakers[name]); err != nil {
 			return err
 		}
 	}

@@ -35,6 +35,7 @@ var noteOverrides = map[string]string{
 // that XTS does not offer to the layout author.
 var valueOverrides = map[string]string{
 	"-bag-leading-model": "`half` (CSS line boxes, the default), `trailing` (TeX style), or a name that the Go program running XTS registered in `XTSConfig.LineModels`",
+	"-bag-line-breaker":  "`auto` (Knuth-Plass, the default) or a name that the Go program running XTS registered in `XTSConfig.Breakers`",
 }
 
 type cssProperty struct {
