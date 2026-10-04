@@ -88,6 +88,34 @@ func TestFlowBottomWithoutBlocks(t *testing.T) {
 	})
 }
 
+// A Flow that starts below what the page holds, less than 25pt above the
+// foot of the area, moves a paragraph whose first line is 26pt high on to
+// the next page, as it would after a block of its own, without the bottom
+// margin warning.
+func TestFlowBelowContentMovesOn(t *testing.T) {
+	for _, c := range []struct{ name, before string }{
+		{"after a flow", `<Flow><Paragraph style="margin: 0; line-height: 338pt"><Value>x</Value></Paragraph></Flow>`},
+		{"after a box", `<PlaceObject><Box width="5cm" height="338pt"/></PlaceObject>`},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			layout := layoutHead + `
+  <PageFormat width="105mm" height="148mm"/>
+  <SetGrid width="5mm" height="12pt"/>
+  <Record match="data">
+    ` + c.before + `
+    <Flow><Paragraph id="p" style="margin: 0; line-height: 26pt"><Value>Two lines that do not fit in what is left of the page area at all</Value></Paragraph></Flow>
+  </Record>
+</Layout>`
+			if got := pagesWith(renderDump(t, layout), "p"); !slices.Equal(got, []int{2}) {
+				t.Errorf("the paragraph is on pages %v, want [2]", got)
+			}
+			if log := runLayoutLog(t, layout); strings.Contains(log, "protrudes into the bottom margin") {
+				t.Errorf("a warning about the bottom margin:\n%s", log)
+			}
+		})
+	}
+}
+
 // A child that cannot be part of a flow is left out with a warning naming
 // the command and its own line.
 func TestFlowNamesLeftOutChild(t *testing.T) {
