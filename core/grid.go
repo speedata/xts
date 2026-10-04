@@ -3,7 +3,9 @@ package core
 import (
 	"fmt"
 	"log/slog"
+	"maps"
 	"math"
+	"slices"
 	"strings"
 
 	"github.com/boxesandglue/boxesandglue/backend/bag"
@@ -198,7 +200,12 @@ func (g *grid) String() string {
 // posX returns the horizontal offset relative to the left page border. Column 1
 // returns the margin left.
 func (g *grid) posX(column coord, area *area) bag.ScaledPoint {
-	offsetX := area.frame[area.currentFrame].col
+	return g.frameX(column, area.frame[area.currentFrame])
+}
+
+// frameX is posX in the frame f.
+func (g *grid) frameX(column coord, f *gridRect) bag.ScaledPoint {
+	offsetX := f.col
 	posx := g.marginLeft + bag.ScaledPoint(column+offsetX-2)*g.gridWidth
 	if column > 1 {
 		posx += bag.ScaledPoint(column-2) * g.gridGapX
@@ -209,12 +216,40 @@ func (g *grid) posX(column coord, area *area) bag.ScaledPoint {
 // posY returns the vertical offset relative to the top page border. Row 1
 // returns the top margin.
 func (g *grid) posY(row coord, area *area) bag.ScaledPoint {
-	offsetY := area.frame[area.currentFrame].row
+	return g.frameY(row, area.frame[area.currentFrame])
+}
+
+// frameY is posY in the frame f.
+func (g *grid) frameY(row coord, f *gridRect) bag.ScaledPoint {
+	offsetY := f.row
 	posy := g.marginTop + bag.ScaledPoint(row+offsetY-2)*g.gridHeight
 	if row > 1 {
 		posy += bag.ScaledPoint(row-2) * g.gridGapY
 	}
 	return posy
+}
+
+// frameOutline is the outline of a frame: left and top from the top left
+// corner of the page, width and height.
+type frameOutline struct {
+	left, top, width, height bag.ScaledPoint
+}
+
+// frameOutlines returns the outline of every frame of every area, the areas
+// in the order of their names, each at its own position on the grid.
+func (g *grid) frameOutlines() []frameOutline {
+	var ret []frameOutline
+	for _, name := range slices.Sorted(maps.Keys(g.areas)) {
+		for _, f := range g.areas[name].frame {
+			ret = append(ret, frameOutline{
+				left:   g.frameX(1, f),
+				top:    g.frameY(1, f),
+				width:  g.width(f.width),
+				height: g.height(f.height),
+			})
+		}
+	}
+	return ret
 }
 
 // height returns the height of the number of columns.

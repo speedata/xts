@@ -466,14 +466,8 @@ func (xd *xtsDocument) registerCallbacks() {
 			}
 			gridDebug.Rect(0, 0, xtspage.pageWidth, xtspage.pageHeight).Stroke().SetDash([]uint{}, 0).LineWidth(bag.ScaledPointFromFloat(0.4)).ColorStroking(red)
 
-			for _, area := range curGrid.areas {
-				for _, rect := range area.frame {
-					posX := xd.currentGrid.posX(1, area)
-					posY := xtspage.pageHeight - xd.currentGrid.posY(1, area)
-					wd := xd.currentGrid.width(rect.width)
-					ht := xd.currentGrid.height(rect.height) * -1
-					gridDebug.Rect(posX, posY, wd, ht).Stroke()
-				}
+			for _, fo := range curGrid.frameOutlines() {
+				gridDebug.Rect(fo.left, xtspage.pageHeight-fo.top, fo.width, -fo.height).Stroke()
 			}
 
 			rule.Pre = gridDebug.String()

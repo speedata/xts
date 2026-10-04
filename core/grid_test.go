@@ -123,3 +123,29 @@ func TestFitsInRowChecksEveryColumn(t *testing.T) {
 		t.Error("column 5 alone does not fit although it is free")
 	}
 }
+
+// TestFrameOutlinesEachAtItsPlace: the grid trace draws every frame of an
+// area where it is, not every one at the place of the area's current frame,
+// and in the order of the area names, so that the output does not depend on
+// the order of a map.
+func TestFrameOutlinesEachAtItsPlace(t *testing.T) {
+	xd, a := threeFrames(5, 5)
+	g := xd.currentGrid
+	g.gridWidth, g.gridHeight = 10, 20
+	g.areas["a"] = &area{name: "a", frame: []*gridRect{{row: 3, col: 2, width: 1, height: 1}}}
+	a.currentFrame = 1
+	got := g.frameOutlines()
+	want := []frameOutline{
+		{left: 10, top: 40, width: 10, height: 20},
+		{left: 0, top: 0, width: 50, height: 120},
+		{left: 60, top: 0, width: 50, height: 120},
+	}
+	if len(got) != len(want) {
+		t.Fatalf("got %d outlines, want %d", len(got), len(want))
+	}
+	for i := range want {
+		if got[i] != want[i] {
+			t.Errorf("outline %d = %+v, want %+v", i, got[i], want[i])
+		}
+	}
+}

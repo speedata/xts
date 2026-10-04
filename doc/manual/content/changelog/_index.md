@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.4 (2026-10-04)
 
+- **The grid trace draws every frame of an area where it is.**<br>
+  With `<Trace grid="yes"/>`, all frames of an area were outlined at the place of the area's current frame, so an area with two columns showed one of them twice and the other not at all. Every frame is now drawn at its own position, and the frames are drawn in a fixed order, so two runs with the trace on give the same PDF.
 - **An object without coordinates no longer lands on a cell that is taken in its last column.**<br>
   When XTS looked for a free place for an object without `row` and `column`, it checked every column the object covers but the last one, and none at all for an object one column wide. Such an object could be put over something placed before. Every column is checked now, so the object moves down to the next row where it is free.
 - **An object can be placed in the last row of a frame.**<br>
