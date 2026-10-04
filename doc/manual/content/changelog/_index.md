@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.4 (2026-10-04)
 
+- **break-inside: avoid keeps a paragraph of a Flow in one frame.**<br>
+  A `Paragraph` (or a bordered block) directly in a `Flow` split between two frames although it had `break-inside: avoid`; the property worked only on a block inside a container. Such a block now moves to the next frame whole when it fits into an empty one (htmlbag[#75](https://github.com/speedata/xts/issues/75)).
 - **In a Flow, break-before and break-after with recto and verso pick the page side.**<br>
   A forced break with `recto` or `verso` in a `Flow` started a new page without looking at its side, unlike `right` and `left`. `recto` now goes on to the next right (odd) page and `verso` to the next left (even) one ([#60](https://github.com/speedata/xts/issues/60)).
 - **Objects are placed on the cells of a grid with gaps.**<br>

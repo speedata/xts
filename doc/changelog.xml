@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.4" date="2026-10-04">
+      <en summary="break-inside: avoid keeps a paragraph of a Flow in one frame.">A <tt>Paragraph</tt> (or a bordered block) directly in a <tt>Flow</tt> split between two frames although it had <tt>break-inside: avoid</tt>; the property worked only on a block inside a container. Such a block now moves to the next frame whole when it fits into an empty one (htmlbag#75).</en>
+    </entry>
+    <entry version="0.1.4" date="2026-10-04">
       <en summary="In a Flow, break-before and break-after with recto and verso pick the page side.">A forced break with <tt>recto</tt> or <tt>verso</tt> in a <tt>Flow</tt> started a new page without looking at its side, unlike <tt>right</tt> and <tt>left</tt>. <tt>recto</tt> now goes on to the next right (odd) page and <tt>verso</tt> to the next left (even) one (#60).</en>
     </entry>
     <entry version="0.1.4" date="2026-10-04">

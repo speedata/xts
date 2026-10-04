@@ -59,7 +59,7 @@ Inside a flow, XTS decides where a block breaks:
 - **Paragraphs** break between lines. The CSS properties `widows` and `orphans` (both 2 by default) set how many lines must stay together at the bottom and the top of a frame. A paragraph inside a container, such as a list item or a `<div>` with a border, breaks as well, and the container is drawn in parts.
 - **Tables** break between rows. The rows of `<TableHead>` are repeated at the top of every part, the rows of `<TableFoot>` at the bottom. A row itself never breaks, and the rows that a `rowspan` joins stay together. See [Tables across pages](../../tables/tables#tables-across-pages).
 - `break-after: avoid` keeps a block with the next one, typically a heading with the first paragraph after it.
-- `break-inside: avoid` on a container, such as a `<div>` inside `<HTML>`, keeps the container in one frame.
+- `break-inside: avoid` keeps a paragraph, a list or a container, such as a `<div>` inside `<HTML>`, in one frame. A block taller than a frame breaks all the same.
 
 Forced breaks use `break-before` and `break-after`:
 

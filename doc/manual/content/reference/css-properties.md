@@ -89,7 +89,7 @@ CSS properties supported by XTS for styling layout elements and HTML content. Le
 | `z-index` | Integer or `auto`, with `position` | `z-index: 1;` |
 | `page-break-before`, `break-before` | `auto`, `always`, `avoid`; `break-before` also takes `page`, `left`, `right`, `recto`, `verso`. In a `Flow`, `column` continues in the next frame of the area, `page` on the next page, `left` and `verso` on the next left (even) page, `right` and `recto` on the next right (odd) one. A forced break is taken at any depth; on a block's first child it applies to the block itself | `page-break-before: always;` |
 | `page-break-after`, `break-after` | Same values as `page-break-before`. Acts in a `Flow` as `break-before` does, `avoid` keeps a block with the next one, such as a heading with its first paragraph. A forced break is taken at any depth; on a block's last child it applies to the block itself | `page-break-after: avoid;` |
-| `page-break-inside`, `break-inside` | `auto`, `avoid`. `avoid` keeps a container, such as a `div`, in one frame of a `Flow`. XTS does not split a table row: a row that does not fit moves to the next frame whole | `page-break-inside: avoid;` |
+| `page-break-inside`, `break-inside` | `auto`, `avoid`. `avoid` keeps a paragraph or a container in one frame of a `Flow` unless it is taller than the frame. XTS does not split a table row: a row that does not fit moves to the next frame whole | `page-break-inside: avoid;` |
 | `widows` | Positive integer, the default is 2; `1` switches the control off. Acts in a `Flow`; a paragraph placed with `PlaceObject` is never split | `widows: 3;` |
 | `orphans` | Positive integer, the default is 2; `1` switches the control off. Acts in a `Flow`, as with `widows` | `orphans: 3;` |
 
