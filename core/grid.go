@@ -290,7 +290,7 @@ func (g *grid) allocate(x, y coord, area *area, wd, ht bag.ScaledPoint) {
 
 func (g *grid) findSuitableRow(wdCols coord, htRows coord, startColumn coord, area *area) coord {
 	areaHeight := area.frame[area.currentFrame].height
-	for row := area.CurrentRow(); row < areaHeight; row++ {
+	for row := area.CurrentRow(); row <= areaHeight; row++ {
 		if row+htRows-1 > areaHeight {
 			break
 		}

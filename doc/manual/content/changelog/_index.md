@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.4 (2026-10-04)
 
+- **An object can be placed in the last row of a frame.**<br>
+  The search for a free row never looked at the last row of a frame, so an object without `row` and `column` that fits exactly into it, as well as the cursor of `NextRow`, went on to the next frame or page instead. The last row is now used like every other, which changes layouts that relied on the extra break: such an object stays on the page.
 - **Loop passes on what its children make.**<br>
   A `Loop` dropped the result of its children, so rows made in a `Loop` inside a `Table`, or text inside a `Paragraph`, were lost without a warning and the table stayed empty. A `Loop` now returns what its children return in every round, as `ForAll` and `While` do.
 - **A registered line model gets the paragraph's font.**<br>

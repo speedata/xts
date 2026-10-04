@@ -19,7 +19,7 @@
         <PlaceObject area="cols">
             <TextBlock><Paragraph><Value>Page 1, left frame.</Value></Paragraph></TextBlock>
         </PlaceObject>
-        <Loop select="54">
+        <Loop select="56">
             <NextRow area="cols"/>
         </Loop>
         <PlaceObject area="cols">

@@ -83,3 +83,22 @@ func TestNextRowInASlate(t *testing.T) {
 		t.Errorf("area %v row %d, want the same area at row 1", got, got.CurrentRow())
 	}
 }
+
+// TestFindSuitableRowTakesTheLastRow: an object one row high fits into the
+// last row of a frame, and one that would reach below the frame does not.
+func TestFindSuitableRowTakesTheLastRow(t *testing.T) {
+	xd, a := threeFrames(5)
+	g := xd.currentGrid
+	a.SetCurrentRow(6)
+	if row := g.findSuitableRow(5, 1, 1, a); row != 6 {
+		t.Errorf("one row from row 6 of 6: got row %d, want 6", row)
+	}
+	if row := g.findSuitableRow(5, 2, 1, a); row != -1 {
+		t.Errorf("two rows from row 6 of 6: got row %d, want -1", row)
+	}
+	a.SetCurrentRow(1)
+	fill(g, 1, 5, 1, 5)
+	if row := g.findSuitableRow(5, 1, 1, a); row != 6 {
+		t.Errorf("one row below five full ones: got row %d, want 6", row)
+	}
+}
