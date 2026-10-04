@@ -15,6 +15,16 @@ XTS ships with XML schema files (RELAX NG and XSD) that describe the layout lang
 - **Inline documentation**: Read command descriptions without leaving your editor
 - **Instant validation**: Catch syntax errors as you type
 
+## Without a schema
+
+XTS checks the attributes itself when it runs a layout. An attribute that a command does not know is ignored, and XTS writes a warning with the line, the command and the attribute that was probably meant:
+
+```
+Layout line 12: unknown attribute "colum" on PlaceObject, did you mean "column"?
+```
+
+Attribute names are matched exactly, including the hyphen in names such as `background-color`. Attributes in a namespace, such as `xml:lang`, are left alone. This check only says whether XTS reads an attribute; the schema checks more, such as the allowed values and where a command may appear, and shows mistakes while you type.
+
 ## Schema files
 
 The schema files are in the `schema/` directory of your XTS installation:

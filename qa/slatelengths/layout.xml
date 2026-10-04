@@ -12,7 +12,7 @@
                     </TextBlock>
                 </PlaceObject>
                 <PlaceObject column="100mm" row="2mm">
-                    <Box width="20mm" height="14mm" backgroundcolor="darkblue"/>
+                    <Box width="20mm" height="14mm" background-color="darkblue"/>
                 </PlaceObject>
             </Contents>
         </Slate>

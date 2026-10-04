@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.4" date="2026-10-04">
+      <en summary="XTS warns about attributes that a command does not know.">An attribute that XTS does not read, such as a misspelled <tt>&lt;PlaceObject colum="3"&gt;</tt>, was ignored without a word. XTS now writes a warning with the line, the command and, when one is close, the attribute that was probably meant: <tt>Layout line 12: unknown attribute "colum" on PlaceObject, did you mean "column"?</tt> Attributes in a namespace, such as <tt>xml:lang</tt>, are not checked. Attribute names are now matched exactly, so the spelling without the hyphen that XTS used to accept, such as <tt>backgroundcolor</tt> for <tt>background-color</tt>, is ignored with this warning; layouts that use it need the hyphen (#61).</en>
+    </entry>
+    <entry version="0.1.4" date="2026-10-04">
       <en summary="break-inside: avoid keeps a paragraph of a Flow in one frame.">A <tt>Paragraph</tt> (or a bordered block) directly in a <tt>Flow</tt> split between two frames although it had <tt>break-inside: avoid</tt>; the property worked only on a block inside a container. Such a block now moves to the next frame whole when it fits into an empty one (htmlbag#75).</en>
     </entry>
     <entry version="0.1.4" date="2026-10-04">

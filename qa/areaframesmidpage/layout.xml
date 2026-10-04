@@ -18,7 +18,7 @@
 
     <Record match="data">
         <PlaceObject>
-            <Box width="85mm" height="12mm" backgroundcolor="lightgray"/>
+            <Box width="85mm" height="12mm" background-color="lightgray"/>
         </PlaceObject>
         <PlaceObject area="cols">
             <TextBlock><Paragraph><Value>Paragraph 1, long enough to wrap onto a second line.</Value></Paragraph></TextBlock>

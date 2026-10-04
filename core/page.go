@@ -234,9 +234,11 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 			case *goxml.Element:
 				switch t.Name {
 				case "AtPageCreation":
+					xd.checkAttributes(t, nil)
 					slog.Debug(fmt.Sprintf("Call %s (line %d)", t.Name, t.Line))
 					atPageCreation = func() { dispatch(xd, t) }
 				case "AtPageShipout":
+					xd.checkAttributes(t, nil)
 					pg.atPageShipout = func() {
 						slog.Debug(fmt.Sprintf("Call %s (line %d)", t.Name, t.Line))
 						dispatch(xd, t)

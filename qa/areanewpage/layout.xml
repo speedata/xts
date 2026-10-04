@@ -10,13 +10,13 @@
     <SetGrid nx="21" ny="30"/>
     <DefineMasterPage name="page" test="true()" margin="10mm">
         <AtPageCreation>
-            <PlaceObject row="1" column="1"><Box width="21" height="3" backgroundcolor="gray"/></PlaceObject>
+            <PlaceObject row="1" column="1"><Box width="21" height="3" background-color="gray"/></PlaceObject>
         </AtPageCreation>
     </DefineMasterPage>
 
     <Record match="data">
         <Loop select="12" variable="i">
-            <PlaceObject><Box width="10" height="4" backgroundcolor="lightgray"/></PlaceObject>
+            <PlaceObject><Box width="10" height="4" background-color="lightgray"/></PlaceObject>
             <PlaceObject><TextBlock width="8"><Paragraph><Value>Box <Value select="$i"/></Value></Paragraph></TextBlock></PlaceObject>
         </Loop>
     </Record>

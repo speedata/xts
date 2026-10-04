@@ -13,7 +13,7 @@
     </StyleSheet>
     <Record match="data">
         <PlaceObject>
-            <Box width="17" height="20" backgroundcolor="lightgray"/>
+            <Box width="17" height="20" background-color="lightgray"/>
         </PlaceObject>
         <PlaceObject>
             <Table width="10" stretch="max">

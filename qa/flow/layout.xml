@@ -18,7 +18,7 @@
     </StyleSheet>
     <Record match="data">
         <PlaceObject>
-            <Box width="85mm" height="30pt" backgroundcolor="lightgray"/>
+            <Box width="85mm" height="30pt" background-color="lightgray"/>
         </PlaceObject>
         <Flow>
             <ForAll select="para">
@@ -40,7 +40,7 @@
             <Paragraph id="after"><Value>A second Flow continues exactly where the first one ended.</Value></Paragraph>
         </Flow>
         <PlaceObject>
-            <Box width="85mm" height="12pt" backgroundcolor="red"/>
+            <Box width="85mm" height="12pt" background-color="red"/>
         </PlaceObject>
     </Record>
 </Layout>

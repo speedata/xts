@@ -114,7 +114,7 @@ func (xd *xtsDocument) convertXHTMLElement(elt *goxml.Element, expandText bool) 
 			} else {
 				// XTS command: dispatch and insert results
 				if f, ok := dispatchTable[t.Name]; ok {
-					seq, err := f(xd, t)
+					seq, err := callCommand(xd, f, t)
 					if err != nil {
 						return nil, err
 					}
@@ -162,7 +162,7 @@ func (xd *xtsDocument) buildHTMLFromMixedContent(layoutelt *goxml.Element, expan
 			} else {
 				// XTS command
 				if f, ok := dispatchTable[t.Name]; ok {
-					seq, err := f(xd, t)
+					seq, err := callCommand(xd, f, t)
 					if err != nil {
 						return nil, err
 					}

@@ -7,7 +7,7 @@
         <Slate name="band">
             <Contents>
                 <PlaceObject column="-22mm" row="-5mm" allocate="no">
-                    <Box width="20mm" height="14mm" backgroundcolor="darkblue"/>
+                    <Box width="20mm" height="14mm" background-color="darkblue"/>
                 </PlaceObject>
                 <PlaceObject>
                     <TextBlock width="10">
@@ -15,7 +15,7 @@
                     </TextBlock>
                 </PlaceObject>
                 <PlaceObject column="8" row="1" allocate="no">
-                    <Box width="4" height="3" backgroundcolor="gray"/>
+                    <Box width="4" height="3" background-color="gray"/>
                 </PlaceObject>
             </Contents>
         </Slate>

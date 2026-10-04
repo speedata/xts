@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"reflect"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -247,8 +248,87 @@ func goxmlToHTMLNode(elt *goxml.Element) *html.Node {
 	}
 }
 
+// attributeName is the layout attribute that fills the struct field f: the
+// field name in lower case, or the name in the tag sdxml:"attr:…".
+func attributeName(f reflect.StructField) string {
+	for tag := range strings.SplitSeq(getStructTag(f, "sdxml"), ",") {
+		if name, ok := strings.CutPrefix(tag, "attr:"); ok {
+			return name
+		}
+	}
+	return strings.ToLower(f.Name)
+}
+
+// checkAttributes warns about every attribute of elt that is not in known,
+// with the known name it was probably meant to be. Each element is checked
+// once, as a command in a loop runs many times; dispatch calls it with no
+// known names after a command that did not read its attributes. Attributes
+// in a namespace are not the command's to check.
+func (xd *xtsDocument) checkAttributes(elt *goxml.Element, known []string) {
+	if xd.attributesChecked == nil {
+		xd.attributesChecked = make(map[*goxml.Element]bool)
+	}
+	if xd.attributesChecked[elt] {
+		return
+	}
+	xd.attributesChecked[elt] = true
+	// A known name that the element has is not what another one meant.
+	var unused []string
+	for _, name := range known {
+		if !slices.ContainsFunc(elt.Attributes(), func(a *goxml.Attribute) bool { return a.Namespace == "" && a.Name == name }) {
+			unused = append(unused, name)
+		}
+	}
+	for _, attr := range elt.Attributes() {
+		if attr.Namespace != "" || slices.Contains(known, attr.Name) {
+			continue
+		}
+		msg := fmt.Sprintf("Layout line %d: unknown attribute %q on %s", elt.Line, attr.Name, elt.Name)
+		if s := closestName(attr.Name, unused); s != "" {
+			msg += fmt.Sprintf(", did you mean %q?", s)
+		}
+		slog.Warn(msg)
+	}
+}
+
+// closestName returns the name in names with the smallest edit distance to
+// name, or "" if none is close enough to be a misspelling: at most two
+// edits, or a third of the length for long names.
+func closestName(name string, names []string) string {
+	maxDist := max(2, len(name)/3)
+	best, bestDist := "", maxDist+1
+	for _, n := range names {
+		if d := editDistance(name, n); d < bestDist {
+			best, bestDist = n, d
+		}
+	}
+	return best
+}
+
+// editDistance is the Levenshtein distance of a and b.
+func editDistance(a, b string) int {
+	ra, rb := []rune(a), []rune(b)
+	prev := make([]int, len(rb)+1)
+	cur := make([]int, len(rb)+1)
+	for j := range prev {
+		prev[j] = j
+	}
+	for i := 1; i <= len(ra); i++ {
+		cur[0] = i
+		for j := 1; j <= len(rb); j++ {
+			cost := 1
+			if ra[i-1] == rb[j-1] {
+				cost = 0
+			}
+			cur[j] = min(prev[j]+1, cur[j-1]+1, prev[j-1]+cost)
+		}
+		prev, cur = cur, prev
+	}
+	return prev[len(rb)]
+}
+
 // getXMLAttributes fills the struct at v with the attribute values of the
-// current element.
+// current element and warns about the attributes that no field takes.
 func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 	attributes := make(map[string]string)
 
@@ -271,8 +351,9 @@ func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 	// }
 
 	for _, attrib := range layoutelt.Attributes() {
-		name := strings.ReplaceAll(attrib.Name, "-", "")
-		attributes[name] = attrib.Value
+		if attrib.Namespace == "" {
+			attributes[attrib.Name] = attrib.Value
+		}
 	}
 
 	val := reflect.ValueOf(v)
@@ -286,6 +367,14 @@ func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 
 	valNumFields := val.NumField()
 
+	// Check before the struct is filled, so a misspelled attribute that must
+	// exist is reported with its suggestion before the error.
+	known := make([]string, valNumFields)
+	for i := range valNumFields {
+		known[i] = attributeName(val.Type().Field(i))
+	}
+	xd.checkAttributes(layoutelt, known)
+
 	var mustexist bool
 	var dflt string
 	var allowXPath bool
@@ -298,12 +387,10 @@ func getXMLAttributes(xd *xtsDocument, layoutelt *goxml.Element, v any) error {
 
 		field := val.Field(i)
 		structField := val.Type().Field(i)
-		fieldName := strings.ToLower(structField.Name)
+		fieldName := known[i]
 		for tag := range strings.SplitSeq(getStructTag(structField, "sdxml"), ",") {
 			if suffix, ok := strings.CutPrefix(tag, "default:"); ok {
 				dflt = suffix
-			} else if suffix, ok := strings.CutPrefix(tag, "attr:"); ok {
-				fieldName = suffix
 			} else if tag == "mustexist" {
 				mustexist = true
 			} else if tag == "noescape" {

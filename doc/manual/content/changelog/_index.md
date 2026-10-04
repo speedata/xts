@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.4 (2026-10-04)
 
+- **XTS warns about attributes that a command does not know.**<br>
+  An attribute that XTS does not read, such as a misspelled `<PlaceObject colum="3">`, was ignored without a word. XTS now writes a warning with the line, the command and, when one is close, the attribute that was probably meant: `Layout line 12: unknown attribute "colum" on PlaceObject, did you mean "column"?` Attributes in a namespace, such as `xml:lang`, are not checked. Attribute names are now matched exactly, so the spelling without the hyphen that XTS used to accept, such as `backgroundcolor` for `background-color`, is ignored with this warning; layouts that use it need the hyphen ([#61](https://github.com/speedata/xts/issues/61)).
 - **break-inside: avoid keeps a paragraph of a Flow in one frame.**<br>
   A `Paragraph` (or a bordered block) directly in a `Flow` split between two frames although it had `break-inside: avoid`; the property worked only on a block inside a container. Such a block now moves to the next frame whole when it fits into an empty one (htmlbag[#75](https://github.com/speedata/xts/issues/75)).
 - **In a Flow, break-before and break-after with recto and verso pick the page side.**<br>

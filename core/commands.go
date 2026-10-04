@@ -207,7 +207,7 @@ func dispatch(xd *xtsDocument, layoutelement *goxml.Element) (xpath.Sequence, er
 					return nil, newTypesettingError(elt.Name, elt.Line, "not allowed inside a Flow")
 				}
 				slog.Debug("Command", "cmd", elt.Name, "line", elt.Line)
-				seq, err := f(xd, elt)
+				seq, err := callCommand(xd, f, elt)
 				if err != nil {
 					return nil, err
 				}
@@ -225,6 +225,17 @@ func dispatch(xd *xtsDocument, layoutelement *goxml.Element) (xpath.Sequence, er
 		}
 	}
 	return retSequence, nil
+}
+
+// callCommand runs the command f for elt. A command with attributes reads
+// them through getXMLAttributes, which warns about the unknown ones, so every
+// attribute of an element whose command read none is unknown.
+func callCommand(xd *xtsDocument, f commandFunc, elt *goxml.Element) (xpath.Sequence, error) {
+	seq, err := f(xd, elt)
+	if err == nil {
+		xd.checkAttributes(elt, nil)
+	}
+	return seq, err
 }
 
 // dispatchValueContext dispatches the children of layoutelement as a bound data
@@ -392,7 +403,7 @@ func cmdBox(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 		Class           string
 		ID              string
 		Style           string
-		Backgroundcolor *string
+		Backgroundcolor *string         `sdxml:"attr:background-color"`
 		Width           bag.ScaledPoint `sdxml:"mustexist"`
 		Height          bag.ScaledPoint `sdxml:"mustexist"`
 	}{}
@@ -430,13 +441,13 @@ func cmdCircle(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 		Class           string
 		ID              string
 		Style           string
-		Backgroundcolor *string
-		Borderwidth     *bag.ScaledPoint
-		Bordercolor     *string
-		RadiusX         *bag.ScaledPoint `sdxml:"mustexist"`
-		RadiusY         *bag.ScaledPoint
-		OriginX         int `sdxml:"default:50"`
-		OriginY         int `sdxml:"default:50"`
+		Backgroundcolor *string          `sdxml:"attr:background-color"`
+		Borderwidth     *bag.ScaledPoint `sdxml:"attr:border-width"`
+		Bordercolor     *string          `sdxml:"attr:border-color"`
+		RadiusX         *bag.ScaledPoint `sdxml:"attr:radius-x,mustexist"`
+		RadiusY         *bag.ScaledPoint `sdxml:"attr:radius-y"`
+		OriginX         int              `sdxml:"attr:origin-x,default:50"`
+		OriginY         int              `sdxml:"attr:origin-y,default:50"`
 	}{}
 	var err error
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
@@ -509,7 +520,7 @@ func cmdColumn(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 	var err error
 	attValues := &struct {
 		Align           string
-		Backgroundcolor string
+		Backgroundcolor string `sdxml:"attr:background-color"`
 		Valign          string
 		Width           string
 	}{}
@@ -1023,7 +1034,7 @@ func cmdHTML(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 	var err error
 	attValues := &struct {
 		Select     *string
-		ExpandText string `sdxml:"default:no"`
+		ExpandText string `sdxml:"attr:expand-text,default:no"`
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -1192,10 +1203,10 @@ func cmdImage(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		Href       string `sdxml:"mustexist"`
 		Height     *bag.ScaledPoint
 		Width      *bag.ScaledPoint
-		MinHeight  *bag.ScaledPoint
-		MinWidth   *bag.ScaledPoint
-		MaxHeight  *bag.ScaledPoint
-		MaxWidth   *bag.ScaledPoint
+		MinHeight  *bag.ScaledPoint `sdxml:"attr:min-height"`
+		MinWidth   *bag.ScaledPoint `sdxml:"attr:min-width"`
+		MaxHeight  *bag.ScaledPoint `sdxml:"attr:max-height"`
+		MaxWidth   *bag.ScaledPoint `sdxml:"attr:max-width"`
 		Stretch    bool
 		Page       int
 		VisibleBox string `sdxml:"default:cropbox"`
@@ -1978,7 +1989,7 @@ func cmdPlaceObject(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		Allocate        bool `sdxml:"default:yes"`
 		Area            string
 		Background      bool
-		BackgroundColor string
+		BackgroundColor string `sdxml:"attr:background-color"`
 		Column          string
 		Frame           bool
 		ID              string
@@ -2373,9 +2384,15 @@ func cmdSaveXML(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 }
 
 // cmdSection is a structural grouping element that simply dispatches its children.
-// The "name" attribute exists in the XML schema for documentation purposes only
-// and is intentionally not parsed here.
+// The "name" attribute exists in the XML schema for documentation purposes only;
+// it is read so that it is not reported as unknown.
 func cmdSection(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
+	attValues := &struct {
+		Name string
+	}{}
+	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
+		return nil, err
+	}
 	return dispatch(xd, layoutelt)
 }
 
@@ -2526,10 +2543,12 @@ func cmdStyleSheet(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 func selectSwitchBranch(xd *xtsDocument, layoutelt *goxml.Element) (*goxml.Element, error) {
 	var err error
 
+	xd.checkAttributes(layoutelt, nil)
 	for _, cld := range layoutelt.Children() {
 		if c, ok := cld.(*goxml.Element); ok {
 			switch c.Name {
 			case "Case":
+				xd.checkAttributes(c, []string{"test"})
 				hasTest := false
 				attrs := c.Attributes()
 				for _, attr := range attrs {
@@ -2555,6 +2574,7 @@ func selectSwitchBranch(xd *xtsDocument, layoutelt *goxml.Element) (*goxml.Eleme
 					return nil, newTypesettingErrorf("Case", c.Line, "attribute test on element Case not found")
 				}
 			case "Otherwise":
+				xd.checkAttributes(c, nil)
 				return c, nil
 			}
 		}

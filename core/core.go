@@ -83,6 +83,9 @@ type xtsDocument struct {
 	inSetupPage     bool
 	nextDestination int
 	statCache       map[string]string
+	// attributesChecked are the layout elements whose attributes were
+	// checked for unknown names, see checkAttributes.
+	attributesChecked map[*goxml.Element]bool
 }
 
 func newXTSDocument() *xtsDocument {
@@ -297,6 +300,7 @@ func RunXTS(cfg *XTSConfig) error {
 		}
 		return fmt.Errorf("the layout file must be in the name space %s, found %s", SDNAMESPACE, ns)
 	}
+	d.checkAttributes(layoutRoot, []string{"version"})
 	for _, attr := range layoutRoot.Attributes() {
 		if attr.Name == "version" {
 			if err = checkVersion(attr.Value, Version); err != nil {

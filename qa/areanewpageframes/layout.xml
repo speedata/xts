@@ -13,13 +13,13 @@
             <PositioningFrame column="12" row="1" width="10" height="30"/>
         </PositioningArea>
         <AtPageCreation>
-            <PlaceObject row="1" column="1"><Box width="10" height="30" backgroundcolor="gray"/></PlaceObject>
+            <PlaceObject row="1" column="1"><Box width="10" height="30" background-color="gray"/></PlaceObject>
         </AtPageCreation>
     </DefineMasterPage>
 
     <Record match="data">
         <Loop select="4" variable="i">
-            <PlaceObject area="cols"><Box width="10" height="12" backgroundcolor="lightgray"/></PlaceObject>
+            <PlaceObject area="cols"><Box width="10" height="12" background-color="lightgray"/></PlaceObject>
         </Loop>
     </Record>
 </Layout>
