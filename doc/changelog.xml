@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.4" date="2026-10-04">
+      <en summary="Loop passes on what its children make.">A <tt>Loop</tt> dropped the result of its children, so rows made in a <tt>Loop</tt> inside a <tt>Table</tt>, or text inside a <tt>Paragraph</tt>, were lost without a warning and the table stayed empty. A <tt>Loop</tt> now returns what its children return in every round, as <tt>ForAll</tt> and <tt>While</tt> do.</en>
+    </entry>
+    <entry version="0.1.4" date="2026-10-04">
       <en summary="A registered line model gets the paragraph's font.">A line model registered through <tt>XTSConfig.LineModels</tt> gets the paragraph's own font in <tt>htmlbag.LineModelStyles.Font</tt>, with the face, size and vertical metrics its glyphs are set in, so it can give a line without glyphs, such as the one between two <tt>Br</tt>, the height of the paragraph's font (CSS 2.1 §10.8.1).</en>
     </entry>
     <entry version="0.1.4" date="2026-10-02">

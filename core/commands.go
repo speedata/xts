@@ -1512,15 +1512,17 @@ func cmdLoop(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 		return nil, err
 	}
 
+	var ret xpath.Sequence
 	for i := 1; i < int(f)+1; i++ {
 		xd.data.SetVariable(attValues.Variable, xpath.Sequence{i})
 		eval, err = dispatch(xd, layoutelt)
 		if err != nil {
 			return nil, err
 		}
+		ret = append(ret, eval...)
 	}
 
-	return nil, nil
+	return ret, nil
 }
 
 func cmdMark(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {

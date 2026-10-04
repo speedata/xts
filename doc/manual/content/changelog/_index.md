@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.4 (2026-10-04)
 
+- **Loop passes on what its children make.**<br>
+  A `Loop` dropped the result of its children, so rows made in a `Loop` inside a `Table`, or text inside a `Paragraph`, were lost without a warning and the table stayed empty. A `Loop` now returns what its children return in every round, as `ForAll` and `While` do.
 - **A registered line model gets the paragraph's font.**<br>
   A line model registered through `XTSConfig.LineModels` gets the paragraph's own font in `htmlbag.LineModelStyles.Font`, with the face, size and vertical metrics its glyphs are set in, so it can give a line without glyphs, such as the one between two `Br`, the height of the paragraph's font (CSS 2.1 §10.8.1).
 - **PlaceObject keeps a table whole; a table that breaks goes into a Flow.**<br>
