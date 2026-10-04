@@ -332,7 +332,7 @@ func (g *grid) fitsInRow(col coord, row coord, wdCols coord, area *area) bool {
 	col += area.frame[area.currentFrame].col - 1
 	row += area.frame[area.currentFrame].row - 1
 
-	for c := col; c < col+wdCols-1; c++ {
+	for c := col; c < col+wdCols; c++ {
 		if g.allocatedBlocks.allocValue(c, row) > 0 {
 			return false
 		}

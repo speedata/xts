@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.4" date="2026-10-04">
+      <en summary="An object without coordinates no longer lands on a cell that is taken in its last column.">When XTS looked for a free place for an object without <tt>row</tt> and <tt>column</tt>, it checked every column the object covers but the last one, and none at all for an object one column wide. Such an object could be put over something placed before. Every column is checked now, so the object moves down to the next row where it is free.</en>
+    </entry>
+    <entry version="0.1.4" date="2026-10-04">
       <en summary="An object can be placed in the last row of a frame.">The search for a free row never looked at the last row of a frame, so an object without <tt>row</tt> and <tt>column</tt> that fits exactly into it, as well as the cursor of <tt>NextRow</tt>, went on to the next frame or page instead. The last row is now used like every other, which changes layouts that relied on the extra break: such an object stays on the page.</en>
     </entry>
     <entry version="0.1.4" date="2026-10-04">

@@ -102,3 +102,24 @@ func TestFindSuitableRowTakesTheLastRow(t *testing.T) {
 		t.Errorf("one row below five full ones: got row %d, want 6", row)
 	}
 }
+
+// TestFitsInRowChecksEveryColumn: an object fits into a row only when none of
+// the columns it covers is allocated, its last column and a single column
+// included.
+func TestFitsInRowChecksEveryColumn(t *testing.T) {
+	xd, a := threeFrames(5)
+	g := xd.currentGrid
+	fill(g, 4, 4, 1, 1)
+	if g.fitsInRow(1, 1, 4, a) {
+		t.Error("columns 1 to 4 fit although column 4 is allocated")
+	}
+	if !g.fitsInRow(1, 1, 3, a) {
+		t.Error("columns 1 to 3 do not fit although they are free")
+	}
+	if g.fitsInRow(4, 1, 1, a) {
+		t.Error("column 4 alone fits although it is allocated")
+	}
+	if !g.fitsInRow(5, 1, 1, a) {
+		t.Error("column 5 alone does not fit although it is free")
+	}
+}
