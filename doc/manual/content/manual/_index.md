@@ -14,7 +14,7 @@ For the language itself -- the data/action model, variables, functions, template
 [Install XTS and create your first PDF.](getting-started)
 
 ### Core Concepts
-[Understand how layout files, data files, the grid, and positioning work together.](core-concepts)
+[Understand how layout files, data files, the grid, positioning, and flowing text work together.](core-concepts)
 
 ### Text & Styling
 [Load fonts, format text, use CSS and HTML.](text-and-styling)

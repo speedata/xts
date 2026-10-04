@@ -88,7 +88,7 @@ How dimensions work depends on the object type:
 
 ## Text blocks
 
-A text block is a rectangular area for text that doesn't break across pages. It's perfect for headings, captions, labels, and short descriptions.
+A text block is a rectangular area for text that doesn't break across pages. It's perfect for headings, captions, labels, and short descriptions. Running text that should continue on the next page goes into a [`<Flow>`](../flow).
 
 ```xml
 <PlaceObject>
@@ -165,7 +165,7 @@ Tables are placed just like any other object:
 </PlaceObject>
 ```
 
-Tables can span multiple pages (with repeating headers). There's a [whole chapter](../../tables) devoted to them.
+A table placed this way is kept in one piece, like any other object. A table that should break across frames and pages, with its header repeated, goes into a [`<Flow>`](../flow) instead. There's a [whole chapter](../../tables) devoted to tables.
 
 ## Barcodes
 

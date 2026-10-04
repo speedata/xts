@@ -111,7 +111,7 @@ Key points about the cursor:
 
 ## Multiple frames per area
 
-An area can have multiple frames. When the first frame is full, content flows to the next one. If all frames are full, a page break occurs and XTS continues in the first frame of the same area on the new page.
+An area can have multiple frames. When the first frame is full, content flows to the next one. If all frames are full, a page break occurs and XTS continues in the first frame of the same area on the new page. A [`<Flow>`](../flow) uses the frames the same way for text that breaks across them.
 
 ## Forcing a frame switch
 
@@ -125,4 +125,4 @@ If there's no next frame, a new page is created.
 
 ## What's next?
 
-You now understand the core layout model. Next up: [Text & Styling](../../text-and-styling) -- loading fonts, formatting text, and using CSS.
+You now know how to place objects in areas. The last core concept is [flowing text](../flow): running text and long tables that `<Flow>` pours into an area, frame after frame and page after page.

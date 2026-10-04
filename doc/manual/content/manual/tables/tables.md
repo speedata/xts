@@ -61,7 +61,7 @@ Proportional columns are handy:
 
 ## Table headers
 
-`<TableHead>` defines rows that repeat on every page when a table spans multiple pages:
+`<TableHead>` defines rows at the top of the table. When the table breaks across frames and pages in a [`<Flow>`](../../core-concepts/flow), they repeat at the top of every part:
 
 ```xml
 <Table>
@@ -86,6 +86,29 @@ Proportional columns are handy:
     </ForAll>
 </Table>
 ```
+
+`<TableFoot>` is the counterpart at the bottom: its rows close the table and repeat at the bottom of every part.
+
+## Tables across pages
+
+A table placed with `<PlaceObject>` is one object: it is kept whole and moves to the next frame or page when it does not fit. A table taller than every frame of its area is an error. To let a table break between its rows, put it into a `<Flow>`:
+
+```xml
+<Record match="catalog">
+    <Flow>
+        <Table>
+            <TableHead>
+                <Tr><Td><Paragraph><Value>Product</Value></Paragraph></Td></Tr>
+            </TableHead>
+            <ForAll select="product">
+                <Tr><Td><Paragraph><Value select="@name"/></Paragraph></Td></Tr>
+            </ForAll>
+        </Table>
+    </Flow>
+</Record>
+```
+
+The rows are laid out down the frame. When the next row does not fit, the table continues in the next frame of the area, or on a new page, with the rows of `<TableHead>` and `<TableFoot>` repeated. A row itself never breaks, and the rows that a cell with `rowspan` joins go to the next frame together. Paragraphs and other tables can stand before and after the table in the same flow; see [Flowing Text](../../core-concepts/flow) for how the flow fills the page.
 
 ## Spanning rows and columns
 
@@ -141,6 +164,12 @@ A CSS `height` on a row or a cell is the minimum height of the row, as in a brow
 <Tr style="height: 2cm"><Td><Paragraph><Value>Tall row</Value></Paragraph></Td></Tr>
 ```
 
+For rows of exactly one height, as on a form or a label sheet, use `-bag-fixed-height` on the row. The row is then exactly that high, whatever its cells hold: content that does not fit draws past the row, and the row never breaks inside.
+
+```xml
+<Tr style="-bag-fixed-height: 16pt"><Td><Paragraph><Value select="@name"/></Paragraph></Td></Tr>
+```
+
 ### Tabular numbers for financial data
 
 ```xml
@@ -186,7 +215,7 @@ Table cells can hold more than just text:
 
 A paragraph in a cell keeps its own margins, background and border, so a class such as `.note { margin-left: 1em; background-color: #eef; }` looks the same in a cell as on the page.
 
-Individual cells are never split across pages -- they're always rendered as a single rectangular box.
+Individual cells are never split across pages -- they're always rendered as a single rectangular box. A table in a `<Flow>` breaks between rows, see [Tables across pages](#tables-across-pages).
 
 ## Data-driven tables
 
@@ -289,4 +318,5 @@ A `margin-left` moves the table to the right, with its borders, also when it is 
 
 ## See also
 
-- [Table reference](/reference/commands/table), [Tr](/reference/commands/tr), [Td](/reference/commands/td), [Columns](/reference/commands/columns), [TableHead](/reference/commands/tablehead)
+- [Table reference](/reference/commands/table), [Tr](/reference/commands/tr), [Td](/reference/commands/td), [Columns](/reference/commands/columns), [TableHead](/reference/commands/tablehead), [TableFoot](/reference/commands/tablefoot)
+- [Flowing Text](../../core-concepts/flow) -- tables that break across frames and pages

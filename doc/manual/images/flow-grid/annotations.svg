@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="510.24pt" height="226.77pt" viewBox="0 0 510.24 226.77">
+  <!-- Overlay of flow-grid, coordinates in pt from the top left of the
+       page (180mm x 80mm, height 226.77pt). Measured in the dump of
+       xts with the option dumpoutput, y subtracted from the page height:
+       gray box bottom    28.35 + 30 = 58.35, where the flow starts
+       last line bottom   baseline + depth = 153.34, in row 11
+       red box top        row 12 = 28.35 + 11 * 12 = 160.35
+       text area right    28.35 + 269.29 = 297.64 -->
+  <g font-family="sans" font-size="8.5" fill="#222">
+    <text x="330" y="52">The flow starts at the exact bottom</text>
+    <text x="330" y="63">of the gray box, in the middle of row 3.</text>
+    <text x="330" y="132">The text ends part way down row 11.</text>
+    <text x="330" y="143">Every row it reaches into is allocated.</text>
+    <text x="330" y="181">A PlaceObject after the flow starts</text>
+    <text x="330" y="192">on the next whole row, row 12.</text>
+  </g>
+  <g stroke="#1a5fb4" stroke-width="0.8" fill="none">
+    <line x1="326" y1="55" x2="302" y2="58.35"/>
+    <line x1="326" y1="135" x2="302" y2="153.34"/>
+    <line x1="326" y1="184" x2="302" y2="166"/>
+  </g>
+  <g fill="#1a5fb4">
+    <circle cx="300" cy="58.35" r="2"/>
+    <circle cx="300" cy="153.34" r="2"/>
+    <circle cx="300" cy="166" r="2"/>
+  </g>
+</svg>

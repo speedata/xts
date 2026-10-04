@@ -6,6 +6,27 @@ linktitle: Multi-Page Content
 
 # Multi-Page Content
 
+Content reaches the next page in one of two ways:
+
+- An object placed with `<PlaceObject>` stays in one piece. When it does not fit below what is already in the frame, it moves to the next frame of its area, or to a new page once the frames are used up.
+- The content of a `<Flow>` breaks: paragraphs between lines, tables between rows. The rest continues in the next frame or on the next page.
+
+## Text across pages
+
+Put running text into a `<Flow>`. It starts new pages by itself, as many as the text needs:
+
+```xml
+<Record match="article">
+    <Flow area="text">
+        <ForAll select="para">
+            <Paragraph><Value select="."/></Paragraph>
+        </ForAll>
+    </Flow>
+</Record>
+```
+
+The chapter [Flowing Text](../../core-concepts/flow) explains how a flow fills the grid, which commands it takes, and how to control the breaks with CSS.
+
 ## Tables across pages
 
 A table in a `<Flow>` breaks across frames and pages. Its rows are laid out
@@ -60,6 +81,8 @@ If an area has multiple frames, use `<NextFrame>` to jump to the next one:
 
 If there's no next frame, a page break is inserted and content continues in the first frame of the area on the new page.
 
+`<ClearPage>` and `<NextFrame>` are not allowed inside a `<Flow>`. There, the CSS properties `break-before` and `break-after` do the same: `page` (or `left`, `right`) for a new page and `column` for the next frame.
+
 ## Positioning frames for multi-column layouts
 
 Define multiple frames within a single area to create flowing multi-column layouts:
@@ -74,10 +97,11 @@ Define multiple frames within a single area to create flowing multi-column layou
 </DefineMasterPage>
 ```
 
-Content placed in the "text" area fills the first column, then flows to the second, then the third. When all three are full, a new page is created and the cycle repeats.
+Content placed in the "text" area fills the first column, then flows to the second, then the third. When all three are full, a new page is created and the cycle repeats. Objects placed with `<PlaceObject>` jump to the next column as a whole; with `<Flow area="text">` the text breaks at the bottom of each column and continues at the top of the next one.
 
 ## See also
 
+- [Flowing Text](../../core-concepts/flow), [Flow reference](/reference/commands/flow)
 - [ClearPage reference](/reference/commands/clearpage)
 - [NextFrame reference](/reference/commands/nextframe)
 - [PositioningArea reference](/reference/commands/positioningarea)

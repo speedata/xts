@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="510.24pt" height="226.77pt" viewBox="0 0 510.24 226.77">
+  <!-- Overlay of flow-skip, coordinates in pt from the top left of the
+       page (180mm x 80mm, height 226.77pt). Measured in the dump of
+       xts with the option dumpoutput, y subtracted from the page height:
+       gray box           x 184.25 to 269.29, y 76.34 to 112.34 (rows 5 to 7)
+       first line below   baseline 121.91
+       text area right    28.35 + 269.29 = 297.64 -->
+  <g font-family="sans" font-size="8.5" fill="#222">
+    <text x="330" y="86">Rows 5 to 7 hold the gray box. The flow</text>
+    <text x="330" y="97">leaves them empty on the full width of</text>
+    <text x="330" y="108">the frame, also beside the box.</text>
+    <text x="330" y="129">The paragraph continues below the box,</text>
+    <text x="330" y="140">at its exact bottom.</text>
+  </g>
+  <g stroke="#1a5fb4" stroke-width="0.8" fill="none">
+    <line x1="326" y1="94" x2="286" y2="94"/>
+    <line x1="326" y1="132" x2="302" y2="117"/>
+  </g>
+  <g fill="#1a5fb4">
+    <circle cx="284" cy="94" r="2"/>
+    <circle cx="300" cy="115" r="2"/>
+  </g>
+</svg>

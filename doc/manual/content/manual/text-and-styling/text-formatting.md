@@ -75,7 +75,7 @@ If your data contains raw HTML (not well-formed XML), use `sd:decode-html()` to 
 
 ## Paragraphs and text blocks
 
-`<TextBlock>` is a rectangular area that holds one or more `<Paragraph>` elements. Text blocks don't break across pages -- they're placed as a single unit. This makes them ideal for:
+`<TextBlock>` is a rectangular area that holds one or more `<Paragraph>` elements. Text blocks don't break across pages -- they're placed as a single unit. For text that breaks between lines and continues in the next frame or on the next page, put the paragraphs into a [`<Flow>`](../../core-concepts/flow) instead. A text block is ideal for:
 
 - Page numbers and headers
 - Short descriptions and captions
@@ -125,6 +125,32 @@ Force a line break with `<Br/>`:
     <Value>Second line</Value>
 </Paragraph>
 ```
+
+## Alignment and spacing
+
+`text-align` sets how the lines of a paragraph are aligned. The default is `start`, which is left for left-to-right text.
+
+- With `left`, `right`, `center`, `start` or `end` the text is ragged: every line is set at its natural width, the word spaces keep their size, and a word that does not fit moves to the next line.
+- With `justify` the word spaces stretch and shrink so that every line but the last fills the measure. Only justified text uses the font expansion (`-bag-font-expansion`), which widens or narrows the glyphs a little to even out the spaces.
+
+```xml
+<StyleSheet>
+    .body { text-align: justify; hyphens: auto; }
+    .caption { text-align: center; }
+</StyleSheet>
+```
+
+`letter-spacing` adds space after every character, the spaces between words included, so a letter-spaced line keeps its words apart. For headings in capitals, a small value such as `0.05em` is common.
+
+`-bag-horizontal-scale` draws the glyphs narrower or wider by a fixed factor, given as a percentage or a number (`90%` or `0.9`). The line breaker sees the scaled width, so more text fits on a line. The value is inherited but does not compound: `100%` inside a scaled element returns to normal width.
+
+```xml
+<Paragraph style="-bag-horizontal-scale: 90%">
+    <Value>A long product name that should fit on one line</Value>
+</Paragraph>
+```
+
+All text properties are listed in the [CSS reference](/reference/css-properties).
 
 ## CSS styling
 

@@ -1,0 +1,30 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+        xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+  <!-- Source of manual/img/flow-grid.png, see ../Readme.md. A box 30pt
+       high on rows of 12pt, a Flow that starts at its exact bottom and a
+       red box placed after the flow on the next whole row. The labels on
+       the right come from annotations.svg. -->
+  <PageFormat width="180mm" height="80mm"/>
+  <SetGrid width="5mm" height="12pt"/>
+  <Trace grid="yes" gridallocation="yes"/>
+  <DefineMasterPage name="page" test="true()" margin="10mm 75mm 10mm 10mm"/>
+  <StyleSheet>
+    p { font-family: serif; font-size: 10pt; line-height: 13pt; margin: 0 0 4pt 0; }
+  </StyleSheet>
+  <Record match="data">
+    <PlaceObject>
+      <Box width="{sd:number-of-columns()}" height="30pt" background-color="lightgray"/>
+    </PlaceObject>
+    <Flow>
+      <ForAll select="para">
+        <Paragraph><Value select="."/></Paragraph>
+      </ForAll>
+    </Flow>
+    <PlaceObject>
+      <Box width="{sd:number-of-columns()}" height="1" background-color="#d33"/>
+    </PlaceObject>
+    <PlaceObject column="0mm" row="0mm" allocate="no">
+      <Image href="annotations.svg" width="180mm" height="80mm"/>
+    </PlaceObject>
+  </Record>
+</Layout>

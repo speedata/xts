@@ -1,0 +1,29 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+        xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+  <!-- Source of manual/img/flow-columns.png, see ../Readme.md. An
+       introduction flows across the page and ends part way down a row.
+       The flow into the area cols, two frames side by side, starts at
+       that exact height in both columns and fills the left one first. -->
+  <PageFormat width="180mm" height="75mm"/>
+  <SetGrid width="5mm" height="12pt"/>
+  <DefineMasterPage name="page" test="true()" margin="10mm">
+    <PositioningArea name="cols">
+      <PositioningFrame column="1" row="1" width="15" height="{sd:number-of-rows()}"/>
+      <PositioningFrame column="18" row="1" width="15" height="{sd:number-of-rows()}"/>
+    </PositioningArea>
+  </DefineMasterPage>
+  <StyleSheet>
+    p { font-family: serif; font-size: 10pt; line-height: 13pt; margin: 0 0 4pt 0; }
+    .intro { font-style: italic; font-size: 11pt; line-height: 14pt; margin-bottom: 8pt; }
+  </StyleSheet>
+  <Record match="data">
+    <Flow>
+      <Paragraph class="intro"><Value select="intro"/></Paragraph>
+    </Flow>
+    <Flow area="cols">
+      <ForAll select="para">
+        <Paragraph><Value select="."/></Paragraph>
+      </ForAll>
+    </Flow>
+  </Record>
+</Layout>

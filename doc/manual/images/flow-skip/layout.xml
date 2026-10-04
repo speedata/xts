@@ -1,0 +1,28 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+        xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+  <!-- Source of manual/img/flow-skip.png, see ../Readme.md. A box in the
+       middle of the page area blocks rows 5 to 7. The flow passes over
+       these rows on the full width and the paragraph continues below. The
+       labels on the right come from annotations.svg. -->
+  <PageFormat width="180mm" height="80mm"/>
+  <SetGrid width="5mm" height="12pt"/>
+  <Trace grid="yes" gridallocation="yes"/>
+  <DefineMasterPage name="page" test="true()" margin="10mm 75mm 10mm 10mm"/>
+  <StyleSheet>
+    p { font-family: serif; font-size: 10pt; line-height: 13pt; margin: 0 0 4pt 0; }
+  </StyleSheet>
+  <Record match="data">
+    <PlaceObject row="5" column="12">
+      <Box width="6" height="3" background-color="lightgray"/>
+    </PlaceObject>
+    <NextRow row="1"/>
+    <Flow>
+      <ForAll select="para">
+        <Paragraph><Value select="."/></Paragraph>
+      </ForAll>
+    </Flow>
+    <PlaceObject column="0mm" row="0mm" allocate="no">
+      <Image href="annotations.svg" width="180mm" height="80mm"/>
+    </PlaceObject>
+  </Record>
+</Layout>
