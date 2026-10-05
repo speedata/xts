@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.4 (2026-10-05)
 
+- **ProcessNode passes on what its records return, and their errors.**<br>
+  The blocks made in a `Record` called through `ProcessNode` were thrown away, so a `Flow` over `ProcessNode` came out empty without a warning, and the same held in a `Paragraph`, a table cell or a variable around it. `ProcessNode` now returns what its records return, in order, as `ForAll` does with its body, so a record per chapter can fill a flow, its `Mark` included. An error in such a record, such as an unknown area, was logged and the run went on; it now ends the run as in a `ForAll`. The schema allows `ProcessNode` and `CallTemplate` inside a `Flow` ([#64](https://github.com/speedata/xts/issues/64)).
 - **sd:slate-height while a slate is composed no longer draws objects twice.**<br>
   Measuring a slate with `sd:slate-height()` while its `Contents` were still being placed kept links from that measurement, so the next object on the slate brought an earlier one back: it was drawn twice, or, with the objects one below the other, the run did not end ([#62](https://github.com/speedata/xts/issues/62)).
 - **XTS warns about attributes that a command does not know.**<br>

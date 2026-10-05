@@ -1449,13 +1449,23 @@ func cmdProcessNode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 
 	oldContext := xd.data.Ctx.SetContextSequence(xpath.Sequence{})
 	// position() and last() are the selected nodes' for their records and are
-	// given back when they are done, like in a ForAll.
+	// given back when they are done, like in a ForAll, also when a record
+	// fails.
 	oldPos, oldSize := xd.data.Ctx.Pos, xd.data.Ctx.Size()
+	defer func() {
+		xd.data.Ctx.SetContextSequence(oldContext)
+		xd.data.Ctx.Pos = oldPos
+		xd.data.Ctx.SetSize(oldSize)
+	}()
 
 	if len(eval) == 0 {
 		slog.Debug(fmt.Sprintf("Call Record select %q mode %q (no items found)", attValues.Select, attValues.Mode))
 	}
 
+	// What the records return goes to the caller in order, as the body of a
+	// ForAll does, so that a Flow or a Paragraph around the ProcessNode gets
+	// it.
+	var ret xpath.Sequence
 	for i, itm := range eval {
 		xd.data.Ctx.Pos = i + 1
 		xd.data.Ctx.SetSize(len(eval))
@@ -1463,14 +1473,15 @@ func cmdProcessNode(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 			xd.data.Ctx.SetContextSequence(xpath.Sequence{elt})
 			if rec := findRecord(xd, elt, attValues.Mode); rec != nil {
 				slog.Debug(fmt.Sprintf("Call Record match %q mode %q (pos %d)", elt.Name, attValues.Mode, xd.data.Ctx.Pos))
-				_, err = dispatch(xd, rec)
+				seq, err := dispatch(xd, rec)
+				if err != nil {
+					return nil, err
+				}
+				ret = append(ret, seq...)
 			}
 		}
 	}
-	xd.data.Ctx.SetContextSequence(oldContext)
-	xd.data.Ctx.Pos = oldPos
-	xd.data.Ctx.SetSize(oldSize)
-	return nil, nil
+	return ret, nil
 }
 
 // findRecord finds the best matching Record for the given element and mode.

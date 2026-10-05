@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.4" date="2026-10-05">
+      <en summary="ProcessNode passes on what its records return, and their errors.">The blocks made in a <tt>Record</tt> called through <tt>ProcessNode</tt> were thrown away, so a <tt>Flow</tt> over <tt>ProcessNode</tt> came out empty without a warning, and the same held in a <tt>Paragraph</tt>, a table cell or a variable around it. <tt>ProcessNode</tt> now returns what its records return, in order, as <tt>ForAll</tt> does with its body, so a record per chapter can fill a flow, its <tt>Mark</tt> included. An error in such a record, such as an unknown area, was logged and the run went on; it now ends the run as in a <tt>ForAll</tt>. The schema allows <tt>ProcessNode</tt> and <tt>CallTemplate</tt> inside a <tt>Flow</tt> (#64).</en>
+    </entry>
+    <entry version="0.1.4" date="2026-10-05">
       <en summary="sd:slate-height while a slate is composed no longer draws objects twice.">Measuring a slate with <tt>sd:slate-height()</tt> while its <tt>Contents</tt> were still being placed kept links from that measurement, so the next object on the slate brought an earlier one back: it was drawn twice, or, with the objects one below the other, the run did not end (#62).</en>
     </entry>
     <entry version="0.1.4" date="2026-10-04">
