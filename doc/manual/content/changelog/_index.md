@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.4 (2026-10-05)
 
+- **A Flow runs on to the bottom margin below the grid's last row.**<br>
+  In a frame that reaches the grid's last row, a `Flow`'s band ended at that row's bottom, so the rest of the page area below it, when its height is not a whole number of rows, was never used. The band now runs on to the bottom margin there; a frame that ends higher, or rows taken by an object such as a footer, keep the row edge. A line that ends between the last row and the bottom margin gives no "protrudes into the bottom margin" warning ([#58](https://github.com/speedata/xts/issues/58)).
 - **Text and HTML follow the browser more closely in margins, backgrounds and link targets (htmlbag v0.0.79).**<br>
   With htmlbag v0.0.79 and boxes and glue v0.2.77: `margin: auto` centers a block with a width (both sides) or moves it to the right (`margin-left: auto`); a block image is placed by its margins, applied once, and no longer by the `text-align` it inherits; an inline background such as `background-color` on a `span` covers the font's ascent and descent, as in a browser, rather than the em box; a block with `break-inside: avoid` stays whole; and every element with an `id`, also a `div` or a `span`, is a named PDF destination that a link can point to.
 - **Mark no longer documents append and shiftup, which had no effect.**<br>

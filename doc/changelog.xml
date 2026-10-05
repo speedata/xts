@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.4" date="2026-10-05">
+      <en summary="A Flow runs on to the bottom margin below the grid's last row.">In a frame that reaches the grid's last row, a <tt>Flow</tt>'s band ended at that row's bottom, so the rest of the page area below it, when its height is not a whole number of rows, was never used. The band now runs on to the bottom margin there; a frame that ends higher, or rows taken by an object such as a footer, keep the row edge. A line that ends between the last row and the bottom margin gives no "protrudes into the bottom margin" warning (#58).</en>
+    </entry>
+    <entry version="0.1.4" date="2026-10-05">
       <en summary="Text and HTML follow the browser more closely in margins, backgrounds and link targets (htmlbag v0.0.79).">With htmlbag v0.0.79 and boxes and glue v0.2.77: <tt>margin: auto</tt> centers a block with a width (both sides) or moves it to the right (<tt>margin-left: auto</tt>); a block image is placed by its margins, applied once, and no longer by the <tt>text-align</tt> it inherits; an inline background such as <tt>background-color</tt> on a <tt>span</tt> covers the font's ascent and descent, as in a browser, rather than the em box; a block with <tt>break-inside: avoid</tt> stays whole; and every element with an <tt>id</tt>, also a <tt>div</tt> or a <tt>span</tt>, is a named PDF destination that a link can point to.</en>
     </entry>
     <entry version="0.1.4" date="2026-10-05">

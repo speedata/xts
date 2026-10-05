@@ -1,0 +1,20 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+
+    <!-- The page area is 113.39pt high: nine rows of 12pt and 5.39pt below
+         the last one. The flow's band runs on to the bottom margin, so ten
+         lines of 11.3pt fit on a page and the twenty lines take two pages. -->
+
+    <PageFormat width="100mm" height="60mm"/>
+    <SetGrid width="5mm" height="12pt"/>
+    <StyleSheet>
+        p { margin: 0; font-size: 10pt; line-height: 11.3pt }
+    </StyleSheet>
+    <Record match="data">
+        <Flow>
+            <ForAll select="line">
+                <Paragraph><Value select="concat('Line ', @n)"/></Paragraph>
+            </ForAll>
+        </Flow>
+    </Record>
+</Layout>

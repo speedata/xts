@@ -184,6 +184,12 @@ func (r *flowRegions) Next(brk string) (htmlbag.Region, error) {
 		// level with the first block.
 		top, continues := r.bandTop(first)
 		bottom := g.posY(last, r.area) + g.gridHeight
+		if f := r.area.frame[r.area.currentFrame]; last == f.height && int(absRow(r.area, last)) >= g.ny {
+			// The grid's last row ends short of the bottom margin by what
+			// is left of a row: a band that reaches it runs on to the
+			// margin.
+			bottom = max(bottom, xd.currentPage.pageHeight-g.marginBottom)
+		}
 		if bottom <= top {
 			r.next = last + 1
 			continue

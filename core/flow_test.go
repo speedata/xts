@@ -171,3 +171,86 @@ func TestFlowBreakToPageSide(t *testing.T) {
 		})
 	}
 }
+
+// A band that reaches the grid's last row, in a frame that ends there, runs
+// on to the bottom margin. The page area is 113.39pt high, nine rows of 12pt
+// and 5.39pt below them, and the lines 11.3pt: ten fit to the margin, nine
+// to the last row.
+func TestFlowRunsOnToTheBottomMargin(t *testing.T) {
+	head := func(master string) string {
+		return layoutHead + `
+  <PageFormat width="100mm" height="60mm"/>
+  <SetGrid width="5mm" height="12pt"/>
+  <DefineMasterPage name="page" test="true()" margin="10mm">` + master + `</DefineMasterPage>
+  <StyleSheet>p { margin: 0; font-size: 10pt; line-height: 11.3pt }</StyleSheet>
+`
+	}
+	lines := func(area string, n int) string {
+		var b strings.Builder
+		fmt.Fprintf(&b, `<Flow%s>`, area)
+		for i := 1; i <= n; i++ {
+			fmt.Fprintf(&b, `<Paragraph id="l%d"><Value>Line %d</Value></Paragraph>`, i, i)
+		}
+		b.WriteString(`</Flow>`)
+		return b.String()
+	}
+	// onFirstPage counts the lines on the first page that holds any. With a
+	// footer from AtPageCreation, the flow starts on page 2: the footer's
+	// PlaceObject leaves the current row below it on page 1.
+	onFirstPage := func(t *testing.T, layout string) int {
+		t.Helper()
+		for _, pg := range renderDump(t, layout).Children {
+			n := 0
+			for _, id := range pg.ids() {
+				if strings.HasPrefix(id, "l") {
+					n++
+				}
+			}
+			if n > 0 {
+				return n
+			}
+		}
+		return 0
+	}
+	for _, c := range []struct {
+		name, master, area string
+		want               int
+	}{
+		{"a frame that reaches the last row", "", "", 10},
+		{"a frame that ends above it", `<PositioningArea name="a"><PositioningFrame column="1" row="1" width="16" height="8"/></PositioningArea>`, ` area="a"`, 8},
+		{"two frames side by side", `<PositioningArea name="a"><PositioningFrame column="1" row="1" width="7" height="9"/><PositioningFrame column="9" row="1" width="8" height="9"/></PositioningArea>`, ` area="a"`, 20},
+		{"a footer in the last row", `<AtPageCreation><PlaceObject column="1" row="9"><Box width="16" height="1"/></PlaceObject></AtPageCreation>`, "", 8},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			layout := head(c.master) + `<Record match="data">` + lines(c.area, 30) + `</Record></Layout>`
+			if got := onFirstPage(t, layout); got != c.want {
+				t.Errorf("%d lines on the first page, want %d", got, c.want)
+			}
+			if log := runLayoutLog(t, layout); strings.Contains(log, "protrudes into the bottom margin") {
+				t.Errorf("a warning about the bottom margin:\n%s", log)
+			}
+		})
+	}
+	// A block that fits in no empty frame and passes the margin still warns.
+	t.Run("a block taller than the frame", func(t *testing.T) {
+		layout := head("") + `<Record match="data"><Flow><Paragraph style="line-height: 150pt"><Value>Tall</Value></Paragraph></Flow></Record></Layout>`
+		if log := runLayoutLog(t, layout); !strings.Contains(log, "protrudes into the bottom margin") {
+			t.Errorf("no warning about the bottom margin:\n%s", log)
+		}
+	})
+	// A Flow that follows one ending in the rest below the last row starts
+	// on the next page, not in what is left of the rest.
+	t.Run("a flow after one that ends in the rest", func(t *testing.T) {
+		layout := head("") + `<Record match="data">` + lines("", 10) + `<Flow><Paragraph id="after"><Value>After</Value></Paragraph></Flow></Record></Layout>`
+		root := renderDump(t, layout)
+		if got := pagesWith(root, "l10"); !slices.Equal(got, []int{1}) {
+			t.Errorf("the first flow's last line is on pages %v, want [1]", got)
+		}
+		if got := pagesWith(root, "after"); !slices.Equal(got, []int{2}) {
+			t.Errorf("the second flow is on pages %v, want [2]", got)
+		}
+		if n := len(root.Children); n != 2 {
+			t.Errorf("%d pages, want 2", n)
+		}
+	})
+}
