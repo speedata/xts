@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.4" date="2026-10-05">
+      <en summary="Floats get -bag-float-gutter, and a table moves with position: relative (htmlbag v0.0.80).">With htmlbag v0.0.80 and boxes and glue v0.2.78: the new CSS property <tt>-bag-float-gutter</tt> sets the space between a float and the text beside it where the float declares no margin on that side (9pt by default, <tt>0</tt> gives a browser's spacing); a table with <tt>position: relative</tt> is moved by <tt>left</tt> or <tt>right</tt>, as other blocks are; a float taller than a page no longer leaves empty space on the next page, or a blank page at the end; and a line model from <tt>XTSConfig.LineModels</tt> gets the synthetic oblique in <tt>LineModelStyles.Font</tt> where <tt>font-synthesis-style</tt> slants the upright.</en>
+    </entry>
+    <entry version="0.1.4" date="2026-10-05">
       <en summary="A Flow runs on to the bottom margin below the grid's last row.">In a frame that reaches the grid's last row, a <tt>Flow</tt>'s band ended at that row's bottom, so the rest of the page area below it, when its height is not a whole number of rows, was never used. The band now runs on to the bottom margin there; a frame that ends higher, or rows taken by an object such as a footer, keep the row edge. A line that ends between the last row and the bottom margin gives no "protrudes into the bottom margin" warning (#58).</en>
     </entry>
     <entry version="0.1.4" date="2026-10-05">

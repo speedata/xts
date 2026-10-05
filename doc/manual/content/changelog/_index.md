@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.4 (2026-10-05)
 
+- **Floats get -bag-float-gutter, and a table moves with position: relative (htmlbag v0.0.80).**<br>
+  With htmlbag v0.0.80 and boxes and glue v0.2.78: the new CSS property `-bag-float-gutter` sets the space between a float and the text beside it where the float declares no margin on that side (9pt by default, `0` gives a browser's spacing); a table with `position: relative` is moved by `left` or `right`, as other blocks are; a float taller than a page no longer leaves empty space on the next page, or a blank page at the end; and a line model from `XTSConfig.LineModels` gets the synthetic oblique in `LineModelStyles.Font` where `font-synthesis-style` slants the upright.
 - **A Flow runs on to the bottom margin below the grid's last row.**<br>
   In a frame that reaches the grid's last row, a `Flow`'s band ended at that row's bottom, so the rest of the page area below it, when its height is not a whole number of rows, was never used. The band now runs on to the bottom margin there; a frame that ends higher, or rows taken by an object such as a footer, keep the row edge. A line that ends between the last row and the bottom margin gives no "protrudes into the bottom margin" warning ([#58](https://github.com/speedata/xts/issues/58)).
 - **Text and HTML follow the browser more closely in margins, backgrounds and link targets (htmlbag v0.0.79).**<br>
