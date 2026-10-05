@@ -298,7 +298,7 @@ func (g *grid) allocate(x, y coord, area *area, wd, ht bag.ScaledPoint) {
 					slog.Warn("object protrudes into the right margin")
 					warningRightRaised = true
 				}
-				if posY > coord(g.ny) && !warningBottomRaised && !g.inSlate {
+				if posY > coord(g.ny) && !warningBottomRaised && !g.inSlate && g.pastBottomMargin(g.posY(y, area)+ht) {
 					slog.Warn("object protrudes into the bottom margin")
 					warningBottomRaised = true
 				}
@@ -313,6 +313,16 @@ func (g *grid) allocate(x, y coord, area *area, wd, ht bag.ScaledPoint) {
 		area.SetCurrentCol(col)
 		area.SetCurrentRow(y)
 	}
+}
+
+// pastBottomMargin reports whether an object whose exact bottom, from the
+// page top, is bottom reaches into the bottom margin. Its rows may pass the
+// grid's last row while it ends above the margin: the rest of a row there.
+func (g *grid) pastBottomMargin(bottom bag.ScaledPoint) bool {
+	if g.page == nil {
+		return true
+	}
+	return bottom > g.page.pageHeight-g.marginBottom
 }
 
 func (g *grid) findSuitableRow(wdCols coord, htRows coord, startColumn coord, area *area) coord {
