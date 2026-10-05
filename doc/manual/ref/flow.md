@@ -12,7 +12,7 @@ A [TextBlock](../textblock), an [Image](../image) or a [Box](../box) cannot be p
 
 The children are read before the flow is laid out, so a command that acts on the page at once, [PlaceObject](../placeobject), [ClearPage](../clearpage), [NextFrame](../nextframe) or [NextRow](../nextrow), is an error inside a flow. A forced break goes through CSS, such as `break-before: page`. [CallTemplate](../calltemplate) and [ProcessNode](../processnode) work as everywhere: the blocks of the template or of the records go into the flow.
 
-A [Mark](../mark) between the blocks of a flow, also in an [Action](../action), marks the page of the block that follows it, wherever that block lands; after the last block, the page where the flow ends. With `pdftarget` it is a named destination at the top of that block. A [Bookmark](../bookmark) between the blocks points to the top of the block that follows it. Inside a block, such as a [Paragraph](../paragraph), both are an error for now.
+A [Mark](../mark) between the blocks of a flow, also in an [Action](../action), marks the page of the block that follows it, wherever that block lands; after the last block, the page where the flow ends. With `pdftarget` it is a named destination at the top of that block. A [Bookmark](../bookmark) between the blocks points to the top of the block that follows it. Inside a [Paragraph](../paragraph), a [Mark](../mark) in an [Action](../action) and a [Bookmark](../bookmark) go into their line and take its page and position, also when the flow breaks the paragraph across pages. Elsewhere inside a block, such as directly in a table cell, both are an error for now.
 
 
 

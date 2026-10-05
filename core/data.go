@@ -130,6 +130,10 @@ func (xd *xtsDocument) textValuesToHTMLNode(tagname string, seq xpath.Sequence, 
 			n.AppendChild(cd)
 		case *html.Node:
 			n.AppendChild(t)
+		case *node.StartStop:
+			// From an Action with a Mark, or a Bookmark: it goes into the
+			// line, so it is shipped out on the line's page.
+			n.AppendChild(xd.cssbuilder.InlineNode(t))
 		case *goxml.Element:
 			xmltext, err := xd.parseHTMLText("<body>" + t.ToXML() + "</body>")
 			if err != nil {

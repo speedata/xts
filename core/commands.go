@@ -196,9 +196,10 @@ var flowRejects = map[string]bool{
 
 // flowTransparent reports whether a command leaves a Flow's children at the
 // level of the flow's blocks: the control flow commands of cmdKinds, Action
-// and CallTemplate. A Mark or a Bookmark is only possible there, where it
-// takes the page of the block that follows it. SetVariable, Param and
-// Function collect a value instead, which a Mark would never leave.
+// and CallTemplate. A Mark or a Bookmark there takes the page of the block
+// that follows it; inside a block it is only possible in a Paragraph, whose
+// line it goes into. SetVariable, Param and Function collect a value
+// instead, which a Mark would never leave.
 func flowTransparent(name string) bool {
 	switch name {
 	case "Action", "CallTemplate":
@@ -220,7 +221,7 @@ func dispatch(xd *xtsDocument, layoutelement *goxml.Element) (xpath.Sequence, er
 				if xd.inFlow && flowRejects[elt.Name] {
 					return nil, newTypesettingError(elt.Name, elt.Line, "not allowed inside a Flow")
 				}
-				if xd.inFlow && xd.flowDepth > 0 && (elt.Name == "Mark" || elt.Name == "Bookmark") {
+				if xd.inFlow && xd.flowDepth > 0 && xd.paragraphDepth == 0 && (elt.Name == "Mark" || elt.Name == "Bookmark") {
 					return nil, newTypesettingError(elt.Name, elt.Line, "not allowed inside a block of a Flow, only between its blocks")
 				}
 				slog.Debug("Command", "cmd", elt.Name, "line", elt.Line)
@@ -1994,7 +1995,9 @@ func cmdParagraph(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, er
 		return nil, err
 	}
 
+	xd.paragraphDepth++
 	seq, err := dispatch(xd, layoutelt)
+	xd.paragraphDepth--
 	if err != nil {
 		return nil, err
 	}

@@ -2,7 +2,7 @@
 
 
 
-Sets an invisible mark into the output. This is helpful when you want to know on which page the mark is placed on.
+Sets an invisible mark into the output. This is helpful when you want to know on which page the mark is placed on. The mark takes the page it is output on: in an [Action](../action) inside a [Paragraph](../paragraph) the page of its line, in a [Slate](../slate) the page the slate is placed on. A mark that is output more than once, such as one in a slate placed twice, keeps the last page.
 
 
 

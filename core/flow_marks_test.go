@@ -147,11 +147,12 @@ func TestFlowMarkFirstAndLast(t *testing.T) {
 	}
 }
 
-// A Mark inside a block of a flow has no page of its own yet, and one in a
-// SetVariable never reaches the flow: an error.
-func TestFlowMarkInsideAParagraph(t *testing.T) {
+// A Mark inside a block of a flow, outside a Paragraph whose line it would
+// go into, has no page of its own yet, and one in a SetVariable never
+// reaches the flow: an error.
+func TestFlowMarkInsideABlock(t *testing.T) {
 	for _, c := range []struct{ name, child string }{
-		{"Paragraph", `<Paragraph><Action><Mark select="'m'"/></Action><Value>A</Value></Paragraph>`},
+		{"Td", `<Table><Tr><Td><Action><Mark select="'m'"/></Action><Paragraph><Value>A</Value></Paragraph></Td></Tr></Table>`},
 		{"SetVariable", `<SetVariable variable="v"><Mark select="'m'"/></SetVariable>`},
 	} {
 		t.Run(c.name, func(t *testing.T) {

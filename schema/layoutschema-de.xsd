@@ -9,6 +9,7 @@
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
         <xs:element ref="en:B"></xs:element>
+        <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:Br"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:I"></xs:element>
@@ -158,6 +159,7 @@
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
         <xs:element ref="en:B"></xs:element>
+        <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:Br"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:I"></xs:element>
@@ -573,7 +575,7 @@
       Jedes Kindelement mit einer id behält sie, auch wenn es über Rahmen und Seiten umbrochen wird: Jeder Teil erscheint in --dumpoutput mit seiner Seite und Position.
       Ein TextBlock, ein Image oder eine Box kann noch nicht Teil eines Flusses sein und wird mit einer Warnung ausgelassen. In einem Slate ist ein Fluss nicht möglich.
       Die Kindelemente werden gelesen, bevor der Fluss gesetzt wird. Ein Befehl, der sofort auf die Seite wirkt, PlaceObject, ClearPage, NextFrame oder NextRow, ist in einem Fluss daher ein Fehler. Ein erzwungener Umbruch geht über CSS, etwa break-before: page. CallTemplate und ProcessNode funktionieren wie überall: Die Blöcke der Vorlage oder der Records gehen in den Fluss ein.
-      Ein Mark zwischen den Blöcken eines Flusses, auch in einer Action, markiert die Seite des folgenden Blocks, wo immer dieser landet; nach dem letzten Block die Seite, auf der der Fluss endet. Mit pdftarget ist er ein benanntes Sprungziel am oberen Rand dieses Blocks. Ein Bookmark zwischen den Blöcken zeigt auf den oberen Rand des folgenden Blocks. Innerhalb eines Blocks, etwa eines Paragraph, sind beide vorerst ein Fehler.</xs:documentation>
+      Ein Mark zwischen den Blöcken eines Flusses, auch in einer Action, markiert die Seite des folgenden Blocks, wo immer dieser landet; nach dem letzten Block die Seite, auf der der Fluss endet. Mit pdftarget ist er ein benanntes Sprungziel am oberen Rand dieses Blocks. Ein Bookmark zwischen den Blöcken zeigt auf den oberen Rand des folgenden Blocks. In einem Paragraph gehen ein Mark in einer Action und ein Bookmark in ihre Zeile und erhalten deren Seite und Position, auch wenn der Fluss den Absatz über Seiten umbricht. Anderswo innerhalb eines Blocks, etwa direkt in einer Tabellenzelle, sind beide vorerst ein Fehler.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -746,6 +748,7 @@
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
         <xs:element ref="en:B"></xs:element>
+        <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:Br"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:I"></xs:element>
@@ -848,6 +851,7 @@
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
         <xs:element ref="en:B"></xs:element>
+        <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:Br"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:I"></xs:element>
@@ -979,7 +983,7 @@
   </xs:element>
   <xs:element name="Mark">
     <xs:annotation>
-      <xs:documentation>Setzt eine unsichtbare Markierung in die Ausgabe. Das ist hilfreich, um die Seitenzahl zu bestimmen, auf der die Marke gelandet ist.</xs:documentation>
+      <xs:documentation>Setzt eine unsichtbare Markierung in die Ausgabe. Das ist hilfreich, um die Seitenzahl zu bestimmen, auf der die Marke gelandet ist. Die Marke erhält die Seite, auf der sie ausgegeben wird: in einer Action in einem Paragraph die Seite ihrer Zeile, in einem Slate die Seite, auf der das Slate platziert wird. Eine Marke, die mehrmals ausgegeben wird, etwa in einem zweimal platzierten Slate, behält die letzte Seite.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:attribute name="select" use="required">
@@ -1174,6 +1178,7 @@
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
         <xs:element ref="en:B"></xs:element>
+        <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:Br"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:I"></xs:element>
@@ -1718,6 +1723,7 @@
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
         <xs:element ref="en:B"></xs:element>
+        <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:Br"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:I"></xs:element>
@@ -2130,6 +2136,7 @@
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
         <xs:element ref="en:B"></xs:element>
+        <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:Br"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:I"></xs:element>

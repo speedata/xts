@@ -12,7 +12,7 @@ Create a bookmark for the PDF viewer (e.g. Adobe Reader). When the user clicks o
 
 ##  Parent elements
 
-[Flow](../flow), [Td](../td), [TextBlock](../textblock)
+[A](../a), [B](../b), [Flow](../flow), [I](../i), [Li](../li), [Paragraph](../paragraph), [Span](../span), [Td](../td), [TextBlock](../textblock), [U](../u)
 
 
 ## Attributes

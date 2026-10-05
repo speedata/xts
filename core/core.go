@@ -74,8 +74,12 @@ type xtsDocument struct {
 	inFlow     bool
 	tableDepth int
 	// flowDepth counts the commands of a Flow's children that build a
-	// block, around whose children a Mark has no page of its own.
+	// block, around whose children a Mark has no page of its own unless
+	// it is in a Paragraph (see paragraphDepth).
 	flowDepth int
+	// paragraphDepth counts the Paragraphs being built. Inside one a Mark
+	// goes into its line and takes that line's page, also in a Flow.
+	paragraphDepth int
 	// flowOrigin is the command each node of a Flow's children came from,
 	// to name it when the node cannot be part of the flow.
 	flowOrigin map[node.Node]*goxml.Element

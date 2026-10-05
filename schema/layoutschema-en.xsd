@@ -9,6 +9,7 @@
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
         <xs:element ref="en:B"></xs:element>
+        <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:Br"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:I"></xs:element>
@@ -158,6 +159,7 @@
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
         <xs:element ref="en:B"></xs:element>
+        <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:Br"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:I"></xs:element>
@@ -573,7 +575,7 @@
       Every child with an id keeps it, also when it breaks across frames and pages: each part shows up in --dumpoutput with its page and position.
       A TextBlock, an Image or a Box cannot be part of a flow yet and is left out with a warning. A flow is not possible in a Slate.
       The children are read before the flow is laid out, so a command that acts on the page at once, PlaceObject, ClearPage, NextFrame or NextRow, is an error inside a flow. A forced break goes through CSS, such as break-before: page. CallTemplate and ProcessNode work as everywhere: the blocks of the template or of the records go into the flow.
-      A Mark between the blocks of a flow, also in an Action, marks the page of the block that follows it, wherever that block lands; after the last block, the page where the flow ends. With pdftarget it is a named destination at the top of that block. A Bookmark between the blocks points to the top of the block that follows it. Inside a block, such as a Paragraph, both are an error for now.</xs:documentation>
+      A Mark between the blocks of a flow, also in an Action, marks the page of the block that follows it, wherever that block lands; after the last block, the page where the flow ends. With pdftarget it is a named destination at the top of that block. A Bookmark between the blocks points to the top of the block that follows it. Inside a Paragraph, a Mark in an Action and a Bookmark go into their line and take its page and position, also when the flow breaks the paragraph across pages. Elsewhere inside a block, such as directly in a table cell, both are an error for now.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -746,6 +748,7 @@
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
         <xs:element ref="en:B"></xs:element>
+        <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:Br"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:I"></xs:element>
@@ -848,6 +851,7 @@
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
         <xs:element ref="en:B"></xs:element>
+        <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:Br"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:I"></xs:element>
@@ -979,7 +983,7 @@
   </xs:element>
   <xs:element name="Mark">
     <xs:annotation>
-      <xs:documentation>Sets an invisible mark into the output. This is helpful when you want to know on which page the mark is placed on.</xs:documentation>
+      <xs:documentation>Sets an invisible mark into the output. This is helpful when you want to know on which page the mark is placed on. The mark takes the page it is output on: in an Action inside a Paragraph the page of its line, in a Slate the page the slate is placed on. A mark that is output more than once, such as one in a slate placed twice, keeps the last page.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:attribute name="select" use="required">
@@ -1174,6 +1178,7 @@
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
         <xs:element ref="en:B"></xs:element>
+        <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:Br"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:I"></xs:element>
@@ -1718,6 +1723,7 @@
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
         <xs:element ref="en:B"></xs:element>
+        <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:Br"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:I"></xs:element>
@@ -2130,6 +2136,7 @@
         <xs:element ref="en:A"></xs:element>
         <xs:element ref="en:Action"></xs:element>
         <xs:element ref="en:B"></xs:element>
+        <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:Br"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:I"></xs:element>
