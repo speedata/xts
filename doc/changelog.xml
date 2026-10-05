@@ -36,6 +36,9 @@
     <entry version="0.1.4" date="2026-10-05">
       <en summary="sd:slate-height while a slate is composed no longer draws objects twice.">Measuring a slate with <tt>sd:slate-height()</tt> while its <tt>Contents</tt> were still being placed kept links from that measurement, so the next object on the slate brought an earlier one back: it was drawn twice, or, with the objects one below the other, the run did not end (#62).</en>
     </entry>
+    <entry version="0.1.4" date="2026-10-05">
+      <en summary="A Flow below content on the page moves a block that does not fit on.">A <tt>Flow</tt> that starts below what the page already holds, such as a second <tt>Flow</tt> or a <tt>PlaceObject</tt>, set a block that did not fit in the space left there anyway, past the bottom of the area with a warning. The block now moves on to the next frame or page, as it does after another block of the same flow (#53, #61).</en>
+    </entry>
     <entry version="0.1.4" date="2026-10-04">
       <en summary="XTS warns about attributes that a command does not know.">An attribute that XTS does not read, such as a misspelled <tt>&lt;PlaceObject colum="3"&gt;</tt>, was ignored without a word. XTS now writes a warning with the line, the command and, when one is close, the attribute that was probably meant: <tt>Layout line 12: unknown attribute "colum" on PlaceObject, did you mean "column"?</tt> Attributes in a namespace, such as <tt>xml:lang</tt>, are not checked. Attribute names are now matched exactly, so the spelling without the hyphen that XTS used to accept, such as <tt>backgroundcolor</tt> for <tt>background-color</tt>, is ignored with this warning; layouts that use it need the hyphen (#61).</en>
     </entry>

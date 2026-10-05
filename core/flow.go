@@ -28,6 +28,8 @@ type flowRegions struct {
 	// directly; startPage is the page it ended on.
 	start     *flowEnd
 	startPage *page
+	// firstPage is the page the flow starts on.
+	firstPage *page
 	// next is the frame row the search for the next band starts at.
 	next    coord
 	started bool
@@ -203,6 +205,11 @@ func (r *flowRegions) Next(brk string) (htmlbag.Region, error) {
 		if continues && r.filled == 0 {
 			reg.MarginBefore = r.start.marginAfter
 		}
+		// A band below the top of the frame on the page the flow starts on
+		// lies below what the page holds already, so a block that does not
+		// fit there moves on. Above a band on a later page there is only
+		// what the page was set up with.
+		reg.Occupied = xd.currentPage == r.firstPage && top > g.posY(1, r.area)
 		return reg, nil
 	}
 }
@@ -348,7 +355,7 @@ func cmdFlow(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 		return nil, newTypesettingError("Flow", layoutelt.Line, err.Error())
 	}
 
-	r := &flowRegions{xd: xd, name: attValues.Area, area: area, next: area.CurrentRow()}
+	r := &flowRegions{xd: xd, name: attValues.Area, area: area, next: area.CurrentRow(), firstPage: xd.currentPage}
 	if len(before) > 0 {
 		r.pos = map[*html.Node]int{}
 		i := 0
