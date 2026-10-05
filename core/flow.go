@@ -212,9 +212,11 @@ func (r *flowRegions) Next(brk string) (htmlbag.Region, error) {
 			reg.MarginBefore = r.start.marginAfter
 		}
 		// A band below the top of the frame on the page the flow starts on
-		// lies below what the page holds already, so a block that does not
-		// fit there moves on. Above a band on a later page there is only
-		// what the page was set up with.
+		// lies below what the page holds already, which includes what the
+		// page was set up with: a block that does not fit there moves on,
+		// once. On a later page there is only what the page was set up
+		// with above a band, and a block that arrives there is placed even
+		// when it does not fit.
 		reg.Occupied = xd.currentPage == r.firstPage && top > g.posY(1, r.area)
 		return reg, nil
 	}
