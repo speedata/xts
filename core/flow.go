@@ -60,11 +60,6 @@ type waitingMarks struct {
 // page top, and x on the current page, so they take its number and position.
 func (r *flowRegions) placeMarks(ss []*node.StartStop, x, y bag.ScaledPoint) {
 	for _, s := range ss {
-		if s.Attributes != nil {
-			if _, ok := s.Attributes["page"]; ok {
-				s.Attributes["page"] = r.xd.currentPage
-			}
-		}
 		r.xd.currentPage.outputAbsolute(x, y, node.Vpack(s))
 	}
 }

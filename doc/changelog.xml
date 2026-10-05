@@ -24,6 +24,9 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
+    <entry version="0.1.5" date="2026-10-05">
+      <en summary="A Mark in a slate takes the page the slate is placed on.">A <tt>Mark</tt> in a <tt>Slate</tt> got the page that was current when the slate was composed, so <tt>sd:page-number()</tt> gave that page even when the slate was placed on a later one. A mark now takes the page it is shipped out on; a slate placed more than once leaves the mark on the last of its pages, as a second <tt>Mark</tt> of the same name does (#68).</en>
+    </entry>
     <entry version="0.1.4" date="2026-10-05">
       <en summary="Floats get -bag-float-gutter, and a table moves with position: relative (htmlbag v0.0.80).">With htmlbag v0.0.80 and boxes and glue v0.2.78: the new CSS property <tt>-bag-float-gutter</tt> sets the space between a float and the text beside it where the float declares no margin on that side (9pt by default, <tt>0</tt> gives a browser's spacing); a table with <tt>position: relative</tt> is moved by <tt>left</tt> or <tt>right</tt>, as other blocks are; a float taller than a page no longer leaves empty space on the next page, or a blank page at the end; and a line model from <tt>XTSConfig.LineModels</tt> gets the synthetic oblique in <tt>LineModelStyles.Font</tt> where <tt>font-synthesis-style</tt> slants the upright.</en>
     </entry>

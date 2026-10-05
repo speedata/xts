@@ -9,6 +9,11 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
+## 0.1.5 (2026-10-05)
+
+- **A Mark in a slate takes the page the slate is placed on.**<br>
+  A `Mark` in a `Slate` got the page that was current when the slate was composed, so `sd:page-number()` gave that page even when the slate was placed on a later one. A mark now takes the page it is shipped out on; a slate placed more than once leaves the mark on the last of its pages, as a second `Mark` of the same name does ([#68](https://github.com/speedata/xts/issues/68)).
+
 ## 0.1.4 (2026-10-05)
 
 - **Floats get -bag-float-gutter, and a table moves with position: relative (htmlbag v0.0.80).**<br>

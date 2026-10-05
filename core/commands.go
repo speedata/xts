@@ -313,7 +313,10 @@ func cmdAction(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error
 }
 
 // markDest is the node that sets the mark m to the page it is shipped out
-// on, and with pdftarget is a named destination there.
+// on, and with pdftarget is a named destination there. The page is the one
+// clearPage ships out, not the one current when the node is made: a slate
+// is placed later, maybe on another page and more than once, and the last
+// placement wins as a second Mark of the same name does.
 func (xd *xtsDocument) markDest(m marker) *node.StartStop {
 	var dest *node.StartStop
 	if m.pdftarget {
@@ -321,12 +324,8 @@ func (xd *xtsDocument) markDest(m marker) *node.StartStop {
 	} else {
 		dest = node.NewStartStop()
 	}
-	dest.Attributes = node.H{
-		"page": xd.currentPage,
-	}
 	dest.ShipoutCallback = func(n node.Node) string {
-		startStop := n.(*node.StartStop)
-		cp := startStop.Attributes["page"].(*page)
+		cp := xd.currentPage
 		m.pagenumber = cp.pagenumber
 		m.id = cp.nextMarkerID()
 		xd.marker[m.name] = m
