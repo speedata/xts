@@ -1,0 +1,22 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+
+    <!-- sd:slate-height measures a slate while it is composed, after two
+         objects beside each other, and a third object follows below them.
+         The slate holds each object once: First and Second side by side,
+         Third below. -->
+
+    <PageFormat width="105mm" height="148mm"/>
+    <SetGrid width="5mm" height="12pt"/>
+    <Record match="data">
+        <Slate name="s">
+            <Contents>
+                <PlaceObject><TextBlock width="5"><Paragraph><Value>First</Value></Paragraph></TextBlock></PlaceObject>
+                <PlaceObject column="8" row="1"><TextBlock width="5"><Paragraph><Value>Second</Value></Paragraph></TextBlock></PlaceObject>
+                <Message select="concat('height so far: ', sd:slate-height('s', 'pt'))"/>
+                <PlaceObject><TextBlock width="5"><Paragraph><Value>Third</Value></Paragraph></TextBlock></PlaceObject>
+            </Contents>
+        </Slate>
+        <PlaceObject slate="s"/>
+    </Record>
+</Layout>
