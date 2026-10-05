@@ -42,6 +42,29 @@ type flowRegions struct {
 	// ends on, and endMargin the margin below it.
 	endPage        *page
 	end, endMargin bag.ScaledPoint
+	// waiting holds the Mark and Bookmark nodes waiting for a child of the
+	// body to begin, in body order; pos is the place of each child.
+	waiting []waitingMarks
+	pos     map[*html.Node]int
+}
+
+// waitingMarks are the marks that wait for the body child at pos.
+type waitingMarks struct {
+	pos   int
+	marks []*node.StartStop
+}
+
+// placeMarks ships the mark and bookmark nodes ss out at y, measured from the
+// page top, and x on the current page, so they take its number and position.
+func (r *flowRegions) placeMarks(ss []*node.StartStop, x, y bag.ScaledPoint) {
+	for _, s := range ss {
+		if s.Attributes != nil {
+			if _, ok := s.Attributes["page"]; ok {
+				s.Attributes["page"] = r.xd.currentPage
+			}
+		}
+		r.xd.currentPage.outputAbsolute(x, y, node.Vpack(s))
+	}
 }
 
 // absRow is the page row of the frame row row.
@@ -216,6 +239,18 @@ func (r *flowRegions) startTop() bag.ScaledPoint {
 func (r *flowRegions) Filled(f htmlbag.Filled) error {
 	xd := r.xd
 	g := xd.currentGrid
+	// A child that begins here takes the marks waiting for it, and those
+	// for every child before it, which made no block.
+	for _, fr := range f.Fragments {
+		p, ok := r.pos[fr.Node]
+		if fr.Continued || !ok {
+			continue
+		}
+		for len(r.waiting) > 0 && r.waiting[0].pos <= p {
+			r.placeMarks(r.waiting[0].marks, r.left, r.top+fr.Top)
+			r.waiting = r.waiting[1:]
+		}
+	}
 	if f.Box != nil && f.Used > 0 {
 		xd.currentPage.outputAbsolute(r.left, r.top, f.Box)
 		ht := r.top - g.posY(r.row, r.area) + f.Used
@@ -269,14 +304,30 @@ func cmdFlow(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 		return nil, err
 	}
 	body := &html.Node{Data: "body", Type: html.ElementNode}
+	// pending are the marks and bookmarks waiting for the next child, before
+	// holds them by the child they wait for.
+	var pending []*node.StartStop
+	before := map[*html.Node][]*node.StartStop{}
+	appendChild := func(n *html.Node) {
+		if len(pending) > 0 {
+			before[n] = append(before[n], pending...)
+			pending = nil
+		}
+		body.AppendChild(n)
+	}
 	for _, itm := range seq {
 		switch t := itm.(type) {
 		case *html.Node:
-			body.AppendChild(t)
+			appendChild(t)
 		case *goxml.Element:
-			body.AppendChild(goxmlToHTMLNode(t))
+			appendChild(goxmlToHTMLNode(t))
 		case goxml.Element:
-			body.AppendChild(goxmlToHTMLNode(&t))
+			appendChild(goxmlToHTMLNode(&t))
+		case marker:
+			pending = append(pending, xd.markDest(t))
+		case *node.StartStop:
+			// From an Action with a Mark, or a Bookmark.
+			pending = append(pending, t)
 		default:
 			if n, ok := itm.(node.Node); ok && origin[n] != nil {
 				elt := origin[n]
@@ -291,12 +342,24 @@ func cmdFlow(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 	root.AppendChild(&html.Node{Data: "head", Type: html.ElementNode})
 	root.AppendChild(body)
 	doc.AppendChild(root)
+	trailing := pending
 	te, err := xd.cssbuilder.ParseHTMLFromNode(doc)
 	if err != nil {
 		return nil, newTypesettingError("Flow", layoutelt.Line, err.Error())
 	}
 
 	r := &flowRegions{xd: xd, name: attValues.Area, area: area, next: area.CurrentRow()}
+	if len(before) > 0 {
+		r.pos = map[*html.Node]int{}
+		i := 0
+		for c := body.FirstChild; c != nil; c = c.NextSibling {
+			r.pos[c] = i
+			if ss, ok := before[c]; ok {
+				r.waiting = append(r.waiting, waitingMarks{pos: i, marks: ss})
+			}
+			i++
+		}
+	}
 	if area.CurrentCol() != 1 {
 		// The row is taken in part already.
 		r.next++
@@ -306,6 +369,21 @@ func cmdFlow(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 	}
 	if err := xd.cssbuilder.FlowText(te, r); err != nil {
 		return nil, newTypesettingError("Flow", layoutelt.Line, err.Error())
+	}
+
+	// Marks after the last child, or before a child that never began, take
+	// the page where the flow ends.
+	var rest []*node.StartStop
+	for _, w := range r.waiting {
+		rest = append(rest, w.marks...)
+	}
+	rest = append(rest, trailing...)
+	if len(rest) > 0 {
+		end := r.end
+		if !r.started {
+			end = r.startTop()
+		}
+		r.placeMarks(rest, xd.currentGrid.posX(1, r.area), end)
 	}
 
 	if r.endPage == xd.currentPage {

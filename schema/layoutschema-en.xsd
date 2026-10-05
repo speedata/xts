@@ -572,12 +572,16 @@
       The flow starts at the area&#39;s current row and fills the free rows of each frame: rows that hold objects placed earlier are passed over. The blocks are not rounded to the grid; the rows they reach into are allocated. A free band does not start on the next whole row but at the exact bottom of the objects that end in the row above it, so where the text starts does not depend on the row height. A PlaceObject after the flow starts on the next whole row. A Flow that follows another directly, with nothing placed in between, goes on exactly where it ended, its last margin collapsing with the first block&#39;s, and so does every frame of its area that is free from there on the same page.
       Every child with an id keeps it, also when it breaks across frames and pages: each part shows up in --dumpoutput with its page and position.
       A TextBlock, an Image or a Box cannot be part of a flow yet and is left out with a warning. A flow is not possible in a Slate.
-      The children are read before the flow is laid out, so a command that acts on the page at once, PlaceObject, ClearPage, NextFrame, NextRow or Mark, is an error inside a flow. A forced break goes through CSS, such as break-before: page. CallTemplate works as everywhere.</xs:documentation>
+      The children are read before the flow is laid out, so a command that acts on the page at once, PlaceObject, ClearPage, NextFrame or NextRow, is an error inside a flow. A forced break goes through CSS, such as break-before: page. CallTemplate works as everywhere.
+      A Mark between the blocks of a flow, also in an Action, marks the page of the block that follows it, wherever that block lands; after the last block, the page where the flow ends. With pdftarget it is a named destination at the top of that block. A Bookmark between the blocks points to the top of the block that follows it. Inside a block, such as a Paragraph, both are an error for now.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="en:Action"></xs:element>
+        <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
+        <xs:element ref="en:Mark"></xs:element>
         <xs:element ref="en:Ol"></xs:element>
         <xs:element ref="en:Paragraph"></xs:element>
         <xs:element ref="en:Switch"></xs:element>
