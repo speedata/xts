@@ -9,8 +9,10 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
-## 0.1.4 (2026-10-04)
+## 0.1.4 (2026-10-05)
 
+- **sd:slate-height while a slate is composed no longer draws objects twice.**<br>
+  Measuring a slate with `sd:slate-height()` while its `Contents` were still being placed kept links from that measurement, so the next object on the slate brought an earlier one back: it was drawn twice, or, with the objects one below the other, the run did not end ([#62](https://github.com/speedata/xts/issues/62)).
 - **XTS warns about attributes that a command does not know.**<br>
   An attribute that XTS does not read, such as a misspelled `<PlaceObject colum="3">`, was ignored without a word. XTS now writes a warning with the line, the command and, when one is close, the attribute that was probably meant: `Layout line 12: unknown attribute "colum" on PlaceObject, did you mean "column"?` Attributes in a namespace, such as `xml:lang`, are not checked. Attribute names are now matched exactly, so the spelling without the hyphen that XTS used to accept, such as `backgroundcolor` for `background-color`, is ignored with this warning; layouts that use it need the hyphen ([#61](https://github.com/speedata/xts/issues/61)).
 - **break-inside: avoid keeps a paragraph of a Flow in one frame.**<br>

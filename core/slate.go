@@ -105,9 +105,18 @@ func (s *slate) buildContents() *node.VList {
 		return items[i].behind && !items[j].behind
 	})
 
+	// The objects may still be linked from an earlier build (sd:slate-height
+	// measures the slate while it is composed), so each one is linked anew
+	// rather than inserted after the last, which would keep the old links.
 	var head, tail node.Node
 	appendNode := func(n node.Node) {
-		head = node.InsertAfter(head, tail, n)
+		n.SetPrev(tail)
+		n.SetNext(nil)
+		if tail == nil {
+			head = n
+		} else {
+			tail.SetNext(n)
+		}
 		tail = n
 	}
 	var curY, maxX, maxY bag.ScaledPoint
