@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.4 (2026-10-05)
 
+- **Text and HTML follow the browser more closely in margins, backgrounds and link targets (htmlbag v0.0.79).**<br>
+  With htmlbag v0.0.79 and boxes and glue v0.2.77: `margin: auto` centers a block with a width (both sides) or moves it to the right (`margin-left: auto`); a block image is placed by its margins, applied once, and no longer by the `text-align` it inherits; an inline background such as `background-color` on a `span` covers the font's ascent and descent, as in a browser, rather than the em box; a block with `break-inside: avoid` stays whole; and every element with an `id`, also a `div` or a `span`, is a named PDF destination that a link can point to.
 - **Mark no longer documents append and shiftup, which had no effect.**<br>
   The reference and the schema listed the attributes `append` and `shiftup` of `Mark`, but XTS read them and did nothing with them: a mark never collected several pages and its anchor was never raised. Both are removed until they are implemented, and a layout that sets them gets the warning about an unknown attribute ([#56](https://github.com/speedata/xts/issues/56)).
 - **ProcessNode passes on what its records return, and their errors.**<br>

@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.4" date="2026-10-05">
+      <en summary="Text and HTML follow the browser more closely in margins, backgrounds and link targets (htmlbag v0.0.79).">With htmlbag v0.0.79 and boxes and glue v0.2.77: <tt>margin: auto</tt> centers a block with a width (both sides) or moves it to the right (<tt>margin-left: auto</tt>); a block image is placed by its margins, applied once, and no longer by the <tt>text-align</tt> it inherits; an inline background such as <tt>background-color</tt> on a <tt>span</tt> covers the font's ascent and descent, as in a browser, rather than the em box; a block with <tt>break-inside: avoid</tt> stays whole; and every element with an <tt>id</tt>, also a <tt>div</tt> or a <tt>span</tt>, is a named PDF destination that a link can point to.</en>
+    </entry>
+    <entry version="0.1.4" date="2026-10-05">
       <en summary="Mark no longer documents append and shiftup, which had no effect.">The reference and the schema listed the attributes <tt>append</tt> and <tt>shiftup</tt> of <tt>Mark</tt>, but XTS read them and did nothing with them: a mark never collected several pages and its anchor was never raised. Both are removed until they are implemented, and a layout that sets them gets the warning about an unknown attribute (#56).</en>
     </entry>
     <entry version="0.1.4" date="2026-10-05">
