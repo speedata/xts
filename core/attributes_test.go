@@ -121,3 +121,19 @@ func TestClosestName(t *testing.T) {
 		}
 	}
 }
+
+// append and shiftup of Mark were documented but had no effect; they are
+// unknown now, so a layout that sets them hears about it.
+func TestMarkAppendAndShiftupAreUnknown(t *testing.T) {
+	log := runLayoutLog(t, layoutHead+`
+  <Record match="data">
+    <Mark select="'m'" append="yes" shiftup="2mm"/>
+    <PlaceObject><Box width="2" height="1"/></PlaceObject>
+  </Record>
+</Layout>`)
+	for _, att := range []string{"append", "shiftup"} {
+		if want := `unknown attribute \"` + att + `\" on Mark`; !strings.Contains(log, want) {
+			t.Errorf("no warning %s in\n%s", want, log)
+		}
+	}
+}

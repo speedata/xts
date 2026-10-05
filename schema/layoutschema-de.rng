@@ -1472,26 +1472,10 @@
         <element name="Mark">
             <a:documentation>Setzt eine unsichtbare Markierung in die Ausgabe. Das ist hilfreich, um die Seitenzahl zu bestimmen, auf der die Marke gelandet ist.</a:documentation>
             <lsp:doc href="https://doc.speedata.de/xts/reference/commands/mark/"></lsp:doc>
-            <optional>
-                <attribute name="append">
-                    <a:documentation>Wenn &#39;yes&#39;, dann wird die aktuelle Seitenzahl an den letzten Wert angehängt (mit Komma separiert). Nützlich, um Seitenzahlen wie S. 3-5 im Index zu erstellen. Voreinstellung ist nein.</a:documentation>
-                    <choice>
-                        <value>yes</value>
-                        <a:documentation>Die Seitenzahl an die vorherigen Werte anhängen.</a:documentation>
-                        <value>no</value>
-                        <a:documentation>Den vorherigen Wert ersetzen.</a:documentation>
-                    </choice>
-                </attribute>
-            </optional>
             <attribute name="select">
                 <a:documentation>Der Name des Markers, der gesetzt wird.</a:documentation>
                 <lsp:defines symbol="mark" form="xpath-string"></lsp:defines>
             </attribute>
-            <optional>
-                <attribute name="shiftup">
-                    <a:documentation>Verschiebe die Position des Hyperlink-Ankers um diesen Betrag.</a:documentation>
-                </attribute>
-            </optional>
             <optional>
                 <attribute name="pdftarget">
                     <a:documentation>Setze ein PDF-Ziel, das mit A referenziert werden kann.</a:documentation>

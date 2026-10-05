@@ -982,25 +982,9 @@
       <xs:documentation>Sets an invisible mark into the output. This is helpful when you want to know on which page the mark is placed on.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
-      <xs:attribute name="append">
-        <xs:annotation>
-          <xs:documentation>When yes, append the current page to the previous values of the mark. Useful to get page ranges in an index. (Default is no.)</xs:documentation>
-        </xs:annotation>
-        <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:enumeration value="yes"></xs:enumeration>
-            <xs:enumeration value="no"></xs:enumeration>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:attribute>
       <xs:attribute name="select" use="required">
         <xs:annotation>
           <xs:documentation>The name of the mark to be set.</xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
-      <xs:attribute name="shiftup">
-        <xs:annotation>
-          <xs:documentation>Raise the position of the hyperlink anchor by this amount.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="pdftarget">

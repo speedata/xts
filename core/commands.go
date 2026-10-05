@@ -1577,9 +1577,7 @@ func cmdMark(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 	var err error
 	attValues := &struct {
 		Select    string `sdxml:"noescape,mustexist"`
-		Append    bool
 		PDFTarget bool
-		ShiftUP   bag.ScaledPoint
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -1590,9 +1588,7 @@ func cmdMark(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 		return nil, err
 	}
 	m := marker{
-		append:    attValues.Append,
 		pdftarget: attValues.PDFTarget,
-		shiftup:   attValues.ShiftUP,
 		name:      eval.Stringvalue(),
 	}
 

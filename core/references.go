@@ -7,7 +7,6 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/boxesandglue/boxesandglue/backend/bag"
 	"github.com/boxesandglue/boxesandglue/backend/node"
 	"github.com/speedata/goxpath"
 )
@@ -33,11 +32,9 @@ func getNameDest(name string) *node.StartStop {
 
 type marker struct {
 	name       string
-	append     bool
 	pdftarget  bool
 	pagenumber int
 	id         int // a per page uid
-	shiftup    bag.ScaledPoint
 }
 
 type mapmarker map[string]marker

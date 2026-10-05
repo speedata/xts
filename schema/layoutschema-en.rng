@@ -1472,26 +1472,10 @@
         <element name="Mark">
             <a:documentation>Sets an invisible mark into the output. This is helpful when you want to know on which page the mark is placed on.</a:documentation>
             <lsp:doc href="https://doc.speedata.de/xts/reference/commands/mark/"></lsp:doc>
-            <optional>
-                <attribute name="append">
-                    <a:documentation>When yes, append the current page to the previous values of the mark. Useful to get page ranges in an index. (Default is no.)</a:documentation>
-                    <choice>
-                        <value>yes</value>
-                        <a:documentation>Append the page number to the previous value of the mark.</a:documentation>
-                        <value>no</value>
-                        <a:documentation>Replace the previous value.</a:documentation>
-                    </choice>
-                </attribute>
-            </optional>
             <attribute name="select">
                 <a:documentation>The name of the mark to be set.</a:documentation>
                 <lsp:defines symbol="mark" form="xpath-string"></lsp:defines>
             </attribute>
-            <optional>
-                <attribute name="shiftup">
-                    <a:documentation>Raise the position of the hyperlink anchor by this amount.</a:documentation>
-                </attribute>
-            </optional>
             <optional>
                 <attribute name="pdftarget">
                     <a:documentation>Set a pdf target that can be referenced by A</a:documentation>

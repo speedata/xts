@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.4 (2026-10-05)
 
+- **Mark no longer documents append and shiftup, which had no effect.**<br>
+  The reference and the schema listed the attributes `append` and `shiftup` of `Mark`, but XTS read them and did nothing with them: a mark never collected several pages and its anchor was never raised. Both are removed until they are implemented, and a layout that sets them gets the warning about an unknown attribute ([#56](https://github.com/speedata/xts/issues/56)).
 - **ProcessNode passes on what its records return, and their errors.**<br>
   The blocks made in a `Record` called through `ProcessNode` were thrown away, so a `Flow` over `ProcessNode` came out empty without a warning, and the same held in a `Paragraph`, a table cell or a variable around it. `ProcessNode` now returns what its records return, in order, as `ForAll` does with its body, so a record per chapter can fill a flow, its `Mark` included. An error in such a record, such as an unknown area, was logged and the run went on; it now ends the run as in a `ForAll`. The schema allows `ProcessNode` and `CallTemplate` inside a `Flow` ([#64](https://github.com/speedata/xts/issues/64)).
 - **sd:slate-height while a slate is composed no longer draws objects twice.**<br>

@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.4" date="2026-10-05">
+      <en summary="Mark no longer documents append and shiftup, which had no effect.">The reference and the schema listed the attributes <tt>append</tt> and <tt>shiftup</tt> of <tt>Mark</tt>, but XTS read them and did nothing with them: a mark never collected several pages and its anchor was never raised. Both are removed until they are implemented, and a layout that sets them gets the warning about an unknown attribute (#56).</en>
+    </entry>
+    <entry version="0.1.4" date="2026-10-05">
       <en summary="ProcessNode passes on what its records return, and their errors.">The blocks made in a <tt>Record</tt> called through <tt>ProcessNode</tt> were thrown away, so a <tt>Flow</tt> over <tt>ProcessNode</tt> came out empty without a warning, and the same held in a <tt>Paragraph</tt>, a table cell or a variable around it. <tt>ProcessNode</tt> now returns what its records return, in order, as <tt>ForAll</tt> does with its body, so a record per chapter can fill a flow, its <tt>Mark</tt> included. An error in such a record, such as an unknown area, was logged and the run went on; it now ends the run as in a <tt>ForAll</tt>. The schema allows <tt>ProcessNode</tt> and <tt>CallTemplate</tt> inside a <tt>Flow</tt> (#64).</en>
     </entry>
     <entry version="0.1.4" date="2026-10-05">

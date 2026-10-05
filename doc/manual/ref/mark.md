@@ -19,22 +19,6 @@ Sets an invisible mark into the output. This is helpful when you want to know on
 
 
 
-`append` (optional)
-:   When yes, append the current page to the previous values of the mark. Useful to get page ranges in an index. (Default is no.)
-
-
-
-    `yes`
-    :    Append the page number to the previous value of the mark.
-
-
-
-    `no`
-    :    Replace the previous value.
-
-
-
-
 `pdftarget` (yes or no, optional)
 :   Set a pdf target that can be referenced by [A](../a)
 
@@ -43,12 +27,6 @@ Sets an invisible mark into the output. This is helpful when you want to know on
 
 `select` ([XPath expressions](/programming/xpath))
 :   The name of the mark to be set.
-
-
-
-
-`shiftup` (length, optional)
-:   Raise the position of the hyperlink anchor by this amount.
 
 
 

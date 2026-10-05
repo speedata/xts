@@ -982,25 +982,9 @@
       <xs:documentation>Setzt eine unsichtbare Markierung in die Ausgabe. Das ist hilfreich, um die Seitenzahl zu bestimmen, auf der die Marke gelandet ist.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
-      <xs:attribute name="append">
-        <xs:annotation>
-          <xs:documentation>Wenn &#39;yes&#39;, dann wird die aktuelle Seitenzahl an den letzten Wert angehängt (mit Komma separiert). Nützlich, um Seitenzahlen wie S. 3-5 im Index zu erstellen. Voreinstellung ist nein.</xs:documentation>
-        </xs:annotation>
-        <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:enumeration value="yes"></xs:enumeration>
-            <xs:enumeration value="no"></xs:enumeration>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:attribute>
       <xs:attribute name="select" use="required">
         <xs:annotation>
           <xs:documentation>Der Name des Markers, der gesetzt wird.</xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
-      <xs:attribute name="shiftup">
-        <xs:annotation>
-          <xs:documentation>Verschiebe die Position des Hyperlink-Ankers um diesen Betrag.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="pdftarget">
