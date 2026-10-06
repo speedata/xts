@@ -9,8 +9,10 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
-## 0.1.5 (2026-10-05)
+## 0.1.5 (2026-10-06)
 
+- **A margin no longer starts a page on its own, and a CSS height splits at the page end (htmlbag v0.0.81).**<br>
+  With htmlbag v0.0.81 and boxes and glue v0.2.79: when a page ended exactly full, the bottom margin of its last block went to the next page on its own, and a block taller than a page then moved one page further and left a page with nothing but that margin; a margin at the top of a page after an automatic break is now dropped, as in CSS. The space a CSS `height` adds below a block's content is split at the page end like the content, rather than going whole to the next page and running below its content area.
 - **A Mark in a slate takes the page the slate is placed on.**<br>
   A `Mark` in a `Slate` got the page that was current when the slate was composed, so `sd:page-number()` gave that page even when the slate was placed on a later one. A mark now takes the page it is shipped out on; a slate placed more than once leaves the mark on the last of its pages, as a second `Mark` of the same name does ([#68](https://github.com/speedata/xts/issues/68)).
 
