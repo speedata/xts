@@ -8,7 +8,9 @@ The flow starts at the area's current row and fills the free rows of each frame:
 
 Every child with an `id` keeps it, also when it breaks across frames and pages: each part shows up in `--dumpoutput` with its page and position.
 
-A [TextBlock](../textblock), an [Image](../image) or a [Box](../box) cannot be part of a flow yet and is left out with a warning. A flow is not possible in a [Slate](../slate).
+A [TextBlock](../textblock), an [Image](../image) or a [Box](../box) cannot be part of a flow yet and is left out with a warning.
+
+In a [Slate](../slate), a flow stacks its blocks as one object, as wide as the slate's frame, with the same children, rules and warnings: the blocks keep their exact heights and their margins collapse, but nothing goes on to a next frame or page. It starts at the slate's current row, at the exact bottom of what ends in the row above, and a [PlaceObject](../placeobject) after it starts on the next whole row. A forced break with `page`, `column`, `left` or `right` has nothing to break to there: the blocks go on as without it, with a warning once per flow. The slate has no positioning areas, so `area` is an error in a slate. A [Mark](../mark) or [Bookmark](../bookmark) takes the page the slate is placed on.
 
 The children are read before the flow is laid out, so a command that acts on the page at once, [PlaceObject](../placeobject), [ClearPage](../clearpage), [NextFrame](../nextframe) or [NextRow](../nextrow), is an error inside a flow. A forced break goes through CSS, such as `break-before: page`. [CallTemplate](../calltemplate) and [ProcessNode](../processnode) work as everywhere: the blocks of the template or of the records go into the flow.
 

@@ -87,6 +87,24 @@ An object placed with `allocate="no"` takes no room: it is drawn where it is pla
 
 A slate draws its objects in the order they were placed, as a page does, so without `layer="behind"` the panel would cover the text. With `layer="behind"` an object is drawn under the slate's other objects.
 
+## A flow in a slate
+
+A `<Flow>` in a slate stacks its blocks as one object, as wide as the slate. The blocks keep their exact heights and their margins collapse as on a page, where a `<PlaceObject>` per block would round each one up to whole grid rows. A slate never breaks, so a forced break such as `break-before: page` is ignored there with a warning, and an `area` is an error.
+
+```xml
+<Slate name="letterhead">
+    <Contents>
+        <Flow>
+            <Paragraph class="name"><Value>Example Instruments Ltd</Value></Paragraph>
+            <Paragraph><Value>12 Sample Street</Value></Paragraph>
+            <Paragraph><Value>Testville TV1 2AB</Value></Paragraph>
+        </Flow>
+    </Contents>
+</Slate>
+```
+
+A `<PlaceObject>` in the slate after the flow starts on the next whole row below it, `sd:slate-height()` gives the flow's exact end, and a `<Mark>` between the blocks takes the page the slate is placed on.
+
 ## Why use slates?
 
 - **Independent cursor**: A slate works on its own copy of the page grid, so sketching content does not move the page cursor.

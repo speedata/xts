@@ -1,0 +1,36 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+    <!-- A letterhead composed as a Flow in a slate: its blocks stack as one
+         object at their exact heights, with the margins between them
+         collapsing, and the rule placed after the flow starts on the next
+         whole row below it. The flow is as wide as the slate's frame, which
+         its Grid sets to 20 columns. The frame shows the slate's size. -->
+    <SetGrid width="5mm" height="12pt"/>
+    <StyleSheet>
+        p { margin: 0; font-size: 10pt; line-height: 13pt }
+        p.name { font-size: 16pt; line-height: 20pt; font-weight: bold; margin-bottom: 6pt }
+        p.street { margin-top: 4pt }
+    </StyleSheet>
+    <Record match="data">
+        <Slate name="letterhead">
+            <Grid nx="20"/>
+            <Contents>
+                <Flow>
+                    <Paragraph class="name"><Value>Example Instruments Ltd</Value></Paragraph>
+                    <Paragraph class="street"><Value>12 Sample Street</Value></Paragraph>
+                    <Paragraph><Value>Testville TV1 2AB</Value></Paragraph>
+                    <Paragraph><Value>hello@example.com</Value></Paragraph>
+                </Flow>
+                <PlaceObject>
+                    <Box width="20" height="1pt" background-color="darkblue"/>
+                </PlaceObject>
+            </Contents>
+        </Slate>
+        <PlaceObject column="3" row="2" slate="letterhead" frame="yes"/>
+        <PlaceObject column="3">
+            <TextBlock width="20">
+                <Paragraph><Value select="concat('The letterhead is ', sd:slate-height('letterhead', 'pt'), 'pt high.')"/></Paragraph>
+            </TextBlock>
+        </PlaceObject>
+    </Record>
+</Layout>

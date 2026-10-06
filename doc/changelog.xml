@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.5" date="2026-10-06">
+      <en summary="A Flow in a slate stacks its blocks as one object.">A <tt>Flow</tt> in a <tt>Slate</tt> was an error. It now stacks its blocks as one object, as wide as the slate's frame, with the same children, rules and warnings as on a page: the blocks keep their exact heights and their margins collapse, where a <tt>PlaceObject</tt> per block rounds each one up to whole rows, but nothing goes on to a next frame or page. <tt>bottom</tt> and <tt>sd:slate-height()</tt> give its exact end, and a <tt>PlaceObject</tt> after it starts on the next whole row. A forced break with <tt>page</tt>, <tt>column</tt>, <tt>left</tt> or <tt>right</tt> has nothing to break to there and is ignored with one warning per flow; <tt>area</tt> is an error in a slate. A <tt>Mark</tt> or <tt>Bookmark</tt> between the blocks takes the page the slate is placed on (#59).</en>
+    </entry>
+    <entry version="0.1.5" date="2026-10-06">
       <en summary="A Go program can choose how paragraphs break.">A program that runs XTS can register breakers in <tt>XTSConfig.Breakers</tt>, by name, as it registers line models in <tt>XTSConfig.LineModels</tt>. The CSS property <tt>-bag-line-breaker</tt> selects one for a paragraph, which then chooses the paragraph's breaks among its legal breakpoints in place of Knuth-Plass; the lines are measured and set as before. <tt>auto</tt>, the default, keeps Knuth-Plass.</en>
     </entry>
     <entry version="0.1.5" date="2026-10-06">
