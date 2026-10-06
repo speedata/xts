@@ -6,12 +6,12 @@ github.com/andybalholm/cascadia v1.3.4 h1:vM2lgh0Vru9Vwyfm4cQqWP2HHMW0u0+2PAW7Q3
 github.com/andybalholm/cascadia v1.3.4/go.mod h1:BLRmbRjpEtNKieZOCCvYj4RqN+KRA41GBe/5O+G93kM=
 github.com/boxesandglue/baseline-pdf v1.1.26 h1:KkcSMb/eg+hJ930O26QEGwBtTYJdiY3pGFrrIzmoPD8=
 github.com/boxesandglue/baseline-pdf v1.1.26/go.mod h1:s4HKQ1fw78LlJNCrJuinrLcm0RXD0M/PhQcqLbqRm2k=
-github.com/boxesandglue/boxesandglue v0.2.80 h1:1pQOX9hwq5+JWBt93R3Q1ywVi+VckffURN6ogH3bXY8=
-github.com/boxesandglue/boxesandglue v0.2.80/go.mod h1:TCFQTGqHEgPmxCYd5VRiLt5YhOVYz1jg8adUftUSEtk=
+github.com/boxesandglue/boxesandglue v0.2.81 h1:DAKJEHThlk4ODrw3Ga98lbfmp+/CNWKzlJ3fPIRz+ks=
+github.com/boxesandglue/boxesandglue v0.2.81/go.mod h1:TCFQTGqHEgPmxCYd5VRiLt5YhOVYz1jg8adUftUSEtk=
 github.com/boxesandglue/gofpdi v1.0.24 h1:7Q0v4dkmByemj8PyIYi8ylIYrUnNhY/L/Ed6MRGwlro=
 github.com/boxesandglue/gofpdi v1.0.24/go.mod h1:U26faV5/yQf8ivQS0Tt2TdpU7Y8X9wpLLB2T/5oI+u4=
-github.com/boxesandglue/htmlbag v0.0.82 h1:Tk7K7zrmkWBvUQ18ChDE/7HfKa96SJZ2Yw2Ovm5CK1E=
-github.com/boxesandglue/htmlbag v0.0.82/go.mod h1:RKy01zJ8bbrXTA92uyNdaNUCi4StO5S+hO7no4ZFNLo=
+github.com/boxesandglue/htmlbag v0.0.83 h1:uUtQ0IgMsDF7koRz26fkglf8pr18NJjfB+KeY5cI1D8=
+github.com/boxesandglue/htmlbag v0.0.83/go.mod h1:/EdvMVXGYVADpi1DM2Eya03eJA0eBussetkEDi7JD4w=
 github.com/boxesandglue/svgreader v0.0.5 h1:yUvFP+T66l2YjRjFs7aLQ4lAfimDSLRssy6wZcfOTGc=
 github.com/boxesandglue/svgreader v0.0.5/go.mod h1:EGGvqEiNQsKBrnLYqDfMznN044fFcKkCHrXDLYJ56IY=
 github.com/boxesandglue/textshape v0.0.17 h1:w0lJNSjw6mJ+a0cbiHcahbOAHlSzQkwpUB5XC1MeWhM=

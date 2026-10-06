@@ -28,6 +28,9 @@ CSS properties supported by XTS for styling layout elements and HTML content. Le
 | `font-variation-settings` | Comma separated pairs of an axis tag and a number, for variable fonts | `font-variation-settings: "wght" 650;` |
 | `color` | Color value or a defined color name | `color: #333;` |
 | `text-align` | `left`, `right`, `center`, `justify`, `start`, `end` | `text-align: justify;` |
+| `text-box` | `normal`, or a `text-box-trim` and a `text-box-edge` value. Shorthand; without a trim value it is `trim-both` | `text-box: trim-both text;` |
+| `text-box-edge` | `auto`, `text`. The edges a block's lines are trimmed to: the block's font's text-over and text-under edges, its content area. Other edges warn and use `text` | `text-box-edge: text;` |
+| `text-box-trim` | `none`, `trim-start`, `trim-end`, `trim-both`. Not inherited. Takes the space above the block's font's text-over edge off its first line and below its text-under edge off its last line, such as half-leading, so the block's box ends at its text. Lines set tighter than the content area make the block grow to its text. Split across pages, only the first fragment's start and the last fragment's end are trimmed. Applies only to a block that holds its own lines: on a container of other blocks and in table cells (the `td` itself or a block in it) nothing is trimmed yet | `text-box-trim: trim-both;` |
 | `text-indent` | Length, indents the first line | `text-indent: 1em;` |
 | `text-decoration` | Shorthand for line, style and color | `text-decoration: underline dotted red;` |
 | `text-decoration-line` | `none`, `underline`, `overline`, `line-through` | `text-decoration-line: underline;` |
@@ -118,6 +121,7 @@ CSS properties supported by XTS for styling layout elements and HTML content. Le
 | `-bag-tab-stops` | `none`, or a comma separated list of stops: a length or percentage of the line width, optionally `start`, `end`, `center`, `decimal` or `decimal(",")`, optionally `leader(" . ")` (or `dotted`, `solid`, `space`). Inherited. A tab advances to the next stop past the text before it, `left` and `right` are synonyms of `start` and `end`. Tabs within a line survive any `white-space` mode, whitespace with a newline stays source formatting | `-bag-tab-stops: 12mm, 100% end leader(dotted);` |
 | `-bag-fixed-height` | Length, or `none` (the default). On table rows only, not inherited. The row is exactly this high and never breaks inside: content that does not fit draws past the row, background and borders keep the height. Wins over `height` on the same row, and a cell's `height` in a fixed row is ignored. On a cell the property has no effect | `-bag-fixed-height: 16pt;` |
 | `-bag-float-gutter` | Non-negative length, default `9pt`. Inherited. The space between a float and the text beside it where the float declares no positive margin on the side of the text; a declared margin replaces it. `margin: 0` cannot be told from no margin, so `-bag-float-gutter: 0` is how to get a browser's spacing | `-bag-float-gutter: 0;` |
+| `-bag-trace` | `boxmodel` or `none` (the default). Not inherited. Paints the box model overlay (margin, border, padding and content) on the matched elements only, as the global box model trace does on every block. `none` turns it off again in a more specific rule; it cannot turn off the global trace | `-bag-trace: boxmodel;` |
 | `-bag-bookmark` | `none`, or a level number optionally followed by `open` or `closed`, see [Bookmarks](/manual/advanced/pdf-options#bookmarks). Adds the element to the PDF outline | `-bag-bookmark: 2 closed;` |
 
 ## Selectors

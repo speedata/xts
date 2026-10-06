@@ -11,6 +11,14 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.5 (2026-10-06)
 
+- **CSS text-box-trim trims a block to its text (htmlbag v0.0.83).**<br>
+  The CSS properties `text-box-trim` (`trim-start`, `trim-end`, `trim-both`), `text-box-edge` and the shorthand `text-box` take the space above a block's first line and below its last line, such as the half-leading, off down to the text edges of the block's font, so the block ends at its text. They are not inherited. Split across pages, only the start of the first part and the end of the last part are trimmed. A container of other blocks and a table cell are not trimmed yet.
+- **-bag-trace: boxmodel shows the box model of chosen elements.**<br>
+  The CSS property `-bag-trace: boxmodel` paints the box model overlay (margin, border, padding and content) on the elements a rule matches, as the global box model trace does on every block. It is not inherited, and `none` turns it off again in a more specific rule.
+- **Floats in HTML text shrink to fit, float at the start of a paragraph and are painted over the blocks beside them (htmlbag v0.0.83, boxes and glue v0.2.81).**<br>
+  A float without a `width` shrinks to its longest line instead of taking the full measure, and where it leaves no room beside it the text goes below it. A float at the start of a paragraph, such as an image with `float: left` before the paragraph's text, now floats; before, it was set inline. A paragraph with a border or padding still sets it inline. A float is painted over the background and border of the blocks beside it, as in CSS, where those used to cover it.
+- **A list item with lang no longer stops the run.**<br>
+  An HTML `li` with a `lang` attribute, `-bag-bookmark` or `page-break-inside` stopped the run with an "Unknown setting" error, because its marker took over settings only htmlbag knows (htmlbag v0.0.83).
 - **A Flow in a slate stacks its blocks as one object.**<br>
   A `Flow` in a `Slate` was an error. It now stacks its blocks as one object, as wide as the slate's frame, with the same children, rules and warnings as on a page: the blocks keep their exact heights and their margins collapse, where a `PlaceObject` per block rounds each one up to whole rows, but nothing goes on to a next frame or page. `bottom` and `sd:slate-height()` give its exact end, and a `PlaceObject` after it starts on the next whole row. A forced break with `page`, `column`, `left` or `right` has nothing to break to there and is ignored with one warning per flow; `area` is an error in a slate. A `Mark` or `Bookmark` between the blocks takes the page the slate is placed on ([#59](https://github.com/speedata/xts/issues/59)).
 - **A Go program can choose how paragraphs break.**<br>
