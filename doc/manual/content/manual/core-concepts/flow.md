@@ -224,7 +224,7 @@ A table placed with `<PlaceObject>` that is taller than every frame of its area 
 ## Limits
 
 - Text does not flow around objects; a row with an object is passed over as a whole.
-- A flow is not possible inside a `<Slate>` or inside another flow.
+- A flow is not possible inside another flow. Inside a `<Slate>` it does not break: it stacks its blocks as one object (see [Slates](../../advanced/slates)).
 - `<TextBlock>`, `<Image>` and `<Box>` are left out of a flow with a warning.
 - A `<Mark>` cannot be set inside a flow, so `sd:page-number()` does not find a paragraph placed by a flow.
 

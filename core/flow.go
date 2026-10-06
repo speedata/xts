@@ -48,6 +48,28 @@ type flowRegions struct {
 	// body to begin, in body order; pos is the place of each child.
 	waiting []waitingMarks
 	pos     map[*html.Node]int
+	// slate is set for a flow in a slate, which stacks its blocks there as
+	// one object; line and breakWarned serve its warning on a forced break.
+	slate       *slate
+	line        int
+	breakWarned bool
+}
+
+// slateRegionHeight is the height of the region of a flow in a slate, which
+// never breaks: tall enough for anything, and far from overflowing when added
+// to.
+const slateRegionHeight = bag.ScaledPoint(1 << 40)
+
+// output places vl with its top left corner at x, y from the page's top left
+// corner, or on the slate at the same place of the slate's grid. noRoom puts
+// it on the slate without sizing it.
+func (r *flowRegions) output(x, y bag.ScaledPoint, vl *node.VList, noRoom bool) {
+	if s := r.slate; s != nil {
+		g := r.xd.currentGrid
+		s.appendItem(slateItem{x: x - g.marginLeft, y: y - g.marginTop, vl: vl, noRoom: noRoom})
+		return
+	}
+	r.xd.currentPage.outputAbsolute(x, y, vl)
 }
 
 // waitingMarks are the marks that wait for the body child at pos.
@@ -58,9 +80,10 @@ type waitingMarks struct {
 
 // placeMarks ships the mark and bookmark nodes ss out at y, measured from the
 // page top, and x on the current page, so they take its number and position.
+// In a slate they take those of the page the slate is shipped out on.
 func (r *flowRegions) placeMarks(ss []*node.StartStop, x, y bag.ScaledPoint) {
 	for _, s := range ss {
-		r.xd.currentPage.outputAbsolute(x, y, node.Vpack(s))
+		r.output(x, y, node.Vpack(s), true)
 	}
 }
 
@@ -144,6 +167,9 @@ func pageSide(brk string) (right, ok bool) {
 // that side).
 func (r *flowRegions) Next(brk string) (htmlbag.Region, error) {
 	xd := r.xd
+	if r.slate != nil {
+		return r.nextOnSlate(brk), nil
+	}
 	if r.started {
 		var err error
 		switch brk {
@@ -262,7 +288,7 @@ func (r *flowRegions) Filled(f htmlbag.Filled) error {
 		}
 	}
 	if f.Box != nil && f.Used > 0 {
-		xd.currentPage.outputAbsolute(r.left, r.top, f.Box)
+		r.output(r.left, r.top, f.Box, false)
 		ht := r.top - g.posY(r.row, r.area) + f.Used
 		g.allocate(1, r.row, r.area, r.width, ht)
 		r.area.SetCurrentRow(r.row + g.heightToRows(ht))
@@ -291,12 +317,12 @@ func cmdFlow(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 	if attValues.Area == "" {
 		attValues.Area = defaultAreaName
 	}
-	if xd.currentSlate != nil {
-		return nil, newTypesettingError("Flow", layoutelt.Line, "a flow is not possible in a slate")
-	}
 	xd.setupPage()
 	area, ok := xd.currentGrid.areas[attValues.Area]
 	if !ok {
+		if s := xd.currentSlate; s != nil {
+			return nil, newTypesettingErrorf("Flow", layoutelt.Line, "area %s not found: a flow in slate %s stacks its blocks in the slate's frame and takes no area", attValues.Area, s.name)
+		}
 		return nil, newTypesettingErrorf("Flow", layoutelt.Line, "area %s not found", attValues.Area)
 	}
 	if xd.inFlow {
@@ -358,7 +384,7 @@ func cmdFlow(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 		return nil, newTypesettingError("Flow", layoutelt.Line, err.Error())
 	}
 
-	r := &flowRegions{xd: xd, name: attValues.Area, area: area, next: area.CurrentRow(), firstPage: xd.currentPage}
+	r := &flowRegions{xd: xd, name: attValues.Area, area: area, next: area.CurrentRow(), firstPage: xd.currentPage, slate: xd.currentSlate, line: layoutelt.Line}
 	if len(before) > 0 {
 		r.pos = map[*html.Node]int{}
 		i := 0
@@ -418,4 +444,41 @@ func cmdFlow(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 		xd.data.SetVariable(attValues.Bottom, xpath.Sequence{(end - xd.currentGrid.marginTop).ToPT()})
 	}
 	return nil, nil
+}
+
+// nextOnSlate returns the one region of a flow in a slate: as wide as the
+// slate's frame and open at the bottom, at the exact bottom of what ends in
+// the row above the first free row. A forced break has nothing to break to,
+// so the blocks go on below the last one, their margins collapsing as
+// without the break, and the flow warns once.
+func (r *flowRegions) nextOnSlate(brk string) htmlbag.Region {
+	xd, g := r.xd, r.xd.currentGrid
+	reg := htmlbag.Region{Height: slateRegionHeight}
+	if r.started {
+		if brk != "" && !r.breakWarned {
+			r.breakWarned = true
+			slog.Warn(fmt.Sprintf("Flow (line %d): a forced break (%s) in a slate has nothing to break to and is ignored", r.line, brk))
+		}
+		r.top = r.end
+		reg.MarginBefore = r.endMargin
+	} else {
+		first := max(r.next, 1)
+		for !g.rowFree(r.area, first) {
+			first++
+		}
+		var continues bool
+		r.row = first
+		r.top, continues = r.bandTop(first)
+		if continues {
+			reg.MarginBefore = r.start.marginAfter
+		}
+		r.left = g.posX(1, r.area)
+		r.width = g.width(r.area.frame[r.area.currentFrame].width)
+	}
+	r.started = true
+	reg.Width = r.width
+	reg.Left = r.left
+	reg.Top = xd.currentPage.pageHeight - r.top
+	reg.PageNum = xd.currentPage.pagenumber
+	return reg
 }

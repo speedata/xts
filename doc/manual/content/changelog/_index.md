@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.5 (2026-10-06)
 
+- **A Flow in a slate stacks its blocks as one object.**<br>
+  A `Flow` in a `Slate` was an error. It now stacks its blocks as one object, as wide as the slate's frame, with the same children, rules and warnings as on a page: the blocks keep their exact heights and their margins collapse, where a `PlaceObject` per block rounds each one up to whole rows, but nothing goes on to a next frame or page. `bottom` and `sd:slate-height()` give its exact end, and a `PlaceObject` after it starts on the next whole row. A forced break with `page`, `column`, `left` or `right` has nothing to break to there and is ignored with one warning per flow; `area` is an error in a slate. A `Mark` or `Bookmark` between the blocks takes the page the slate is placed on ([#59](https://github.com/speedata/xts/issues/59)).
 - **A Go program can choose how paragraphs break.**<br>
   A program that runs XTS can register breakers in `XTSConfig.Breakers`, by name, as it registers line models in `XTSConfig.LineModels`. The CSS property `-bag-line-breaker` selects one for a paragraph, which then chooses the paragraph's breaks among its legal breakpoints in place of Knuth-Plass; the lines are measured and set as before. `auto`, the default, keeps Knuth-Plass.
 - **A link target in a line sits at the line's top, and an inline background is one band (boxes and glue v0.2.80).**<br>
