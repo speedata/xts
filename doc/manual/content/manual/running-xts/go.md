@@ -63,6 +63,7 @@ func main() {
 | `DumpFile` | Receives the XML dump of the output | `--dumpoutput` |
 | `Pdfua`, `Pdfa`, `Pdfx` | The PDF standards to claim, empty for none | `--pdfua`, `--pdfa`, `--pdfx` |
 | `LineModels` | Line models by name, see below | |
+| `Breakers` | Line breakers by name, see below | |
 
 The command line does a few things around `RunXTS` that a Go program does itself when it needs them: it reads `xts.cfg`, adds the directories, runs the Lua filter, and calls `RunXTS` again for `--runs`, so that cross-references written to the aux file in one run are resolved in the next. Messages go to the default logger of `log/slog`; the protocol file `xts-protocol.xml` is written by the command line.
 
@@ -81,3 +82,19 @@ p { -bag-leading-model: word; }
 ```
 
 The `ascent-override`, `descent-override` and `line-gap-override` descriptors of `@font-face` are only read by such a line model. The built-in models `half` (CSS line boxes, the default) and `trailing` (TeX style) do not use them.
+
+## Breakers
+
+`Breakers` maps a name to an `htmlbag.BreakerFunc`, a function that gets the name, font size and language of a paragraph (`htmlbag.BreakerStyles`) and returns a `node.Breaker` from boxes and glue. A paragraph selects it with `-bag-line-breaker` in CSS, and the breaker then chooses where the paragraph breaks among its legal breakpoints in place of Knuth-Plass; the lines are measured and set as before:
+
+```go
+cfg.Breakers = map[string]htmlbag.BreakerFunc{
+	"greedy": func(htmlbag.BreakerStyles) node.Breaker { return firstFit{} },
+}
+```
+
+```css
+p { -bag-line-breaker: greedy; }
+```
+
+Here `firstFit` is a type whose `Breaks` method fills each line with as many words as fit. A function that returns `nil` keeps Knuth-Plass for that paragraph. `auto`, the default, is Knuth-Plass; the name is reserved and cannot be registered.

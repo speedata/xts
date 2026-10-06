@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.5 (2026-10-06)
 
+- **A Go program can choose how paragraphs break.**<br>
+  A program that runs XTS can register breakers in `XTSConfig.Breakers`, by name, as it registers line models in `XTSConfig.LineModels`. The CSS property `-bag-line-breaker` selects one for a paragraph, which then chooses the paragraph's breaks among its legal breakpoints in place of Knuth-Plass; the lines are measured and set as before. `auto`, the default, keeps Knuth-Plass.
 - **A link target in a line sits at the line's top, and an inline background is one band (boxes and glue v0.2.80).**<br>
   With boxes and glue v0.2.80 and baseline-pdf v1.1.26: a named destination inside a line, from a `Mark` with `pdftarget`, a `Bookmark` in a `Paragraph` or an `id` on an element in HTML text, was placed the line's depth above the line, so a viewer jumping there showed a sliver of the line before it; it is now at the top of the line. A `background-color` on an inline element takes its height from that element's own font, as in a browser, so text inside it in another font or size no longer makes the band step up and down. A PDF no longer claims a Unicode mapping for a glyph that is only part of another, such as the dieresis of an "ä" in a TrueType font.
 - **A margin no longer starts a page on its own, and a CSS height splits at the page end (htmlbag v0.0.81).**<br>
