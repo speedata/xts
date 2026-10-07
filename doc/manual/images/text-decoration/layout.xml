@@ -1,0 +1,32 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+        xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+  <!-- Source of manual/img/text-decoration.png, see ../Readme.md -->
+  <PageFormat width="180mm" height="28mm"/>
+  <StyleSheet>
+    p { font-family: serif; font-size: 13pt; line-height: 19pt; margin: 0; }
+    .mark   { background-color: #fff1a8; }
+    .del    { text-decoration: line-through #c0392b; }
+    .ins    { color: #2e7d32; text-decoration: underline; }
+    .spell  { text-decoration: underline wavy #c0392b; }
+    .query  { text-decoration: underline dotted #1f5fa8; }
+  </StyleSheet>
+  <Record match="data">
+    <PlaceObject column="8mm" row="4mm">
+      <TextBlock width="164mm">
+        <Paragraph>
+          <Value>The report </Value>
+          <Span class="del"><Value>will be</Value></Span>
+          <Value> </Value>
+          <Span class="ins"><Value>is</Value></Span>
+          <Value> due on Friday. </Value>
+          <Span class="mark"><Value>The budget stays as planned.</Value></Span>
+          <Value> Please check the word </Value>
+          <Span class="spell"><Value>recieve</Value></Span>
+          <Value>, and note that </Value>
+          <Span class="query"><Value>this claim needs a source</Value></Span>
+          <Value>.</Value>
+        </Paragraph>
+      </TextBlock>
+    </PlaceObject>
+  </Record>
+</Layout>

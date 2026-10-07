@@ -105,7 +105,8 @@ The `<HTML>` element lets you include HTML markup:
 | `<p>` | Paragraph |
 | `<b>`, `<strong>` | Bold |
 | `<i>`, `<em>` | Italic |
-| `<u>` | Underline |
+| `<u>`, `<ins>` | Underline |
+| `<s>`, `<del>` | Strike-through |
 | `<span>` | Inline container |
 | `<br>` | Line break |
 | `<a>` | Link |
@@ -115,6 +116,29 @@ The `<HTML>` element lets you include HTML markup:
 | `<div>` | Block container |
 | `<pre>`, `<code>` | Preformatted / code |
 | `<img>` | Image |
+
+### Floats
+
+`float: left` and `float: right` set an image or a block beside the text, and the lines flow around it. This works in `<HTML>` inside a `<TextBlock>` as well as in a `<Flow>`:
+
+```xml
+<StyleSheet>
+    img.left { float: left; width: 20mm; }
+    .facts   { float: right; background-color: #eef3f7; padding: 2mm 3mm; }
+</StyleSheet>
+
+<HTML>
+    <p><img class="left" src="lens.svg"/>The heart of the tower is not
+       the lamp but the lens around it. ...</p>
+    <div class="facts"><b>Skerry Point</b><br/>Tower: 32 m<br/>Range: 22 nautical miles</div>
+    <p>The rings are ground so precisely that ...</p>
+</HTML>
+```
+
+![text flowing around a floated image and a box](/manual/img/html-float.png)
+<figcaption>An SVG image at the start of a paragraph floats at its first line. The box of facts has no width and shrinks to its longest line.</figcaption>
+
+An image floats when it stands at the very start of a paragraph or as a block of its own; PNG, JPEG, PDF and SVG files behave alike. A float without a `width` is as wide as its longest line. The space between float and text is the float's margin on that side, or `-bag-float-gutter` (9pt by default) where it has none, and `clear: both` starts a block below the floats before it. The how-to [Wrap text around an image](https://boxesandglue.dev/glu/howto/image-runaround/) on boxesandglue.dev goes through the details and the limits; they hold for XTS as well.
 
 ### Dynamic content with expand-text
 

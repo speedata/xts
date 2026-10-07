@@ -1,0 +1,21 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+        xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+  <!-- Source of manual/img/html-float.png, see ../Readme.md -->
+  <PageFormat width="180mm" height="46mm"/>
+  <StyleSheet>
+    p { font-family: serif; font-size: 11pt; line-height: 15pt; margin: 0 0 5pt 0; text-align: justify; }
+    img.left { float: left; width: 20mm; }
+    .facts { float: right; background-color: #eef3f7; padding: 2mm 3mm; font-size: 9pt; line-height: 12pt; text-align: left; }
+  </StyleSheet>
+  <Record match="data">
+    <PlaceObject column="8mm" row="5mm">
+      <TextBlock width="164mm">
+        <HTML>
+          <p><img class="left" src="lens.svg"/>The heart of the tower is not the lamp but the lens around it. A Fresnel lens breaks one heavy curved glass into a set of thin rings, each bending the light by the same amount as the solid lens would.</p>
+          <div class="facts"><b>Skerry Point</b><br/>Tower: 32 m<br/>Range: 22 nautical miles</div>
+          <p>The rings are ground so precisely that the beam spreads by less than a degree. Turned by clockwork, the lens sweeps the beam over the sea, and the gaps between its panels make the flashes.</p>
+        </HTML>
+      </TextBlock>
+    </PlaceObject>
+  </Record>
+</Layout>

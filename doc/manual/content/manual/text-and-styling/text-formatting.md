@@ -114,6 +114,47 @@ For inline styling within a paragraph, use `<Span>`:
 
 Spans support `class`, `style`, and `id` attributes, just like in HTML. Properties that change the font or the text color work on a span, and so does `background-color`: the box behind the text is as high as the font and follows the text across line breaks. With `position: relative`, `top` moves a span down and `bottom` moves it up by a fixed amount, without moving the lines or the text around it.
 
+## Lines and highlights
+
+`text-decoration` draws a line under, over or through the text (`underline`, `overline`, `line-through`), in one of the styles `solid`, `double`, `dotted`, `dashed` and `wavy`, and in any color. `background-color` on a span works as a highlighter. `<U>` and `<u>` are short for `text-decoration: underline`; in `<HTML>`, `<s>` and `<del>` are struck through and `<ins>` is underlined.
+
+```xml
+<StyleSheet>
+    .mark  { background-color: #fff1a8; }
+    .del   { text-decoration: line-through #c0392b; }
+    .ins   { color: #2e7d32; text-decoration: underline; }
+    .spell { text-decoration: underline wavy #c0392b; }
+    .query { text-decoration: underline dotted #1f5fa8; }
+</StyleSheet>
+
+<Paragraph>
+    <Value>The report </Value>
+    <Span class="del"><Value>will be</Value></Span>
+    <Value> </Value>
+    <Span class="ins"><Value>is</Value></Span>
+    <Value> due on Friday. </Value>
+    <Span class="mark"><Value>The budget stays as planned.</Value></Span>
+    ...
+</Paragraph>
+```
+
+![correction marks and a highlight](/manual/img/text-decoration.png)
+<figcaption>A struck-through word, an underlined insertion, a highlight, a wavy and a dotted underline, all from CSS classes on <code>&lt;Span&gt;</code>.</figcaption>
+
+Without a color the line takes the text color of the element that declares the decoration. It underlines the spaces between the words but stops at the last letter of each line, so it is not drawn out into the margin. The how-to [Highlight and mark up text](https://boxesandglue.dev/glu/howto/highlighting/) on boxesandglue.dev covers the details; they hold for XTS as well.
+
+## Trimming a paragraph to its text
+
+A paragraph's box holds more than its letters: half of the leading above the first line and below the last, and the room the font keeps for its tallest ascenders and deepest descenders. In a paragraph with a background and padding the text then looks lower than it is. `text-box-trim: trim-both` takes that space off, down to the ascent of the font at the top and its descent at the bottom; `trim-start` and `trim-end` trim one side only.
+
+```xml
+<StyleSheet>
+    .note { background-color: #e0ecf8; padding: 3mm; text-box-trim: trim-both; }
+</StyleSheet>
+```
+
+The property is not inherited and acts on a block that holds its own lines, a `<Paragraph>` or a `<p>` or heading in `<HTML>`. A `<div>` around paragraphs and a table cell are not trimmed yet; trim the first and the last paragraph inside instead. [Lines and leading](https://boxesandglue.dev/glu/typography/leading/#trimming-a-block-to-its-text) on boxesandglue.dev explains the text edges and the behavior across pages.
+
 ## Line breaks
 
 Force a line break with `<Br/>`:

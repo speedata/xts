@@ -56,9 +56,9 @@ A `<TextBlock>`, an `<Image>` or a `<Box>` cannot be part of a flow yet. XTS lea
 
 Inside a flow, XTS decides where a block breaks:
 
-- **Paragraphs** break between lines. The CSS properties `widows` and `orphans` (both 2 by default) set how many lines must stay together at the bottom and the top of a frame. A paragraph inside a container, such as a list item or a `<div>` with a border, breaks as well, and the container is drawn in parts.
+- **Paragraphs** break between lines. `orphans` is the fewest lines a paragraph leaves at the foot of a frame, `widows` the fewest it carries to the top of the next; both are 2 by default, and `1` switches the rule off. A paragraph that cannot keep both, such as one of three lines with room for two, moves to the next frame whole. A paragraph inside a container, such as a list item or a `<div>` with a border, breaks as well, and the container is drawn in parts.
 - **Tables** break between rows. The rows of `<TableHead>` are repeated at the top of every part, the rows of `<TableFoot>` at the bottom. A row itself never breaks, and the rows that a `rowspan` joins stay together. See [Tables across pages](../../tables/tables#tables-across-pages).
-- `break-after: avoid` keeps a block with the next one, typically a heading with the first paragraph after it.
+- `break-after: avoid` keeps a block with the next one, typically a heading with the first paragraph after it. A run of such blocks, a heading and a subheading, moves on together with the first lines of the block that follows. XTS sets no such rule by itself, so give it to the classes or HTML headings that you use as headings.
 - `break-inside: avoid` keeps a paragraph, a list or a container, such as a `<div>` inside `<HTML>`, in one frame. A block taller than a frame breaks all the same.
 
 Forced breaks use `break-before` and `break-after`:
@@ -85,7 +85,11 @@ Forced breaks use `break-before` and `break-after`:
 </Flow>
 ```
 
-A forced break also works on a block inside a container. On the first child of a container it applies to the container itself.
+A forced break also works on a block inside a container. On the first child of a container it applies to the container itself. A forced break wins over `widows`, `orphans` and `avoid`.
+
+The top margin of the first block in a frame is dropped after an automatic break, so text that moves on starts at the top of the frame. After a forced break it is kept.
+
+The typography chapter on boxesandglue.dev shows these rules with pictures, under [Page breaks](https://boxesandglue.dev/glu/typography/page-breaks/); they hold for a flow in XTS as well.
 
 ## Flow and the grid
 
