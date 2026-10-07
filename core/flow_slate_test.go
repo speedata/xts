@@ -2,6 +2,7 @@ package core
 
 import (
 	"regexp"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -137,6 +138,60 @@ func TestFlowInASlateMarkTakesThePageItIsPlacedOn(t *testing.T) {
 	for _, name := range []string{"first", "between", "last"} {
 		if got, ok := marks[name]; !ok || got != 3 {
 			t.Errorf("mark %s on page %d (%t), want 3", name, got, ok)
+		}
+	}
+}
+
+// A Flow in a slate built at page creation or at shipout while the body is
+// itself a Flow breaking across pages runs nested in the body's flow: the
+// header and the footer are on both pages, and the body is not disturbed
+// (#71).
+func TestFlowInASlateDuringABodyFlow(t *testing.T) {
+	slate := func(name string) string {
+		return `<Slate name="` + name + `"><Grid nx="17"/><Contents><Flow>
+            <Paragraph><Value>Example Ltd</Value></Paragraph>
+            <Paragraph><Value>Running ` + name + `</Value></Paragraph>
+          </Flow></Contents></Slate>`
+	}
+	layout := layoutHead + `
+  <PageFormat width="105mm" height="148mm"/>
+  <SetGrid width="5mm" height="12pt"/>
+  <StyleSheet>p { margin: 0 0 4pt 0; font-size: 10pt; line-height: 13pt }</StyleSheet>
+  <DefineMasterPage name="page" test="true()" margin="10mm">
+    <AtPageCreation>
+      ` + slate("header") + `
+      <PlaceObject id="header" row="1" column="1" slate="header"/>
+    </AtPageCreation>
+    <AtPageShipout>
+      ` + slate("footer") + `
+      <PlaceObject id="footer" row="28" column="1" slate="footer"/>
+    </AtPageShipout>
+  </DefineMasterPage>
+  <Record match="data">
+    <Flow>
+      <Loop select="20" variable="i">
+        <Paragraph><Value select="concat('Paragraph ', $i, ': ')"/><Value>lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</Value></Paragraph>
+      </Loop>
+    </Flow>
+  </Record>
+</Layout>`
+	if log := runLayoutLog(t, layout); strings.Contains(log, "level=ERROR") {
+		t.Fatalf("errors in the log:\n%s", log)
+	}
+	root := renderDump(t, layout)
+	if len(root.Children) != 2 {
+		t.Fatalf("%d pages, want 2", len(root.Children))
+	}
+	for i, page := range root.Children {
+		for _, id := range []string{"header", "footer"} {
+			n, _, ok := page.find(id, "")
+			if !ok {
+				t.Errorf("page %d has no %s", i+1, id)
+				continue
+			}
+			if ht, err := strconv.ParseFloat(n.attr("height"), 64); err != nil || !near(ht, 30) {
+				t.Errorf("page %d: the %s is %s high, want 30, two lines of 13pt and a 4pt margin", i+1, id, n.attr("height"))
+			}
 		}
 	}
 }

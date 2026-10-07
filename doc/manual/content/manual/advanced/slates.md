@@ -105,6 +105,8 @@ A `<Flow>` in a slate stacks its blocks as one object, as wide as the slate. The
 
 A `<PlaceObject>` in the slate after the flow starts on the next whole row below it, `sd:slate-height()` gives the flow's exact end, and a `<Mark>` between the blocks takes the page the slate is placed on.
 
+A slate with a flow can also be built in `<AtPageCreation>` or `<AtPageShipout>` while the body is itself a `<Flow>` running over pages, as a running header or footer on every page. The slate's flow runs inside the body's, and the body goes on as without it.
+
 ## Why use slates?
 
 - **Independent cursor**: A slate works on its own copy of the page grid, so sketching content does not move the page cursor.
