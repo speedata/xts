@@ -9,8 +9,16 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
-## 0.1.5 (2026-10-06)
+## 0.1.5 (2026-10-07)
 
+- **Table borders are painted over all cell backgrounds (htmlbag v0.0.84, boxes and glue v0.2.82).**<br>
+  A table painted each cell's background and then its borders, cell by cell, so the background of the next cell came after the borders beside it. Adobe Acrobat rounds the edges of filled areas to its pixel grid, and a thin border next to a shaded cell, such as a zebra stripe or a header row, then vanished partly or wholly. A table now paints its borders after all of its cell backgrounds, as CSS 2.1 asks, but still before anything placed over it later. This holds for `Table` and for tables in HTML text. In PDF/UA the borders are layout artifacts instead of content of their cells.
+- **Tables with cell spacing pass PDF/UA, and PDF/A-3 with PDF/UA declares its schema (boxes and glue v0.2.82).**<br>
+  The space between table cells, as from `border-spacing`, left an empty text operator outside of tagged content, which veraPDF and pdfa11y reject in PDF/UA. It is gone. A document that is PDF/A-3 and PDF/UA at once now declares the PDF/UA identification schema in its XMP metadata, as PDF/A-3 requires; veraPDF rejected the PDF/A part without it.
+- **An SVG image floats like any other image (htmlbag v0.0.84).**<br>
+  An `img` with an SVG file and `float: left` or `float: right` in HTML text was set inline, at the start of a paragraph and as a block before one alike. It now floats as a raster image does.
+- **Fonts with CFF outlines no longer break in some subsets (textshape v0.0.18).**<br>
+  The subset of an OpenType font with CFF outlines, such as TeX Gyre Heros, could come out with every offset in its Top DICT one byte short, depending on the glyphs a document uses. FreeType then rejected the font as a broken table and viewers showed a system font instead.
 - **CSS text-box-trim trims a block to its text (htmlbag v0.0.83).**<br>
   The CSS properties `text-box-trim` (`trim-start`, `trim-end`, `trim-both`), `text-box-edge` and the shorthand `text-box` take the space above a block's first line and below its last line, such as the half-leading, off down to the text edges of the block's font, so the block ends at its text. They are not inherited. Split across pages, only the start of the first part and the end of the last part are trimmed. A container of other blocks and a table cell are not trimmed yet.
 - **-bag-trace: boxmodel shows the box model of chosen elements.**<br>
