@@ -24,6 +24,15 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
+    <entry version="0.1.6" date="2026-10-07">
+      <en summary="A Flow in a slate works while the body is a Flow (htmlbag v0.0.85, #71).">A slate with a <tt>Flow</tt>, built in <tt>AtPageCreation</tt> or <tt>AtPageShipout</tt> while the body is itself a <tt>Flow</tt> running over pages, failed with the error that a flow is already running, and the slate stayed empty on the pages made during the body's flow. The slate's flow now runs inside the body's, and the body goes on as without it, so a running header or footer can be a <tt>Flow</tt> on every page.</en>
+    </entry>
+    <entry version="0.1.6" date="2026-10-07">
+      <en summary="text-box-trim on a container trims its first and last line (htmlbag v0.0.85).">On a container of other blocks, such as a <tt>div</tt> around paragraphs, <tt>text-box-trim</tt> now trims the first line of its first block and the last line of its last block, through nested containers, unless padding or a border on that block lies between. A table cell is not trimmed yet.</en>
+    </entry>
+    <entry version="0.1.6" date="2026-10-07">
+      <en summary="A paragraph alone in a Flow keeps its widows (htmlbag v0.0.85).">A paragraph that was the only block of a <tt>Flow</tt> or of HTML text, or of the part after a forced break, broke without widow protection, so its last line could stand alone in the next frame or on the next page. It now keeps <tt>widows</tt> at every break, and the rest that moves into a frame of another width is broken again at that width.</en>
+    </entry>
     <entry version="0.1.5" date="2026-10-07">
       <en summary="Table borders are painted over all cell backgrounds (htmlbag v0.0.84, boxes and glue v0.2.82).">A table painted each cell's background and then its borders, cell by cell, so the background of the next cell came after the borders beside it. Adobe Acrobat rounds the edges of filled areas to its pixel grid, and a thin border next to a shaded cell, such as a zebra stripe or a header row, then vanished partly or wholly. A table now paints its borders after all of its cell backgrounds, as CSS 2.1 asks, but still before anything placed over it later. This holds for <tt>Table</tt> and for tables in HTML text. In PDF/UA the borders are layout artifacts instead of content of their cells.</en>
     </entry>

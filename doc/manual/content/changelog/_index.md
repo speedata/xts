@@ -9,6 +9,15 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
+## 0.1.6 (2026-10-07)
+
+- **A Flow in a slate works while the body is a Flow (htmlbag v0.0.85, [#71](https://github.com/speedata/xts/issues/71)).**<br>
+  A slate with a `Flow`, built in `AtPageCreation` or `AtPageShipout` while the body is itself a `Flow` running over pages, failed with the error that a flow is already running, and the slate stayed empty on the pages made during the body's flow. The slate's flow now runs inside the body's, and the body goes on as without it, so a running header or footer can be a `Flow` on every page.
+- **text-box-trim on a container trims its first and last line (htmlbag v0.0.85).**<br>
+  On a container of other blocks, such as a `div` around paragraphs, `text-box-trim` now trims the first line of its first block and the last line of its last block, through nested containers, unless padding or a border on that block lies between. A table cell is not trimmed yet.
+- **A paragraph alone in a Flow keeps its widows (htmlbag v0.0.85).**<br>
+  A paragraph that was the only block of a `Flow` or of HTML text, or of the part after a forced break, broke without widow protection, so its last line could stand alone in the next frame or on the next page. It now keeps `widows` at every break, and the rest that moves into a frame of another width is broken again at that width.
+
 ## 0.1.5 (2026-10-07)
 
 - **Table borders are painted over all cell backgrounds (htmlbag v0.0.84, boxes and glue v0.2.82).**<br>
