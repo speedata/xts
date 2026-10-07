@@ -83,6 +83,8 @@ p { -bag-leading-model: word; }
 
 The `ascent-override`, `descent-override` and `line-gap-override` descriptors of `@font-face` are only read by such a line model. The built-in models `half` (CSS line boxes, the default) and `trailing` (TeX style) do not use them.
 
+`htmlbag.LineModelStyles` also carries the paragraph's own font in `Font`, with the face's vertical metrics. A line without glyphs, such as one between two `<br>`, has no font of its own, and a model takes its strut from there, as CSS does. The [htmlbag library reference](https://boxesandglue.dev/htmlbag/library/#line-models) on boxesandglue.dev shows a complete model, and [Linebreaking](https://boxesandglue.dev/goapi/backend/linebreaking/) the `node.LineModel` interface.
+
 ## Breakers
 
 `Breakers` maps a name to an `htmlbag.BreakerFunc`, a function that gets the name, font size and language of a paragraph (`htmlbag.BreakerStyles`) and returns a `node.Breaker` from boxes and glue. A paragraph selects it with `-bag-line-breaker` in CSS, and the breaker then chooses where the paragraph breaks among its legal breakpoints in place of Knuth-Plass; the lines are measured and set as before:
@@ -97,4 +99,4 @@ cfg.Breakers = map[string]htmlbag.BreakerFunc{
 p { -bag-line-breaker: greedy; }
 ```
 
-Here `firstFit` is a type whose `Breaks` method fills each line with as many words as fit. A function that returns `nil` keeps Knuth-Plass for that paragraph. `auto`, the default, is Knuth-Plass; the name is reserved and cannot be registered.
+Here `firstFit` is a type whose `Breaks` method fills each line with as many words as fit; [Linebreaking](https://boxesandglue.dev/goapi/backend/linebreaking/#breaks-of-your-own) on boxesandglue.dev has such a type in full and describes `node.BreakProblem`. A function that returns `nil` keeps Knuth-Plass for that paragraph. `auto`, the default, is Knuth-Plass; the name is reserved and cannot be registered.
