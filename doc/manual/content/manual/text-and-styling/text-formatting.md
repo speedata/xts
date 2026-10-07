@@ -153,7 +153,9 @@ A paragraph's box holds more than its letters: half of the leading above the fir
 </StyleSheet>
 ```
 
-The property is not inherited and acts on a block that holds its own lines, a `<Paragraph>` or a `<p>` or heading in `<HTML>`. A `<div>` around paragraphs and a table cell are not trimmed yet; trim the first and the last paragraph inside instead. [Lines and leading](https://boxesandglue.dev/glu/typography/leading/#trimming-a-block-to-its-text) on boxesandglue.dev explains the text edges and the behavior across pages.
+The property is not inherited. On a block that holds its own lines, a `<Paragraph>` or a `<p>` or heading in `<HTML>`, it trims that block's first and last line. On a `<div>` around paragraphs or on a table cell it trims the first line of the first block inside and the last line of the last one, unless padding or a border on that block lies between.
+
+Split across pages, a paragraph is trimmed only at its start and its end. With `box-decoration-break: clone` it is trimmed at every break, and `-bag-text-box-trim-at-break: trim-end` lets the last line before a page or frame break fit by its text without trimming anything else. [Lines and leading](https://boxesandglue.dev/glu/typography/leading/#trimming-a-block-to-its-text) on boxesandglue.dev explains the text edges and the behavior across pages.
 
 ## Line breaks
 

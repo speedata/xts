@@ -9,6 +9,21 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
+## 0.1.7 (2026-10-07)
+
+- **-bag-text-box-trim-at-break lets the last line before a page break fit by its text (htmlbag v0.0.86).**<br>
+  With `-bag-text-box-trim-at-break: trim-end` on a block, the last line before an unforced page or frame break may fit by its text: the space below the text edge of the block's font, such as the half-leading, is taken off that line, so a paragraph whose last line fits by its text but not by its full line height stays on the page instead of moving on. Nothing else changes: a block ending mid-page keeps its height, its first line is not trimmed, and a forced break trims nothing. A block that a `break-after: avoid` moves on with the next one stays untrimmed. The property is not inherited, and under `box-decoration-break: clone` with `text-box-trim: trim-end` it changes nothing, since every part is trimmed there already.
+- **box-decoration-break: clone repeats a block's border and padding on every page (htmlbag v0.0.86).**<br>
+  The CSS property `box-decoration-break` takes `slice`, the initial value and the behavior so far, and `clone`. With `clone`, a block with a border, padding or background that is split across pages or frames gets its padding and border on both sides of every part. Tables are not cloned yet.
+- **Under box-decoration-break: clone, text-box-trim trims every part of a split paragraph (htmlbag v0.0.86).**<br>
+  As CSS has it, a paragraph with `box-decoration-break: clone` and `text-box-trim` is trimmed at every break, not only at its start and end: with `trim-end` the last line before a break may fit by its text, and with `trim-start` the first line of each continued part is trimmed. A container of other blocks under `clone` is still trimmed only at its start and end.
+- **text-box-trim on a table cell trims its first and last line (htmlbag v0.0.86).**<br>
+  On a table cell, `text-box-trim` now trims the first line of the cell's content and its last, as on a container, so a row can end at the text of its cells. It does not reach into a table nested in the cell.
+- **A justified line before a forced line break no longer runs past the measure (boxes and glue v0.2.84).**<br>
+  When none of the possible line ends before a forced line break gave an acceptable line, the line breaker took the one it had looked at last. In a justified paragraph that could set a line far looser than needed, or join the words up to the break into one line wider than the column, although a line that fits was possible. It now takes the line end with the best result for the paragraph, and one whose line fits before one whose line is too wide.
+- **Long ragged paragraphs no longer take time and memory growing with their square (boxes and glue v0.2.83).**<br>
+  A paragraph set ragged, with thousands of words, took time and memory that grew with the square of its length, gigabytes for a very long one. It now takes a small part of that. The breaks stay the same, except that a paragraph whose first lines are wider than the rest no longer gets a stray line skip above its first line.
+
 ## 0.1.6 (2026-10-07)
 
 - **A Flow in a slate works while the body is a Flow (htmlbag v0.0.85, [#71](https://github.com/speedata/xts/issues/71)).**<br>
