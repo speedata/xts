@@ -9,8 +9,10 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
-## 0.1.7 (2026-10-07)
+## 0.1.7 (2026-10-08)
 
+- **A Flow that ends in the row where the Flow before it ended no longer lets the next Flow print over it ([#73](https://github.com/speedata/xts/issues/73)).**<br>
+  A `Flow` that follows another one starts at its exact end, which may lie partway down a grid row. When its content also ended within that row, it recorded no end, and a third `Flow` started where the second one had started and printed over it. The end is recorded now, so each `Flow` starts below the one before it.
 - **-bag-text-box-trim-at-break lets the last line before a page break fit by its text (htmlbag v0.0.86).**<br>
   With `-bag-text-box-trim-at-break: trim-end` on a block, the last line before an unforced page or frame break may fit by its text: the space below the text edge of the block's font, such as the half-leading, is taken off that line, so a paragraph whose last line fits by its text but not by its full line height stays on the page instead of moving on. Nothing else changes: a block ending mid-page keeps its height, its first line is not trimmed, and a forced break trims nothing. A block that a `break-after: avoid` moves on with the next one stays untrimmed. The property is not inherited, and under `box-decoration-break: clone` with `text-box-trim: trim-end` it changes nothing, since every part is trimmed there already.
 - **box-decoration-break: clone repeats a block's border and padding on every page (htmlbag v0.0.86).**<br>

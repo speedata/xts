@@ -282,3 +282,31 @@ func TestFlowRunsOnToTheBottomMargin(t *testing.T) {
 		}
 	})
 }
+
+// A Flow that starts at the exact end of the Flow before it, in the row
+// above its first free row, and ends before that row, still records its
+// end: the Flow after it starts below it (#73). On a grid of 1cm rows,
+// lines of 12pt end twice within the row they start in.
+func TestFlowEndingAboveItsFirstRow(t *testing.T) {
+	var b strings.Builder
+	b.WriteString(layoutHead + `
+  <PageFormat width="105mm" height="100mm"/>
+  <SetGrid width="5mm" height="1cm"/>
+  <StyleSheet>p { margin: 0; font-size: 10pt; line-height: 12pt }</StyleSheet>
+  <Record match="data">`)
+	for i := 1; i <= 5; i++ {
+		fmt.Fprintf(&b, `
+    <Flow bottom="b%d"><Paragraph><Value>Flow %d</Value></Paragraph></Flow>
+    <Message select="concat('bottom%d=', $b%d)"/>`, i, i, i, i)
+	}
+	b.WriteString(`
+  </Record>
+</Layout>`)
+	log := runLayoutLog(t, b.String())
+	for i := 1; i <= 5; i++ {
+		if want := fmt.Sprintf("bottom%d=%d", i, 12*i); !strings.Contains(log, want) {
+			m := regexp.MustCompile(fmt.Sprintf(`bottom%d=[-0-9.]+`, i)).FindString(log)
+			t.Errorf("%s, want %s", m, want)
+		}
+	}
+}

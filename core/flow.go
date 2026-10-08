@@ -289,9 +289,16 @@ func (r *flowRegions) Filled(f htmlbag.Filled) error {
 	}
 	if f.Box != nil && f.Used > 0 {
 		r.output(r.left, r.top, f.Box, false)
-		ht := r.top - g.posY(r.row, r.area) + f.Used
-		g.allocate(1, r.row, r.area, r.width, ht)
-		r.area.SetCurrentRow(r.row + g.heightToRows(ht))
+		if ht := r.top - g.posY(r.row, r.area) + f.Used; ht > 0 {
+			g.allocate(1, r.row, r.area, r.width, ht)
+			r.area.SetCurrentRow(r.row + g.heightToRows(ht))
+		} else {
+			// The band starts at the exact end of what lies in the row
+			// above r.row, and the box ends in that row too: the row is
+			// taken already, only the box's end is new.
+			g.recordEnd(1, r.row-1, r.area, r.width, r.top+f.Used)
+			r.area.SetCurrentRow(r.row)
+		}
 		r.area.SetCurrentCol(1)
 	}
 	r.filled++

@@ -264,6 +264,23 @@ func (g *grid) heightToRows(height bag.ScaledPoint) coord {
 	return coord(math.Ceil(r - 0.005))
 }
 
+// recordEnd records bottom, the exact bottom from the page top of an object
+// whose last row is the row row of the area's current frame, from its column
+// x over the width wd, for exactTop.
+func (g *grid) recordEnd(x, row coord, area *area, wd, bottom bag.ScaledPoint) {
+	if wd <= 0 {
+		return
+	}
+	f := area.frame[area.currentFrame]
+	col1 := x + f.col - 1
+	g.ends = append(g.ends, allocationEnd{
+		row:  row + f.row - 1,
+		col1: col1,
+		col2: col1 + g.widthToColumns(wd) - 1,
+		y:    bottom,
+	})
+}
+
 func (g *grid) allocate(x, y coord, area *area, wd, ht bag.ScaledPoint) {
 	var warningTopRaised, warningLeftRaised, warningRightRaised, warningBottomRaised bool
 	var offsetX coord
@@ -271,14 +288,8 @@ func (g *grid) allocate(x, y coord, area *area, wd, ht bag.ScaledPoint) {
 
 	offsetX = area.frame[area.currentFrame].col
 	offsetY = area.frame[area.currentFrame].row
-	if rows := g.heightToRows(ht); rows > 0 && wd > 0 {
-		col1 := x + offsetX - 1
-		g.ends = append(g.ends, allocationEnd{
-			row:  y + offsetY - 1 + rows - 1,
-			col1: col1,
-			col2: col1 + g.widthToColumns(wd) - 1,
-			y:    g.posY(y, area) + ht,
-		})
+	if rows := g.heightToRows(ht); rows > 0 {
+		g.recordEnd(x, y+rows-1, area, wd, g.posY(y, area)+ht)
 	}
 
 	for col := coord(1); col <= g.widthToColumns(wd); col++ {
