@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.8 (2026-10-09)
 
+- **An object that reaches into the rest of the grid at the right no longer warns.**<br>
+  When the cells do not fit evenly into the page area, the grid ends before the right margin. An object that reached past the last column into this rest gave the warning "object protrudes into the right margin", even when it ended before the margin. The warning now compares the object's exact right edge with the margin, as it already did at the bottom.
 - **An image can show a part of its source with object-view-box: inset() (htmlbag v0.0.89).**<br>
   The CSS property `object-view-box` takes `none` or `inset()` on an `<img>` with a bitmap, PDF or SVG source. The part becomes the natural size of the image, so `width`, `height` and `max-width` size it as they size a whole image. `xywh()`, `rect()` and the round corners of `inset()` are ignored with a warning.
 - **A margin at a break inside a block split across pages or areas is truncated (htmlbag v0.0.89).**<br>

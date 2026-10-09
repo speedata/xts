@@ -305,7 +305,7 @@ func (g *grid) allocate(x, y coord, area *area, wd, ht bag.ScaledPoint) {
 					slog.Warn("object protrudes into the top margin")
 					warningTopRaised = true
 				}
-				if posX > coord(g.nx) && !warningRightRaised && !g.inSlate {
+				if posX > coord(g.nx) && !warningRightRaised && !g.inSlate && g.pastRightMargin(g.posX(x, area)+wd) {
 					slog.Warn("object protrudes into the right margin")
 					warningRightRaised = true
 				}
@@ -324,6 +324,17 @@ func (g *grid) allocate(x, y coord, area *area, wd, ht bag.ScaledPoint) {
 		area.SetCurrentCol(col)
 		area.SetCurrentRow(y)
 	}
+}
+
+// pastRightMargin reports whether an object whose exact right edge, from the
+// page's left edge, is right reaches into the right margin. Its columns may
+// pass the grid's last column while it ends left of the margin: the rest of
+// a column there.
+func (g *grid) pastRightMargin(right bag.ScaledPoint) bool {
+	if g.page == nil {
+		return true
+	}
+	return right > g.page.pageWidth-g.marginRight
 }
 
 // pastBottomMargin reports whether an object whose exact bottom, from the

@@ -1,6 +1,7 @@
 package core
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/boxesandglue/boxesandglue/backend/bag"
@@ -177,6 +178,33 @@ func TestPositionsCountTheGaps(t *testing.T) {
 		}
 		if y := g.frameY(tc.row, tc.f); y != tc.y {
 			t.Errorf("row %d of frame at row %d: y = %d, want %d", tc.row, tc.f.row, y, tc.y)
+		}
+	}
+}
+
+// TestRightMarginWarnsAtTheMargin: when the cells do not fit evenly into the
+// page area, the grid ends before the right margin. An object that reaches
+// past the last column into that rest gives no warning, one that passes the
+// right margin does. 85mm between the margins hold eight 10mm columns.
+func TestRightMarginWarnsAtTheMargin(t *testing.T) {
+	for _, tc := range []struct {
+		width string
+		warn  bool
+	}{
+		{"80mm", false},
+		{"84mm", false},
+		{"86mm", true},
+	} {
+		layout := layoutHead + `
+  <PageFormat width="105mm" height="148mm"/>
+  <SetGrid width="10mm" height="12pt"/>
+  <Record match="data">
+    <PlaceObject column="1" row="1"><Box width="` + tc.width + `" height="12pt"/></PlaceObject>
+  </Record>
+</Layout>`
+		log := runLayoutLog(t, layout)
+		if got := strings.Contains(log, "protrudes into the right margin"); got != tc.warn {
+			t.Errorf("box %s wide: warning %t, want %t\n%s", tc.width, got, tc.warn, log)
 		}
 	}
 }

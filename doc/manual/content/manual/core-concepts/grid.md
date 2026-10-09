@@ -34,6 +34,12 @@ You can also add gaps between cells, which is common in newspaper layouts:
 <SetGrid width="45mm" dx="3mm" height="12pt"/>
 ```
 
+### When the cells do not fit evenly
+
+With a fixed cell size, the page area between the margins is rarely a whole number of cells. XTS rounds the number of cells down, so the grid never reaches into the margin: the margins you give are the minimum. A rest narrower than a cell stays at the right and at the bottom of the page area. With 85mm between the margins and `width="10mm"`, the grid has eight columns and a 5mm rest.
+
+The rest is not lost. An object may reach into it without a warning as long as it ends at the margin, and a [`<Flow>`](../flow) in a frame that reaches the last row runs on to the bottom margin. If you want the grid to fill the page area exactly, give the number of cells with `nx` and `ny`, or choose margins that leave a whole number of cells.
+
 To see your grid while developing, turn on the grid trace:
 
 ```xml

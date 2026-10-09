@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.8" date="2026-10-09">
+      <en summary="An object that reaches into the rest of the grid at the right no longer warns.">When the cells do not fit evenly into the page area, the grid ends before the right margin. An object that reached past the last column into this rest gave the warning "object protrudes into the right margin", even when it ended before the margin. The warning now compares the object's exact right edge with the margin, as it already did at the bottom.</en>
+    </entry>
+    <entry version="0.1.8" date="2026-10-09">
       <en summary="An image can show a part of its source with object-view-box: inset() (htmlbag v0.0.89).">The CSS property <tt>object-view-box</tt> takes <tt>none</tt> or <tt>inset()</tt> on an <tt>&lt;img&gt;</tt> with a bitmap, PDF or SVG source. The part becomes the natural size of the image, so <tt>width</tt>, <tt>height</tt> and <tt>max-width</tt> size it as they size a whole image. <tt>xywh()</tt>, <tt>rect()</tt> and the round corners of <tt>inset()</tt> are ignored with a warning.</en>
     </entry>
     <entry version="0.1.8" date="2026-10-09">
