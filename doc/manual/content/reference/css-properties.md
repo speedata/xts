@@ -60,6 +60,7 @@ CSS properties supported by XTS for styling layout elements and HTML content. Le
 | `width` | Length or percentage, on blocks, images and table cells | `width: 100%;` |
 | `height` | Length, on blocks, images, table rows and table cells. A minimum: content taller than the height is never clipped, a table row grows to fit its cells | `height: 4cm;` |
 | `max-width` | Length or percentage, on images | `max-width: 100%;` |
+| `object-view-box` | `none`, or `inset()` with one to four lengths or percentages, on images (`<img>`, also with an SVG or PDF source). Not inherited. The region becomes the image's natural size and aspect ratio, and `width`, `height` and `max-width` size it as they size a whole image. `xywh()` and `rect()` are not supported and warn, as do the `round` corners of `inset()`, which are ignored. A bitmap's natural size is one point per pixel, as for its sizing, so `inset(10pt)` takes 10 pixels off each edge. Not read on an inline `<svg>` | `object-view-box: inset(10% 20%);` |
 | `background-color` | Color value, painted on block elements, inline elements and table cells | `background-color: #ffffcc;` |
 | `background` | Shorthand, only the color is read | `background: #ffffcc;` |
 | `display` | `block`, `inline`, `none`. Other values are ignored, the table parts follow from the HTML tags | `display: none;` |
