@@ -11,6 +11,10 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.8 (2026-10-09)
 
+- **An image can show a part of its source with object-view-box: inset() (htmlbag v0.0.89).**<br>
+  The CSS property `object-view-box` takes `none` or `inset()` on an `<img>` with a bitmap, PDF or SVG source. The part becomes the natural size of the image, so `width`, `height` and `max-width` size it as they size a whole image. `xywh()`, `rect()` and the round corners of `inset()` are ignored with a warning.
+- **A margin at a break inside a block split across pages or areas is truncated (htmlbag v0.0.89).**<br>
+  When a block with blocks inside was split and the break fell at the margin between two of them, the margin stayed at the top of the next page or area, and the text started lower there. The margin is truncated now, as a margin between two blocks of the flow itself always was.
 - **An SVG drawn much smaller than its viewBox keeps its exact size (svgreader v0.0.6).**<br>
   The transformation of an SVG was written with four decimals. It scales every coordinate drawn under it, so a large `viewBox` placed small ended visibly short of its box: 3000 units at 85pt lost 0.14pt. It is written with six decimals now, and the drawing fills its box.
 - **A ::before or ::after on an element with -bag-bookmark or page-break-inside no longer stops the document (htmlbag v0.0.87).**<br>
