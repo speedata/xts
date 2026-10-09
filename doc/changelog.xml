@@ -24,6 +24,27 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
+    <entry version="0.1.8" date="2026-10-09">
+      <en summary="A ::before or ::after on an element with -bag-bookmark or page-break-inside no longer stops the document (htmlbag v0.0.87).">Generated content took the settings of its element along, among them the internal ones for <tt>-bag-bookmark</tt> and <tt>page-break-inside</tt>, and the document stopped with "Unknown setting". The generated content of such an element is set now.</en>
+    </entry>
+    <entry version="0.1.8" date="2026-10-09">
+      <en summary="A table caption is set above its table (htmlbag v0.0.87).">The <tt>&lt;caption&gt;</tt> of an HTML table was dropped without a word. It is set as a block above the table and keeps with it at a page break. Under PDF/UA it is tagged as the first child of the table.</en>
+    </entry>
+    <entry version="0.1.8" date="2026-10-09">
+      <en summary="A link whose text comes from ::before or ::after is clickable (htmlbag v0.0.87).">A cross reference such as <tt>&lt;a class="ref" href="#sec"&gt;&lt;/a&gt;</tt> with its text from <tt>target-counter()</tt> in <tt>::before</tt> got no link annotation. The generated content of a link carries the link now; a leader does not.</en>
+    </entry>
+    <entry version="0.1.8" date="2026-10-09">
+      <en summary="SVG text without a font-family is set (htmlbag v0.0.87).">Text in an SVG that names no font family, or one the document does not know, was dropped with a warning. An inline <tt>&lt;svg&gt;</tt> now takes the font of the element around it, an SVG in <tt>&lt;img&gt;</tt> the font family serif, as a browser does.</en>
+    </entry>
+    <entry version="0.1.8" date="2026-10-09">
+      <en summary="PDF/UA-2: links to an element get a structure destination, and a figure with a caption is tagged as one (htmlbag v0.0.87, boxes and glue v0.2.85).">Under PDF/UA-2 the action of a link to an element with an id points to the structure element of its target, as ISO 14289-2 requires. A <tt>&lt;figure&gt;</tt> with an image and a <tt>&lt;figcaption&gt;</tt> is tagged as a section holding the image as a figure with its alternative text and the caption, in reading order; before, the caption had no structure element.</en>
+    </entry>
+    <entry version="0.1.8" date="2026-10-09">
+      <en summary="MathML: the minus sign, displaystyle and mspace (boxes and glue v0.2.85)."><tt>&lt;mo&gt;-&lt;/mo&gt;</tt> is set with the minus sign instead of the hyphen of the math font, and the solidus without the space of a binary operator. <tt>&lt;mstyle displaystyle="true"&gt;</tt>, and the attribute on <tt>&lt;math&gt;</tt>, set their content in display style, so a fraction in a line of text can be set at full size. <tt>&lt;mspace width&gt;</tt> in em or as a named space adds space.</en>
+    </entry>
+    <entry version="0.1.8" date="2026-10-09">
+      <en summary="The CSS reference lists the column properties of htmlbag, which xts does not lay out (htmlbag v0.0.87).">htmlbag reads <tt>column-count</tt>, <tt>column-gap</tt>, <tt>column-span</tt>, <tt>column-fill</tt> and <tt>column-rule</tt> and lays out columns for glu. Text that xts sets with them stays in one column, with a warning; columns in xts are areas with several frames.</en>
+    </entry>
     <entry version="0.1.7" date="2026-10-08">
       <en summary="A Flow that ends in the row where the Flow before it ended no longer lets the next Flow print over it (#73).">A <tt>Flow</tt> that follows another one starts at its exact end, which may lie partway down a grid row. When its content also ended within that row, it recorded no end, and a third <tt>Flow</tt> started where the second one had started and printed over it. The end is recorded now, so each <tt>Flow</tt> starts below the one before it.</en>
     </entry>

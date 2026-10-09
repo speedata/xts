@@ -9,6 +9,23 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
+## 0.1.8 (2026-10-09)
+
+- **A ::before or ::after on an element with -bag-bookmark or page-break-inside no longer stops the document (htmlbag v0.0.87).**<br>
+  Generated content took the settings of its element along, among them the internal ones for `-bag-bookmark` and `page-break-inside`, and the document stopped with "Unknown setting". The generated content of such an element is set now.
+- **A table caption is set above its table (htmlbag v0.0.87).**<br>
+  The `<caption>` of an HTML table was dropped without a word. It is set as a block above the table and keeps with it at a page break. Under PDF/UA it is tagged as the first child of the table.
+- **A link whose text comes from ::before or ::after is clickable (htmlbag v0.0.87).**<br>
+  A cross reference such as `<a class="ref" href="#sec"></a>` with its text from `target-counter()` in `::before` got no link annotation. The generated content of a link carries the link now; a leader does not.
+- **SVG text without a font-family is set (htmlbag v0.0.87).**<br>
+  Text in an SVG that names no font family, or one the document does not know, was dropped with a warning. An inline `<svg>` now takes the font of the element around it, an SVG in `<img>` the font family serif, as a browser does.
+- **PDF/UA-2: links to an element get a structure destination, and a figure with a caption is tagged as one (htmlbag v0.0.87, boxes and glue v0.2.85).**<br>
+  Under PDF/UA-2 the action of a link to an element with an id points to the structure element of its target, as ISO 14289-2 requires. A `<figure>` with an image and a `<figcaption>` is tagged as a section holding the image as a figure with its alternative text and the caption, in reading order; before, the caption had no structure element.
+- **MathML: the minus sign, displaystyle and mspace (boxes and glue v0.2.85).**<br>
+  `<mo>-</mo>` is set with the minus sign instead of the hyphen of the math font, and the solidus without the space of a binary operator. `<mstyle displaystyle="true">`, and the attribute on `<math>`, set their content in display style, so a fraction in a line of text can be set at full size. `<mspace width>` in em or as a named space adds space.
+- **The CSS reference lists the column properties of htmlbag, which xts does not lay out (htmlbag v0.0.87).**<br>
+  htmlbag reads `column-count`, `column-gap`, `column-span`, `column-fill` and `column-rule` and lays out columns for glu. Text that xts sets with them stays in one column, with a warning; columns in xts are areas with several frames.
+
 ## 0.1.7 (2026-10-08)
 
 - **A Flow that ends in the row where the Flow before it ended no longer lets the next Flow print over it ([#73](https://github.com/speedata/xts/issues/73)).**<br>
