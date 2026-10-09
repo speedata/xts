@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.8" date="2026-10-09">
+      <en summary="An SVG drawn much smaller than its viewBox keeps its exact size (svgreader v0.0.6).">The transformation of an SVG was written with four decimals. It scales every coordinate drawn under it, so a large <tt>viewBox</tt> placed small ended visibly short of its box: 3000 units at 85pt lost 0.14pt. It is written with six decimals now, and the drawing fills its box.</en>
+    </entry>
+    <entry version="0.1.8" date="2026-10-09">
       <en summary="A ::before or ::after on an element with -bag-bookmark or page-break-inside no longer stops the document (htmlbag v0.0.87).">Generated content took the settings of its element along, among them the internal ones for <tt>-bag-bookmark</tt> and <tt>page-break-inside</tt>, and the document stopped with "Unknown setting". The generated content of such an element is set now.</en>
     </entry>
     <entry version="0.1.8" date="2026-10-09">

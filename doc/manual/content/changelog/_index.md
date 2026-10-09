@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.8 (2026-10-09)
 
+- **An SVG drawn much smaller than its viewBox keeps its exact size (svgreader v0.0.6).**<br>
+  The transformation of an SVG was written with four decimals. It scales every coordinate drawn under it, so a large `viewBox` placed small ended visibly short of its box: 3000 units at 85pt lost 0.14pt. It is written with six decimals now, and the drawing fills its box.
 - **A ::before or ::after on an element with -bag-bookmark or page-break-inside no longer stops the document (htmlbag v0.0.87).**<br>
   Generated content took the settings of its element along, among them the internal ones for `-bag-bookmark` and `page-break-inside`, and the document stopped with "Unknown setting". The generated content of such an element is set now.
 - **A table caption is set above its table (htmlbag v0.0.87).**<br>
