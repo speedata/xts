@@ -9,6 +9,13 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
+## 0.1.10 (2026-10-13)
+
+- **A block beside a float runs on under it, as in CSS; new display: flow-root (htmlbag v0.0.91).**<br>
+  A block with a border or a background beside a float was narrowed as a whole. Now only its lines keep clear of the float, while the border and the background run on under it, and a block that starts past the float is not narrowed at all. A margin, border or padding of the boxes in between takes from the room the float needs instead of adding to it, so the text no longer moves further away from the float the deeper it is nested. A float in a block with padding stands at the padding edge. `display: flow-root` keeps a block clear of a float as a whole, as before.
+- **A paragraph's padding-left is taken off once (htmlbag v0.0.91).**<br>
+  The lines of a paragraph with `padding-left` but no border or background ended short of the right edge by the padding, and beside a float or with a `text-indent` the padding was lost for the whole paragraph. The lines now run from the padding to the right edge, below a float as well, and a `text-indent` adds to the padding. A float without a width that has padding is as wide as its content plus its padding.
+
 ## 0.1.9 (2026-10-13)
 
 - **Links, backgrounds and languages stay on their text in right to left paragraphs (boxesandglue v0.2.87).**<br>

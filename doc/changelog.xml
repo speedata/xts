@@ -24,6 +24,12 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
+    <entry version="0.1.10" date="2026-10-13">
+      <en summary="A block beside a float runs on under it, as in CSS; new display: flow-root (htmlbag v0.0.91).">A block with a border or a background beside a float was narrowed as a whole. Now only its lines keep clear of the float, while the border and the background run on under it, and a block that starts past the float is not narrowed at all. A margin, border or padding of the boxes in between takes from the room the float needs instead of adding to it, so the text no longer moves further away from the float the deeper it is nested. A float in a block with padding stands at the padding edge. <tt>display: flow-root</tt> keeps a block clear of a float as a whole, as before.</en>
+    </entry>
+    <entry version="0.1.10" date="2026-10-13">
+      <en summary="A paragraph's padding-left is taken off once (htmlbag v0.0.91).">The lines of a paragraph with <tt>padding-left</tt> but no border or background ended short of the right edge by the padding, and beside a float or with a <tt>text-indent</tt> the padding was lost for the whole paragraph. The lines now run from the padding to the right edge, below a float as well, and a <tt>text-indent</tt> adds to the padding. A float without a width that has padding is as wide as its content plus its padding.</en>
+    </entry>
     <entry version="0.1.9" date="2026-10-13">
       <en summary="Links, backgrounds and languages stay on their text in right to left paragraphs (boxesandglue v0.2.87).">A link, an inline background, a text color, a text decoration or an element with <tt>lang</tt> inside a right to left paragraph cut the line into pieces that were reordered one by one: the words came out in logical order from left to right, and the spaces at the edges of the run were lost. They stay in place now. A link that runs from Arabic into English gets one area for each visually contiguous part, as CSS splits an inline box at a change of direction.</en>
     </entry>
