@@ -1,0 +1,33 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+        xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+  <!-- Source of manual/img/flow-balance.png, see ../Readme.md. As
+       flow-columns, but the flow into the area cols has
+       column-fill="auto": its paragraphs are spread over both columns,
+       which end at about the same height, and the flow after it starts
+       below the longer one. -->
+  <PageFormat width="180mm" height="64mm"/>
+  <SetGrid width="5mm" height="12pt"/>
+  <DefineMasterPage name="page" test="true()" margin="10mm">
+    <PositioningArea name="cols">
+      <PositioningFrame column="1" row="1" width="15" height="{sd:number-of-rows()}"/>
+      <PositioningFrame column="18" row="1" width="15" height="{sd:number-of-rows()}"/>
+    </PositioningArea>
+  </DefineMasterPage>
+  <StyleSheet>
+    p { font-family: serif; font-size: 10pt; line-height: 13pt; margin: 0 0 4pt 0; }
+    .intro { font-style: italic; font-size: 11pt; line-height: 14pt; margin-bottom: 8pt; }
+  </StyleSheet>
+  <Record match="data">
+    <Flow>
+      <Paragraph class="intro"><Value select="intro"/></Paragraph>
+    </Flow>
+    <Flow area="cols" column-fill="balance">
+      <ForAll select="para">
+        <Paragraph><Value select="."/></Paragraph>
+      </ForAll>
+    </Flow>
+    <Flow>
+      <Paragraph class="intro"><Value select="outro"/></Paragraph>
+    </Flow>
+  </Record>
+</Layout>

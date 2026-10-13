@@ -53,6 +53,9 @@ type flowRegions struct {
 	slate       *slate
 	line        int
 	breakWarned bool
+	// balance balances the end of the flow over the frames of its last page
+	// (column-fill="balance").
+	balance bool
 }
 
 // slateRegionHeight is the height of the region of a flow in a slate, which
@@ -189,8 +192,7 @@ func (r *flowRegions) Next(brk string) (htmlbag.Region, error) {
 	}
 	r.started = true
 	for tries := 0; ; tries++ {
-		g := xd.currentGrid
-		first, last, ok := g.band(r.area, r.next)
+		first, last, ok := xd.currentGrid.band(r.area, r.next)
 		if !ok {
 			if tries > 2*len(r.area.frame)+2 {
 				return htmlbag.Region{}, fmt.Errorf("area %s has no free row", r.name)
@@ -200,59 +202,98 @@ func (r *flowRegions) Next(brk string) (htmlbag.Region, error) {
 			}
 			continue
 		}
-		// A band starts at the exact bottom of what ends in the row above
-		// it, not on the next whole row. Where that is the end of a Flow
-		// this one follows directly, the first region collapses the margin
-		// still open with the first block's; the others start below it,
-		// level with the first block.
-		top, continues := r.bandTop(first)
-		bottom := g.posY(last, r.area) + g.gridHeight
-		if f := r.area.frame[r.area.currentFrame]; last == f.height && int(absRow(r.area, last)) >= g.ny {
-			// The grid's last row ends short of the bottom margin by what
-			// is left of a row: a band that reaches it runs on to the
-			// margin.
-			bottom = max(bottom, xd.currentPage.pageHeight-g.marginBottom)
-		}
-		if bottom <= top {
-			r.next = last + 1
+		r.next = last + 1
+		reg, top, ok := r.bandRegion(first, last, r.filled)
+		if !ok {
 			continue
 		}
 		r.row, r.top = first, top
-		r.left = g.posX(1, r.area)
-		r.width = g.width(r.area.frame[r.area.currentFrame].width)
-		r.height = bottom - top
-		r.next = last + 1
-		reg := htmlbag.Region{
-			Width:   r.width,
-			Height:  r.height,
-			PageNum: xd.currentPage.pagenumber,
-			Left:    r.left,
-			Top:     xd.currentPage.pageHeight - top,
-		}
-		if continues && r.filled == 0 {
-			reg.MarginBefore = r.start.marginAfter
-		}
-		// A band below the top of the frame on the page the flow starts on
-		// lies below what the page holds already, which includes what the
-		// page was set up with: a block that does not fit there moves on,
-		// once. On a later page there is only what the page was set up
-		// with above a band, and a block that arrives there is placed even
-		// when it does not fit.
-		reg.Occupied = xd.currentPage == r.firstPage && top > g.posY(1, r.area)
+		r.left, r.width, r.height = reg.Left, reg.Width, reg.Height
 		return reg, nil
 	}
 }
 
-// bandTop is the top of a band that starts in the frame row first, and
-// whether it continues the Flow this one follows directly.
-func (r *flowRegions) bandTop(first coord) (top bag.ScaledPoint, continues bool) {
+// bandRegion is the region of the band from the frame row first to last of
+// the current frame, filled being the number of regions handed back before
+// it, and its top from the page's top left corner; false when the band has
+// no height.
+func (r *flowRegions) bandRegion(first, last coord, filled int) (htmlbag.Region, bag.ScaledPoint, bool) {
+	xd, g := r.xd, r.xd.currentGrid
+	// A band starts at the exact bottom of what ends in the row above it,
+	// not on the next whole row. Where that is the end of a Flow this one
+	// follows directly, the first region collapses the margin still open
+	// with the first block's; the others start below it, level with the
+	// first block.
+	top, continues := r.bandTop(first, filled)
+	bottom := g.posY(last, r.area) + g.gridHeight
+	if f := r.area.frame[r.area.currentFrame]; last == f.height && int(absRow(r.area, last)) >= g.ny {
+		// The grid's last row ends short of the bottom margin by what is
+		// left of a row: a band that reaches it runs on to the margin.
+		bottom = max(bottom, xd.currentPage.pageHeight-g.marginBottom)
+	}
+	if bottom <= top {
+		return htmlbag.Region{}, 0, false
+	}
+	reg := htmlbag.Region{
+		Width:   g.width(r.area.frame[r.area.currentFrame].width),
+		Height:  bottom - top,
+		PageNum: xd.currentPage.pagenumber,
+		Left:    g.posX(1, r.area),
+		Top:     xd.currentPage.pageHeight - top,
+	}
+	if continues && filled == 0 {
+		reg.MarginBefore = r.start.marginAfter
+	}
+	// A band below the top of the frame on the page the flow starts on lies
+	// below what the page holds already, which includes what the page was
+	// set up with: a block that does not fit there moves on, once. On a
+	// later page there is only what the page was set up with above a band,
+	// and a block that arrives there is placed even when it does not fit.
+	reg.Occupied = xd.currentPage == r.firstPage && top > g.posY(1, r.area)
+	return reg, top, true
+}
+
+// Remaining returns the regions Next("") hands out after the current one up
+// to the end of the page: the bands below it in its frame, then those of the
+// area's next frames. A flow in a slate has one region and returns nil.
+func (r *flowRegions) Remaining() []htmlbag.Region {
+	if r.slate != nil || !r.started {
+		return nil
+	}
+	g := r.xd.currentGrid
+	defer func(frame int) { r.area.currentFrame = frame }(r.area.currentFrame)
+	// Each follows the current region, which is handed back first.
+	filled := r.filled + 1
+	var out []htmlbag.Region
+	for row := r.next; r.area.currentFrame < len(r.area.frame); r.area.currentFrame, row = r.area.currentFrame+1, 1 {
+		for {
+			first, last, ok := g.band(r.area, row)
+			if !ok {
+				break
+			}
+			row = last + 1
+			if reg, _, ok := r.bandRegion(first, last, filled); ok {
+				out = append(out, reg)
+			}
+		}
+	}
+	return out
+}
+
+// BalanceEnd reports whether the flow balances its end.
+func (r *flowRegions) BalanceEnd() bool { return r.balance }
+
+// bandTop is the top of a band that starts in the frame row first, filled
+// being the number of regions handed back before it, and whether it
+// continues the Flow this one follows directly.
+func (r *flowRegions) bandTop(first coord, filled int) (top bag.ScaledPoint, continues bool) {
 	g := r.xd.currentGrid
 	top = g.posY(first, r.area)
 	if y, ok := g.exactTop(r.area, first); ok {
 		top = y
 		if s := r.start; s != nil && r.xd.currentPage == r.startPage && y == s.y {
 			continues = true
-			if r.filled > 0 {
+			if filled > 0 {
 				top += s.marginAfter
 			}
 		}
@@ -265,7 +306,7 @@ func (r *flowRegions) bandTop(first coord) (top bag.ScaledPoint, continues bool)
 // the frame has none.
 func (r *flowRegions) startTop() bag.ScaledPoint {
 	if first, _, ok := r.xd.currentGrid.band(r.area, r.next); ok {
-		top, _ := r.bandTop(first)
+		top, _ := r.bandTop(first, r.filled)
 		return top
 	}
 	return r.xd.currentGrid.posY(r.next, r.area)
@@ -315,11 +356,15 @@ func (r *flowRegions) Filled(f htmlbag.Filled) error {
 
 func cmdFlow(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	attValues := &struct {
-		Area   string
-		Bottom string
+		Area       string
+		Bottom     string
+		Columnfill string `sdxml:"attr:column-fill,default:auto"`
 	}{}
 	if err := getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
+	}
+	if attValues.Columnfill != "auto" && attValues.Columnfill != "balance" {
+		return nil, newTypesettingErrorf("Flow", layoutelt.Line, "column-fill must be auto or balance, not %q", attValues.Columnfill)
 	}
 	if attValues.Area == "" {
 		attValues.Area = defaultAreaName
@@ -391,7 +436,7 @@ func cmdFlow(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) 
 		return nil, newTypesettingError("Flow", layoutelt.Line, err.Error())
 	}
 
-	r := &flowRegions{xd: xd, name: attValues.Area, area: area, next: area.CurrentRow(), firstPage: xd.currentPage, slate: xd.currentSlate, line: layoutelt.Line}
+	r := &flowRegions{xd: xd, name: attValues.Area, area: area, next: area.CurrentRow(), firstPage: xd.currentPage, slate: xd.currentSlate, line: layoutelt.Line, balance: attValues.Columnfill == "balance"}
 	if len(before) > 0 {
 		r.pos = map[*html.Node]int{}
 		i := 0
@@ -475,7 +520,7 @@ func (r *flowRegions) nextOnSlate(brk string) htmlbag.Region {
 		}
 		var continues bool
 		r.row = first
-		r.top, continues = r.bandTop(first)
+		r.top, continues = r.bandTop(first, r.filled)
 		if continues {
 			reg.MarginBefore = r.start.marginAfter
 		}

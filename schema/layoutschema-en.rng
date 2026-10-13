@@ -831,6 +831,17 @@
                             <a:documentation>Name of a variable that is set to where the flow ends, in points below the top of the page&#39;s grid, as a number. With frames side by side, that is the bottom of the longest one on the last page.</a:documentation>
                         </attribute>
                     </optional>
+                    <optional>
+                        <attribute name="column-fill">
+                            <a:documentation>How the flow fills the frames of its last page.</a:documentation>
+                            <choice>
+                                <value>auto</value>
+                                <a:documentation>One frame after the other, as on every page before (default).</a:documentation>
+                                <value>balance</value>
+                                <a:documentation>The part of the flow after its last forced break that ends on a page is spread over the frames of that page, so that they end at about the same height: each frame ends on one line across the page, the highest at which the part still ends there, or at its own foot above it. widows, orphans and the breaks hold as without it. The pages before are filled as with auto, and so is a page on which a block moves into a frame of another width. No effect in a Slate.</a:documentation>
+                            </choice>
+                        </attribute>
+                    </optional>
                     <oneOrMore>
                         <interleave>
                             <optional>

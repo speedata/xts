@@ -603,6 +603,17 @@
           <xs:documentation>Name of a variable that is set to where the flow ends, in points below the top of the page&#39;s grid, as a number. With frames side by side, that is the bottom of the longest one on the last page.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="column-fill">
+        <xs:annotation>
+          <xs:documentation>How the flow fills the frames of its last page.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="auto"></xs:enumeration>
+            <xs:enumeration value="balance"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
   <xs:element name="ForAll">

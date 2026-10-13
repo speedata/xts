@@ -159,6 +159,28 @@ Two frames side by side give a two-column layout. Each column starts at the exac
 ![a flow in two columns](/manual/img/flow-columns.png)
 <figcaption>The introduction is a flow across the page. The flow into the area <code>cols</code> starts at its exact end in both columns. The second paragraph breaks between the columns: two lines go to the right column, as <code>widows: 2</code> asks.</figcaption>
 
+### Balanced columns
+
+A flow fills a frame before it goes on to the next one, which is what running text needs. When a short run of columns ends part way down the page, with more content across the page below it, that leaves one long column and an empty one. With `column-fill="balance"`, named after the CSS property, the flow spreads its end over the frames of its last page instead, so that they end at about the same height:
+
+```xml
+<Flow area="cols" column-fill="balance">
+    <ForAll select="para">
+        <Paragraph><Value select="."/></Paragraph>
+    </ForAll>
+</Flow>
+<Flow>
+    <Paragraph class="intro"><Value select="outro"/></Paragraph>
+</Flow>
+```
+
+![a flow balanced over two columns](/manual/img/flow-balance.png)
+<figcaption>The three paragraphs of the flow into the area <code>cols</code> are spread over both columns. The flow after it starts below the longer one.</figcaption>
+
+Only the last page is balanced. The pages before it fill their frames one after the other, as without the attribute, and so does a part of the flow that a forced break such as `break-before: page` ends. xts tries heights until it finds the highest line across the page at which the rest of the flow still ends on that page, with `widows`, `orphans` and the breaks as they are. Each frame then ends at that line, or at its own foot above it; a band that starts below the line stays empty. `bottom` and a flow that follows directly start below the longest frame.
+
+Each try sets the end of the flow again, from its last forced break on. For a long flow without forced breaks, that takes a few times as long as filling the frames. When a block on the last page moves into a frame of another width, the page is filled as without balancing. In a `<Slate>`, the attribute has no effect.
+
 ## One flow after another
 
 A `<Flow>` that follows another directly continues exactly where the first one ended. The margin below the last block collapses with the margin above the next block as if both were one flow. Commands that do not touch the page, such as `<SetVariable>` or `<Message>`, may stand in between; a `<PlaceObject>`, `<NextRow>` or `<NextFrame>` ends the connection, and the next flow starts anew at the cursor. So you can split long text into several flows, for example to compute a value in between, without a visible seam:

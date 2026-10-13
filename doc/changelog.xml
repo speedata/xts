@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.10" date="2026-10-13">
+      <en summary="New attribute column-fill on Flow: balance spreads the end of a flow over the frames of its last page (#72).">With <tt>column-fill="balance"</tt>, the part of a <tt>Flow</tt> after its last forced break that ends on a page is set in the frames of that page as high as it takes to hold it, so that a run of columns that ends part way down the page ends at about the same height in every column. The pages before fill their frames as before, and <tt>bottom</tt> and a <tt>Flow</tt> that follows directly start below the longest frame. The default <tt>auto</tt> fills one frame after the other, as always.</en>
+    </entry>
+    <entry version="0.1.10" date="2026-10-13">
       <en summary="A block beside a float runs on under it, as in CSS; new display: flow-root (htmlbag v0.0.91).">A block with a border or a background beside a float was narrowed as a whole. Now only its lines keep clear of the float, while the border and the background run on under it, and a block that starts past the float is not narrowed at all. A margin, border or padding of the boxes in between takes from the room the float needs instead of adding to it, so the text no longer moves further away from the float the deeper it is nested. A float in a block with padding stands at the padding edge. <tt>display: flow-root</tt> keeps a block clear of a float as a whole, as before.</en>
     </entry>
     <entry version="0.1.10" date="2026-10-13">

@@ -43,6 +43,22 @@ A [Mark](../mark) between the blocks of a flow, also in an [Action](../action), 
 
 
 
+`column-fill` (optional)
+:   How the flow fills the frames of its last page.
+
+
+
+    `auto`
+    :    One frame after the other, as on every page before (default).
+
+
+
+    `balance`
+    :    The part of the flow after its last forced break that ends on a page is spread over the frames of that page, so that they end at about the same height: each frame ends on one line across the page, the highest at which the part still ends there, or at its own foot above it. `widows`, `orphans` and the breaks hold as without it. The pages before are filled as with `auto`, and so is a page on which a block moves into a frame of another width. No effect in a [Slate](../slate).
+
+
+
+
 ## Example
 
 ```xml

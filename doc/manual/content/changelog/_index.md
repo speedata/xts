@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.10 (2026-10-13)
 
+- **New attribute column-fill on Flow: balance spreads the end of a flow over the frames of its last page ([#72](https://github.com/speedata/xts/issues/72)).**<br>
+  With `column-fill="balance"`, the part of a `Flow` after its last forced break that ends on a page is set in the frames of that page as high as it takes to hold it, so that a run of columns that ends part way down the page ends at about the same height in every column. The pages before fill their frames as before, and `bottom` and a `Flow` that follows directly start below the longest frame. The default `auto` fills one frame after the other, as always.
 - **A block beside a float runs on under it, as in CSS; new display: flow-root (htmlbag v0.0.91).**<br>
   A block with a border or a background beside a float was narrowed as a whole. Now only its lines keep clear of the float, while the border and the background run on under it, and a block that starts past the float is not narrowed at all. A margin, border or padding of the boxes in between takes from the room the float needs instead of adding to it, so the text no longer moves further away from the float the deeper it is nested. A float in a block with padding stands at the padding edge. `display: flow-root` keeps a block clear of a float as a whole, as before.
 - **A paragraph's padding-left is taken off once (htmlbag v0.0.91).**<br>

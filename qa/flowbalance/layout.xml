@@ -1,0 +1,44 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+
+    <!-- column-fill="balance" on a Flow into an area of two frames side by
+         side. On the first page, four paragraphs end part way down the page
+         and are spread over both columns; the Flow after them starts below
+         the taller one. The second Flow runs over two pages: the first one
+         fills both columns as without balancing, the last one is balanced,
+         and its bottom attribute is the end of the taller column. -->
+
+    <PageFormat width="105mm" height="148mm"/>
+    <SetGrid nx="21" height="12pt"/>
+    <DefineMasterPage name="page" test="true()" margin="10mm">
+        <PositioningArea name="cols">
+            <PositioningFrame column="1" row="1" width="10" height="27"/>
+            <PositioningFrame column="12" row="1" width="10" height="27"/>
+        </PositioningArea>
+    </DefineMasterPage>
+    <StyleSheet>
+        p { margin: 0 0 4pt 0; font-size: 9pt; line-height: 11pt }
+    </StyleSheet>
+    <Record match="data">
+        <Flow>
+            <Paragraph><Value>An introduction across the width of the page.</Value></Paragraph>
+        </Flow>
+        <Flow area="cols" column-fill="balance">
+            <Loop select="4" variable="i">
+                <Paragraph><Value select="concat('Paragraph ', $i, ': ')"/><Value>lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</Value></Paragraph>
+            </Loop>
+        </Flow>
+        <Flow>
+            <Paragraph><Value>Below the columns, across the page again.</Value></Paragraph>
+        </Flow>
+        <ClearPage/>
+        <Flow area="cols" column-fill="balance" bottom="end">
+            <Loop select="16" variable="i">
+                <Paragraph><Value select="concat('Paragraph ', $i, ': ')"/><Value>lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Value></Paragraph>
+            </Loop>
+        </Flow>
+        <Flow>
+            <Paragraph><Value select="concat('The balanced Flow ends ', round($end), 'pt below the top of the grid.')"/></Paragraph>
+        </Flow>
+    </Record>
+</Layout>

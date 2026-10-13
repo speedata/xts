@@ -603,6 +603,17 @@
           <xs:documentation>Name einer Variablen, die auf das Ende des Flusses gesetzt wird, in Punkt unterhalb des oberen Rands des Seitenrasters, als Zahl. Bei nebeneinanderliegenden Rahmen ist das das untere Ende des längsten auf der letzten Seite.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="column-fill">
+        <xs:annotation>
+          <xs:documentation>Wie der Fluss die Rahmen seiner letzten Seite füllt.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="auto"></xs:enumeration>
+            <xs:enumeration value="balance"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
   <xs:element name="ForAll">
