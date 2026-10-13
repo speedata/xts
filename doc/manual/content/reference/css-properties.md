@@ -63,7 +63,7 @@ CSS properties supported by XTS for styling layout elements and HTML content. Le
 | `object-view-box` | `none`, or `inset()` with one to four lengths or percentages, on images (`<img>`, also with an SVG or PDF source). Not inherited. The region becomes the image's natural size and aspect ratio, and `width`, `height` and `max-width` size it as they size a whole image. `xywh()` and `rect()` are not supported and warn, as do the `round` corners of `inset()`, which are ignored. A bitmap's natural size is one point per pixel, as for its sizing, so `inset(10pt)` takes 10 pixels off each edge. Not read on an inline `<svg>` | `object-view-box: inset(10% 20%);` |
 | `background-color` | Color value, painted on block elements, inline elements and table cells | `background-color: #ffffcc;` |
 | `background` | Shorthand, only the color is read | `background: #ffffcc;` |
-| `display` | `block`, `inline`, `none`. Other values are ignored, the table parts follow from the HTML tags | `display: none;` |
+| `display` | `block`, `inline`, `flow-root`, `none`. `flow-root` is a block that keeps clear of a float as a whole, where a block runs on under it. Other values are ignored, the table parts follow from the HTML tags | `display: none;` |
 
 ## Borders
 
