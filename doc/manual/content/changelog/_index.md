@@ -9,6 +9,15 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
+## 0.1.9 (2026-10-13)
+
+- **Links, backgrounds and languages stay on their text in right to left paragraphs (boxesandglue v0.2.87).**<br>
+  A link, an inline background, a text color, a text decoration or an element with `lang` inside a right to left paragraph cut the line into pieces that were reordered one by one: the words came out in logical order from left to right, and the spaces at the edges of the run were lost. They stay in place now. A link that runs from Arabic into English gets one area for each visually contiguous part, as CSS splits an inline box at a change of direction.
+- **A left and a right float stand side by side (htmlbag v0.0.90).**<br>
+  A float that started while another one was still beside the text went below it, even when it floated to the other side. A left and a right float now stand side by side, each beside its own edge of the text, as long as they leave room for text between them. Two floats on the same side still stack. A page break no longer leaves the shorter of two such floats alone at the bottom of a page.
+- **A negative margin lets the text run over a float, as in CSS (htmlbag v0.0.90).**<br>
+  A float's negative margin on the side of the text fell back to `-bag-float-gutter`, and the text kept its distance. Now the text runs over the float by that much, or past it altogether. Only a margin of zero still gets the gutter. Where the text runs over the float, the float covers it.
+
 ## 0.1.8 (2026-10-09)
 
 - **An object that reaches into the rest of the grid at the right no longer warns.**<br>
