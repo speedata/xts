@@ -9,8 +9,14 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
-## 0.1.10 (2026-10-13)
+## 0.1.10 (2026-10-14)
 
+- **Justified lines end exactly at the right edge (boxesandglue v0.2.89).**<br>
+  A justified line that was squeezed with font expansion, which is on by default up to 5 percent, ended up to 0.4pt past the right edge: the expansion was cut to whole percent, and the word spaces shrank along with the glyphs. Only the glyphs are narrowed now, and kerns and `letter-spacing` keep their width. The word spaces of every line are also placed more exactly, so that a justified line without expansion no longer misses the edge by up to 0.05pt either. The output of justified text moves by fractions of a point.
+- **A line after a line with font expansion starts at its indent (boxesandglue v0.2.88).**<br>
+  The line after a line that was squeezed with font expansion started too far left by the expansion of that line, by up to a few points beside a float or under a `text-indent`. It starts at its indent now.
+- **Floats on one side stand next to each other (htmlbag v0.0.92).**<br>
+  A float that started while another one on the same side was still beside the text went below it. It stands beside it now, past the outer edge of its margin, as in CSS, and the lines of a paragraph give way row by row to whichever float reaches furthest in at their height. Where the text would keep no room, the float goes down past the float that ends first. Two floats without margins touch; the gutter keeps the text off a float, not the next float.
 - **New attribute column-fill on Flow: balance spreads the end of a flow over the frames of its last page ([#72](https://github.com/speedata/xts/issues/72)).**<br>
   With `column-fill="balance"`, the part of a `Flow` after its last forced break that ends on a page is set in the frames of that page as high as it takes to hold it, so that a run of columns that ends part way down the page ends at about the same height in every column. The pages before fill their frames as before, and `bottom` and a `Flow` that follows directly start below the longest frame. The default `auto` fills one frame after the other, as always.
 - **A block beside a float runs on under it, as in CSS; new display: flow-root (htmlbag v0.0.91).**<br>

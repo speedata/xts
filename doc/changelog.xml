@@ -24,6 +24,15 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
+    <entry version="0.1.10" date="2026-10-14">
+      <en summary="Justified lines end exactly at the right edge (boxesandglue v0.2.89).">A justified line that was squeezed with font expansion, which is on by default up to 5 percent, ended up to 0.4pt past the right edge: the expansion was cut to whole percent, and the word spaces shrank along with the glyphs. Only the glyphs are narrowed now, and kerns and <tt>letter-spacing</tt> keep their width. The word spaces of every line are also placed more exactly, so that a justified line without expansion no longer misses the edge by up to 0.05pt either. The output of justified text moves by fractions of a point.</en>
+    </entry>
+    <entry version="0.1.10" date="2026-10-14">
+      <en summary="A line after a line with font expansion starts at its indent (boxesandglue v0.2.88).">The line after a line that was squeezed with font expansion started too far left by the expansion of that line, by up to a few points beside a float or under a <tt>text-indent</tt>. It starts at its indent now.</en>
+    </entry>
+    <entry version="0.1.10" date="2026-10-14">
+      <en summary="Floats on one side stand next to each other (htmlbag v0.0.92).">A float that started while another one on the same side was still beside the text went below it. It stands beside it now, past the outer edge of its margin, as in CSS, and the lines of a paragraph give way row by row to whichever float reaches furthest in at their height. Where the text would keep no room, the float goes down past the float that ends first. Two floats without margins touch; the gutter keeps the text off a float, not the next float.</en>
+    </entry>
     <entry version="0.1.10" date="2026-10-13">
       <en summary="New attribute column-fill on Flow: balance spreads the end of a flow over the frames of its last page (#72).">With <tt>column-fill="balance"</tt>, the part of a <tt>Flow</tt> after its last forced break that ends on a page is set in the frames of that page as high as it takes to hold it, so that a run of columns that ends part way down the page ends at about the same height in every column. The pages before fill their frames as before, and <tt>bottom</tt> and a <tt>Flow</tt> that follows directly start below the longest frame. The default <tt>auto</tt> fills one frame after the other, as always.</en>
     </entry>
