@@ -24,6 +24,12 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
+    <entry version="0.1.11" date="2026-10-14">
+      <en summary="A width in em is relative to the font size (htmlbag v0.0.93).">A <tt>width</tt> in <tt>em</tt> took the width of the table or the surrounding block as its base instead of the font size, so <tt>width: 5em</tt> on a table cell made the column five times as wide as the table, and a table ignored a width in <tt>em</tt> altogether. Cells, tables and blocks now resolve <tt>em</tt> against their own font size and <tt>rem</tt> against the root font size.</en>
+    </entry>
+    <entry version="0.1.11" date="2026-10-14">
+      <en summary="The @page background color fills every page (htmlbag v0.0.93).">A <tt>background-color</tt> on <tt>@page</tt> was painted on the first page only. It fills every page now, and <tt>@page :first</tt>, <tt>:left</tt> and <tt>:right</tt> override it per page, as they already did for <tt>background-image</tt>.</en>
+    </entry>
     <entry version="0.1.10" date="2026-10-14">
       <en summary="Justified lines end exactly at the right edge (boxesandglue v0.2.89).">A justified line that was squeezed with font expansion, which is on by default up to 5 percent, ended up to 0.4pt past the right edge: the expansion was cut to whole percent, and the word spaces shrank along with the glyphs. Only the glyphs are narrowed now, and kerns and <tt>letter-spacing</tt> keep their width. The word spaces of every line are also placed more exactly, so that a justified line without expansion no longer misses the edge by up to 0.05pt either. The output of justified text moves by fractions of a point.</en>
     </entry>

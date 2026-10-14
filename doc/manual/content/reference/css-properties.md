@@ -164,7 +164,7 @@ Sets up a master page, see [Master Pages](/manual/page-layout/master-pages#page-
 | `margin-top`, `margin-right`, `margin-bottom`, `margin-left` | Length, one page margin | `margin-left: 3cm;` |
 | `border`, `border-top`, `border-right`, `border-bottom`, `border-left`, `border-width`, `border-style`, `border-color`, `border-radius` | As on elements, drawn around the page content area on every page | `border-left: 4pt solid navy;` |
 | `padding`, `padding-top`, `padding-right`, `padding-bottom`, `padding-left` | Length, space between the page border and the content | `padding: 5mm;` |
-| `background-color` | Color value, fills the sheet. Painted on the first page only | `background-color: #fafafa;` |
+| `background-color` | Color value, fills the sheet | `background-color: #fafafa;` |
 | `background-image` | `url()` of an image or PDF file, scaled to the full sheet on every page that uses this `@page` rule | `background-image: url("letterhead.pdf");` |
 | `-bag-background-page` | Page number of a multi page PDF used as `background-image`, the default is 1 | `-bag-background-page: 2;` |
 

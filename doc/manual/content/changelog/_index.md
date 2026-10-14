@@ -9,6 +9,13 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
+## 0.1.11 (2026-10-14)
+
+- **A width in em is relative to the font size (htmlbag v0.0.93).**<br>
+  A `width` in `em` took the width of the table or the surrounding block as its base instead of the font size, so `width: 5em` on a table cell made the column five times as wide as the table, and a table ignored a width in `em` altogether. Cells, tables and blocks now resolve `em` against their own font size and `rem` against the root font size.
+- **The `@page` background color fills every page (htmlbag v0.0.93).**<br>
+  A `background-color` on `@page` was painted on the first page only. It fills every page now, and `@page :first`, `:left` and `:right` override it per page, as they already did for `background-image`.
+
 ## 0.1.10 (2026-10-14)
 
 - **Justified lines end exactly at the right edge (boxesandglue v0.2.89).**<br>
