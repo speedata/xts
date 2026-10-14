@@ -1,0 +1,52 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+
+    <!-- A block that starts the second frame of an area at an automatic
+         break loses its margin-top, as the second column below a spanner
+         does, also when the frame lies below a Flow across the page
+         (xts#74). On the first page, the Flow is balanced and Paragraph 2,
+         with a margin-top of one line, starts the second column level with
+         Paragraph 1. On the second page, the frames are short and filled:
+         Paragraph 2 starts the second column level with Paragraph 1 again,
+         and Paragraph 3 moves on below the gray box in that column, where it
+         keeps its margin. -->
+
+    <PageFormat width="105mm" height="148mm"/>
+    <SetGrid nx="21" height="12pt"/>
+    <DefineMasterPage name="page" test="true()" margin="10mm">
+        <PositioningArea name="cols">
+            <PositioningFrame column="1" row="1" width="10" height="27"/>
+            <PositioningFrame column="12" row="1" width="10" height="27"/>
+        </PositioningArea>
+        <PositioningArea name="short">
+            <PositioningFrame column="1" row="1" width="10" height="4"/>
+            <PositioningFrame column="12" row="1" width="10" height="9"/>
+        </PositioningArea>
+    </DefineMasterPage>
+    <StyleSheet>
+        p { margin: 0; font-size: 9pt; line-height: 11pt }
+        p.space { margin-top: 11pt }
+    </StyleSheet>
+    <Record match="data">
+        <Flow>
+            <Paragraph><Value>An introduction across the width of the page.</Value></Paragraph>
+        </Flow>
+        <Flow area="cols" column-fill="balance">
+            <Paragraph><Value>Paragraph 1: lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</Value></Paragraph>
+            <Paragraph class="space"><Value>Paragraph 2: lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</Value></Paragraph>
+        </Flow>
+        <Flow>
+            <Paragraph><Value>Below the columns, across the page again.</Value></Paragraph>
+        </Flow>
+        <ClearPage/>
+        <Flow>
+            <Paragraph><Value>An introduction across the width of the page.</Value></Paragraph>
+        </Flow>
+        <PlaceObject column="12" row="5"><Box width="10" height="1" background-color="gray"/></PlaceObject>
+        <Flow area="short">
+            <Paragraph><Value>Paragraph 1: lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</Value></Paragraph>
+            <Paragraph class="space"><Value>Paragraph 2: lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</Value></Paragraph>
+            <Paragraph class="space"><Value>Paragraph 3: lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</Value></Paragraph>
+        </Flow>
+    </Record>
+</Layout>

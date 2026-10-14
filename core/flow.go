@@ -202,8 +202,11 @@ func (r *flowRegions) Next(brk string) (htmlbag.Region, error) {
 			}
 			continue
 		}
+		// The search starts at the frame's first row only in a frame the
+		// flow has just moved to (or starts in).
+		columnStart := r.next == 1
 		r.next = last + 1
-		reg, top, ok := r.bandRegion(first, last, r.filled)
+		reg, top, ok := r.bandRegion(first, last, r.filled, columnStart)
 		if !ok {
 			continue
 		}
@@ -215,9 +218,9 @@ func (r *flowRegions) Next(brk string) (htmlbag.Region, error) {
 
 // bandRegion is the region of the band from the frame row first to last of
 // the current frame, filled being the number of regions handed back before
-// it, and its top from the page's top left corner; false when the band has
-// no height.
-func (r *flowRegions) bandRegion(first, last coord, filled int) (htmlbag.Region, bag.ScaledPoint, bool) {
+// it and firstInFrame whether it is the frame's first free band, and its top
+// from the page's top left corner; false when the band has no height.
+func (r *flowRegions) bandRegion(first, last coord, filled int, firstInFrame bool) (htmlbag.Region, bag.ScaledPoint, bool) {
 	xd, g := r.xd, r.xd.currentGrid
 	// A band starts at the exact bottom of what ends in the row above it,
 	// not on the next whole row. Where that is the end of a Flow this one
@@ -250,6 +253,11 @@ func (r *flowRegions) bandRegion(first, last coord, filled int) (htmlbag.Region,
 	// later page there is only what the page was set up with above a band,
 	// and a block that arrives there is placed even when it does not fit.
 	reg.Occupied = xd.currentPage == r.firstPage && top > g.posY(1, r.area)
+	// The first band of a frame after the first is the top of a column: a
+	// block that arrives there at an automatic break loses its margin-top,
+	// even below what the page holds (xts#74). A later band of the frame
+	// lies below something placed in the column itself and keeps it.
+	reg.ColumnStart = firstInFrame && r.area.currentFrame > 0
 	return reg, top, true
 }
 
@@ -271,8 +279,9 @@ func (r *flowRegions) Remaining() []htmlbag.Region {
 			if !ok {
 				break
 			}
+			firstInFrame := row == 1
 			row = last + 1
-			if reg, _, ok := r.bandRegion(first, last, filled); ok {
+			if reg, _, ok := r.bandRegion(first, last, filled, firstInFrame); ok {
 				out = append(out, reg)
 			}
 		}
