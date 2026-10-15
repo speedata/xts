@@ -1,10 +1,16 @@
-[![Explore in Constellation](https://img.shields.io/badge/Explore%20in-Constellation-blue)](https://constellation.speedata.de)
+[![Explore in Constellation](https://img.shields.io/badge/Explore%20in-Constellation-blue)](https://constellation.speedata.de/#xts)
 
 # XTS - XML typesetting system
 
 XTS turns XML data into PDF. You write a layout in XML, point it at your data, and get a fully typeset document -- no GUI, no manual intervention. Think product catalogs, price lists, data sheets, or anything where content changes but the design stays the same.
 
 Under the hood, XTS uses [boxes and glue](https://github.com/boxesandglue/boxesandglue), a Go library that implements TeX's typesetting algorithms. If you know the [speedata Publisher](https://github.com/speedata/publisher/), XTS is its next-generation successor.
+
+<p align="center">
+  <a href="https://github.com/speedata/xts-examples/tree/main/introduction/planets">
+    <img src="https://raw.githubusercontent.com/speedata/xts-examples/main/introduction/planets/firstpage.png" width="320" alt="First page of a booklet about the planets, typeset by XTS from XML data">
+  </a>
+</p>
 
 ## Getting started
 
@@ -32,13 +38,13 @@ cd xts
 rake build
 ```
 
-Needs Go 1.21+ and Ruby/rake (or just run the `go build` command from the Rakefile directly).
+Needs Go 1.25+ and Ruby/rake (or just run the `go build` command from the Rakefile directly).
 
 ## Ecosystem
 
 XTS is part of a broader ecosystem of PDF, typesetting and publishing technologies.
 
-**[Explore the constellation →](https://constellation.speedata.de)**
+**[Explore the constellation →](https://constellation.speedata.de/#xts)**
 
 ## License
 
