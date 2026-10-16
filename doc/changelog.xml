@@ -24,6 +24,15 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
+    <entry version="0.1.11" date="2026-10-16">
+      <en summary="Copied text keeps the space after a colored word (boxesandglue v0.2.91).">The word space after a color change was missing from the text of the PDF: copying or extracting the text ran a colored word into the next one, so that red three came out as redthree, and a line ending in a colored word lost its space as well. The space is in the text now, inside the marked content of its word as PDF/UA requires. The page looks the same.</en>
+    </entry>
+    <entry version="0.1.11" date="2026-10-16">
+      <en summary="Hyphenation works around and inside ligatures (boxesandglue v0.2.91).">Every hyphenation point after a ligature such as fi or ft landed too far to the right, so that beschäftigt could break as beschäft-igt. The points are in the right place now. A point inside a ligature, as in Schiff-fahrt set with an fff ligature, was left out. A line can break there now as in TeX: the ligature makes way for the two parts at the break and stays where the line does not break. The parts keep the font features and the <tt>letter-spacing</tt> of their text.</en>
+    </entry>
+    <entry version="0.1.11" date="2026-10-16">
+      <en summary="Paragraphs break closer to TeX (boxesandglue v0.2.90).">The line breaker weighs its choices as TeX does: each line costs a little in itself, so of two equally good breaks the one with fewer lines wins; a hyphen at the end of the second to last line costs extra, so a paragraph ends less often in the second half of a hyphenated word; and hyphens on consecutive lines and a tight line next to a loose one cost as much as in plain TeX. A few paragraphs break differently.</en>
+    </entry>
     <entry version="0.1.11" date="2026-10-14">
       <en summary="A width in em is relative to the font size (htmlbag v0.0.93).">A <tt>width</tt> in <tt>em</tt> took the width of the table or the surrounding block as its base instead of the font size, so <tt>width: 5em</tt> on a table cell made the column five times as wide as the table, and a table ignored a width in <tt>em</tt> altogether. Cells, tables and blocks now resolve <tt>em</tt> against their own font size and <tt>rem</tt> against the root font size.</en>
     </entry>

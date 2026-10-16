@@ -9,8 +9,14 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
-## 0.1.11 (2026-10-14)
+## 0.1.11 (2026-10-16)
 
+- **Copied text keeps the space after a colored word (boxesandglue v0.2.91).**<br>
+  The word space after a color change was missing from the text of the PDF: copying or extracting the text ran a colored word into the next one, so that red three came out as redthree, and a line ending in a colored word lost its space as well. The space is in the text now, inside the marked content of its word as PDF/UA requires. The page looks the same.
+- **Hyphenation works around and inside ligatures (boxesandglue v0.2.91).**<br>
+  Every hyphenation point after a ligature such as fi or ft landed too far to the right, so that beschäftigt could break as beschäft-igt. The points are in the right place now. A point inside a ligature, as in Schiff-fahrt set with an fff ligature, was left out. A line can break there now as in TeX: the ligature makes way for the two parts at the break and stays where the line does not break. The parts keep the font features and the `letter-spacing` of their text.
+- **Paragraphs break closer to TeX (boxesandglue v0.2.90).**<br>
+  The line breaker weighs its choices as TeX does: each line costs a little in itself, so of two equally good breaks the one with fewer lines wins; a hyphen at the end of the second to last line costs extra, so a paragraph ends less often in the second half of a hyphenated word; and hyphens on consecutive lines and a tight line next to a loose one cost as much as in plain TeX. A few paragraphs break differently.
 - **A width in em is relative to the font size (htmlbag v0.0.93).**<br>
   A `width` in `em` took the width of the table or the surrounding block as its base instead of the font size, so `width: 5em` on a table cell made the column five times as wide as the table, and a table ignored a width in `em` altogether. Cells, tables and blocks now resolve `em` against their own font size and `rem` against the root font size.
 - **The `@page` background color fills every page (htmlbag v0.0.93).**<br>
