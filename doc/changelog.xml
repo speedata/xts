@@ -31,6 +31,9 @@
       <en summary="-bag-linebreak-tolerance: 0 and -bag-linebreak-hyphen-penalty: 0 take effect (htmlbag#104).">A value of 0 for <tt>-bag-linebreak-tolerance</tt> or <tt>-bag-linebreak-hyphen-penalty</tt> was treated as not set, so the defaults 4 and 50 applied. Both take 0 now: a tolerance of 0 accepts only lines that fit exactly, a hyphen penalty of 0 makes a break at a hyphenation point free. A negative tolerance is ignored.</en>
     </entry>
     <entry version="0.1.12" date="2026-10-18">
+      <en summary="A Factur-X invoice with the profile MINIMUM or BASIC WL is attached as Data (boxesandglue#95).">An invoice attached with <tt>&lt;AttachFile type="facturx"&gt;</tt> always got the relationship <tt>/AFRelationship /Alternative</tt>. Factur-X uses <tt>/Data</tt> for the profiles MINIMUM and BASIC WL, whose XML carries too little for a full invoice, and <tt>/Alternative</tt> for the others. XTS now sets the relationship from the detected profile.</en>
+    </entry>
+    <entry version="0.1.12" date="2026-10-18">
       <en summary="Text directly in a command counts as a Value.">Text written directly in a command, as in <tt>&lt;Paragraph&gt;A &lt;B&gt;bold&lt;/B&gt; word&lt;/Paragraph&gt;</tt>, was dropped without a warning; only text inside <tt>&lt;Value&gt;</tt> reached the output. Such text now counts as a <tt>&lt;Value&gt;</tt> with that text: in paragraphs and inline commands, in <tt>Switch</tt>, <tt>ForAll</tt> and <tt>Loop</tt>, in table cells, <tt>Message</tt> and <tt>SetVariable</tt>. Text of whitespace only between commands is still left out, so a lone space needs <tt>&lt;Value&gt; &lt;/Value&gt;</tt>. The schema allows the text there, inline markup, marks, bookmarks and blocks inside loops and <tt>Switch</tt>, and <tt>ForAll</tt> and <tt>Loop</tt> inside paragraphs.</en>
     </entry>
     <entry version="0.1.11" date="2026-10-16">

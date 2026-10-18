@@ -65,7 +65,7 @@
       </xs:attribute>
       <xs:attribute name="type">
         <xs:annotation>
-          <xs:documentation>The MIME type of the attachment (e.g. &#34;application/pdf&#34;). If set to &#34;ZUGFeRD invoice&#34; or &#34;facturx&#34;, the attached XML is treated as a Factur-X / ZUGFeRD invoice: the conformance profile is detected automatically from the XML data, the required XMP metadata for ZUGFeRD compliance is added, and the PDF format is automatically set to PDF/A-3b. If not set, the MIME type is detected from the file extension.</xs:documentation>
+          <xs:documentation>The MIME type of the attachment (e.g. &#34;application/pdf&#34;). If set to &#34;ZUGFeRD invoice&#34; or &#34;facturx&#34;, the attached XML is treated as a Factur-X / ZUGFeRD invoice: the conformance profile is detected automatically from the XML data, the required XMP metadata for ZUGFeRD compliance is added, and the PDF format is automatically set to PDF/A-3b. An invoice with the profile MINIMUM or BASIC WL is attached with the relationship Data, one with another profile with Alternative. If not set, the MIME type is detected from the file extension.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
     </xs:complexType>

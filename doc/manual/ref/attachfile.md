@@ -38,7 +38,7 @@ Attach a file to the PDF document. This is used for example to embed ZUGFeRD/Fac
 
 
 `type` (text, optional)
-:   The MIME type of the attachment (e.g. "application/pdf"). If set to "ZUGFeRD invoice" or "facturx", the attached XML is treated as a Factur-X / ZUGFeRD invoice: the conformance profile is detected automatically from the XML data, the required XMP metadata for ZUGFeRD compliance is added, and the PDF format is automatically set to PDF/A-3b. If not set, the MIME type is detected from the file extension.
+:   The MIME type of the attachment (e.g. "application/pdf"). If set to "ZUGFeRD invoice" or "facturx", the attached XML is treated as a Factur-X / ZUGFeRD invoice: the conformance profile is detected automatically from the XML data, the required XMP metadata for ZUGFeRD compliance is added, and the PDF format is automatically set to PDF/A-3b. An invoice with the profile MINIMUM or BASIC WL is attached with the relationship Data, one with another profile with Alternative. If not set, the MIME type is detected from the file extension.
 
 
 

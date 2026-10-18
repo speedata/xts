@@ -65,7 +65,7 @@
       </xs:attribute>
       <xs:attribute name="type">
         <xs:annotation>
-          <xs:documentation>Der MIME-Typ des Anhangs (z. B. &#34;application/pdf&#34;). Wenn auf &#34;ZUGFeRD invoice&#34; oder &#34;facturx&#34; gesetzt, wird die angehängte XML als Factur-X / ZUGFeRD-Rechnung behandelt: das Konformitätsprofil wird automatisch aus den XML-Daten erkannt, die erforderlichen XMP-Metadaten für ZUGFeRD-Konformität werden gesetzt und das PDF-Format wird automatisch auf PDF/A-3b gestellt. Wenn nicht gesetzt, wird der MIME-Typ aus der Dateiendung ermittelt.</xs:documentation>
+          <xs:documentation>Der MIME-Typ des Anhangs (z. B. &#34;application/pdf&#34;). Wenn auf &#34;ZUGFeRD invoice&#34; oder &#34;facturx&#34; gesetzt, wird die angehängte XML als Factur-X / ZUGFeRD-Rechnung behandelt: das Konformitätsprofil wird automatisch aus den XML-Daten erkannt, die erforderlichen XMP-Metadaten für ZUGFeRD-Konformität werden gesetzt und das PDF-Format wird automatisch auf PDF/A-3b gestellt. Eine Rechnung mit dem Profil MINIMUM oder BASIC WL wird mit der Beziehung Data angehängt, eine mit einem anderen Profil mit Alternative. Wenn nicht gesetzt, wird der MIME-Typ aus der Dateiendung ermittelt.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
     </xs:complexType>

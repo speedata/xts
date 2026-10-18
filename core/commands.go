@@ -1753,6 +1753,19 @@ func cmdAttachFile(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 		attachment.Description = *attValues.Description
 	}
 
+	var conformanceLevel string
+	if isFacturx {
+		conformanceLevel = detectFacturxProfile(data)
+		if conformanceLevel == "" {
+			return nil, newTypesettingErrorf("AttachFile", layoutelt.Line, "cannot detect Factur-X profile from %s", attValues.Href)
+		}
+		// MINIMUM and BASIC WL carry too little for a full invoice, so
+		// their XML is data about the PDF, not an alternative to it.
+		if conformanceLevel == "MINIMUM" || conformanceLevel == "BASIC WL" {
+			attachment.AFRelationship = "Data"
+		}
+	}
+
 	xd.document.Doc.AttachFile(attachment)
 
 	if isFacturx {
@@ -1760,10 +1773,6 @@ func cmdAttachFile(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, e
 		// declaration from <PDFOptions format="…"> survives an embedded
 		// Factur-X invoice.
 		xd.document.Doc.Format.PDFA = &document.PDFAConf{Part: 3, Level: document.PDFALevelB}
-		conformanceLevel := detectFacturxProfile(data)
-		if conformanceLevel == "" {
-			return nil, newTypesettingErrorf("AttachFile", layoutelt.Line, "cannot detect Factur-X profile from %s", attValues.Href)
-		}
 		xd.document.Doc.AddXMPExtension(document.XMPExtension{
 			Schema:       "Factur-X PDFA Extension Schema",
 			NamespaceURI: "urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0#",
