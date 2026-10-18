@@ -9,6 +9,8 @@ linktitle: CSS Properties
 # CSS Properties Reference
 
 CSS properties supported by XTS for styling layout elements and HTML content. Lengths take the [units](../units) of XTS; `em` and `%` are relative to the font size or the containing block as in CSS.
+
+The list comes from htmlbag, the HTML and CSS layer that XTS shares with glu and bagme. The `column-*` properties, and the footnotes their notes mention, apply in glu and bagme only. XTS does not lay them out: a `<Flow>` sets content with `column-count` in one column and drops footnotes, each with a warning. Columns in XTS are the frames of a [positioning area](/manual/core-concepts/positioning-areas), and the `column-fill` attribute of [`<Flow>`](/manual/core-concepts/flow#balanced-columns) balances them.
 {{ range .Elements }}
 ## {{ .Title }}
 
