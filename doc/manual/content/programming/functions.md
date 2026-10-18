@@ -39,6 +39,7 @@ Key points:
   must be declared on the `<Function>` element or one of its ancestors (usually
   the root element).
 - Parameters are accessed as local variables (`$first`, `$second`).
+- A function's `<Param>` takes no `select`: there are no default values, and every call passes all arguments.
 - Parameter variables have **local scope** -- unlike ordinary XTS variables, they
   do not leak out of the function body.
 - Every `<Value>` in the body contributes to the return value.

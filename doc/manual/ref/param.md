@@ -26,7 +26,7 @@ Specify a parameter for a [Function](../function) or [Template](../template) def
 
 
 `select` ([XPath expressions](/programming/xpath), optional)
-:   The value of the parameter. On a [CallTemplate](../calltemplate) it is the argument passed to the template; on a [Template](../template) definition it is the default value used when the caller omits the parameter.
+:   The value of the parameter. On a [CallTemplate](../calltemplate) it is the argument passed to the template; on a [Template](../template) definition it is the default value used when the caller omits the parameter. On a [Function](../function) definition `select` is not allowed: a function has no default values, every call passes all of its arguments. XTS ignores it there with a warning.
 
 
 

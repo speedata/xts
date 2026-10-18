@@ -2,7 +2,7 @@
 
 
 
-Executes all given nodes. The elements, that are to be executed, are given with the attribute `selection`.
+Runs the matching [Record](../record) for each of the elements selected with the attribute `select`. What the records return is passed on in order, as with the body of a [ForAll](../forall), so a [Flow](../flow) around the [ProcessNode](../processnode) receives the blocks they make.
 
 
 

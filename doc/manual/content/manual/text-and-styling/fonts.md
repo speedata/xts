@@ -49,7 +49,7 @@ When the text asks for a variant the family does not have, XTS uses the closest 
 </StyleSheet>
 ```
 
-`@font-face` also takes `size-adjust`, which scales a face so that it matches the size of its neighbors, and `ascent-override`, `descent-override` and `line-gap-override`. The overrides are only read by a line model registered from Go (see [Running XTS from Go](../../running-xts/go)). The [CSS reference](/reference/css-properties) lists all descriptors.
+`@font-face` also takes `size-adjust`, which scales a face so that it matches the size of its neighbors, and `ascent-override`, `descent-override` and `line-gap-override`. `ascent-override` and `descent-override` set the font's content area: the band an inline `background-color` covers and the edge `text-box-trim` cuts at. For the height of a line the built-in line models use none of the three overrides; only a line model registered from Go reads them (see [Running XTS from Go](../../running-xts/go)). The [CSS reference](/reference/css-properties) lists all descriptors.
 
 ## Selecting fonts
 

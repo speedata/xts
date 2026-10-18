@@ -297,7 +297,8 @@
     </define>
     <define name="e_Bookmark">
         <element name="Bookmark">
-            <a:documentation>Erstellt ein Lesezeichen für den PDF Betrachter (z.B. Adobe Reader). Wenn der Leser auf das Lesezeichen klickt, springt der PDF Betrachter an diese Stelle im Dokument.</a:documentation>
+            <a:documentation>Erstellt ein Lesezeichen für den PDF-Betrachter (z.B. Adobe Reader). Wenn der Leser auf das Lesezeichen klickt, springt der PDF-Betrachter an diese Stelle im Dokument.
+      In einem Paragraph wird das Lesezeichen Teil der Zeile, in der es steht, und zeigt auf diese Zeile, auch wenn ein Flow den Absatz über Seiten umbricht. Zwischen den Blöcken eines Flow zeigt es auf den oberen Rand des folgenden Blocks, auf welcher Seite dieser auch landet.</a:documentation>
             <lsp:doc href="https://doc.speedata.de/xts/reference/commands/bookmark/"></lsp:doc>
             <attribute name="level">
                 <a:documentation>Hierarchieebene. 1 ist die höchste Ebene, zwei die nächst tiefere Ebene etc.</a:documentation>
@@ -815,7 +816,7 @@
       Jedes Kindelement mit einer id behält sie, auch wenn es über Rahmen und Seiten umbrochen wird: Jeder Teil erscheint in --dumpoutput mit seiner Seite und Position.
       Ein TextBlock, ein Image oder eine Box kann noch nicht Teil eines Flusses sein und wird mit einer Warnung ausgelassen.
       In einem Slate stapelt ein Fluss seine Blöcke als ein Objekt, so breit wie der Rahmen des Slates, mit denselben Kindelementen, Regeln und Warnungen: Die Blöcke behalten ihre genaue Höhe und ihre Abstände fallen zusammen, aber nichts geht in einen nächsten Rahmen oder auf eine nächste Seite. Er beginnt in der aktuellen Zeile des Slates, genau am unteren Rand dessen, was in der Zeile darüber endet, und ein PlaceObject danach beginnt in der nächsten ganzen Zeile. Ein erzwungener Umbruch mit page, column, left oder right hat dort kein Ziel: Die Blöcke gehen weiter wie ohne ihn, mit einer Warnung je Fluss. Das Slate hat keine Platzierungsbereiche, daher ist area in einem Slate ein Fehler. Ein Mark oder Bookmark erhält die Seite, auf der das Slate platziert wird.
-      Die Kindelemente werden gelesen, bevor der Fluss gesetzt wird. Ein Befehl, der sofort auf die Seite wirkt, PlaceObject, ClearPage, NextFrame oder NextRow, ist in einem Fluss daher ein Fehler. Ein erzwungener Umbruch geht über CSS, etwa break-before: page. CallTemplate und ProcessNode funktionieren wie überall: Die Blöcke der Vorlage oder der Records gehen in den Fluss ein.
+      Die Kindelemente werden gelesen, bevor der Fluss gesetzt wird. Ein Befehl, der sofort auf die Seite wirkt, PlaceObject, ClearPage, NextFrame oder NextRow, ist in einem Fluss daher ein Fehler. Ein erzwungener Umbruch geht über CSS, etwa break-before: page. CallTemplate und ProcessNode funktionieren wie überall: Die Blöcke der Vorlage oder der Records gehen in den Fluss ein. Ebenso die Blöcke, die Loop, While und Until in jedem Durchlauf erzeugen, in ihrer Reihenfolge.
       Ein Mark zwischen den Blöcken eines Flusses, auch in einer Action, markiert die Seite des folgenden Blocks, wo immer dieser landet; nach dem letzten Block die Seite, auf der der Fluss endet. Mit pdftarget ist er ein benanntes Sprungziel am oberen Rand dieses Blocks. Ein Bookmark zwischen den Blöcken zeigt auf den oberen Rand des folgenden Blocks. In einem Paragraph gehen ein Mark in einer Action und ein Bookmark in ihre Zeile und erhalten deren Seite und Position, auch wenn der Fluss den Absatz über Seiten umbricht. Anderswo innerhalb eines Blocks, etwa direkt in einer Tabellenzelle, sind beide vorerst ein Fehler.</a:documentation>
             <lsp:doc href="https://doc.speedata.de/xts/reference/commands/flow/"></lsp:doc>
             <interleave>
@@ -860,6 +861,9 @@
                                 <ref name="e_HTML"></ref>
                             </optional>
                             <optional>
+                                <ref name="e_Loop"></ref>
+                            </optional>
+                            <optional>
                                 <ref name="e_Mark"></ref>
                             </optional>
                             <optional>
@@ -879,6 +883,12 @@
                             </optional>
                             <optional>
                                 <ref name="e_Ul"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_Until"></ref>
+                            </optional>
+                            <optional>
+                                <ref name="e_While"></ref>
                             </optional>
                         </interleave>
                     </oneOrMore>
@@ -1883,7 +1893,7 @@
             </attribute>
             <optional>
                 <attribute name="select">
-                    <a:documentation>Der Wert des Parameters. Bei CallTemplate ist es das an das Template übergebene Argument; bei einer Template-Definition der Vorgabewert, falls der Aufrufer den Parameter weglässt.</a:documentation>
+                    <a:documentation>Der Wert des Parameters. Bei CallTemplate ist es das an das Template übergebene Argument; bei einer Template-Definition der Vorgabewert, falls der Aufrufer den Parameter weglässt. Bei einer Function-Definition ist select nicht erlaubt: Eine Funktion hat keine Vorgabewerte, jeder Aufruf übergibt alle Argumente. XTS ignoriert das Attribut dort mit einer Warnung.</a:documentation>
                     <lsp:references symbol="variable" form="xpath-variable"></lsp:references>
                 </attribute>
             </optional>
@@ -2180,7 +2190,7 @@
     </define>
     <define name="e_ProcessNode">
         <element name="ProcessNode">
-            <a:documentation>Bearbeitet alle angegebenen Datensätze. Die Elemente, für die die Regeln ausgeführt werden sollen, werden mit dem Attribut select angegeben.</a:documentation>
+            <a:documentation>Führt für jedes Element, das mit dem Attribut select ausgewählt wird, den passenden Record aus. Was die Records zurückgeben, wird der Reihe nach weitergegeben, wie beim Inhalt von ForAll, sodass ein Flow um den ProcessNode die Blöcke erhält, die sie erzeugen.</a:documentation>
             <lsp:doc href="https://doc.speedata.de/xts/reference/commands/processnode/"></lsp:doc>
             <attribute name="select">
                 <a:documentation>Auswahl der Kindelemente, die verarbeitet werden sollen.</a:documentation>

@@ -83,6 +83,8 @@ For one-off styling:
 
 The [CSS Properties Reference](/reference/css-properties) lists every property, value and selector that XTS understands, and the at-rules for fonts, colors and page margin boxes.
 
+Multi-column layout with `column-count` and the other `column-*` properties, and footnotes, belong to glu and bagme, which share the CSS layer with XTS. XTS makes columns from the frames of a [positioning area](../../core-concepts/positioning-areas) and balances them with the `column-fill` attribute of [`<Flow>`](../../core-concepts/flow#balanced-columns).
+
 ## HTML content
 
 The `<HTML>` element lets you include HTML markup:

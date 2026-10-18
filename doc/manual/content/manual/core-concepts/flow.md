@@ -43,12 +43,12 @@ A flow takes the commands that produce blocks of text:
 - `<Ul>` and `<Ol>` with their `<Li>` items
 - `<Table>`
 
-and the commands that generate them from the data: `<ForAll>`, `<Switch>` and `<CallTemplate>`.
+and the commands that generate them from the data: `<ForAll>`, `<Switch>`, `<CallTemplate>`, `<ProcessNode>`, whose records fill the flow, and the loops `<Loop>`, `<While>` and `<Until>`. A `<Mark>` or a `<Bookmark>`, also inside an `<Action>`, may stand between the blocks, see [Marks and bookmarks](#marks-and-bookmarks).
 
 Everything inside a `<Flow>` is read first and laid out afterwards. This has two consequences:
 
-1. Commands that act on the page at once are an error inside a flow: `<PlaceObject>`, `<ClearPage>`, `<NextFrame>`, `<NextRow>` and `<Mark>`. Breaks inside a flow are written in CSS instead, see [Breaks](#breaks).
-2. A value such as `sd:current-page()` inside a flow is the value when the flow starts, not on the page where the paragraph ends up.
+1. Commands that act on the page at once are an error inside a flow: `<PlaceObject>`, `<ClearPage>`, `<NextFrame>` and `<NextRow>`. Breaks inside a flow are written in CSS instead, see [Breaks](#breaks).
+2. A value such as `sd:current-page()` inside a flow is the value when the flow starts, not on the page where the paragraph ends up. To learn where a block lands, set a `<Mark>` before it, see [Marks and bookmarks](#marks-and-bookmarks).
 
 A `<TextBlock>`, an `<Image>` or a `<Box>` cannot be part of a flow yet. XTS leaves such an object out and writes a warning to the protocol. Place it before or after the flow with `<PlaceObject>`.
 
@@ -87,7 +87,7 @@ Forced breaks use `break-before` and `break-after`:
 
 A forced break also works on a block inside a container. On the first child of a container it applies to the container itself. A forced break wins over `widows`, `orphans` and `avoid`.
 
-The top margin of the first block in a frame is dropped after an automatic break, so text that moves on starts at the top of the frame. After a forced break it is kept.
+The top margin of the first block in a frame is dropped after an automatic break, so text that moves on starts at the top of the frame. After a forced break it is kept. A block that moves on to a later band of the same frame, below an object placed in the frame, keeps it as well (see [Objects in the way](#objects-in-the-way)).
 
 The typography chapter on boxesandglue.dev shows these rules with pictures, under [Page breaks](https://boxesandglue.dev/glu/typography/page-breaks/); they hold for a flow in XTS as well.
 
@@ -100,6 +100,7 @@ The [grid](../grid) is the backbone of an XTS page: objects snap to it, and ever
 3. **A band starts at the exact bottom of the object above.** If the object in the row above ends part way down its last row, the text starts right there, not at the next whole row. The gap between a picture and the text below it does not depend on the row height.
 4. **The text is not rounded to the grid.** Lines are set at the line height given by CSS. The rows the text reaches into are allocated, so the grid knows that they are taken.
 5. **A `<PlaceObject>` after the flow starts on the next whole row** below the text.
+6. **At the foot of the grid the flow runs on to the bottom margin.** When the page area is not a whole number of rows high, the grid's last row ends short of the bottom margin. In a frame that reaches the last row, the flow uses that rest as well. A frame that ends higher, or a last row taken by an object such as a footer, ends at the row edge.
 
 The following image shows rules 3 to 5 with the grid allocation trace (`<Trace grid="yes" gridallocation="yes"/>`). The gray box is placed first, 30pt high on rows of 12pt. The flow starts at its exact bottom, and the red box after the flow starts on the next whole row:
 
@@ -221,6 +222,27 @@ This example draws a box behind the text that is exactly as tall as the text. Th
 
 To place an object at an absolute position below the text, add the top margin of the page: absolute positions count from the edge of the page, `bottom` counts from the top of the grid.
 
+## Marks and bookmarks
+
+A `<Mark>` or a `<Bookmark>` between the blocks of a flow, directly or in an `<Action>`, waits for the block that follows it and takes the page that block lands on, wherever the flow puts it. A bookmark, and a mark with `pdftarget="yes"`, point to the top of that block. After the last block they take the page where the flow ends.
+
+So a table of contents can read the page of every chapter heading with `sd:page-number()`, also when `break-after: avoid` or a forced break moves the heading on. As always with marks, the page numbers are those of the previous run, so run XTS twice (`--runs 2`):
+
+```xml
+<Flow>
+    <ForAll select="chapter">
+        <Mark select="concat('chapter-', @n)"/>
+        <Bookmark select="@title" level="1"/>
+        <Paragraph class="heading"><Value select="@title"/></Paragraph>
+        <ForAll select="para">
+            <Paragraph><Value select="."/></Paragraph>
+        </ForAll>
+    </ForAll>
+</Flow>
+```
+
+Inside a `<Paragraph>`, a `<Mark>` in an `<Action>` and a `<Bookmark>` go into the line they stand in and take its page and position, also when the flow breaks the paragraph across pages. Elsewhere inside a block, such as directly in a table cell, they are an error.
+
 ## Finding the parts
 
 A paragraph or table that breaks across frames and pages keeps its `id` in every part. With `--dumpoutput` every part shows up with its page and position, which makes it easy to check in a test where a block ended up:
@@ -252,7 +274,7 @@ A table placed with `<PlaceObject>` that is taller than every frame of its area 
 - Text does not flow around objects; a row with an object is passed over as a whole.
 - A flow is not possible inside another flow. Inside a `<Slate>` it does not break: it stacks its blocks as one object (see [Slates](../../advanced/slates)).
 - `<TextBlock>`, `<Image>` and `<Box>` are left out of a flow with a warning.
-- A `<Mark>` cannot be set inside a flow, so `sd:page-number()` does not find a paragraph placed by a flow.
+- A `<Mark>` or a `<Bookmark>` inside a block of a flow is only possible in a `<Paragraph>`; directly in a table cell or another block it is an error.
 
 ## What's next?
 

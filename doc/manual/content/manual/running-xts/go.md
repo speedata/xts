@@ -34,7 +34,6 @@ func main() {
 	cfg := &core.XTSConfig{
 		Layoutfile:  layout,
 		Datafile:    data,
-		FindFile:    core.FindFile,
 		Jobname:     "report",
 		OutFilename: "report.pdf",
 		Variables:   map[string]any{"title": "Monthly report"},
@@ -48,12 +47,14 @@ func main() {
 
 `RunXTS` typesets one run and writes the PDF to `OutFilename`. Afterwards `cfg.Info` holds the number of pages and the size of the file.
 
+Each call to `RunXTS` starts afresh, as a new `xts` process does: the records, the cache of files found and the numbering of the PDF destinations of one run do not carry over into the next. A program can call it many times, one run after the other, for example once for every document it makes.
+
 ## The configuration
 
 | Field | Meaning | Command line |
 |---|---|---|
 | `Layoutfile`, `Datafile` | The layout and the data as readers | `--layout`, `--data` |
-| `FindFile` | Turns a file name from the layout (images, fonts, XML) into a path. `core.FindFile` searches the directories added with `core.AddDir`, then the working directory, and downloads `http` and `https` URLs | `--extradir` |
+| `FindFile` | Turns a file name from the layout (images, fonts, XML) into a path. When it is nil, XTS searches the directories added with `core.AddDir` and the working directory, downloads `http` and `https` URLs, and keeps the paths it found for the run. `core.FindFile` is that lookup without the cache, for a function of your own to fall back on | `--extradir` |
 | `Jobname` | Base name of the files XTS writes besides the PDF, such as `report-aux.xml` | `--jobname` |
 | `OutFilename` | The PDF file | |
 | `Variables` | Variables the layout can read, here `$title` | `--var` |
@@ -81,7 +82,7 @@ cfg.LineModels = map[string]htmlbag.LineModelFunc{
 p { -bag-leading-model: word; }
 ```
 
-The `ascent-override`, `descent-override` and `line-gap-override` descriptors of `@font-face` are only read by such a line model. The built-in models `half` (CSS line boxes, the default) and `trailing` (TeX style) do not use them.
+The built-in models `half` (CSS line boxes, the default) and `trailing` (TeX style) do not use the `ascent-override`, `descent-override` and `line-gap-override` descriptors of `@font-face` for the height of a line; only such a line model reads them. `ascent-override` and `descent-override` set the font's content area as well, with every line model: that is the band an inline `background-color` covers and the edge `text-box-trim` cuts at.
 
 `htmlbag.LineModelStyles` also carries the paragraph's own font in `Font`, with the face's vertical metrics. A line without glyphs, such as one between two `<br>`, has no font of its own, and a model takes its strut from there, as CSS does. The [htmlbag library reference](https://boxesandglue.dev/htmlbag/library/#line-models) on boxesandglue.dev shows a complete model, and [Linebreaking](https://boxesandglue.dev/goapi/backend/linebreaking/) the `node.LineModel` interface.
 

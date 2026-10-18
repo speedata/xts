@@ -181,7 +181,8 @@
   </xs:element>
   <xs:element name="Bookmark">
     <xs:annotation>
-      <xs:documentation>Create a bookmark for the PDF viewer (e.g. Adobe Reader). When the user clicks on a bookmark, the PDF viewer jumps to that place in the document.</xs:documentation>
+      <xs:documentation>Create a bookmark for the PDF viewer (e.g. Adobe Reader). When the user clicks on a bookmark, the PDF viewer jumps to that place in the document.
+      Inside a Paragraph the bookmark goes into the line it stands in and points to that line, also when a Flow breaks the paragraph across pages. Between the blocks of a Flow it points to the top of the block that follows it, on whatever page that block lands.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:attribute name="level" use="required">
@@ -575,7 +576,7 @@
       Every child with an id keeps it, also when it breaks across frames and pages: each part shows up in --dumpoutput with its page and position.
       A TextBlock, an Image or a Box cannot be part of a flow yet and is left out with a warning.
       In a Slate, a flow stacks its blocks as one object, as wide as the slate&#39;s frame, with the same children, rules and warnings: the blocks keep their exact heights and their margins collapse, but nothing goes on to a next frame or page. It starts at the slate&#39;s current row, at the exact bottom of what ends in the row above, and a PlaceObject after it starts on the next whole row. A forced break with page, column, left or right has nothing to break to there: the blocks go on as without it, with a warning once per flow. The slate has no positioning areas, so area is an error in a slate. A Mark or Bookmark takes the page the slate is placed on.
-      The children are read before the flow is laid out, so a command that acts on the page at once, PlaceObject, ClearPage, NextFrame or NextRow, is an error inside a flow. A forced break goes through CSS, such as break-before: page. CallTemplate and ProcessNode work as everywhere: the blocks of the template or of the records go into the flow.
+      The children are read before the flow is laid out, so a command that acts on the page at once, PlaceObject, ClearPage, NextFrame or NextRow, is an error inside a flow. A forced break goes through CSS, such as break-before: page. CallTemplate and ProcessNode work as everywhere: the blocks of the template or of the records go into the flow. So do the blocks that Loop, While and Until make in each pass, in order.
       A Mark between the blocks of a flow, also in an Action, marks the page of the block that follows it, wherever that block lands; after the last block, the page where the flow ends. With pdftarget it is a named destination at the top of that block. A Bookmark between the blocks points to the top of the block that follows it. Inside a Paragraph, a Mark in an Action and a Bookmark go into their line and take its page and position, also when the flow breaks the paragraph across pages. Elsewhere inside a block, such as directly in a table cell, both are an error for now.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
@@ -585,6 +586,7 @@
         <xs:element ref="en:CallTemplate"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
+        <xs:element ref="en:Loop"></xs:element>
         <xs:element ref="en:Mark"></xs:element>
         <xs:element ref="en:Ol"></xs:element>
         <xs:element ref="en:Paragraph"></xs:element>
@@ -592,6 +594,8 @@
         <xs:element ref="en:Switch"></xs:element>
         <xs:element ref="en:Table"></xs:element>
         <xs:element ref="en:Ul"></xs:element>
+        <xs:element ref="en:Until"></xs:element>
+        <xs:element ref="en:While"></xs:element>
       </xs:choice>
       <xs:attribute name="area">
         <xs:annotation>
@@ -1231,7 +1235,7 @@
       </xs:attribute>
       <xs:attribute name="select">
         <xs:annotation>
-          <xs:documentation>The value of the parameter. On a CallTemplate it is the argument passed to the template; on a Template definition it is the default value used when the caller omits the parameter.</xs:documentation>
+          <xs:documentation>The value of the parameter. On a CallTemplate it is the argument passed to the template; on a Template definition it is the default value used when the caller omits the parameter. On a Function definition select is not allowed: a function has no default values, every call passes all of its arguments. XTS ignores it there with a warning.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
     </xs:complexType>
@@ -1473,7 +1477,7 @@
   </xs:element>
   <xs:element name="ProcessNode">
     <xs:annotation>
-      <xs:documentation>Executes all given nodes. The elements, that are to be executed, are given with the attribute selection.</xs:documentation>
+      <xs:documentation>Runs the matching Record for each of the elements selected with the attribute select. What the records return is passed on in order, as with the body of a ForAll, so a Flow around the ProcessNode receives the blocks they make.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:attribute name="select" use="required">

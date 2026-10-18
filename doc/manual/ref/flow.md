@@ -12,7 +12,7 @@ A [TextBlock](../textblock), an [Image](../image) or a [Box](../box) cannot be p
 
 In a [Slate](../slate), a flow stacks its blocks as one object, as wide as the slate's frame, with the same children, rules and warnings: the blocks keep their exact heights and their margins collapse, but nothing goes on to a next frame or page. It starts at the slate's current row, at the exact bottom of what ends in the row above, and a [PlaceObject](../placeobject) after it starts on the next whole row. A forced break with `page`, `column`, `left` or `right` has nothing to break to there: the blocks go on as without it, with a warning once per flow. The slate has no positioning areas, so `area` is an error in a slate. A [Mark](../mark) or [Bookmark](../bookmark) takes the page the slate is placed on.
 
-The children are read before the flow is laid out, so a command that acts on the page at once, [PlaceObject](../placeobject), [ClearPage](../clearpage), [NextFrame](../nextframe) or [NextRow](../nextrow), is an error inside a flow. A forced break goes through CSS, such as `break-before: page`. [CallTemplate](../calltemplate) and [ProcessNode](../processnode) work as everywhere: the blocks of the template or of the records go into the flow.
+The children are read before the flow is laid out, so a command that acts on the page at once, [PlaceObject](../placeobject), [ClearPage](../clearpage), [NextFrame](../nextframe) or [NextRow](../nextrow), is an error inside a flow. A forced break goes through CSS, such as `break-before: page`. [CallTemplate](../calltemplate) and [ProcessNode](../processnode) work as everywhere: the blocks of the template or of the records go into the flow. So do the blocks that [Loop](../loop), [While](../while) and [Until](../until) make in each pass, in order.
 
 A [Mark](../mark) between the blocks of a flow, also in an [Action](../action), marks the page of the block that follows it, wherever that block lands; after the last block, the page where the flow ends. With `pdftarget` it is a named destination at the top of that block. A [Bookmark](../bookmark) between the blocks points to the top of the block that follows it. Inside a [Paragraph](../paragraph), a [Mark](../mark) in an [Action](../action) and a [Bookmark](../bookmark) go into their line and take its page and position, also when the flow breaks the paragraph across pages. Elsewhere inside a block, such as directly in a table cell, both are an error for now.
 
@@ -20,7 +20,7 @@ A [Mark](../mark) between the blocks of a flow, also in an [Action](../action), 
 
 ##  Child elements
 
-[Action](../action), [Bookmark](../bookmark), [CallTemplate](../calltemplate), [ForAll](../forall), [HTML](../html), [Mark](../mark), [Ol](../ol), [Paragraph](../paragraph), [ProcessNode](../processnode), [Switch](../switch), [Table](../table), [Ul](../ul)
+[Action](../action), [Bookmark](../bookmark), [CallTemplate](../calltemplate), [ForAll](../forall), [HTML](../html), [Loop](../loop), [Mark](../mark), [Ol](../ol), [Paragraph](../paragraph), [ProcessNode](../processnode), [Switch](../switch), [Table](../table), [Ul](../ul), [Until](../until), [While](../while)
 
 ##  Parent elements
 

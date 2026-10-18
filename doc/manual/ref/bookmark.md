@@ -4,6 +4,8 @@
 
 Create a bookmark for the PDF viewer (e.g. Adobe Reader). When the user clicks on a bookmark, the PDF viewer jumps to that place in the document.
 
+Inside a [Paragraph](../paragraph) the bookmark goes into the line it stands in and points to that line, also when a [Flow](../flow) breaks the paragraph across pages. Between the blocks of a [Flow](../flow) it points to the top of the block that follows it, on whatever page that block lands.
+
 
 
 ##  Child elements

@@ -999,9 +999,11 @@
   <command en="Bookmark">
     <description xml:lang="en">
       <para>Create a bookmark for the PDF viewer (e.g. Adobe Reader). When the user clicks on a bookmark, the PDF viewer <quote>jumps</quote> to that place in the document.</para>
+      <para>Inside a <cmd name="Paragraph"/> the bookmark goes into the line it stands in and points to that line, also when a <cmd name="Flow"/> breaks the paragraph across pages. Between the blocks of a <cmd name="Flow"/> it points to the top of the block that follows it, on whatever page that block lands.</para>
     </description>
     <description xml:lang="de">
-      <para>Erstellt ein Lesezeichen für den PDF Betrachter (z.B. Adobe Reader). Wenn der Leser auf das Lesezeichen klickt, springt der PDF Betrachter an diese Stelle im Dokument.</para>
+      <para>Erstellt ein Lesezeichen für den PDF-Betrachter (z.B. Adobe Reader). Wenn der Leser auf das Lesezeichen klickt, springt der PDF-Betrachter an diese Stelle im Dokument.</para>
+      <para>In einem <cmd name="Paragraph"/> wird das Lesezeichen Teil der Zeile, in der es steht, und zeigt auf diese Zeile, auch wenn ein <cmd name="Flow"/> den Absatz über Seiten umbricht. Zwischen den Blöcken eines <cmd name="Flow"/> zeigt es auf den oberen Rand des folgenden Blocks, auf welcher Seite dieser auch landet.</para>
     </description>
     <childelements/>
     <attribute en="level" type="number" optional="no">
@@ -1982,7 +1984,7 @@
       <para>Every child with an <tt>id</tt> keeps it, also when it breaks across frames and pages: each part shows up in <tt>--dumpoutput</tt> with its page and position.</para>
       <para>A <cmd name="TextBlock"/>, an <cmd name="Image"/> or a <cmd name="Box"/> cannot be part of a flow yet and is left out with a warning.</para>
       <para>In a <cmd name="Slate"/>, a flow stacks its blocks as one object, as wide as the slate's frame, with the same children, rules and warnings: the blocks keep their exact heights and their margins collapse, but nothing goes on to a next frame or page. It starts at the slate's current row, at the exact bottom of what ends in the row above, and a <cmd name="PlaceObject"/> after it starts on the next whole row. A forced break with <tt>page</tt>, <tt>column</tt>, <tt>left</tt> or <tt>right</tt> has nothing to break to there: the blocks go on as without it, with a warning once per flow. The slate has no positioning areas, so <tt>area</tt> is an error in a slate. A <cmd name="Mark"/> or <cmd name="Bookmark"/> takes the page the slate is placed on.</para>
-      <para>The children are read before the flow is laid out, so a command that acts on the page at once, <cmd name="PlaceObject"/>, <cmd name="ClearPage"/>, <cmd name="NextFrame"/> or <cmd name="NextRow"/>, is an error inside a flow. A forced break goes through CSS, such as <tt>break-before: page</tt>. <cmd name="CallTemplate"/> and <cmd name="ProcessNode"/> work as everywhere: the blocks of the template or of the records go into the flow.</para>
+      <para>The children are read before the flow is laid out, so a command that acts on the page at once, <cmd name="PlaceObject"/>, <cmd name="ClearPage"/>, <cmd name="NextFrame"/> or <cmd name="NextRow"/>, is an error inside a flow. A forced break goes through CSS, such as <tt>break-before: page</tt>. <cmd name="CallTemplate"/> and <cmd name="ProcessNode"/> work as everywhere: the blocks of the template or of the records go into the flow. So do the blocks that <cmd name="Loop"/>, <cmd name="While"/> and <cmd name="Until"/> make in each pass, in order.</para>
       <para>A <cmd name="Mark"/> between the blocks of a flow, also in an <cmd name="Action"/>, marks the page of the block that follows it, wherever that block lands; after the last block, the page where the flow ends. With <tt>pdftarget</tt> it is a named destination at the top of that block. A <cmd name="Bookmark"/> between the blocks points to the top of the block that follows it. Inside a <cmd name="Paragraph"/>, a <cmd name="Mark"/> in an <cmd name="Action"/> and a <cmd name="Bookmark"/> go into their line and take its page and position, also when the flow breaks the paragraph across pages. Elsewhere inside a block, such as directly in a table cell, both are an error for now.</para>
     </description>
     <description xml:lang="de">
@@ -1991,7 +1993,7 @@
       <para>Jedes Kindelement mit einer <tt>id</tt> behält sie, auch wenn es über Rahmen und Seiten umbrochen wird: Jeder Teil erscheint in <tt>--dumpoutput</tt> mit seiner Seite und Position.</para>
       <para>Ein <cmd name="TextBlock"/>, ein <cmd name="Image"/> oder eine <cmd name="Box"/> kann noch nicht Teil eines Flusses sein und wird mit einer Warnung ausgelassen.</para>
       <para>In einem <cmd name="Slate"/> stapelt ein Fluss seine Blöcke als ein Objekt, so breit wie der Rahmen des Slates, mit denselben Kindelementen, Regeln und Warnungen: Die Blöcke behalten ihre genaue Höhe und ihre Abstände fallen zusammen, aber nichts geht in einen nächsten Rahmen oder auf eine nächste Seite. Er beginnt in der aktuellen Zeile des Slates, genau am unteren Rand dessen, was in der Zeile darüber endet, und ein <cmd name="PlaceObject"/> danach beginnt in der nächsten ganzen Zeile. Ein erzwungener Umbruch mit <tt>page</tt>, <tt>column</tt>, <tt>left</tt> oder <tt>right</tt> hat dort kein Ziel: Die Blöcke gehen weiter wie ohne ihn, mit einer Warnung je Fluss. Das Slate hat keine Platzierungsbereiche, daher ist <tt>area</tt> in einem Slate ein Fehler. Ein <cmd name="Mark"/> oder <cmd name="Bookmark"/> erhält die Seite, auf der das Slate platziert wird.</para>
-      <para>Die Kindelemente werden gelesen, bevor der Fluss gesetzt wird. Ein Befehl, der sofort auf die Seite wirkt, <cmd name="PlaceObject"/>, <cmd name="ClearPage"/>, <cmd name="NextFrame"/> oder <cmd name="NextRow"/>, ist in einem Fluss daher ein Fehler. Ein erzwungener Umbruch geht über CSS, etwa <tt>break-before: page</tt>. <cmd name="CallTemplate"/> und <cmd name="ProcessNode"/> funktionieren wie überall: Die Blöcke der Vorlage oder der Records gehen in den Fluss ein.</para>
+      <para>Die Kindelemente werden gelesen, bevor der Fluss gesetzt wird. Ein Befehl, der sofort auf die Seite wirkt, <cmd name="PlaceObject"/>, <cmd name="ClearPage"/>, <cmd name="NextFrame"/> oder <cmd name="NextRow"/>, ist in einem Fluss daher ein Fehler. Ein erzwungener Umbruch geht über CSS, etwa <tt>break-before: page</tt>. <cmd name="CallTemplate"/> und <cmd name="ProcessNode"/> funktionieren wie überall: Die Blöcke der Vorlage oder der Records gehen in den Fluss ein. Ebenso die Blöcke, die <cmd name="Loop"/>, <cmd name="While"/> und <cmd name="Until"/> in jedem Durchlauf erzeugen, in ihrer Reihenfolge.</para>
       <para>Ein <cmd name="Mark"/> zwischen den Blöcken eines Flusses, auch in einer <cmd name="Action"/>, markiert die Seite des folgenden Blocks, wo immer dieser landet; nach dem letzten Block die Seite, auf der der Fluss endet. Mit <tt>pdftarget</tt> ist er ein benanntes Sprungziel am oberen Rand dieses Blocks. Ein <cmd name="Bookmark"/> zwischen den Blöcken zeigt auf den oberen Rand des folgenden Blocks. In einem <cmd name="Paragraph"/> gehen ein <cmd name="Mark"/> in einer <cmd name="Action"/> und ein <cmd name="Bookmark"/> in ihre Zeile und erhalten deren Seite und Position, auch wenn der Fluss den Absatz über Seiten umbricht. Anderswo innerhalb eines Blocks, etwa direkt in einer Tabellenzelle, sind beide vorerst ein Fehler.</para>
     </description>
     <childelements>
@@ -2002,6 +2004,7 @@
           <optional><cmd name="CallTemplate"/></optional>
           <optional><cmd name="ForAll"/></optional>
           <optional><cmd name="HTML"/></optional>
+          <optional><cmd name="Loop"/></optional>
           <optional><cmd name="Mark"/></optional>
           <optional><cmd name="Ol"/></optional>
           <optional><cmd name="Paragraph"/></optional>
@@ -2009,6 +2012,8 @@
           <optional><cmd name="Switch"/></optional>
           <optional><cmd name="Table"/></optional>
           <optional><cmd name="Ul"/></optional>
+          <optional><cmd name="Until"/></optional>
+          <optional><cmd name="While"/></optional>
         </interleave>
       </oneOrMore>
     </childelements>
@@ -3615,10 +3620,10 @@
     </attribute>
     <attribute en="select" optional="yes" type="xpath">
       <description xml:lang="en">
-        <para>The value of the parameter. On a <cmd name="CallTemplate"/> it is the argument passed to the template; on a <cmd name="Template"/> definition it is the default value used when the caller omits the parameter.</para>
+        <para>The value of the parameter. On a <cmd name="CallTemplate"/> it is the argument passed to the template; on a <cmd name="Template"/> definition it is the default value used when the caller omits the parameter. On a <cmd name="Function"/> definition <tt>select</tt> is not allowed: a function has no default values, every call passes all of its arguments. XTS ignores it there with a warning.</para>
       </description>
       <description xml:lang="de">
-        <para>Der Wert des Parameters. Bei <cmd name="CallTemplate"/> ist es das an das Template übergebene Argument; bei einer <cmd name="Template"/>-Definition der Vorgabewert, falls der Aufrufer den Parameter weglässt.</para>
+        <para>Der Wert des Parameters. Bei <cmd name="CallTemplate"/> ist es das an das Template übergebene Argument; bei einer <cmd name="Template"/>-Definition der Vorgabewert, falls der Aufrufer den Parameter weglässt. Bei einer <cmd name="Function"/>-Definition ist <tt>select</tt> nicht erlaubt: Eine Funktion hat keine Vorgabewerte, jeder Aufruf übergibt alle Argumente. XTS ignoriert das Attribut dort mit einer Warnung.</para>
       </description>
     </attribute>
     <example xml:lang="en">
@@ -4253,10 +4258,10 @@
   -->
   <command en="ProcessNode">
     <description xml:lang="en">
-      <para>Executes all given nodes. The elements, that are to be executed, are given with the attribute <tt>selection</tt>.</para>
+      <para>Runs the matching <cmd name="Record"/> for each of the elements selected with the attribute <tt>select</tt>. What the records return is passed on in order, as with the body of a <cmd name="ForAll"/>, so a <cmd name="Flow"/> around the <cmd name="ProcessNode"/> receives the blocks they make.</para>
     </description>
     <description xml:lang="de">
-      <para>Bearbeitet alle angegebenen Datensätze. Die Elemente, für die die Regeln ausgeführt werden sollen, werden mit dem Attribut select angegeben.</para>
+      <para>Führt für jedes Element, das mit dem Attribut <tt>select</tt> ausgewählt wird, den passenden <cmd name="Record"/> aus. Was die Records zurückgeben, wird der Reihe nach weitergegeben, wie beim Inhalt von <cmd name="ForAll"/>, sodass ein <cmd name="Flow"/> um den <cmd name="ProcessNode"/> die Blöcke erhält, die sie erzeugen.</para>
     </description>
     <childelements/>
     <attribute en="select" type="xpath" optional="no">

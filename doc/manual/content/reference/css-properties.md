@@ -10,6 +10,8 @@ linktitle: CSS Properties
 
 CSS properties supported by XTS for styling layout elements and HTML content. Lengths take the [units](../units) of XTS; `em` and `%` are relative to the font size or the containing block as in CSS.
 
+The list comes from htmlbag, the HTML and CSS layer that XTS shares with glu and bagme. The `column-*` properties, and the footnotes their notes mention, apply in glu and bagme only. XTS does not lay them out: a `<Flow>` sets content with `column-count` in one column and drops footnotes, each with a warning. Columns in XTS are the frames of a [positioning area](/manual/core-concepts/positioning-areas), and the `column-fill` attribute of [`<Flow>`](/manual/core-concepts/flow#balanced-columns) balances them.
+
 ## Text
 
 | Property | Values | Example |
@@ -125,8 +127,8 @@ CSS properties supported by XTS for styling layout elements and HTML content. Le
 | `-bag-italic-correction` | `auto`, `none` | `-bag-italic-correction: none;` |
 | `-bag-line-breaker` | `auto` (Knuth-Plass, the default) or a name that the Go program running XTS registered in `XTSConfig.Breakers`. Chooses where a paragraph breaks among its legal breakpoints; the lines are measured and set as with Knuth-Plass. Inherited. An unregistered name keeps Knuth-Plass and logs a warning once | `-bag-line-breaker: greedy;` |
 | `-bag-leading-model` | `half` (CSS line boxes, the default), `trailing` (TeX style), or a name that the Go program running XTS registered in `XTSConfig.LineModels` | `-bag-leading-model: trailing;` |
-| `-bag-linebreak-tolerance` | Number, the largest adjustment ratio a line may have, default 4. How far the spaces of a line may stretch, as a multiple of their stretchability. A ratio, not a badness as TeX's `\tolerance`: TeX's 200 is about 1.26 | `-bag-linebreak-tolerance: 8;` |
-| `-bag-linebreak-hyphen-penalty` | Number, the TeX hyphen penalty | `-bag-linebreak-hyphen-penalty: 200;` |
+| `-bag-linebreak-tolerance` | Number, the largest adjustment ratio a line may have, default 4. How far the spaces of a line may stretch, as a multiple of their stretchability. A ratio, not a badness as TeX's `\tolerance`: TeX's 200 is about 1.26. Below 1 it also limits how far the spaces may shrink | `-bag-linebreak-tolerance: 8;` |
+| `-bag-linebreak-hyphen-penalty` | Number, the TeX hyphen penalty, default 50. The penalty of a break at a hyphenation point, soft hyphens included. As in TeX, its square goes into the demerits of the line, and 10000 or more forbids breaks at hyphenation points | `-bag-linebreak-hyphen-penalty: 200;` |
 | `-bag-tab-stops` | `none`, or a comma separated list of stops: a length or percentage of the line width, optionally `start`, `end`, `center`, `decimal` or `decimal(",")`, optionally `leader(" . ")` (or `dotted`, `solid`, `space`). Inherited. A tab advances to the next stop past the text before it, `left` and `right` are synonyms of `start` and `end`. Tabs within a line survive any `white-space` mode, whitespace with a newline stays source formatting | `-bag-tab-stops: 12mm, 100% end leader(dotted);` |
 | `-bag-fixed-height` | Length, or `none` (the default). On table rows only, not inherited. The row is exactly this high and never breaks inside: content that does not fit draws past the row, background and borders keep the height. Wins over `height` on the same row, and a cell's `height` in a fixed row is ignored. On a cell the property has no effect | `-bag-fixed-height: 16pt;` |
 | `-bag-float-gutter` | Non-negative length, default `9pt`. Inherited. The space between a float and the text beside it where the float's margin on the side of the text is zero; any other margin replaces it, a negative one lets the text run over the float as in CSS. Two floats next to each other are not held apart by it. `margin: 0` cannot be told from no margin, so `-bag-float-gutter: 0` is how to get a browser's spacing | `-bag-float-gutter: 0;` |
@@ -183,8 +185,8 @@ Defines a font face, see [Fonts](/manual/text-and-styling/fonts). The descriptor
 | `font-feature-settings` | OpenType features switched on for this face, as on elements | `font-feature-settings: "onum";` |
 | `font-variation-settings` | Axis values of a variable font, as on elements | `font-variation-settings: "wght" 450;` |
 | `size-adjust` | Percentage that scales the glyphs of this face | `size-adjust: 95%;` |
-| `ascent-override` | `normal` or a percentage of the em, in place of the face's ascent. Read only by a line model registered with `CSSBuilder.RegisterLineModel` (see `-bag-leading-model`); the built-in `half` and `trailing` models do not use it | `ascent-override: 107.91%;` |
-| `descent-override` | `normal` or a percentage of the em, in place of the face's descent. Read only by a line model registered with `CSSBuilder.RegisterLineModel` (see `-bag-leading-model`); the built-in `half` and `trailing` models do not use it | `descent-override: 25.1%;` |
+| `ascent-override` | `normal` or a percentage of the em, in place of the face's ascent. Sets the content area of the face, which an inline background covers and from which `text-box-trim` measures. The line box reads it only in a line model registered with `CSSBuilder.RegisterLineModel` (see `-bag-leading-model`); the built-in `half` and `trailing` models do not use it | `ascent-override: 107.91%;` |
+| `descent-override` | `normal` or a percentage of the em, in place of the face's descent. Sets the content area of the face, which an inline background covers and from which `text-box-trim` measures. The line box reads it only in a line model registered with `CSSBuilder.RegisterLineModel` (see `-bag-leading-model`); the built-in `half` and `trailing` models do not use it | `descent-override: 25.1%;` |
 | `line-gap-override` | `normal` or a percentage of the em, in place of the face's line gap. Read only by a line model registered with `CSSBuilder.RegisterLineModel` (see `-bag-leading-model`); the built-in `half` and `trailing` models do not use it | `line-gap-override: 0%;` |
 
 ### @-bag-color

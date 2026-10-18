@@ -29,13 +29,15 @@ Create clickable links with `<A>`:
     <A href="https://example.com"><Value>Visit our website</Value></A>
 </Paragraph>
 
-<!-- Internal link (to a mark) -->
-<Action><Mark select="'chapter1'"/></Action>
+<!-- Internal link (to a mark that is a PDF target) -->
+<Action><Mark select="'chapter1'" pdftarget="yes"/></Action>
 <!-- ... later ... -->
 <Paragraph>
     <A link="chapter1"><Value>See Chapter 1</Value></A>
 </Paragraph>
 ```
+
+`link` points to a named destination in the PDF, and only a `<Mark>` with `pdftarget="yes"` makes one. Without it the mark only records its page for `sd:page-number()`, and the link has no target to jump to.
 
 ### Page destinations
 
