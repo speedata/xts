@@ -70,13 +70,14 @@ func TestValidateOneTextPerEntry(t *testing.T) {
 func TestMarkdown(t *testing.T) {
 	r := &Release{Entries: []Entry{{
 		SHA1: "abc1234,def5678",
-		En:   Text{Summary: "New <tt>&lt;Foo&gt;</tt> command (#12), CSS @page and @-bag-color.", Text: "Uses <tt>a_b</tt> and\n   <tt>*</tt>, see *docs*. Rules <tt>@page</tt> and @top-left, mail a@b.c."},
+		En:   Text{Summary: "New <tt>&lt;Foo&gt;</tt> command (#12), CSS @page and @-bag-color.", Text: "Uses <tt>a_b</tt> and\n   <tt>*</tt>, see *docs*. Rules <tt>@page</tt> and @top-left, mail a@b.c. Fixes htmlbag#103, goxpath#10 and xts#7."},
 	}}}
 	got := r.Markdown(true)
 	for _, want := range []string{
 		"- **New `<Foo>` command ([#12](" + Repo + "/issues/12)), CSS `@page` and `@-bag-color`.**",
 		"[↗](" + Repo + "/commit/abc1234) [↗](" + Repo + "/commit/def5678)<br>",
 		"Uses `a_b` and `*`, see \\*docs\\*. Rules `@page` and `@top-left`, mail a@b.c.",
+		"Fixes [htmlbag#103](https://github.com/boxesandglue/htmlbag/issues/103), [goxpath#10](https://github.com/speedata/goxpath/issues/10) and [xts#7](https://github.com/speedata/xts/issues/7).",
 	} {
 		if !strings.Contains(got, want) {
 			t.Errorf("missing %q in\n%s", want, got)

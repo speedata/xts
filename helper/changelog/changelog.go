@@ -232,7 +232,7 @@ func splitSHA1(s string) []string {
 }
 
 var (
-	ghIssueRe = regexp.MustCompile(`#(\d+)`)
+	ghIssueRe = regexp.MustCompile(`([a-z][a-z-]*)?#(\d+)`)
 	ttBlockRe = regexp.MustCompile(`<tt>.*?</tt>`)
 	ttRepl    = strings.NewReplacer(`<tt>`, "`", `</tt>`, "`")
 	mdEscRepl = strings.NewReplacer(`\`, `\\`, `*`, `\*`, `_`, `\_`, `[`, `\[`, `]`, `\]`, `<`, `\<`, `>`, `\>`)
@@ -265,8 +265,28 @@ func markdown(s string) string {
 		last = loc[1]
 	}
 	b.WriteString(escapeOutsideCode(s[last:]))
-	s = ghIssueRe.ReplaceAllString(b.String(), `[#$1](`+Repo+`/issues/$1)`)
+	s = ghIssueRe.ReplaceAllStringFunc(b.String(), issueLink)
 	return ttRepl.Replace(s)
+}
+
+// speedataRepos are the repositories an issue reference such as goxpath#10
+// finds under github.com/speedata; any other prefix, such as htmlbag#103,
+// names a repository of github.com/boxesandglue.
+var speedataRepos = map[string]bool{"xts": true, "goxml": true, "goxpath": true, "hyphenation": true, "css": true}
+
+// issueLink turns #12 into a link to the issue of XTS and repo#12 into a
+// link to the issue of that repository.
+func issueLink(ref string) string {
+	m := ghIssueRe.FindStringSubmatch(ref)
+	repo, num := m[1], m[2]
+	if repo == "" {
+		return fmt.Sprintf("[#%s](%s/issues/%s)", num, Repo, num)
+	}
+	org := "boxesandglue"
+	if speedataRepos[repo] {
+		org = "speedata"
+	}
+	return fmt.Sprintf("[%s#%s](https://github.com/%s/%s/issues/%s)", repo, num, org, repo, num)
 }
 
 // Markdown renders the entries of a release as a bullet list. With
