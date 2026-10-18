@@ -11,6 +11,10 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.12 (2026-10-18)
 
+- **A container with break-inside: avoid that is taller than a frame breaks without losing text ([htmlbag#103](https://github.com/boxesandglue/htmlbag/issues/103)).**<br>
+  A `<div>` or another container without a table inside, set to `break-inside: avoid` and taller than a frame, was moved to the next frame whole and the text that did not fit there was lost. It breaks across frames now, as the manual says: `break-inside: avoid` keeps a block together only when it fits.
+- **-bag-linebreak-tolerance: 0 and -bag-linebreak-hyphen-penalty: 0 take effect ([htmlbag#104](https://github.com/boxesandglue/htmlbag/issues/104)).**<br>
+  A value of 0 for `-bag-linebreak-tolerance` or `-bag-linebreak-hyphen-penalty` was treated as not set, so the defaults 4 and 50 applied. Both take 0 now: a tolerance of 0 accepts only lines that fit exactly, a hyphen penalty of 0 makes a break at a hyphenation point free. A negative tolerance is ignored.
 - **Text directly in a command counts as a Value.**<br>
   Text written directly in a command, as in `<Paragraph>A <B>bold</B> word</Paragraph>`, was dropped without a warning; only text inside `<Value>` reached the output. Such text now counts as a `<Value>` with that text: in paragraphs and inline commands, in `Switch`, `ForAll` and `Loop`, in table cells, `Message` and `SetVariable`. Text of whitespace only between commands is still left out, so a lone space needs `<Value> </Value>`. The schema allows the text there, inline markup, marks, bookmarks and blocks inside loops and `Switch`, and `ForAll` and `Loop` inside paragraphs.
 

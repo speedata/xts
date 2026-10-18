@@ -5,8 +5,8 @@ go 1.25.0
 require (
 	github.com/alecthomas/chroma v0.10.0
 	github.com/boxesandglue/baseline-pdf v1.1.27
-	github.com/boxesandglue/boxesandglue v0.2.91
-	github.com/boxesandglue/htmlbag v0.0.94
+	github.com/boxesandglue/boxesandglue v0.2.93
+	github.com/boxesandglue/htmlbag v0.0.95
 	github.com/boxesandglue/svgreader v0.0.6
 	github.com/boxesandglue/textshape v0.0.18
 	github.com/fsnotify/fsnotify v1.10.1
