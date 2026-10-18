@@ -12,7 +12,7 @@ Insert a tab. The text after it continues at the next tab stop set with the CSS 
 
 ##  Parent elements
 
-[A](../a), [B](../b), [I](../i), [Li](../li), [Paragraph](../paragraph), [Span](../span), [U](../u)
+[A](../a), [B](../b), [Case](../case), [ForAll](../forall), [I](../i), [Li](../li), [Loop](../loop), [Otherwise](../otherwise), [Paragraph](../paragraph), [Span](../span), [U](../u), [Until](../until), [While](../while)
 
 
 ## Attributes

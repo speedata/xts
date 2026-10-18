@@ -5,29 +5,44 @@
   >
 
   <define name="Switchcontents">
+    <optional><cmd name="A"/></optional>
+    <optional><cmd name="Action"/></optional>
+    <optional><cmd name="B"/></optional>
+    <optional><cmd name="Bookmark"/></optional>
+    <optional><cmd name="Br"/></optional>
     <optional><cmd name="CallTemplate"/></optional>
     <optional><cmd name="Column"/></optional>
     <optional><cmd name="ClearPage"/></optional>
+    <optional><cmd name="CopyOf"/></optional>
     <optional><cmd name="Flow"/></optional>
     <optional><cmd name="ForAll" /></optional>
     <optional><cmd name="HTML"/></optional>
+    <optional><cmd name="I"/></optional>
     <optional><cmd name="LoadXML"/></optional>
     <optional><cmd name="Loop"/></optional>
     <optional><cmd name="Li"/></optional>
+    <optional><cmd name="Mark"/></optional>
     <optional><cmd name="Message"/></optional>
     <optional><cmd name="NextFrame"/></optional>
     <optional><cmd name="NextRow"/></optional>
+    <optional><cmd name="Ol"/></optional>
     <optional><cmd name="Paragraph"/></optional>
     <optional><cmd name="PlaceObject"/></optional>
     <optional><cmd name="ProcessNode"/></optional>
     <optional><cmd name="SaveXML"/></optional>
     <optional><cmd name="SetVariable"/></optional>
+    <optional><cmd name="Span"/></optional>
     <optional><cmd name="Switch"/></optional>
+    <optional><cmd name="Tab"/></optional>
+    <optional><cmd name="Table"/></optional>
     <optional><cmd name="Td"/></optional>
     <optional><cmd name="Tr"/></optional>
+    <optional><cmd name="U"/></optional>
+    <optional><cmd name="Ul"/></optional>
     <optional><cmd name="Until"/></optional>
     <optional><cmd name="Value"/></optional>
     <optional><cmd name="While"/></optional>
+    <optional><text/></optional>
   </define>
 
 
@@ -79,14 +94,17 @@
         <cmd name="B"/>
         <cmd name="Bookmark"/>
         <cmd name="Br"/>
+        <cmd name="ForAll"/>
         <cmd name="HTML"/>
         <cmd name="I"/>
+        <cmd name="Loop"/>
         <cmd name="Ol"/>
         <cmd name="U"/>
         <cmd name="Ul"/>
         <cmd name="Value"/>
         <cmd name="CopyOf"/>
         <cmd name="Span"/>
+        <cmd name="Switch"/>
         <cmd name="Tab"/>
         <text/>
       </choice>
@@ -2195,6 +2213,7 @@
         <optional><cmd name="SetVariable"/></optional>
         <optional><cmd name="Switch"/></optional>
         <optional><cmd name="Value"/></optional>
+        <optional><text/></optional>
       </oneOrMore>
     </childelements>
     <attribute en="name" optional="no" type="text">
@@ -2875,6 +2894,7 @@
             <cmd name="Element"/>
           </oneOrMore>
         </optional>
+        <optional><text/></optional>
       </interleave>
     </childelements>
     <attribute en="select" type="xpath" optional="yes">
@@ -4414,6 +4434,7 @@
         <optional><cmd name="ForAll"/></optional>
         <optional><cmd name="Loop"/></optional>
         <optional><cmd name="Value"/></optional>
+        <optional><text/></optional>
       </oneOrMore>
     </childelements>
     <attribute en="href" type="text" optional="yes">
@@ -4738,6 +4759,7 @@
           <optional><cmd name="TextBlock"/></optional>
           <optional><cmd name="Until"/></optional>
           <optional><cmd name="Value"/></optional>
+          <optional><text/></optional>
           <optional><cmd name="While"/></optional>
         </interleave>
       </oneOrMore>
@@ -5525,6 +5547,7 @@
           <cmd name="Table"/>
           <cmd name="Ul"/>
           <cmd name="Value"/>
+          <text/>
         </choice>
       </zeroOrMore>
     </childelements>

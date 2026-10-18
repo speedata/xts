@@ -8,11 +8,11 @@ Switch to italic text.
 
 ##  Child elements
 
-[A](../a), [Action](../action), [B](../b), [Bookmark](../bookmark), [Br](../br), [CopyOf](../copyof), [HTML](../html), [I](../i), [Ol](../ol), [Span](../span), [Tab](../tab), [U](../u), [Ul](../ul), [Value](../value)
+[A](../a), [Action](../action), [B](../b), [Bookmark](../bookmark), [Br](../br), [CopyOf](../copyof), [ForAll](../forall), [HTML](../html), [I](../i), [Loop](../loop), [Ol](../ol), [Span](../span), [Switch](../switch), [Tab](../tab), [U](../u), [Ul](../ul), [Value](../value)
 
 ##  Parent elements
 
-[A](../a), [B](../b), [I](../i), [Li](../li), [Paragraph](../paragraph), [Span](../span), [U](../u)
+[A](../a), [B](../b), [Case](../case), [ForAll](../forall), [I](../i), [Li](../li), [Loop](../loop), [Otherwise](../otherwise), [Paragraph](../paragraph), [Span](../span), [U](../u), [Until](../until), [While](../while)
 
 
 ## Attributes

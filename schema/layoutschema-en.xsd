@@ -11,14 +11,17 @@
         <xs:element ref="en:B"></xs:element>
         <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:Br"></xs:element>
+        <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:I"></xs:element>
+        <xs:element ref="en:Loop"></xs:element>
         <xs:element ref="en:Ol"></xs:element>
         <xs:element ref="en:U"></xs:element>
         <xs:element ref="en:Ul"></xs:element>
         <xs:element ref="en:Value"></xs:element>
         <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:Span"></xs:element>
+        <xs:element ref="en:Switch"></xs:element>
         <xs:element ref="en:Tab"></xs:element>
         <xs:element ref="en:Box"></xs:element>
         <xs:element ref="en:Circle"></xs:element>
@@ -161,14 +164,17 @@
         <xs:element ref="en:B"></xs:element>
         <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:Br"></xs:element>
+        <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:I"></xs:element>
+        <xs:element ref="en:Loop"></xs:element>
         <xs:element ref="en:Ol"></xs:element>
         <xs:element ref="en:U"></xs:element>
         <xs:element ref="en:Ul"></xs:element>
         <xs:element ref="en:Value"></xs:element>
         <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:Span"></xs:element>
+        <xs:element ref="en:Switch"></xs:element>
         <xs:element ref="en:Tab"></xs:element>
       </xs:choice>
     </xs:complexType>
@@ -249,28 +255,42 @@
     <xs:annotation>
       <xs:documentation>Part of a Switch construct. All cases up to the first case which evaluates to “true” will be executed. If no cases match and there is a Otherwise, this will be executed instead.</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="en:A"></xs:element>
+        <xs:element ref="en:Action"></xs:element>
+        <xs:element ref="en:B"></xs:element>
+        <xs:element ref="en:Bookmark"></xs:element>
+        <xs:element ref="en:Br"></xs:element>
         <xs:element ref="en:CallTemplate"></xs:element>
         <xs:element ref="en:Column"></xs:element>
         <xs:element ref="en:ClearPage"></xs:element>
+        <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:Flow"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
+        <xs:element ref="en:I"></xs:element>
         <xs:element ref="en:LoadXML"></xs:element>
         <xs:element ref="en:Loop"></xs:element>
         <xs:element ref="en:Li"></xs:element>
+        <xs:element ref="en:Mark"></xs:element>
         <xs:element ref="en:Message"></xs:element>
         <xs:element ref="en:NextFrame"></xs:element>
         <xs:element ref="en:NextRow"></xs:element>
+        <xs:element ref="en:Ol"></xs:element>
         <xs:element ref="en:Paragraph"></xs:element>
         <xs:element ref="en:PlaceObject"></xs:element>
         <xs:element ref="en:ProcessNode"></xs:element>
         <xs:element ref="en:SaveXML"></xs:element>
         <xs:element ref="en:SetVariable"></xs:element>
+        <xs:element ref="en:Span"></xs:element>
         <xs:element ref="en:Switch"></xs:element>
+        <xs:element ref="en:Tab"></xs:element>
+        <xs:element ref="en:Table"></xs:element>
         <xs:element ref="en:Td"></xs:element>
         <xs:element ref="en:Tr"></xs:element>
+        <xs:element ref="en:U"></xs:element>
+        <xs:element ref="en:Ul"></xs:element>
         <xs:element ref="en:Until"></xs:element>
         <xs:element ref="en:Value"></xs:element>
         <xs:element ref="en:While"></xs:element>
@@ -624,28 +644,42 @@
     <xs:annotation>
       <xs:documentation>Executes the given commands for all elements in the data XML file that match the contents of the attribute select.</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="en:A"></xs:element>
+        <xs:element ref="en:Action"></xs:element>
+        <xs:element ref="en:B"></xs:element>
+        <xs:element ref="en:Bookmark"></xs:element>
+        <xs:element ref="en:Br"></xs:element>
         <xs:element ref="en:CallTemplate"></xs:element>
         <xs:element ref="en:Column"></xs:element>
         <xs:element ref="en:ClearPage"></xs:element>
+        <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:Flow"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
+        <xs:element ref="en:I"></xs:element>
         <xs:element ref="en:LoadXML"></xs:element>
         <xs:element ref="en:Loop"></xs:element>
         <xs:element ref="en:Li"></xs:element>
+        <xs:element ref="en:Mark"></xs:element>
         <xs:element ref="en:Message"></xs:element>
         <xs:element ref="en:NextFrame"></xs:element>
         <xs:element ref="en:NextRow"></xs:element>
+        <xs:element ref="en:Ol"></xs:element>
         <xs:element ref="en:Paragraph"></xs:element>
         <xs:element ref="en:PlaceObject"></xs:element>
         <xs:element ref="en:ProcessNode"></xs:element>
         <xs:element ref="en:SaveXML"></xs:element>
         <xs:element ref="en:SetVariable"></xs:element>
+        <xs:element ref="en:Span"></xs:element>
         <xs:element ref="en:Switch"></xs:element>
+        <xs:element ref="en:Tab"></xs:element>
+        <xs:element ref="en:Table"></xs:element>
         <xs:element ref="en:Td"></xs:element>
         <xs:element ref="en:Tr"></xs:element>
+        <xs:element ref="en:U"></xs:element>
+        <xs:element ref="en:Ul"></xs:element>
         <xs:element ref="en:Until"></xs:element>
         <xs:element ref="en:Value"></xs:element>
         <xs:element ref="en:While"></xs:element>
@@ -661,7 +695,7 @@
     <xs:annotation>
       <xs:documentation>Define a function</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:Param"></xs:element>
         <xs:element ref="en:ClearPage"></xs:element>
@@ -766,14 +800,17 @@
         <xs:element ref="en:B"></xs:element>
         <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:Br"></xs:element>
+        <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:I"></xs:element>
+        <xs:element ref="en:Loop"></xs:element>
         <xs:element ref="en:Ol"></xs:element>
         <xs:element ref="en:U"></xs:element>
         <xs:element ref="en:Ul"></xs:element>
         <xs:element ref="en:Value"></xs:element>
         <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:Span"></xs:element>
+        <xs:element ref="en:Switch"></xs:element>
         <xs:element ref="en:Tab"></xs:element>
       </xs:choice>
     </xs:complexType>
@@ -869,14 +906,17 @@
         <xs:element ref="en:B"></xs:element>
         <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:Br"></xs:element>
+        <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:I"></xs:element>
+        <xs:element ref="en:Loop"></xs:element>
         <xs:element ref="en:Ol"></xs:element>
         <xs:element ref="en:U"></xs:element>
         <xs:element ref="en:Ul"></xs:element>
         <xs:element ref="en:Value"></xs:element>
         <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:Span"></xs:element>
+        <xs:element ref="en:Switch"></xs:element>
         <xs:element ref="en:Tab"></xs:element>
       </xs:choice>
       <xs:attribute name="class">
@@ -900,28 +940,42 @@
     <xs:annotation>
       <xs:documentation>Repeat the contents of this element several times.</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="en:A"></xs:element>
+        <xs:element ref="en:Action"></xs:element>
+        <xs:element ref="en:B"></xs:element>
+        <xs:element ref="en:Bookmark"></xs:element>
+        <xs:element ref="en:Br"></xs:element>
         <xs:element ref="en:CallTemplate"></xs:element>
         <xs:element ref="en:Column"></xs:element>
         <xs:element ref="en:ClearPage"></xs:element>
+        <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:Flow"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
+        <xs:element ref="en:I"></xs:element>
         <xs:element ref="en:LoadXML"></xs:element>
         <xs:element ref="en:Loop"></xs:element>
         <xs:element ref="en:Li"></xs:element>
+        <xs:element ref="en:Mark"></xs:element>
         <xs:element ref="en:Message"></xs:element>
         <xs:element ref="en:NextFrame"></xs:element>
         <xs:element ref="en:NextRow"></xs:element>
+        <xs:element ref="en:Ol"></xs:element>
         <xs:element ref="en:Paragraph"></xs:element>
         <xs:element ref="en:PlaceObject"></xs:element>
         <xs:element ref="en:ProcessNode"></xs:element>
         <xs:element ref="en:SaveXML"></xs:element>
         <xs:element ref="en:SetVariable"></xs:element>
+        <xs:element ref="en:Span"></xs:element>
         <xs:element ref="en:Switch"></xs:element>
+        <xs:element ref="en:Tab"></xs:element>
+        <xs:element ref="en:Table"></xs:element>
         <xs:element ref="en:Td"></xs:element>
         <xs:element ref="en:Tr"></xs:element>
+        <xs:element ref="en:U"></xs:element>
+        <xs:element ref="en:Ul"></xs:element>
         <xs:element ref="en:Until"></xs:element>
         <xs:element ref="en:Value"></xs:element>
         <xs:element ref="en:While"></xs:element>
@@ -942,7 +996,7 @@
     <xs:annotation>
       <xs:documentation>Writes a message onto the console and to the protocol file.</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:Value"></xs:element>
         <xs:element ref="en:Element"></xs:element>
@@ -1140,28 +1194,42 @@
     <xs:annotation>
       <xs:documentation>Default branch of a Switch command.</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="en:A"></xs:element>
+        <xs:element ref="en:Action"></xs:element>
+        <xs:element ref="en:B"></xs:element>
+        <xs:element ref="en:Bookmark"></xs:element>
+        <xs:element ref="en:Br"></xs:element>
         <xs:element ref="en:CallTemplate"></xs:element>
         <xs:element ref="en:Column"></xs:element>
         <xs:element ref="en:ClearPage"></xs:element>
+        <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:Flow"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
+        <xs:element ref="en:I"></xs:element>
         <xs:element ref="en:LoadXML"></xs:element>
         <xs:element ref="en:Loop"></xs:element>
         <xs:element ref="en:Li"></xs:element>
+        <xs:element ref="en:Mark"></xs:element>
         <xs:element ref="en:Message"></xs:element>
         <xs:element ref="en:NextFrame"></xs:element>
         <xs:element ref="en:NextRow"></xs:element>
+        <xs:element ref="en:Ol"></xs:element>
         <xs:element ref="en:Paragraph"></xs:element>
         <xs:element ref="en:PlaceObject"></xs:element>
         <xs:element ref="en:ProcessNode"></xs:element>
         <xs:element ref="en:SaveXML"></xs:element>
         <xs:element ref="en:SetVariable"></xs:element>
+        <xs:element ref="en:Span"></xs:element>
         <xs:element ref="en:Switch"></xs:element>
+        <xs:element ref="en:Tab"></xs:element>
+        <xs:element ref="en:Table"></xs:element>
         <xs:element ref="en:Td"></xs:element>
         <xs:element ref="en:Tr"></xs:element>
+        <xs:element ref="en:U"></xs:element>
+        <xs:element ref="en:Ul"></xs:element>
         <xs:element ref="en:Until"></xs:element>
         <xs:element ref="en:Value"></xs:element>
         <xs:element ref="en:While"></xs:element>
@@ -1196,14 +1264,17 @@
         <xs:element ref="en:B"></xs:element>
         <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:Br"></xs:element>
+        <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:I"></xs:element>
+        <xs:element ref="en:Loop"></xs:element>
         <xs:element ref="en:Ol"></xs:element>
         <xs:element ref="en:U"></xs:element>
         <xs:element ref="en:Ul"></xs:element>
         <xs:element ref="en:Value"></xs:element>
         <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:Span"></xs:element>
+        <xs:element ref="en:Switch"></xs:element>
         <xs:element ref="en:Tab"></xs:element>
       </xs:choice>
       <xs:attribute name="class">
@@ -1534,7 +1605,7 @@
     <xs:annotation>
       <xs:documentation>Saves an element/attribute structure to be used in the next publisher run. The contents must have a tree structure.</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:Element"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
@@ -1687,7 +1758,7 @@
     <xs:annotation>
       <xs:documentation>Associates a value with a variable name. The value can be a simple value or a more complex one consisting of several elements.</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:Attribute"></xs:element>
         <xs:element ref="en:Column"></xs:element>
@@ -1741,14 +1812,17 @@
         <xs:element ref="en:B"></xs:element>
         <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:Br"></xs:element>
+        <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:I"></xs:element>
+        <xs:element ref="en:Loop"></xs:element>
         <xs:element ref="en:Ol"></xs:element>
         <xs:element ref="en:U"></xs:element>
         <xs:element ref="en:Ul"></xs:element>
         <xs:element ref="en:Value"></xs:element>
         <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:Span"></xs:element>
+        <xs:element ref="en:Switch"></xs:element>
         <xs:element ref="en:Tab"></xs:element>
       </xs:choice>
       <xs:attribute name="class">
@@ -1908,7 +1982,7 @@
     <xs:annotation>
       <xs:documentation>Td wraps a table cell, just like HTML.</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:Box"></xs:element>
@@ -2154,14 +2228,17 @@
         <xs:element ref="en:B"></xs:element>
         <xs:element ref="en:Bookmark"></xs:element>
         <xs:element ref="en:Br"></xs:element>
+        <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
         <xs:element ref="en:I"></xs:element>
+        <xs:element ref="en:Loop"></xs:element>
         <xs:element ref="en:Ol"></xs:element>
         <xs:element ref="en:U"></xs:element>
         <xs:element ref="en:Ul"></xs:element>
         <xs:element ref="en:Value"></xs:element>
         <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:Span"></xs:element>
+        <xs:element ref="en:Switch"></xs:element>
         <xs:element ref="en:Tab"></xs:element>
       </xs:choice>
       <xs:attribute name="class">
@@ -2185,28 +2262,42 @@
     <xs:annotation>
       <xs:documentation>Create a loop. All child elements are executed repeatedly until the given condition is true. The return value of Until is the concatenated return value of the child elements.</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="en:A"></xs:element>
+        <xs:element ref="en:Action"></xs:element>
+        <xs:element ref="en:B"></xs:element>
+        <xs:element ref="en:Bookmark"></xs:element>
+        <xs:element ref="en:Br"></xs:element>
         <xs:element ref="en:CallTemplate"></xs:element>
         <xs:element ref="en:Column"></xs:element>
         <xs:element ref="en:ClearPage"></xs:element>
+        <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:Flow"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
+        <xs:element ref="en:I"></xs:element>
         <xs:element ref="en:LoadXML"></xs:element>
         <xs:element ref="en:Loop"></xs:element>
         <xs:element ref="en:Li"></xs:element>
+        <xs:element ref="en:Mark"></xs:element>
         <xs:element ref="en:Message"></xs:element>
         <xs:element ref="en:NextFrame"></xs:element>
         <xs:element ref="en:NextRow"></xs:element>
+        <xs:element ref="en:Ol"></xs:element>
         <xs:element ref="en:Paragraph"></xs:element>
         <xs:element ref="en:PlaceObject"></xs:element>
         <xs:element ref="en:ProcessNode"></xs:element>
         <xs:element ref="en:SaveXML"></xs:element>
         <xs:element ref="en:SetVariable"></xs:element>
+        <xs:element ref="en:Span"></xs:element>
         <xs:element ref="en:Switch"></xs:element>
+        <xs:element ref="en:Tab"></xs:element>
+        <xs:element ref="en:Table"></xs:element>
         <xs:element ref="en:Td"></xs:element>
         <xs:element ref="en:Tr"></xs:element>
+        <xs:element ref="en:U"></xs:element>
+        <xs:element ref="en:Ul"></xs:element>
         <xs:element ref="en:Until"></xs:element>
         <xs:element ref="en:Value"></xs:element>
         <xs:element ref="en:While"></xs:element>
@@ -2263,28 +2354,42 @@
     <xs:annotation>
       <xs:documentation>Create a loop. All child elements are executed as long as the condition in the test attribute evaluates to true.</xs:documentation>
     </xs:annotation>
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="en:A"></xs:element>
+        <xs:element ref="en:Action"></xs:element>
+        <xs:element ref="en:B"></xs:element>
+        <xs:element ref="en:Bookmark"></xs:element>
+        <xs:element ref="en:Br"></xs:element>
         <xs:element ref="en:CallTemplate"></xs:element>
         <xs:element ref="en:Column"></xs:element>
         <xs:element ref="en:ClearPage"></xs:element>
+        <xs:element ref="en:CopyOf"></xs:element>
         <xs:element ref="en:Flow"></xs:element>
         <xs:element ref="en:ForAll"></xs:element>
         <xs:element ref="en:HTML"></xs:element>
+        <xs:element ref="en:I"></xs:element>
         <xs:element ref="en:LoadXML"></xs:element>
         <xs:element ref="en:Loop"></xs:element>
         <xs:element ref="en:Li"></xs:element>
+        <xs:element ref="en:Mark"></xs:element>
         <xs:element ref="en:Message"></xs:element>
         <xs:element ref="en:NextFrame"></xs:element>
         <xs:element ref="en:NextRow"></xs:element>
+        <xs:element ref="en:Ol"></xs:element>
         <xs:element ref="en:Paragraph"></xs:element>
         <xs:element ref="en:PlaceObject"></xs:element>
         <xs:element ref="en:ProcessNode"></xs:element>
         <xs:element ref="en:SaveXML"></xs:element>
         <xs:element ref="en:SetVariable"></xs:element>
+        <xs:element ref="en:Span"></xs:element>
         <xs:element ref="en:Switch"></xs:element>
+        <xs:element ref="en:Tab"></xs:element>
+        <xs:element ref="en:Table"></xs:element>
         <xs:element ref="en:Td"></xs:element>
         <xs:element ref="en:Tr"></xs:element>
+        <xs:element ref="en:U"></xs:element>
+        <xs:element ref="en:Ul"></xs:element>
         <xs:element ref="en:Until"></xs:element>
         <xs:element ref="en:Value"></xs:element>
         <xs:element ref="en:While"></xs:element>

@@ -9,6 +9,11 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
+## 0.1.12 (2026-10-18)
+
+- **Text directly in a command counts as a Value.**<br>
+  Text written directly in a command, as in `<Paragraph>A <B>bold</B> word</Paragraph>`, was dropped without a warning; only text inside `<Value>` reached the output. Such text now counts as a `<Value>` with that text: in paragraphs and inline commands, in `Switch`, `ForAll` and `Loop`, in table cells, `Message` and `SetVariable`. Text of whitespace only between commands is still left out, so a lone space needs `<Value> </Value>`. The schema allows the text there, inline markup, marks, bookmarks and blocks inside loops and `Switch`, and `ForAll` and `Loop` inside paragraphs.
+
 ## 0.1.11 (2026-10-16)
 
 - **Copied text keeps the space after a colored word (boxesandglue v0.2.91).**<br>

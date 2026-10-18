@@ -14,7 +14,7 @@ In a [Flow](../flow), a table breaks between rows across frames and pages, with 
 
 ##  Parent elements
 
-[Flow](../flow), [PlaceObject](../placeobject), [SetVariable](../setvariable), [Td](../td)
+[Case](../case), [Flow](../flow), [ForAll](../forall), [Loop](../loop), [Otherwise](../otherwise), [PlaceObject](../placeobject), [SetVariable](../setvariable), [Td](../td), [Until](../until), [While](../while)
 
 
 ## Attributes

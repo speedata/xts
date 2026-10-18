@@ -12,7 +12,7 @@ Create an if-then-else construct. The test attribute of each [Case](../case) com
 
 ##  Parent elements
 
-[AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout), [Case](../case), [Columns](../columns), [Contents](../contents), [Flow](../flow), [ForAll](../forall), [Function](../function), [Loop](../loop), [Otherwise](../otherwise), [PositioningArea](../positioningarea), [Record](../record), [TableFoot](../tablefoot), [TableHead](../tablehead), [Td](../td), [Template](../template), [Tr](../tr), [Until](../until), [While](../while)
+[A](../a), [AtPageCreation](../atpagecreation), [AtPageShipout](../atpageshipout), [B](../b), [Case](../case), [Columns](../columns), [Contents](../contents), [Flow](../flow), [ForAll](../forall), [Function](../function), [I](../i), [Li](../li), [Loop](../loop), [Otherwise](../otherwise), [Paragraph](../paragraph), [PositioningArea](../positioningarea), [Record](../record), [Span](../span), [TableFoot](../tablefoot), [TableHead](../tablehead), [Td](../td), [Template](../template), [Tr](../tr), [U](../u), [Until](../until), [While](../while)
 
 
 ## Attributes

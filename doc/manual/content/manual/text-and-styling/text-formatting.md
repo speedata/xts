@@ -34,6 +34,8 @@ The most direct way to switch fonts is with the inline commands:
 
 These commands nest freely -- `<I><B>...</B></I>` gives you bold italic.
 
+Text may also stand directly in a command, without `<Value>`: `<Paragraph>A wonderful <B>serenity</B> has taken possession</Paragraph>` sets the same text. Text of whitespace only, such as the indentation between commands or a single space between `</B>` and `<I>`, is left out, so a space of its own still needs `<Value> </Value>`.
+
 ## HTML markup
 
 If you prefer HTML-style formatting, use `<HTML>`:

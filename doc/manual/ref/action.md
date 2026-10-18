@@ -12,7 +12,7 @@ Associates an action with a text. Once the text is placed on the page, the assoc
 
 ##  Parent elements
 
-[A](../a), [B](../b), [Flow](../flow), [I](../i), [Li](../li), [Paragraph](../paragraph), [Span](../span), [TextBlock](../textblock), [U](../u)
+[A](../a), [B](../b), [Case](../case), [Flow](../flow), [ForAll](../forall), [I](../i), [Li](../li), [Loop](../loop), [Otherwise](../otherwise), [Paragraph](../paragraph), [Span](../span), [TextBlock](../textblock), [U](../u), [Until](../until), [While](../while)
 
 
 ## Attributes

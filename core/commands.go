@@ -213,6 +213,14 @@ func flowTransparent(name string) bool {
 func dispatch(xd *xtsDocument, layoutelement *goxml.Element) (xpath.Sequence, error) {
 	var retSequence xpath.Sequence
 	for _, cld := range layoutelement.Children() {
+		if cd, ok := cld.(goxml.CharData); ok {
+			// Text directly in a command counts as a <Value> with that
+			// text. Text of whitespace only is the layout's indentation.
+			if strings.TrimSpace(cd.Contents) != "" {
+				retSequence = append(retSequence, cd.Contents)
+			}
+			continue
+		}
 		if elt, ok := cld.(*goxml.Element); ok {
 			if f, ok := dispatchTable[elt.Name]; ok {
 				if xd.valueContext && kindOf(elt.Name) == kindAction {

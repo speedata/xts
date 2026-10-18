@@ -24,6 +24,9 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
+    <entry version="0.1.12" date="2026-10-18">
+      <en summary="Text directly in a command counts as a Value.">Text written directly in a command, as in <tt>&lt;Paragraph&gt;A &lt;B&gt;bold&lt;/B&gt; word&lt;/Paragraph&gt;</tt>, was dropped without a warning; only text inside <tt>&lt;Value&gt;</tt> reached the output. Such text now counts as a <tt>&lt;Value&gt;</tt> with that text: in paragraphs and inline commands, in <tt>Switch</tt>, <tt>ForAll</tt> and <tt>Loop</tt>, in table cells, <tt>Message</tt> and <tt>SetVariable</tt>. Text of whitespace only between commands is still left out, so a lone space needs <tt>&lt;Value&gt; &lt;/Value&gt;</tt>. The schema allows the text there, inline markup, marks, bookmarks and blocks inside loops and <tt>Switch</tt>, and <tt>ForAll</tt> and <tt>Loop</tt> inside paragraphs.</en>
+    </entry>
     <entry version="0.1.11" date="2026-10-16">
       <en summary="Copied text keeps the space after a colored word (boxesandglue v0.2.91).">The word space after a color change was missing from the text of the PDF: copying or extracting the text ran a colored word into the next one, so that red three came out as redthree, and a line ending in a colored word lost its space as well. The space is in the text now, inside the marked content of its word as PDF/UA requires. The page looks the same.</en>
     </entry>
