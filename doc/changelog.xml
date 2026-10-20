@@ -24,6 +24,15 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
+    <entry version="0.1.13" date="2026-10-20">
+      <en summary="Text decorations add up: underline and line-through together, and nested ones (boxesandglue#96).">A run with both an underline and a line-through drew only one of them, and an element's own <tt>text-decoration</tt> replaced the one of its ancestors, so a struck <tt>&lt;span&gt;</tt> inside <tt>&lt;u&gt;</tt> lost the underline. <tt>text-decoration-line</tt> and the shorthand take several line keywords now, as in <tt>underline line-through</tt>, and an element adds its decoration, with its own style and color, to the ones it inherits. As in CSS, <tt>text-decoration: none</tt> does not take an ancestor's line away.</en>
+    </entry>
+    <entry version="0.1.13" date="2026-10-20">
+      <en summary="PDF/X documents get a title, and PDF/X-3 refuses images it does not allow (boxesandglue#97, boxesandglue#98).">PDF/X requires a document title. Without one, xts now warns and sets Untitled, as it already did for PDF/UA. The title in the XMP metadata no longer carries a newline and indentation, which Acrobat's PDF/X-4 preflight reported as inconsistent with the document properties. A PDF/X-3 document with a 16-bit image or an image with transparency now fails with a message that names the file: PDF/X-3 allows neither.</en>
+    </entry>
+    <entry version="0.1.13" date="2026-10-20">
+      <en summary="16-bit, interlaced and indexed PNG images with partial alpha load correctly (baseline-pdf#8, baseline-pdf#9).">16-bit PNG images load and keep their 16 bits per component, alpha included. Indexed images with partial transparency get it instead of coming out opaque, interlaced images load instead of failing the document, and an indexed image below 8 bits with a transparent color shows that color as transparent in macOS Preview too.</en>
+    </entry>
     <entry version="0.1.12" date="2026-10-18">
       <en summary="A container with break-inside: avoid that is taller than a frame breaks without losing text (htmlbag#103).">A <tt>&lt;div&gt;</tt> or another container without a table inside, set to <tt>break-inside: avoid</tt> and taller than a frame, was moved to the next frame whole and the text that did not fit there was lost. It breaks across frames now, as the manual says: <tt>break-inside: avoid</tt> keeps a block together only when it fits.</en>
     </entry>

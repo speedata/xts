@@ -9,6 +9,15 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
+## 0.1.13 (2026-10-20)
+
+- **Text decorations add up: underline and line-through together, and nested ones ([boxesandglue#96](https://github.com/boxesandglue/boxesandglue/issues/96)).**<br>
+  A run with both an underline and a line-through drew only one of them, and an element's own `text-decoration` replaced the one of its ancestors, so a struck `<span>` inside `<u>` lost the underline. `text-decoration-line` and the shorthand take several line keywords now, as in `underline line-through`, and an element adds its decoration, with its own style and color, to the ones it inherits. As in CSS, `text-decoration: none` does not take an ancestor's line away.
+- **PDF/X documents get a title, and PDF/X-3 refuses images it does not allow ([boxesandglue#97](https://github.com/boxesandglue/boxesandglue/issues/97), [boxesandglue#98](https://github.com/boxesandglue/boxesandglue/issues/98)).**<br>
+  PDF/X requires a document title. Without one, xts now warns and sets Untitled, as it already did for PDF/UA. The title in the XMP metadata no longer carries a newline and indentation, which Acrobat's PDF/X-4 preflight reported as inconsistent with the document properties. A PDF/X-3 document with a 16-bit image or an image with transparency now fails with a message that names the file: PDF/X-3 allows neither.
+- **16-bit, interlaced and indexed PNG images with partial alpha load correctly ([baseline-pdf#8](https://github.com/boxesandglue/baseline-pdf/issues/8), [baseline-pdf#9](https://github.com/boxesandglue/baseline-pdf/issues/9)).**<br>
+  16-bit PNG images load and keep their 16 bits per component, alpha included. Indexed images with partial transparency get it instead of coming out opaque, interlaced images load instead of failing the document, and an indexed image below 8 bits with a transparent color shows that color as transparent in macOS Preview too.
+
 ## 0.1.12 (2026-10-18)
 
 - **A container with break-inside: avoid that is taller than a frame breaks without losing text ([htmlbag#103](https://github.com/boxesandglue/htmlbag/issues/103)).**<br>
