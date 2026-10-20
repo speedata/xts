@@ -890,7 +890,7 @@
                                 <value>auto</value>
                                 <a:documentation>Einen Rahmen nach dem anderen, wie auf jeder Seite davor (Voreinstellung).</a:documentation>
                                 <value>balance</value>
-                                <a:documentation>Der Teil des Flusses nach seinem letzten erzwungenen Umbruch, der auf einer Seite endet, wird auf die Rahmen dieser Seite verteilt, sodass sie etwa auf gleicher Höhe enden: Jeder Rahmen endet auf einer Linie quer über die Seite, der höchsten, bei der der Teil dort noch endet, oder an seinem eigenen unteren Rand darüber. widows, orphans und die Umbrüche gelten wie ohne. Die Seiten davor werden wie mit auto gefüllt, ebenso eine Seite, auf der ein Block in einen Rahmen anderer Breite wandert. Keine Wirkung in einem Slate.</a:documentation>
+                                <a:documentation>Der Teil des Flusses nach seinem letzten erzwungenen Umbruch, der auf einer Seite endet, wird auf die Rahmen dieser Seite verteilt, sodass sie etwa auf gleicher Höhe enden: Jeder Rahmen endet auf einer Linie quer über die Seite, der höchsten, bei der der Teil dort noch endet, oder an seinem eigenen unteren Rand darüber. widows, orphans und die Umbrüche gelten wie ohne. Die Seiten davor werden wie mit auto gefüllt. Rahmen unterschiedlicher Breite werden ebenfalls ausgeglichen: Was in einen Rahmen anderer Breite wandert, wird in dessen Breite neu gesetzt. Keine Wirkung in einem Slate.</a:documentation>
                             </choice>
                         </attribute>
                     </optional>
