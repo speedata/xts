@@ -54,7 +54,7 @@ A [Mark](../mark) between the blocks of a flow, also in an [Action](../action), 
 
 
     `balance`
-    :    The part of the flow after its last forced break that ends on a page is spread over the frames of that page, so that they end at about the same height: each frame ends on one line across the page, the highest at which the part still ends there, or at its own foot above it. `widows`, `orphans` and the breaks hold as without it. The pages before are filled as with `auto`, and so is a page on which a block moves into a frame of another width. No effect in a [Slate](../slate).
+    :    The part of the flow after its last forced break that ends on a page is spread over the frames of that page, so that they end at about the same height: each frame ends on one line across the page, the highest at which the part still ends there, or at its own foot above it. `widows`, `orphans` and the breaks hold as without it. The pages before are filled as with `auto`. Frames of different widths are balanced as well: what moves into a frame of another width is set again at that width. No effect in a [Slate](../slate).
 
 
 

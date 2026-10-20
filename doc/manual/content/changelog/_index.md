@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.13 (2026-10-20)
 
+- **column-fill="balance" balances frames of different widths ([#75](https://github.com/speedata/xts/issues/75)).**<br>
+  A `<Flow column-fill="balance">` into frames of different widths, such as a narrow and a wide column, filled the first frame to its foot as with `auto`. The last page is balanced now: what moves into a frame of another width is set again at that width while xts looks for the line at which the frames end.
 - **Text decorations add up: underline and line-through together, and nested ones ([boxesandglue#96](https://github.com/boxesandglue/boxesandglue/issues/96)).**<br>
   A run with both an underline and a line-through drew only one of them, and an element's own `text-decoration` replaced the one of its ancestors, so a struck `<span>` inside `<u>` lost the underline. `text-decoration-line` and the shorthand take several line keywords now, as in `underline line-through`, and an element adds its decoration, with its own style and color, to the ones it inherits. As in CSS, `text-decoration: none` does not take an ancestor's line away.
 - **PDF/X documents get a title, and PDF/X-3 refuses images it does not allow ([boxesandglue#97](https://github.com/boxesandglue/boxesandglue/issues/97), [boxesandglue#98](https://github.com/boxesandglue/boxesandglue/issues/98)).**<br>

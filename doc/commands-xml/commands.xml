@@ -2068,10 +2068,10 @@
       </choice>
       <choice en="balance">
         <description xml:lang="en">
-          <para>The part of the flow after its last forced break that ends on a page is spread over the frames of that page, so that they end at about the same height: each frame ends on one line across the page, the highest at which the part still ends there, or at its own foot above it. <tt>widows</tt>, <tt>orphans</tt> and the breaks hold as without it. The pages before are filled as with <tt>auto</tt>, and so is a page on which a block moves into a frame of another width. No effect in a <cmd name="Slate"/>.</para>
+          <para>The part of the flow after its last forced break that ends on a page is spread over the frames of that page, so that they end at about the same height: each frame ends on one line across the page, the highest at which the part still ends there, or at its own foot above it. <tt>widows</tt>, <tt>orphans</tt> and the breaks hold as without it. The pages before are filled as with <tt>auto</tt>. Frames of different widths are balanced as well: what moves into a frame of another width is set again at that width. No effect in a <cmd name="Slate"/>.</para>
         </description>
         <description xml:lang="de">
-          <para>Der Teil des Flusses nach seinem letzten erzwungenen Umbruch, der auf einer Seite endet, wird auf die Rahmen dieser Seite verteilt, sodass sie etwa auf gleicher Höhe enden: Jeder Rahmen endet auf einer Linie quer über die Seite, der höchsten, bei der der Teil dort noch endet, oder an seinem eigenen unteren Rand darüber. <tt>widows</tt>, <tt>orphans</tt> und die Umbrüche gelten wie ohne. Die Seiten davor werden wie mit <tt>auto</tt> gefüllt, ebenso eine Seite, auf der ein Block in einen Rahmen anderer Breite wandert. Keine Wirkung in einem <cmd name="Slate"/>.</para>
+          <para>Der Teil des Flusses nach seinem letzten erzwungenen Umbruch, der auf einer Seite endet, wird auf die Rahmen dieser Seite verteilt, sodass sie etwa auf gleicher Höhe enden: Jeder Rahmen endet auf einer Linie quer über die Seite, der höchsten, bei der der Teil dort noch endet, oder an seinem eigenen unteren Rand darüber. <tt>widows</tt>, <tt>orphans</tt> und die Umbrüche gelten wie ohne. Die Seiten davor werden wie mit <tt>auto</tt> gefüllt. Rahmen unterschiedlicher Breite werden ebenfalls ausgeglichen: Was in einen Rahmen anderer Breite wandert, wird in dessen Breite neu gesetzt. Keine Wirkung in einem <cmd name="Slate"/>.</para>
         </description>
       </choice>
     </attribute>

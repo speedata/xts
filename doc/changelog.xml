@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.13" date="2026-10-20">
+      <en summary="column-fill=&quot;balance&quot; balances frames of different widths (#75).">A <tt>&lt;Flow column-fill="balance"&gt;</tt> into frames of different widths, such as a narrow and a wide column, filled the first frame to its foot as with <tt>auto</tt>. The last page is balanced now: what moves into a frame of another width is set again at that width while xts looks for the line at which the frames end.</en>
+    </entry>
+    <entry version="0.1.13" date="2026-10-20">
       <en summary="Text decorations add up: underline and line-through together, and nested ones (boxesandglue#96).">A run with both an underline and a line-through drew only one of them, and an element's own <tt>text-decoration</tt> replaced the one of its ancestors, so a struck <tt>&lt;span&gt;</tt> inside <tt>&lt;u&gt;</tt> lost the underline. <tt>text-decoration-line</tt> and the shorthand take several line keywords now, as in <tt>underline line-through</tt>, and an element adds its decoration, with its own style and color, to the ones it inherits. As in CSS, <tt>text-decoration: none</tt> does not take an ancestor's line away.</en>
     </entry>
     <entry version="0.1.13" date="2026-10-20">

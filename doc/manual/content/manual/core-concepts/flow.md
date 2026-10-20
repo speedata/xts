@@ -180,7 +180,7 @@ A flow fills a frame before it goes on to the next one, which is what running te
 
 Only the last page is balanced. The pages before it fill their frames one after the other, as without the attribute, and so does a part of the flow that a forced break such as `break-before: page` ends. xts tries heights until it finds the highest line across the page at which the rest of the flow still ends on that page, with `widows`, `orphans` and the breaks as they are. Each frame then ends at that line, or at its own foot above it; a band that starts below the line stays empty. `bottom` and a flow that follows directly start below the longest frame.
 
-Each try sets the end of the flow again, from its last forced break on. For a long flow without forced breaks, that takes a few times as long as filling the frames. When a block on the last page moves into a frame of another width, the page is filled as without balancing. In a `<Slate>`, the attribute has no effect.
+Each try sets the end of the flow again, from its last forced break on. For a long flow without forced breaks, that takes a few times as long as filling the frames. Frames of different widths, such as a narrow and a wide column, are balanced too: a block that moves into a frame of another width is set again at that width, in each try as in the final run. In a `<Slate>`, the attribute has no effect.
 
 ## One flow after another
 

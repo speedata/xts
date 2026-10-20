@@ -1,0 +1,49 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+
+    <!-- column-fill="balance" over frames of different widths (#75). Page 1:
+         six paragraphs over a narrow and a wide frame; the paragraphs that
+         move into the wide frame are set at its width. Page 2: the wide
+         frame first. Page 3: one paragraph, broken across both frames, its
+         rest set again at the width of the wide frame. The Flow after each
+         starts below the taller frame. -->
+
+    <PageFormat width="105mm" height="148mm"/>
+    <SetGrid nx="21" height="12pt"/>
+    <DefineMasterPage name="page" test="true()" margin="10mm">
+        <PositioningArea name="narrowwide">
+            <PositioningFrame column="1" row="1" width="6" height="27"/>
+            <PositioningFrame column="8" row="1" width="14" height="27"/>
+        </PositioningArea>
+        <PositioningArea name="widenarrow">
+            <PositioningFrame column="1" row="1" width="14" height="27"/>
+            <PositioningFrame column="16" row="1" width="6" height="27"/>
+        </PositioningArea>
+    </DefineMasterPage>
+    <StyleSheet>
+        p { margin: 0 0 4pt 0; font-size: 9pt; line-height: 11pt }
+    </StyleSheet>
+    <Record match="data">
+        <Flow><Paragraph><Value>A narrow and a wide frame.</Value></Paragraph></Flow>
+        <Flow area="narrowwide" column-fill="balance">
+            <Loop select="6" variable="i">
+                <Paragraph><Value select="concat('Paragraph ', $i, ': ')"/><Value>lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</Value></Paragraph>
+            </Loop>
+        </Flow>
+        <Flow><Paragraph><Value>After the columns.</Value></Paragraph></Flow>
+        <ClearPage/>
+        <Flow><Paragraph><Value>A wide and a narrow frame.</Value></Paragraph></Flow>
+        <Flow area="widenarrow" column-fill="balance">
+            <Loop select="6" variable="i">
+                <Paragraph><Value select="concat('Paragraph ', $i, ': ')"/><Value>lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</Value></Paragraph>
+            </Loop>
+        </Flow>
+        <Flow><Paragraph><Value>After the columns.</Value></Paragraph></Flow>
+        <ClearPage/>
+        <Flow><Paragraph><Value>One paragraph over a narrow and a wide frame.</Value></Paragraph></Flow>
+        <Flow area="narrowwide" column-fill="balance">
+            <Paragraph><Value>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Value></Paragraph>
+        </Flow>
+        <Flow><Paragraph><Value>After the columns.</Value></Paragraph></Flow>
+    </Record>
+</Layout>
