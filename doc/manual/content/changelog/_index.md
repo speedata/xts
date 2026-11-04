@@ -9,6 +9,11 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
+## 0.1.14 (2026-11-04)
+
+- **CSS custom properties with var(), the selectors :is() and :where(), and WOFF and WOFF2 fonts.**<br>
+  Declarations whose name starts with `--` define custom properties, which inherit as in a browser and are read with `var(--name)` or `var(--name, fallback)`. The selectors `:is()` and `:where()` work, `:host` matches nothing instead of stopping the run, and the alternative text in `content: "x" / "alt"` is skipped. Font files can be WOFF and WOFF2, so web stylesheets such as Font Awesome 7 work unchanged.
+
 ## 0.1.13 (2026-10-20)
 
 - **column-fill="balance" balances frames of different widths ([#75](https://github.com/speedata/xts/issues/75)).**<br>

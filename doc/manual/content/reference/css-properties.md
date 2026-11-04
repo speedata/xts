@@ -150,8 +150,21 @@ XTS supports the CSS selectors of levels 1 to 3 and the most common of level 4:
 | Child | `table > tr { ... }` |
 | Sibling | `h1 + p { ... }`, `h1 ~ p { ... }` |
 | Pseudo-class | `tr:nth-child(even) { ... }`, `li:first-child { ... }`, `p:not(.intro) { ... }` |
+| Selector list | `:is(h1, h2) + p { ... }`, `:where(.note) p { ... }` |
 | Pseudo-element | `h1::before { ... }`, `li::marker { ... }` |
 | Multiple | `h1, h2, h3 { ... }` |
+
+`:is()` takes the specificity of its most specific argument, `:where()` has none. `:host` matches nothing, since a layout has no shadow trees.
+
+## CSS variables
+
+A declaration whose name starts with `--` defines a custom property, and `var(--name)` or `var(--name, fallback)` reads it in any other declaration. Custom properties inherit like in a browser: an element sees the value of its nearest ancestor unless it sets its own, and pseudo-elements see the values of their element.
+
+```css
+:root { --accent: #c00; }
+.note { --accent: #06c; }
+h2, .note strong { color: var(--accent); }
+```
 
 ## @-rules
 
@@ -181,9 +194,11 @@ Defines a font face, see [Fonts](/manual/text-and-styling/fonts). The descriptor
 | `font-family` | The name the font is used by | `font-family: "Minion Pro";` |
 | `font-style` | `normal`, `italic` | `font-style: italic;` |
 | `font-weight` | A weight name or number, or two of them for the range a variable font covers | `font-weight: 300 700;` |
-| `src` | Comma separated list of `url()` or `local()` sources, each optionally followed by `format()` and `tech()` | `src: url("minion.otf");` |
+| `src` | Comma separated list of `url()` or `local()` sources, each optionally followed by `format()` and `tech()`. A file can be TrueType, OpenType (also collections), WOFF or WOFF2 | `src: url("minion.otf");` |
 | `font-feature-settings` | OpenType features switched on for this face, as on elements | `font-feature-settings: "onum";` |
 | `font-variation-settings` | Axis values of a variable font, as on elements | `font-variation-settings: "wght" 450;` |
+| `font-display` | `auto`, `block`, `swap`, `fallback`, `optional`. Accepted and ignored: it tells a browser what to show while the font loads, and a PDF always waits for its fonts | `font-display: block;` |
+| `unicode-range` | Comma separated code points and ranges such as `U+0025-00FF`. Accepted and ignored: the face is used for every character, so several faces of one family that differ only in their range replace each other instead of combining | `unicode-range: U+0000-00FF;` |
 | `size-adjust` | Percentage that scales the glyphs of this face | `size-adjust: 95%;` |
 | `ascent-override` | `normal` or a percentage of the em, in place of the face's ascent. Sets the content area of the face, which an inline background covers and from which `text-box-trim` measures. The line box reads it only in a line model registered with `CSSBuilder.RegisterLineModel` (see `-bag-leading-model`); the built-in `half` and `trailing` models do not use it | `ascent-override: 107.91%;` |
 | `descent-override` | `normal` or a percentage of the em, in place of the face's descent. Sets the content area of the face, which an inline background covers and from which `text-box-trim` measures. The line box reads it only in a line model registered with `CSSBuilder.RegisterLineModel` (see `-bag-leading-model`); the built-in `half` and `trailing` models do not use it | `descent-override: 25.1%;` |

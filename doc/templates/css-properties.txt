@@ -29,8 +29,21 @@ XTS supports the CSS selectors of levels 1 to 3 and the most common of level 4:
 | Child | `table > tr { ... }` |
 | Sibling | `h1 + p { ... }`, `h1 ~ p { ... }` |
 | Pseudo-class | `tr:nth-child(even) { ... }`, `li:first-child { ... }`, `p:not(.intro) { ... }` |
+| Selector list | `:is(h1, h2) + p { ... }`, `:where(.note) p { ... }` |
 | Pseudo-element | `h1::before { ... }`, `li::marker { ... }` |
 | Multiple | `h1, h2, h3 { ... }` |
+
+`:is()` takes the specificity of its most specific argument, `:where()` has none. `:host` matches nothing, since a layout has no shadow trees.
+
+## CSS variables
+
+A declaration whose name starts with `--` defines a custom property, and `var(--name)` or `var(--name, fallback)` reads it in any other declaration. Custom properties inherit like in a browser: an element sees the value of its nearest ancestor unless it sets its own, and pseudo-elements see the values of their element.
+
+```css
+:root { --accent: #c00; }
+.note { --accent: #06c; }
+h2, .note strong { color: var(--accent); }
+```
 
 ## @-rules
 

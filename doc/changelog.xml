@@ -24,6 +24,9 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
+    <entry version="0.1.14" date="2026-11-04">
+      <en summary="CSS custom properties with var(), the selectors :is() and :where(), and WOFF and WOFF2 fonts.">Declarations whose name starts with <tt>--</tt> define custom properties, which inherit as in a browser and are read with <tt>var(--name)</tt> or <tt>var(--name, fallback)</tt>. The selectors <tt>:is()</tt> and <tt>:where()</tt> work, <tt>:host</tt> matches nothing instead of stopping the run, and the alternative text in <tt>content: "x" / "alt"</tt> is skipped. Font files can be WOFF and WOFF2, so web stylesheets such as Font Awesome 7 work unchanged.</en>
+    </entry>
     <entry version="0.1.13" date="2026-10-20">
       <en summary="column-fill=&quot;balance&quot; balances frames of different widths (#75).">A <tt>&lt;Flow column-fill="balance"&gt;</tt> into frames of different widths, such as a narrow and a wide column, filled the first frame to its foot as with <tt>auto</tt>. The last page is balanced now: what moves into a frame of another width is set again at that width while xts looks for the line at which the frames end.</en>
     </entry>
