@@ -25,6 +25,12 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.14" date="2026-11-04">
+      <en summary="A zero width space is a break opportunity without width (boxesandglue#99).">U+200B in the text allows a line break at that point and takes no room otherwise. Before, it was set as a space of the font's space width, or dropped between letters so that the line could not break there. With <tt>white-space</tt> <tt>pre</tt> or <tt>nowrap</tt> it does not break.</en>
+    </entry>
+    <entry version="0.1.14" date="2026-11-04">
+      <en summary="PDF pages with Brotli compressed content can be placed as images.">A PDF page whose content stream uses the <tt>BrotliDecode</tt> filter, a PDF Association extension to PDF 2.0, is imported instead of failing to load.</en>
+    </entry>
+    <entry version="0.1.14" date="2026-11-04">
       <en summary="CSS custom properties with var(), the selectors :is() and :where(), and WOFF and WOFF2 fonts.">Declarations whose name starts with <tt>--</tt> define custom properties, which inherit as in a browser and are read with <tt>var(--name)</tt> or <tt>var(--name, fallback)</tt>. The selectors <tt>:is()</tt> and <tt>:where()</tt> work, <tt>:host</tt> matches nothing instead of stopping the run, and the alternative text in <tt>content: "x" / "alt"</tt> is skipped. Font files can be WOFF and WOFF2, so web stylesheets such as Font Awesome 7 work unchanged.</en>
     </entry>
     <entry version="0.1.13" date="2026-10-20">

@@ -11,6 +11,10 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.14 (2026-11-04)
 
+- **A zero width space is a break opportunity without width ([boxesandglue#99](https://github.com/boxesandglue/boxesandglue/issues/99)).**<br>
+  U+200B in the text allows a line break at that point and takes no room otherwise. Before, it was set as a space of the font's space width, or dropped between letters so that the line could not break there. With `white-space` `pre` or `nowrap` it does not break.
+- **PDF pages with Brotli compressed content can be placed as images.**<br>
+  A PDF page whose content stream uses the `BrotliDecode` filter, a PDF Association extension to PDF 2.0, is imported instead of failing to load.
 - **CSS custom properties with var(), the selectors :is() and :where(), and WOFF and WOFF2 fonts.**<br>
   Declarations whose name starts with `--` define custom properties, which inherit as in a browser and are read with `var(--name)` or `var(--name, fallback)`. The selectors `:is()` and `:where()` work, `:host` matches nothing instead of stopping the run, and the alternative text in `content: "x" / "alt"` is skipped. Font files can be WOFF and WOFF2, so web stylesheets such as Font Awesome 7 work unchanged.
 
