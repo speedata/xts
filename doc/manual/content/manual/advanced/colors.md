@@ -57,6 +57,23 @@ The same named colors can be declared in a stylesheet with the `@-bag-color` rul
 
 Without a `model` the `value` is any color CSS accepts, including a name defined earlier. The models `cmyk`, `rgb` and `gray` take their components from 0 to 100 (percentages work too), `RGB` and `GRAY` from 0 to 255. A spot color takes the ink name in `colorname` and optional CMYK components for the fallback; without an ink name the color name is used. A color defined this way is available everywhere a color from `<DefineColor>` is, in CSS and in attributes such as `background-color`.
 
+## Overprinting
+
+By default a color knocks out what is below it: the plates of the other colors stay empty in that area. Small black text on a colored background then depends on the exact fit of the plates, and a slight misregister shows a white edge along the letters. An overprinting color prints on top instead. Set `overprint` on the color, in `<DefineColor>` or in `@-bag-color`:
+
+```xml
+<DefineColor name="ink" model="cmyk" c="0" m="0" y="0" k="100" overprint="yes"/>
+<StyleSheet>
+    @-bag-color pms300 { model: spotcolor; colorname: "PANTONE 300 C"; overprint: yes; }
+</StyleSheet>
+```
+
+The color overprints wherever its name is used, in text, backgrounds and borders. Three things to keep in mind:
+
+- It works with CMYK and spot colors. An RGB or gray color knocks out, so `black` does not overprint, a CMYK color with `k="100"` does. xts warns about this.
+- A CMYK color prints only on the plates of its nonzero components. White therefore leaves no mark at all, which xts warns about, too.
+- A PDF viewer shows overprinting only with overprint preview switched on. To check the plates, separate them, for example with Ghostscript: `gs -sDEVICE=tiffsep -o plates.tif document.pdf`.
+
 ## Pre-defined colors
 
 XTS comes with all standard CSS named colors plus:

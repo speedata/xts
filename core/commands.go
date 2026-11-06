@@ -647,6 +647,7 @@ func cmdDefineColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		Model               string
 		Value               string
 		R, G, B, C, M, Y, K string
+		Overprint           bool
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
 		return nil, err
@@ -747,6 +748,7 @@ func cmdDefineColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 	default:
 		return nil, newTypesettingErrorf("DefineColor", layoutelt.Line, "model %q not recognized", attValues.Model)
 	}
+	col.Overprint = attValues.Overprint
 	xd.document.DefineColor(attValues.Name, &col)
 	return nil, nil
 }

@@ -753,6 +753,15 @@
                 <lsp:defines symbol="color"></lsp:defines>
             </attribute>
             <optional>
+                <attribute name="overprint">
+                    <a:documentation>With yes the color prints on top of what is below it instead of knocking it out. Works with CMYK and spot colors. A CMYK color prints only on the plates of its nonzero components, so 100% black keeps the colors below it and white disappears. The default is no.</a:documentation>
+                    <choice>
+                        <value>yes</value>
+                        <value>no</value>
+                    </choice>
+                </attribute>
+            </optional>
+            <optional>
                 <attribute name="value">
                     <a:documentation>Hex value of the color, such as #FA5 or #FFAA55 or rgb(255,170,85) or rgba(255,170,85,1).</a:documentation>
                 </attribute>

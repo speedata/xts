@@ -503,6 +503,17 @@
           <xs:documentation>Name der Farbe, die definiert wird.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="overprint">
+        <xs:annotation>
+          <xs:documentation>Mit yes druckt die Farbe auf das, was darunter liegt, statt es auszusparen. Das wirkt bei CMYK- und Sonderfarben. Eine CMYK-Farbe druckt nur auf den Platten ihrer Anteile ungleich null: 100% Schwarz erhält die Farben darunter, Weiß verschwindet. Die Vorgabe ist no.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="yes"></xs:enumeration>
+            <xs:enumeration value="no"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
       <xs:attribute name="value">
         <xs:annotation>
           <xs:documentation>Der Hexwert der Farbe, wie beispielsweise #FA5 oder #FFAA55 oder rgb(255,170,85) oder rgba(255,170,85,1).</xs:documentation>

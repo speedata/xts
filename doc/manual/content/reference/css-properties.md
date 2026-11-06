@@ -224,5 +224,6 @@ Defines a named color, see [Colors](/manual/advanced/colors#defining-colors-in-c
 | `value` | A CSS color such as `#ff0000` or `rgb(255, 0, 0)`, used instead of a model with components | `value: #c00;` |
 | `colorname` | Name of the separation for a spot color | `colorname: PANTONE 300 C;` |
 | `c`, `m`, `y`, `k`, `r`, `g`, `b` | Number, one component of the chosen model | `c: 100;` |
+| `overprint` | `yes` or `no`, the default. With `yes` the color prints on top of what is below it instead of knocking it out. Works with CMYK and spot colors. A CMYK color prints only on the plates of its nonzero components, so white disappears. Both cases warn | `overprint: yes;` |
 
 

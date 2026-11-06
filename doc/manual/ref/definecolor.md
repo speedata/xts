@@ -92,6 +92,12 @@ Colors defined with DefineColors can be referenced later by their name.
 
 
 
+`overprint` (yes or no, optional)
+:   With yes the color prints on top of what is below it instead of knocking it out. Works with CMYK and spot colors. A CMYK color prints only on the plates of its nonzero components, so 100% black keeps the colors below it and white disappears. The default is no.
+
+
+
+
 `r` (0 to 100 or 0 to 255, optional)
 :   Red part with rgb (0-100) or RGB (0-255).
 

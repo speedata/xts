@@ -1745,6 +1745,14 @@
         <para>Name der Farbe, die definiert wird.</para>
       </description>
     </attribute>
+    <attribute en="overprint" optional="yes" type="boolean">
+      <description xml:lang="en">
+        <para>With yes the color prints on top of what is below it instead of knocking it out. Works with CMYK and spot colors. A CMYK color prints only on the plates of its nonzero components, so 100% black keeps the colors below it and white disappears. The default is no.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Mit yes druckt die Farbe auf das, was darunter liegt, statt es auszusparen. Das wirkt bei CMYK- und Sonderfarben. Eine CMYK-Farbe druckt nur auf den Platten ihrer Anteile ungleich null: 100% Schwarz erhält die Farben darunter, Weiß verschwindet. Die Vorgabe ist no.</para>
+      </description>
+    </attribute>
     <attribute en="value" type="text" optional="yes">
       <description xml:lang="en">
         <para>Hex value of the color, such as <tt>#FA5</tt> or <tt>#FFAA55</tt> or <tt>rgb(255,170,85)</tt> or <tt>rgba(255,170,85,1)</tt>.</para>

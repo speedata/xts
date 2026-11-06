@@ -753,6 +753,15 @@
                 <lsp:defines symbol="color"></lsp:defines>
             </attribute>
             <optional>
+                <attribute name="overprint">
+                    <a:documentation>Mit yes druckt die Farbe auf das, was darunter liegt, statt es auszusparen. Das wirkt bei CMYK- und Sonderfarben. Eine CMYK-Farbe druckt nur auf den Platten ihrer Anteile ungleich null: 100% Schwarz erhält die Farben darunter, Weiß verschwindet. Die Vorgabe ist no.</a:documentation>
+                    <choice>
+                        <value>yes</value>
+                        <value>no</value>
+                    </choice>
+                </attribute>
+            </optional>
+            <optional>
                 <attribute name="value">
                     <a:documentation>Der Hexwert der Farbe, wie beispielsweise #FA5 oder #FFAA55 oder rgb(255,170,85) oder rgba(255,170,85,1).</a:documentation>
                 </attribute>

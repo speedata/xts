@@ -9,8 +9,10 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
-## 0.1.15 (2026-11-05)
+## 0.1.15 (2026-11-06)
 
+- **Colors can overprint.**<br>
+  The new attribute `overprint` of `DefineColor` and the descriptor of the same name in `@-bag-color` make a CMYK or spot color print on top of what is below it instead of knocking it out. RGB, gray and white colors warn, because they cannot overprint.
 - **The trace linegrid shows the baselines of a Flow.**<br>
   It draws numbered lines on the baselines of every band of a `Flow`, so text that has left the line grid shows at once. Turn it on with `<Trace linegrid="yes"/>`, `xts --trace linegrid` or the CSS property `-bag-trace: linegrid`.
 - **The CSS property hyphenate-character sets the text at a hyphenated line end.**<br>
