@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.15" date="2026-11-06">
+      <en summary="Backgrounds reach the bottom edge and are painted once.">A background ended above the depth of the last line, so descenders hung below it and a gap showed above a bottom border. Children no longer paint the background of a parent block again, which made a transparent background darker where a paragraph sat in it.</en>
+    </entry>
+    <entry version="0.1.15" date="2026-11-06">
       <en summary="A Box has the size it asks for.">A <tt>&lt;Box&gt;</tt> painted its background and border twice. The border came out twice as thick, the box grew beyond its <tt>width</tt> and <tt>height</tt>, and a transparent background would have been darker than asked for. <tt>width</tt> and <tt>height</tt> now include border and padding.</en>
     </entry>
     <entry version="0.1.15" date="2026-11-06">

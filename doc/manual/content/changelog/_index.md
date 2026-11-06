@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.15 (2026-11-06)
 
+- **Backgrounds reach the bottom edge and are painted once.**<br>
+  A background ended above the depth of the last line, so descenders hung below it and a gap showed above a bottom border. Children no longer paint the background of a parent block again, which made a transparent background darker where a paragraph sat in it.
 - **A Box has the size it asks for.**<br>
   A `<Box>` painted its background and border twice. The border came out twice as thick, the box grew beyond its `width` and `height`, and a transparent background would have been darker than asked for. `width` and `height` now include border and padding.
 - **Colors can be transparent.**<br>
