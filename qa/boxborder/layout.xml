@@ -1,0 +1,22 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en"
+    xmlns:sd="urn:speedata.de/2021/xtsfunctions/en">
+    <!-- width and height of a Box are its outer size, the border stays as thick
+         as it is asked for. The gray band is as wide as the boxes. The boxes
+         below it overlap: the background of the upper one is half transparent,
+         so it is painted once, and the blue one shines through. -->
+    <DefineColor name="half" value="rgba(255,0,0,.5)"/>
+    <Record match="data">
+        <PlaceObject column="1" row="1">
+            <Box width="5" height="1" background-color="gray"/>
+        </PlaceObject>
+        <PlaceObject column="1" row="2">
+            <Box width="5" height="3" background-color="gold" style="border:6pt solid blue; padding:4pt"/>
+        </PlaceObject>
+        <PlaceObject column="3" row="7">
+            <Box width="5" height="3" background-color="blue"/>
+        </PlaceObject>
+        <PlaceObject column="1" row="8">
+            <Box width="5" height="3" background-color="half"/>
+        </PlaceObject>
+    </Record>
+</Layout>

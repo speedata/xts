@@ -460,11 +460,8 @@ func cmdBox(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error) {
 	}
 
 	vl := node.NewVList()
-	vl.Width = attValues.Width - hv.BorderLeftWidth - hv.BorderRightWidth
-	vl.Height = attValues.Height - hv.BorderTopWidth - hv.BorderBottomWidth
-	vl = xd.cssbuilder.HTMLBorder(vl, hv)
-	vl.Width = attValues.Width
-	vl.Height = attValues.Height
+	vl.Width = attValues.Width - hv.BorderLeftWidth - hv.BorderRightWidth - hv.PaddingLeft - hv.PaddingRight
+	vl.Height = attValues.Height - hv.BorderTopWidth - hv.BorderBottomWidth - hv.PaddingTop - hv.PaddingBottom
 	vl = xd.cssbuilder.HTMLBorder(vl, hv)
 	vl.Attributes = node.H{"origin": "box"}
 	return xpath.Sequence{vl}, nil

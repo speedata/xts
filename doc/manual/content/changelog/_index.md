@@ -11,6 +11,10 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.15 (2026-11-06)
 
+- **A Box has the size it asks for.**<br>
+  A `<Box>` painted its background and border twice. The border came out twice as thick, the box grew beyond its `width` and `height`, and a transparent background would have been darker than asked for. `width` and `height` now include border and padding.
+- **Colors can be transparent.**<br>
+  Colors take an alpha value now, in all spellings of CSS: `rgba(0,0,0,.5)`, `rgb(0 0 0 / 50%)`, `[#00000080](https://github.com/speedata/xts/issues/00000080)`, `[#0008](https://github.com/speedata/xts/issues/0008)` and `device-cmyk(0 0 0 1 / 50%)`. The spellings with a slash and `#rrggbbaa` came out black before, and an alpha value had no effect. `color: transparent` hides the text instead of printing it black. PDF/X-3 forbids transparency: there the color is opaque and a warning is written.
 - **Colors can overprint.**<br>
   The new attribute `overprint` of `DefineColor` and the descriptor of the same name in `@-bag-color` make a CMYK or spot color print on top of what is below it instead of knocking it out. RGB, gray and white colors warn, because they cannot overprint.
 - **The trace linegrid shows the baselines of a Flow.**<br>
