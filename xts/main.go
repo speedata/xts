@@ -195,7 +195,7 @@ func dothings() error {
 	op.On("--runs N", "Run XTS N times", cmdline)
 	op.On("--suppressinfo", "Create a reproducible document", cmdline)
 	op.On("--systemfonts", "Use system fonts", cmdline)
-	op.On("--trace NAMES", "Set the trace to one or more of grid, gridallocation", cmdline)
+	op.On("--trace NAMES", "Set the trace to one or more of grid, gridallocation, linegrid", cmdline)
 	op.On("--verbose", "Show log output in the terminal window (STDOUT)", cmdline)
 	op.On("-v", "--var=VALUE", "Set a variable for the publishing run", cmdline)
 	op.Command("clean", "Remove auxiliary and protocol files")

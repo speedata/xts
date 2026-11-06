@@ -265,6 +265,8 @@ func RunXTS(cfg *XTSConfig) error {
 			d.SetVTrace(VTraceGrid)
 		case "gridallocation":
 			d.SetVTrace(VTraceAllocation)
+		case "linegrid":
+			d.cssbuilder.TraceLineGrid = true
 		}
 	}
 	if d.cfg.DumpFile != nil {

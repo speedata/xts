@@ -3188,6 +3188,7 @@ func cmdTrace(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 		Hboxes         *bool
 		Hyperlinks     *bool
 		Hyphenation    *bool
+		Linegrid       *bool
 		Objects        *bool
 	}{}
 	if err = getXMLAttributes(xd, layoutelt, attValues); err != nil {
@@ -3195,6 +3196,9 @@ func cmdTrace(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, error)
 	}
 	if attValues.Boxmodel != nil {
 		xd.cssbuilder.TraceBoxModel = *attValues.Boxmodel
+	}
+	if attValues.Linegrid != nil {
+		xd.cssbuilder.TraceLineGrid = *attValues.Linegrid
 	}
 	if attValues.Hboxes != nil {
 		if *attValues.Hboxes {

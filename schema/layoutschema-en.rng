@@ -3305,6 +3305,17 @@
                 </attribute>
             </optional>
             <optional>
+                <attribute name="linegrid">
+                    <a:documentation>Draw numbered lines on the baselines of every band of a Flow, at the line-height of the running text or of the element with the CSS property -bag-trace: linegrid.</a:documentation>
+                    <choice>
+                        <value>yes</value>
+                        <a:documentation>Show the line grid.</a:documentation>
+                        <value>no</value>
+                        <a:documentation>Don&#39;t show the line grid (default).</a:documentation>
+                    </choice>
+                </attribute>
+            </optional>
+            <optional>
                 <attribute name="objects">
                     <a:documentation>Draw boxes around objects.</a:documentation>
                     <choice>

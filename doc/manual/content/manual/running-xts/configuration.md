@@ -39,7 +39,7 @@ year = 2026
 | `quiet` | boolean | `false` | Suppress console output |
 | `verbose` | boolean | `false` | Extra debug output |
 | `suppressinfo` | boolean | `false` | Reproducible PDF output |
-| `trace` | string[] | `[]` | Traces: `"grid"`, `"gridallocation"` |
+| `trace` | string[] | `[]` | Traces: `"grid"`, `"gridallocation"`, `"linegrid"` |
 | `mode` | string[] | `[]` | Active modes |
 | `variables` | table | | Key-value pairs accessible in the layout |
 

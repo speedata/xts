@@ -51,6 +51,8 @@ or run XTS with `xts --trace grid`. You'll see something like this:
 ![simple grid](/manual/img/08-raster.png)
 <figcaption>A 10-column grid. Every fifth line is slightly darker to help you count.</figcaption>
 
+The grid places objects, it does not place the lines of a [`<Flow>`](../flow). To see those, use `<Trace linegrid="yes"/>` or `xts --trace linegrid`. It draws numbered lines on the baselines of every band of a `<Flow>`, at the `line-height` of the running text, or of the element with the CSS property `-bag-trace: linegrid`. Equal numbers stand at equal height across the columns of an area, and text that leaves its lines has come off the grid. With `SetGrid height` equal to the `line-height`, the two grids go together.
+
 The red line shows the page margin (default: 1cm on each side).
 
 ## Placing objects on the grid

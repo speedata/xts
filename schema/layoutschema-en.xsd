@@ -2178,6 +2178,17 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
+      <xs:attribute name="linegrid">
+        <xs:annotation>
+          <xs:documentation>Draw numbered lines on the baselines of every band of a Flow, at the line-height of the running text or of the element with the CSS property -bag-trace: linegrid.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="yes"></xs:enumeration>
+            <xs:enumeration value="no"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
       <xs:attribute name="objects">
         <xs:annotation>
           <xs:documentation>Draw boxes around objects.</xs:documentation>

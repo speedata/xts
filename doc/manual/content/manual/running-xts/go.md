@@ -60,7 +60,7 @@ Each call to `RunXTS` starts afresh, as a new `xts` process does: the records, t
 | `Variables` | Variables the layout can read, here `$title` | `--var` |
 | `Mode` | The modes `sd:mode()` tests for | `--mode` |
 | `SuppressInfo` | A reproducible PDF, with a fixed date and no random IDs | `--suppressinfo` |
-| `Tracing` | `grid` and `gridallocation` draw the grid and its allocation | `--trace` |
+| `Tracing` | `grid` and `gridallocation` draw the grid and its allocation, `linegrid` the baselines of a `<Flow>` | `--trace` |
 | `DumpFile` | Receives the XML dump of the output | `--dumpoutput` |
 | `Pdfua`, `Pdfa`, `Pdfx` | The PDF standards to claim, empty for none | `--pdfua`, `--pdfa`, `--pdfx` |
 | `LineModels` | Line models by name, see below | |

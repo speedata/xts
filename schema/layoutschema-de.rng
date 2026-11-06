@@ -3305,6 +3305,17 @@
                 </attribute>
             </optional>
             <optional>
+                <attribute name="linegrid">
+                    <a:documentation>Zeichnet nummerierte Linien auf die Grundlinien jedes Bands eines Flow, im Abstand der line-height des Grundtexts oder des Elements mit der CSS-Eigenschaft -bag-trace: linegrid.</a:documentation>
+                    <choice>
+                        <value>yes</value>
+                        <a:documentation>Zeige das Zeilenraster.</a:documentation>
+                        <value>no</value>
+                        <a:documentation>Zeilenraster nicht zeigen (Voreinstellung).</a:documentation>
+                    </choice>
+                </attribute>
+            </optional>
+            <optional>
                 <attribute name="objects">
                     <a:documentation>Zeichnet Kästchen um Objekte.</a:documentation>
                     <choice>

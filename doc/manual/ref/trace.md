@@ -131,6 +131,22 @@ Set debugging switches
 
 
 
+`linegrid` (optional)
+:   Draw numbered lines on the baselines of every band of a Flow, at the line-height of the running text or of the element with the CSS property -bag-trace: linegrid.
+
+
+
+    `yes`
+    :    Show the line grid.
+
+
+
+    `no`
+    :    Don't show the line grid (default).
+
+
+
+
 `objects` (optional)
 :   Draw boxes around objects.
 

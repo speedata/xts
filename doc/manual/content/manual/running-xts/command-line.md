@@ -45,7 +45,7 @@ xts <command> <parameters>
 | `--reference=NAME` | Base name of the reference PDF for `compare` (default: `reference`) |
 | `--suppressinfo` | Create reproducible PDF (no timestamps/random IDs) |
 | `--systemfonts` | Include system-installed fonts |
-| `--trace=NAMES` | Enable traces: `grid`, `gridallocation` |
+| `--trace=NAMES` | Enable traces: `grid`, `gridallocation`, `linegrid` |
 | `--verbose` | Extra logging output |
 
 ## Examples

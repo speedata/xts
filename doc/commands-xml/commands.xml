@@ -6009,6 +6009,30 @@
         </description>
       </choice>
     </attribute>
+    <attribute en="linegrid" optional="yes">
+      <description xml:lang="en">
+        <para>Draw numbered lines on the baselines of every band of a Flow, at the line-height of the running text or of the element with the CSS property -bag-trace: linegrid.</para>
+      </description>
+      <description xml:lang="de">
+        <para>Zeichnet nummerierte Linien auf die Grundlinien jedes Bands eines Flow, im Abstand der line-height des Grundtexts oder des Elements mit der CSS-Eigenschaft -bag-trace: linegrid.</para>
+      </description>
+      <choice en="yes">
+        <description xml:lang="en">
+          <para>Show the line grid.</para>
+        </description>
+        <description xml:lang="de">
+          <para>Zeige das Zeilenraster.</para>
+        </description>
+      </choice>
+      <choice en="no">
+        <description xml:lang="en">
+          <para>Don't show the line grid (default).</para>
+        </description>
+        <description xml:lang="de">
+          <para>Zeilenraster nicht zeigen (Voreinstellung).</para>
+        </description>
+      </choice>
+    </attribute>
     <attribute en="objects" optional="yes">
       <description xml:lang="en">
         <para>Draw boxes around objects.</para>

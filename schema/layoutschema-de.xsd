@@ -2178,6 +2178,17 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
+      <xs:attribute name="linegrid">
+        <xs:annotation>
+          <xs:documentation>Zeichnet nummerierte Linien auf die Grundlinien jedes Bands eines Flow, im Abstand der line-height des Grundtexts oder des Elements mit der CSS-Eigenschaft -bag-trace: linegrid.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="yes"></xs:enumeration>
+            <xs:enumeration value="no"></xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
       <xs:attribute name="objects">
         <xs:annotation>
           <xs:documentation>Zeichnet Kästchen um Objekte.</xs:documentation>

@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.15" date="2026-11-05">
+      <en summary="The trace linegrid shows the baselines of a Flow.">It draws numbered lines on the baselines of every band of a <tt>Flow</tt>, so text that has left the line grid shows at once. Turn it on with <tt>&lt;Trace linegrid="yes"/&gt;</tt>, <tt>xts --trace linegrid</tt> or the CSS property <tt>-bag-trace: linegrid</tt>.</en>
+    </entry>
+    <entry version="0.1.15" date="2026-11-05">
       <en summary="The CSS property hyphenate-character sets the text at a hyphenated line end.">It takes a string, as in <tt>hyphenate-character: "="</tt>, also for soft hyphens. An empty string sets nothing, and <tt>auto</tt> is the hyphen of the font.</en>
     </entry>
     <entry version="0.1.15" date="2026-11-05">
