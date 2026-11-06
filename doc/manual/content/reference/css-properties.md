@@ -65,7 +65,7 @@ The list comes from htmlbag, the HTML and CSS layer that XTS shares with glu and
 | `object-view-box` | `none`, or `inset()` with one to four lengths or percentages, on images (`<img>`, also with an SVG or PDF source). Not inherited. The region becomes the image's natural size and aspect ratio, and `width`, `height` and `max-width` size it as they size a whole image. `xywh()` and `rect()` are not supported and warn, as do the `round` corners of `inset()`, which are ignored. A bitmap's natural size is one point per pixel, as for its sizing, so `inset(10pt)` takes 10 pixels off each edge. Not read on an inline `<svg>` | `object-view-box: inset(10% 20%);` |
 | `background-color` | Color value, painted on block elements, inline elements and table cells | `background-color: #ffffcc;` |
 | `background` | Shorthand, only the color is read | `background: #ffffcc;` |
-| `display` | `block`, `inline`, `flow-root`, `none`. `flow-root` is a block that keeps clear of a float as a whole, where a block runs on under it. Other values are ignored, the table parts follow from the HTML tags | `display: none;` |
+| `display` | `block`, `inline`, `flow-root`, `none`. `flow-root` is a block that keeps clear of a float as a whole, where a block runs on under it. Other values are ignored with a warning, the table parts follow from the HTML tags | `display: none;` |
 
 ## Borders
 
@@ -174,7 +174,7 @@ Sets up a master page, see [Master Pages](/manual/page-layout/master-pages#page-
 
 | Property | Values | Example |
 |----------|--------|---------|
-| `size` | A paper name (`a0` to `a8`, `b0` to `b8`, `jis-b4`, `jis-b5`, `letter`, `legal`, `ledger`) with optional `portrait` or `landscape`, or width and height as two lengths | `size: a4 landscape;` |
+| `size` | A paper name (`a0` to `a8`, `b0` to `b8`, `jis-b4`, `jis-b5`, `letter`, `legal`, `ledger`) with optional `portrait` or `landscape`, or width and height as two lengths. Without a paper name or lengths the page is A4 | `size: a4 landscape;` |
 | `margin` | One to four lengths, the page margins | `margin: 2cm 1.5cm;` |
 | `margin-top`, `margin-right`, `margin-bottom`, `margin-left` | Length, one page margin | `margin-left: 3cm;` |
 | `border`, `border-top`, `border-right`, `border-bottom`, `border-left`, `border-width`, `border-style`, `border-color`, `border-radius` | As on elements, drawn around the page content area on every page | `border-left: 4pt solid navy;` |
@@ -192,7 +192,7 @@ Defines a font face, see [Fonts](/manual/text-and-styling/fonts). The descriptor
 | Property | Values | Example |
 |----------|--------|---------|
 | `font-family` | The name the font is used by | `font-family: "Minion Pro";` |
-| `font-style` | `normal`, `italic` | `font-style: italic;` |
+| `font-style` | `normal`, `italic`, `oblique`. `oblique` counts as `italic`, an angle is ignored | `font-style: italic;` |
 | `font-weight` | A weight name or number, or two of them for the range a variable font covers | `font-weight: 300 700;` |
 | `src` | Comma separated list of `url()` or `local()` sources, each optionally followed by `format()` and `tech()`. A file can be TrueType, OpenType (also collections), WOFF or WOFF2. The first source that can be used wins: one with an unsupported `format()` or `tech()`, a missing file, or a `local()` name of a font the document does not know is skipped | `src: url("minion.otf");` |
 | `font-feature-settings` | OpenType features switched on for this face, as on elements | `font-feature-settings: "onum";` |
