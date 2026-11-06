@@ -11,6 +11,20 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.15 (2026-11-05)
 
+- **The CSS property hyphenate-character sets the text at a hyphenated line end.**<br>
+  It takes a string, as in `hyphenate-character: "="`, also for soft hyphens. An empty string sets nothing, and `auto` is the hyphen of the font.
+- **The CSS property text-align-last aligns the last line.**<br>
+  It applies to the last line of a paragraph and a line before a `br`, with `auto`, `left`, `right`, `center`, `justify`, `start` and `end`. `text-align` takes `justify-all`, which sets both to `justify`. The line breaks do not change.
+- **The CSS property font-variant-numeric selects figures.**<br>
+  It takes `lining-nums` or `oldstyle-nums`, `proportional-nums` or `tabular-nums`, `diagonal-fractions` or `stacked-fractions`, `ordinal` and `slashed-zero`, and `font-variant` reads the same keywords. The font needs the OpenType features, nothing is synthesized.
+- **CSS: an id selector works without a space before the brace.**<br>
+  A rule such as `#intro{color:red}` or `.note#intro {color:red}` did not match, without a warning, as in minified CSS. The selector lost its hash.
+- **Hyphenation leaves two characters before a hyphen instead of three.**<br>
+  This is the default of TeX and gives breaks such as `hy-phen` and `Ei-senbahn`, so line breaks can change. Text with the old limit keeps it with `hyphenate-limit-chars: auto 3 3` in CSS.
+- **The CSS property hyphenate-limit-chars sets the shortest word to hyphenate.**<br>
+  It takes up to three values: the characters a word needs at least, and those before and after a hyphen, as in `hyphenate-limit-chars: 6 3 2`. Without it, hyphenation does not change.
+- **An `@page` rule can name several master pages.**<br>
+  The selector list `@page a, b` applies the rule to the master pages `a` and `b`. It used to name a page called `a, b`. The CSS property `page` of htmlbag has no effect in a `Flow`, which gives a warning: the master page selects the page here.
 - **Named strings: string-set and string() bring text of a Flow into the page margin.**<br>
   An element in a `Flow` gives a name a value with `string-set`, and `string(name)` shows it in a margin box of the `@page` rule, with `first`, `start`, `last` and `first-except`.
 - **An imported PDF page with RGB colors stays conforming in PDF/A and PDF/X.**<br>

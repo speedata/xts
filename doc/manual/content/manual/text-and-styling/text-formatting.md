@@ -185,6 +185,22 @@ Force a line break with `<Br/>`:
 </StyleSheet>
 ```
 
+`text-align-last` aligns the last line of a paragraph and every line before a line break, with the same values and `auto`, the default, which follows `text-align`. `justify` spreads such a line as well, but a line without a space stays at the start. The line breaks do not change. `text-align: justify-all` justifies every line, it sets `text-align-last` to `justify` as well.
+
+```xml
+<StyleSheet>
+    .verse { text-align: justify; text-align-last: center; }
+</StyleSheet>
+```
+
+`hyphens: auto` breaks words with the patterns of the language. `hyphenate-limit-chars` sets the characters a word needs at least, and those before and after a hyphen. `hyphenate-character` sets the text at the end of the line, also at a soft hyphen: a string such as `"="`, an empty string for a break without a sign, or `auto` for the hyphen of the font. A font without its glyphs keeps the hyphen and gives a warning.
+
+```xml
+<StyleSheet>
+    .body { hyphens: auto; hyphenate-limit-chars: 6 3 2; hyphenate-character: "="; }
+</StyleSheet>
+```
+
 `letter-spacing` adds space after every character, the spaces between words included, so a letter-spaced line keeps its words apart. For headings in capitals, a small value such as `0.05em` is common.
 
 `-bag-horizontal-scale` draws the glyphs narrower or wider by a fixed factor, given as a percentage or a number (`90%` or `0.9`). The line breaker sees the scaled width, so more text fits on a line. The value is inherited but does not compound: `100%` inside a scaled element returns to normal width.

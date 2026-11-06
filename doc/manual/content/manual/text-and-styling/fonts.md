@@ -146,6 +146,20 @@ OpenType fonts often include optional features like old-style figures, small cap
 
 A feature only has an effect when the font has it. The built-in `serif` font has old-style figures, but no small caps, so `font-feature-settings: "smcp"` leaves its text unchanged.
 
+### Figures
+
+For figures, use `font-variant-numeric` instead of the feature tags:
+
+```xml
+<StyleSheet>
+    .amount {
+        font-variant-numeric: lining-nums tabular-nums;
+    }
+</StyleSheet>
+```
+
+It takes `lining-nums` or `oldstyle-nums`, `proportional-nums` or `tabular-nums`, `diagonal-fractions` or `stacked-fractions`, `ordinal` and `slashed-zero`, and `font-variant` reads the same keywords. The value is inherited and replaced as a whole, so `font-variant-numeric: normal` on a child goes back to the default figures. `font-feature-settings` wins over it. As with the feature tags, the font needs the feature, nothing is synthesized.
+
 ### Small caps
 
 For small caps, use `font-variant-caps` instead of the feature tag:

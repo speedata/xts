@@ -25,6 +25,27 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.15" date="2026-11-05">
+      <en summary="The CSS property hyphenate-character sets the text at a hyphenated line end.">It takes a string, as in <tt>hyphenate-character: "="</tt>, also for soft hyphens. An empty string sets nothing, and <tt>auto</tt> is the hyphen of the font.</en>
+    </entry>
+    <entry version="0.1.15" date="2026-11-05">
+      <en summary="The CSS property text-align-last aligns the last line.">It applies to the last line of a paragraph and a line before a <tt>br</tt>, with <tt>auto</tt>, <tt>left</tt>, <tt>right</tt>, <tt>center</tt>, <tt>justify</tt>, <tt>start</tt> and <tt>end</tt>. <tt>text-align</tt> takes <tt>justify-all</tt>, which sets both to <tt>justify</tt>. The line breaks do not change.</en>
+    </entry>
+    <entry version="0.1.15" date="2026-11-05">
+      <en summary="The CSS property font-variant-numeric selects figures.">It takes <tt>lining-nums</tt> or <tt>oldstyle-nums</tt>, <tt>proportional-nums</tt> or <tt>tabular-nums</tt>, <tt>diagonal-fractions</tt> or <tt>stacked-fractions</tt>, <tt>ordinal</tt> and <tt>slashed-zero</tt>, and <tt>font-variant</tt> reads the same keywords. The font needs the OpenType features, nothing is synthesized.</en>
+    </entry>
+    <entry version="0.1.15" date="2026-11-05">
+      <en summary="CSS: an id selector works without a space before the brace.">A rule such as <tt>#intro{color:red}</tt> or <tt>.note#intro {color:red}</tt> did not match, without a warning, as in minified CSS. The selector lost its hash.</en>
+    </entry>
+    <entry version="0.1.15" date="2026-11-05">
+      <en summary="Hyphenation leaves two characters before a hyphen instead of three.">This is the default of TeX and gives breaks such as <tt>hy-phen</tt> and <tt>Ei-senbahn</tt>, so line breaks can change. Text with the old limit keeps it with <tt>hyphenate-limit-chars: auto 3 3</tt> in CSS.</en>
+    </entry>
+    <entry version="0.1.15" date="2026-11-05">
+      <en summary="The CSS property hyphenate-limit-chars sets the shortest word to hyphenate.">It takes up to three values: the characters a word needs at least, and those before and after a hyphen, as in <tt>hyphenate-limit-chars: 6 3 2</tt>. Without it, hyphenation does not change.</en>
+    </entry>
+    <entry version="0.1.15" date="2026-11-05">
+      <en summary="An @page rule can name several master pages.">The selector list <tt>@page a, b</tt> applies the rule to the master pages <tt>a</tt> and <tt>b</tt>. It used to name a page called <tt>a, b</tt>. The CSS property <tt>page</tt> of htmlbag has no effect in a <tt>Flow</tt>, which gives a warning: the master page selects the page here.</en>
+    </entry>
+    <entry version="0.1.15" date="2026-11-05">
       <en summary="Named strings: string-set and string() bring text of a Flow into the page margin.">An element in a <tt>Flow</tt> gives a name a value with <tt>string-set</tt>, and <tt>string(name)</tt> shows it in a margin box of the <tt>@page</tt> rule, with <tt>first</tt>, <tt>start</tt>, <tt>last</tt> and <tt>first-except</tt>.</en>
     </entry>
     <entry version="0.1.15" date="2026-11-05">
