@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.15 (2026-11-05)
 
+- **Named strings: string-set and string() bring text of a Flow into the page margin.**<br>
+  An element in a `Flow` gives a name a value with `string-set`, and `string(name)` shows it in a margin box of the `@page` rule, with `first`, `start`, `last` and `first-except`.
 - **An imported PDF page with RGB colors stays conforming in PDF/A and PDF/X.**<br>
   The `DefaultRGB` of a page does not reach into an imported PDF page, which has resources of its own, so an RGB letterhead or image broke the conformance. Every imported page and form in it now lists `DefaultRGB` as well.
 - **A PDF/X file has no RGB color resets and no links.**<br>

@@ -28,6 +28,7 @@ var noteOverrides = map[string]string{
 	"widows":             "Acts in a `Flow`; a paragraph placed with `PlaceObject` is never split",
 	"orphans":            "Acts in a `Flow`, as with `widows`",
 	"size":               "Has no effect in XTS, the page size comes from `PageFormat`",
+	"string-set":         "Not inherited. Acts in a `Flow`, an element placed with `PlaceObject` assigns nothing. Read in a page margin box with `string(name)`, optionally `string(name, first)`, `start`, `last` or `first-except`",
 	"vertical-align":     "",
 	"-bag-leading-model": "",
 }

@@ -117,6 +117,7 @@ The list comes from htmlbag, the HTML and CSS layer that XTS shares with glu and
 | `counter-reset` | Counter name with an optional start value, repeated for several counters | `counter-reset: section;` |
 | `counter-increment` | Counter name with an optional step, repeated for several counters | `counter-increment: section;` |
 | `content` | On `::before`, `::after`, `::marker` and in page margin boxes: strings, `attr()`, `counter()`, `counters()`, `target-counter()`, `target-counters()`, `target-text()`, `element()`, `leader()`. The counter functions take a counter style as their last argument | `content: counter(section, upper-roman) ". ";` |
+| `string-set` | `none`, or a name and a value of strings, `content()`, `attr()` and `counter()`, several pairs separated by commas. Not inherited. Acts in a `Flow`, an element placed with `PlaceObject` assigns nothing. Read in a page margin box with `string(name)`, optionally `string(name, first)`, `start`, `last` or `first-except` | `string-set: chapter content();` |
 
 ## Custom properties
 
