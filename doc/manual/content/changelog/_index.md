@@ -12,7 +12,7 @@ All user visible changes of XTS, newest first. The version at the top may not be
 ## 0.1.16 (2026-11-06)
 
 - **SVG images can be transparent.**<br>
-  An SVG image honors `opacity`, `fill-opacity`, `stroke-opacity` and colors with an alpha value such as `rgba()` and `#rrggbbaa`. An `opacity` on a group applies to the group as a whole. In PDF/X-3, which forbids transparency, the image stays opaque with a warning.
+  An SVG image honors `opacity`, `fill-opacity`, `stroke-opacity`, `stop-opacity` and colors with an alpha value such as `rgba()` and `#rrggbbaa`. An `opacity` on a group applies to the group as a whole. In PDF/X-3, which forbids transparency, the image stays opaque with a warning.
 - **SVG gradients are valid in PDF/A and PDF/X.**<br>
   A gradient in an SVG image used DeviceRGB, which PDF/A does not accept. It uses the sRGB color space of the document now.
 - **Backgrounds reach the bottom edge and are painted once.**<br>
