@@ -87,6 +87,10 @@ pdfua = "2"
 
 For PDF/UA you should also set a meaningful document `title` (see above); without it XTS emits a placeholder title and a warning. See the [Accessible PDF documents](../../accessibility) chapter for the full workflow.
 
+A PDF/X file is meant for printing, so links are left out with a warning: PDF/X allows neither an annotation in the printed area nor an action.
+
+Beside the CMYK output intent, RGB colors and RGB images count as sRGB, in PDF/A as well, so a file with RGB stays conforming. The print shop's RIP converts them to CMYK. For exact colors define them in CMYK or as spot colors.
+
 ## See also
 
 - [Accessible PDF documents](../../accessibility)

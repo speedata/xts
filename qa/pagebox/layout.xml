@@ -1,0 +1,13 @@
+<Layout xmlns="urn:speedata.de/2021/xts/en">
+  <PageFormat width="105mm" height="148mm"/>
+  <StyleSheet>
+    @page { margin: 1cm; bleed: 3mm; marks: crop; background-color: #dceefb; border: 1pt solid #336699; }
+    @page second { background-color: #fbeedc; }
+  </StyleSheet>
+  <DefineMasterPage name="second" test="sd:current-page() = 2" xmlns:sd="urn:speedata.de/2021/xtsfunctions/en"/>
+  <Record match="data">
+    <PlaceObject><TextBlock><Paragraph><Value>First page</Value></Paragraph></TextBlock></PlaceObject>
+    <ClearPage/>
+    <PlaceObject><TextBlock><Paragraph><Value>Second page</Value></Paragraph></TextBlock></PlaceObject>
+  </Record>
+</Layout>

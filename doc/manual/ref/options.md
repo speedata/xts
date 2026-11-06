@@ -26,7 +26,7 @@ Set publisher specific options.
 
 
 `cutmarks` (optional)
-:   Cut marks / crop marks will be placed in the PDF. The distance of the marks from the imaginary center is determined by the attribute `trim`, but is at least 5mm. The length of the cut marks is 1cm. The default of this attribute is `no`, that means no cut marks will be displayed.
+:   Cut marks / crop marks will be placed in the PDF. The distance of the marks from the trimmed page is the bleed, but at least 5pt. The length of the cut marks is 1cm. They print on every plate including spot colors. The default of this attribute is `no`, that means no cut marks will be displayed.
 
 
 

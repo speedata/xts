@@ -1748,7 +1748,7 @@
             </optional>
             <optional>
                 <attribute name="cutmarks">
-                    <a:documentation>Beschnittmarken (crop marks) werden ausgegeben. Der Abstand der Schnittmarken vom gedachten Mittelpunkt ergibt sich durch die Beschnittzugabe, mindestens beträgt sie jedoch 5pt. Die Länge der Schnittmarke ist 1cm. Voreinstellung ist nein, d.h. es werden keine Schnittmarken ausgegeben.</a:documentation>
+                    <a:documentation>Beschnittmarken (crop marks) werden ausgegeben. Der Abstand der Schnittmarken vom gedachten Mittelpunkt ergibt sich durch die Beschnittzugabe, mindestens beträgt sie jedoch 5pt. Die Länge der Schnittmarke ist 1cm. Die Marken drucken auf allen Platten, auch auf Sonderfarben. Voreinstellung ist nein, d.h. es werden keine Schnittmarken ausgegeben.</a:documentation>
                     <choice>
                         <value>yes</value>
                         <a:documentation>Beschnittmarken anzeigen.</a:documentation>

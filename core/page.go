@@ -246,6 +246,19 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 		pagenumber: xd.currentPagenumber,
 	}
 	g.setPage(pg)
+	if pt.cssPage != nil {
+		pd := htmlbag.PageDimensions{
+			Width:        pg.pageWidth,
+			Height:       pg.pageHeight,
+			MarginTop:    pt.marginTop,
+			MarginBottom: pt.marginBottom,
+			MarginLeft:   pt.marginLeft,
+			MarginRight:  pt.marginRight,
+		}
+		if err := xd.cssbuilder.OutputPageBox(pd, pt.cssPage); err != nil {
+			return nil, nil, err
+		}
+	}
 
 	var atPageCreation func()
 	xd.currentGrid = pg.pagegrid

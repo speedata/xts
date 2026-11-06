@@ -1146,7 +1146,7 @@
       </xs:attribute>
       <xs:attribute name="cutmarks">
         <xs:annotation>
-          <xs:documentation>Beschnittmarken (crop marks) werden ausgegeben. Der Abstand der Schnittmarken vom gedachten Mittelpunkt ergibt sich durch die Beschnittzugabe, mindestens beträgt sie jedoch 5pt. Die Länge der Schnittmarke ist 1cm. Voreinstellung ist nein, d.h. es werden keine Schnittmarken ausgegeben.</xs:documentation>
+          <xs:documentation>Beschnittmarken (crop marks) werden ausgegeben. Der Abstand der Schnittmarken vom gedachten Mittelpunkt ergibt sich durch die Beschnittzugabe, mindestens beträgt sie jedoch 5pt. Die Länge der Schnittmarke ist 1cm. Die Marken drucken auf allen Platten, auch auf Sonderfarben. Voreinstellung ist nein, d.h. es werden keine Schnittmarken ausgegeben.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
           <xs:restriction base="xs:string">

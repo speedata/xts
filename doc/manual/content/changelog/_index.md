@@ -11,6 +11,14 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.15 (2026-11-05)
 
+- **A PDF/X file has no RGB color resets and no links.**<br>
+  The return to black after colored text used RGB, which a PDF/X file beside a CMYK output intent must not contain, even for an invisible space. It is gray now, in every format, and prints on the black plate only. Links are left out of a PDF/X file with a warning, since PDF/X allows neither an annotation in the printed area nor an action.
+- **The `@page` rule of a master page draws its background and border.**<br>
+  The CSS reference listed `background-color`, `background-image` and `border` for `@page`, but only `bleed`, `marks`, the margins and the margin boxes had an effect. The background and the border are now drawn underneath the content, and the background fills the bleed. `padding` still has no effect, the grid defines the content area.
+- **Crop marks always fit on the page.**<br>
+  With no bleed or one below 5pt the page was too small for the marks and cut off their outer end.
+- **PDF/A and PDF/X files can have RGB colors, and PDF/A files links.**<br>
+  Link annotations in PDF/A carry the print flag, and in PDF/A and PDF/X every page defines `DefaultRGB` as sRGB, as both ask for beside a CMYK output intent.
 - **Spot colors are painted, also with a space in their name.**<br>
   The page resources referred to a spot color with a number instead of a reference, and a space in the ink name such as in `PANTONE 300 C` broke the color space. Viewers reported a bad color space and no separation plate came out.
 - **The CSS `@page` rule of the first page can set the bleed and crop marks.**<br>

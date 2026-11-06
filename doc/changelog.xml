@@ -25,6 +25,18 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.15" date="2026-11-05">
+      <en summary="A PDF/X file has no RGB color resets and no links.">The return to black after colored text used RGB, which a PDF/X file beside a CMYK output intent must not contain, even for an invisible space. It is gray now, in every format, and prints on the black plate only. Links are left out of a PDF/X file with a warning, since PDF/X allows neither an annotation in the printed area nor an action.</en>
+    </entry>
+    <entry version="0.1.15" date="2026-11-05">
+      <en summary="The @page rule of a master page draws its background and border.">The CSS reference listed <tt>background-color</tt>, <tt>background-image</tt> and <tt>border</tt> for <tt>@page</tt>, but only <tt>bleed</tt>, <tt>marks</tt>, the margins and the margin boxes had an effect. The background and the border are now drawn underneath the content, and the background fills the bleed. <tt>padding</tt> still has no effect, the grid defines the content area.</en>
+    </entry>
+    <entry version="0.1.15" date="2026-11-05">
+      <en summary="Crop marks always fit on the page.">With no bleed or one below 5pt the page was too small for the marks and cut off their outer end.</en>
+    </entry>
+    <entry version="0.1.15" date="2026-11-05">
+      <en summary="PDF/A and PDF/X files can have RGB colors, and PDF/A files links.">Link annotations in PDF/A carry the print flag, and in PDF/A and PDF/X every page defines <tt>DefaultRGB</tt> as sRGB, as both ask for beside a CMYK output intent.</en>
+    </entry>
+    <entry version="0.1.15" date="2026-11-05">
       <en summary="Spot colors are painted, also with a space in their name.">The page resources referred to a spot color with a number instead of a reference, and a space in the ink name such as in <tt>PANTONE 300 C</tt> broke the color space. Viewers reported a bad color space and no separation plate came out.</en>
     </entry>
     <entry version="0.1.15" date="2026-11-05">

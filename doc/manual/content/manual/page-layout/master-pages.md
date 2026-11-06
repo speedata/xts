@@ -77,6 +77,7 @@ The rules for combining both mechanisms:
 - The margin boxes are rendered when the page is written to the PDF, like [`<AtPageShipout>`](../page-hooks), so `counter(page)` is the final page number.
 - Their content is limited to text, `counter(page)` and an image via `url()`. Tables, several paragraphs or values from the data still need a [page hook](../page-hooks).
 - The CSS page selectors `:first`, `:left` and `:right` are not evaluated. The `test` attribute selects the master page.
+- `background-color`, `background-image` and `border` of the `@page` rule are drawn underneath the content of the page. `padding` has no effect, because the grid defines the content area.
 - The `@page` descriptors `bleed` and `marks: crop` are read from the rule of the first page and hold for the whole document. `bleed` and `cutmarks` on [`<Options>`](/reference/commands/options) win over them.
 
 ## Page format

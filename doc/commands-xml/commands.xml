@@ -3357,10 +3357,10 @@
     </attribute>
     <attribute en="cutmarks" optional="yes">
       <description xml:lang="en">
-        <para>Cut marks / crop marks will be placed in the PDF. The distance of the marks from the imaginary center is determined by the attribute <tt>trim</tt>, but is at least 5mm. The length of the cut marks is 1cm. The default of this attribute is <tt>no</tt>, that means no cut marks will be displayed.</para>
+        <para>Cut marks / crop marks will be placed in the PDF. The distance of the marks from the trimmed page is the bleed, but at least 5pt. The length of the cut marks is 1cm. They print on every plate including spot colors. The default of this attribute is <tt>no</tt>, that means no cut marks will be displayed.</para>
       </description>
       <description xml:lang="de">
-        <para>Beschnittmarken (crop marks) werden ausgegeben. Der Abstand der Schnittmarken vom gedachten Mittelpunkt ergibt sich durch die Beschnittzugabe, mindestens beträgt sie jedoch 5pt. Die Länge der Schnittmarke ist 1cm. Voreinstellung ist nein, d.h. es werden keine Schnittmarken ausgegeben.</para>
+        <para>Beschnittmarken (crop marks) werden ausgegeben. Der Abstand der Schnittmarken vom gedachten Mittelpunkt ergibt sich durch die Beschnittzugabe, mindestens beträgt sie jedoch 5pt. Die Länge der Schnittmarke ist 1cm. Die Marken drucken auf allen Platten, auch auf Sonderfarben. Voreinstellung ist nein, d.h. es werden keine Schnittmarken ausgegeben.</para>
       </description>
       <choice en="yes">
         <description xml:lang="en">

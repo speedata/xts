@@ -27,6 +27,7 @@ var noteOverrides = map[string]string{
 	"page-break-inside":  "`avoid` keeps a paragraph or a container in one frame of a `Flow` unless it is taller than the frame. XTS does not split a table row: a row that does not fit moves to the next frame whole",
 	"widows":             "Acts in a `Flow`; a paragraph placed with `PlaceObject` is never split",
 	"orphans":            "Acts in a `Flow`, as with `widows`",
+	"size":               "Has no effect in XTS, the page size comes from `PageFormat`",
 	"vertical-align":     "",
 	"-bag-leading-model": "",
 }

@@ -174,7 +174,7 @@ Sets up a master page, see [Master Pages](/manual/page-layout/master-pages#page-
 
 | Property | Values | Example |
 |----------|--------|---------|
-| `size` | A paper name (`a0` to `a8`, `b0` to `b8`, `jis-b4`, `jis-b5`, `letter`, `legal`, `ledger`) with optional `portrait` or `landscape`, or width and height as two lengths. Without a paper name or lengths the page is A4 | `size: a4 landscape;` |
+| `size` | A paper name (`a0` to `a8`, `b0` to `b8`, `jis-b4`, `jis-b5`, `letter`, `legal`, `ledger`) with optional `portrait` or `landscape`, or width and height as two lengths. Has no effect in XTS, the page size comes from `PageFormat` | `size: a4 landscape;` |
 | `margin` | One to four lengths, the page margins | `margin: 2cm 1.5cm;` |
 | `margin-top`, `margin-right`, `margin-bottom`, `margin-left` | Length, one page margin | `margin-left: 3cm;` |
 | `border`, `border-top`, `border-right`, `border-bottom`, `border-left`, `border-width`, `border-style`, `border-color`, `border-radius` | As on elements, drawn around the page content area on every page | `border-left: 4pt solid navy;` |
