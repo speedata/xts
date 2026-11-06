@@ -9,8 +9,12 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
-## 0.1.15 (2026-11-04)
+## 0.1.15 (2026-11-05)
 
+- **Spot colors are painted, also with a space in their name.**<br>
+  The page resources referred to a spot color with a number instead of a reference, and a space in the ink name such as in `PANTONE 300 C` broke the color space. Viewers reported a bad color space and no separation plate came out.
+- **The CSS `@page` rule of the first page can set the bleed and crop marks.**<br>
+  The descriptors `bleed` and `marks: crop` in the `@page` rule of the first page work like `bleed` and `cutmarks` on `<Options>`, which win where both are given. With crop marks and without a bleed value the bleed is 6pt. Crop marks now print on every plate including spot colors (Separation `All`), and their page stream no longer contains a text operator outside a text object, which a preflight check reports.
 - **`@font-face` rules of one family combine, with unicode-range selecting the file per character ([htmlbag#105](https://github.com/boxesandglue/htmlbag/issues/105)).**<br>
   Several `@font-face` rules with the same family, weight and style replaced each other, and only the last one was used. They form one face now: a character takes the last rule whose `unicode-range` contains it and whose font has a glyph for it, and a rule without `unicode-range` covers all characters. Google Fonts stylesheets, which split a family into subsets, and the version 4 names of Font Awesome work. A font file none of the text falls into is not loaded. In a `src` list with several entries the first usable one is taken instead of the last, skipping unsupported formats and missing files.
 

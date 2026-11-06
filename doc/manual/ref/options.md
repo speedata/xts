@@ -20,7 +20,7 @@ Set publisher specific options.
 
 
 `bleed` (length, optional)
-:   The amount of bleed. Defaults to 0mm.
+:   The amount of bleed. Defaults to 0mm, or the value of the CSS `@page` rule of the first page.
 
 
 

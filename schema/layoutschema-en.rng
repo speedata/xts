@@ -1743,7 +1743,7 @@
             <lsp:doc href="https://doc.speedata.de/xts/reference/commands/options/"></lsp:doc>
             <optional>
                 <attribute name="bleed">
-                    <a:documentation>The amount of bleed. Defaults to 0mm.</a:documentation>
+                    <a:documentation>The amount of bleed. Defaults to 0mm, or the value of the CSS @page rule of the first page.</a:documentation>
                 </attribute>
             </optional>
             <optional>

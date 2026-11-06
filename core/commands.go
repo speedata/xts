@@ -1950,9 +1950,11 @@ func cmdOptions(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, erro
 
 	if attValues.Bleed != nil {
 		xd.document.Doc.Bleed = *attValues.Bleed
+		xd.optionsBleed = true
 	}
 	if attValues.Cutmarks != nil {
 		xd.document.Doc.ShowCutmarks = *attValues.Cutmarks
+		xd.optionsCutmarks = true
 	}
 	if features := attValues.Features; features != nil {
 		for str := range strings.SplitSeq(*features, ",") {

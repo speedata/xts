@@ -1141,7 +1141,7 @@
     <xs:complexType>
       <xs:attribute name="bleed">
         <xs:annotation>
-          <xs:documentation>Die Größe des Anschnitts (bleed). Voreinstellung ist 0mm.</xs:documentation>
+          <xs:documentation>Die Größe des Anschnitts (bleed). Voreinstellung ist 0mm oder der Wert der CSS-Regel @page der ersten Seite.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="cutmarks">

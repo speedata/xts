@@ -96,6 +96,24 @@ func (xd *xtsDocument) resolvePageCSS(pt *pagetype) error {
 	return nil
 }
 
+// applyPageMarks takes bleed and crop marks from the @page rule of the first
+// page, they hold for the whole document. Like the margin attribute of
+// DefineMasterPage, <Options> is authoritative: the rule fills in only what
+// Options left unset.
+func (xd *xtsDocument) applyPageMarks(pt *pagetype) {
+	if pt.cssPage == nil {
+		return
+	}
+	d := xd.document.Doc
+	m := pt.cssPage.Marks()
+	if !xd.optionsBleed {
+		d.Bleed = m.Bleed
+	}
+	if !xd.optionsCutmarks {
+		d.ShowCutmarks = m.Crop
+	}
+}
+
 func (xd *xtsDocument) newPagetype(name string, test string) (*pagetype, error) {
 	slog.Info("Define new page type", "type", name)
 	pt := &pagetype{
@@ -194,6 +212,9 @@ func newPage(xd *xtsDocument) (*page, func(), error) {
 		return nil, nil, err
 	}
 	d := xd.document.Doc
+	if len(d.Pages) == 0 {
+		xd.applyPageMarks(pt)
+	}
 	g.marginLeft = pt.marginLeft
 	g.marginBottom = pt.marginBottom
 	g.marginTop = pt.marginTop

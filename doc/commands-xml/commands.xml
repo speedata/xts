@@ -3349,10 +3349,10 @@
     <childelements/>
     <attribute en="bleed" type="length" optional="yes">
       <description xml:lang="en">
-        <para>The amount of bleed. Defaults to 0mm.</para>
+        <para>The amount of bleed. Defaults to 0mm, or the value of the CSS <tt>@page</tt> rule of the first page.</para>
       </description>
       <description xml:lang="de">
-        <para>Die Größe des Anschnitts (bleed). Voreinstellung ist 0mm.</para>
+        <para>Die Größe des Anschnitts (bleed). Voreinstellung ist 0mm oder der Wert der CSS-Regel <tt>@page</tt> der ersten Seite.</para>
       </description>
     </attribute>
     <attribute en="cutmarks" optional="yes">

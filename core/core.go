@@ -56,6 +56,8 @@ type xtsDocument struct {
 	masterpages        []*pagetype
 	marker             mapmarker
 	aux                *auxfile // contents of the previous run, if available
+	optionsBleed       bool     // <Options> gave the bleed, it wins over @page
+	optionsCutmarks    bool     // <Options> gave cutmarks, they win over @page
 	currentPage        *page
 	currentGrid        *grid
 	currentSlate       *slate

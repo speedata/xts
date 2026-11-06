@@ -179,8 +179,10 @@ Sets up a master page, see [Master Pages](/manual/page-layout/master-pages#page-
 | `margin-top`, `margin-right`, `margin-bottom`, `margin-left` | Length, one page margin | `margin-left: 3cm;` |
 | `border`, `border-top`, `border-right`, `border-bottom`, `border-left`, `border-width`, `border-style`, `border-color`, `border-radius` | As on elements, drawn around the page content area on every page | `border-left: 4pt solid navy;` |
 | `padding`, `padding-top`, `padding-right`, `padding-bottom`, `padding-left` | Length, space between the page border and the content | `padding: 5mm;` |
-| `background-color` | Color value, fills the sheet | `background-color: #fafafa;` |
-| `background-image` | `url()` of an image or PDF file, scaled to the full sheet on every page that uses this `@page` rule | `background-image: url("letterhead.pdf");` |
+| `bleed` | `auto` (the default) or a length of zero or more. How far the content may run past the trimmed sheet. The page grows by it on all sides and gets a BleedBox, the page background fills it. `auto` is 6pt with crop marks and 0 otherwise. Holds for the whole document, the rule of the first page decides | `bleed: 3mm;` |
+| `marks` | `none` (the default) or `crop`. Crop marks outside the bleed, on every plate including spot colors. `cross` warns and is ignored. Holds for the whole document, the rule of the first page decides | `marks: crop;` |
+| `background-color` | Color value, fills the sheet and its bleed | `background-color: #fafafa;` |
+| `background-image` | `url()` of an image or PDF file, scaled to the full sheet and its bleed on every page that uses this `@page` rule | `background-image: url("letterhead.pdf");` |
 | `-bag-background-page` | Page number of a multi page PDF used as `background-image`, the default is 1 | `-bag-background-page: 2;` |
 
 The margin boxes `@top-left-corner`, `@top-left`, `@top-center`, `@top-right`, `@top-right-corner`, `@left-top`, `@left-middle`, `@left-bottom`, `@right-top`, `@right-middle`, `@right-bottom`, `@bottom-left-corner`, `@bottom-left`, `@bottom-center`, `@bottom-right` and `@bottom-right-corner` are nested in the `@page` rule. They take `content`, `width`, `height` and the text and border properties above.

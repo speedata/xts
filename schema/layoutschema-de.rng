@@ -1743,7 +1743,7 @@
             <lsp:doc href="https://doc.speedata.de/xts/reference/commands/options/"></lsp:doc>
             <optional>
                 <attribute name="bleed">
-                    <a:documentation>Die Größe des Anschnitts (bleed). Voreinstellung ist 0mm.</a:documentation>
+                    <a:documentation>Die Größe des Anschnitts (bleed). Voreinstellung ist 0mm oder der Wert der CSS-Regel @page der ersten Seite.</a:documentation>
                 </attribute>
             </optional>
             <optional>

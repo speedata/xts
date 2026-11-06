@@ -1141,7 +1141,7 @@
     <xs:complexType>
       <xs:attribute name="bleed">
         <xs:annotation>
-          <xs:documentation>The amount of bleed. Defaults to 0mm.</xs:documentation>
+          <xs:documentation>The amount of bleed. Defaults to 0mm, or the value of the CSS @page rule of the first page.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="cutmarks">
