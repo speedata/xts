@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.15 (2026-11-05)
 
+- **An imported PDF page with RGB colors stays conforming in PDF/A and PDF/X.**<br>
+  The `DefaultRGB` of a page does not reach into an imported PDF page, which has resources of its own, so an RGB letterhead or image broke the conformance. Every imported page and form in it now lists `DefaultRGB` as well.
 - **A PDF/X file has no RGB color resets and no links.**<br>
   The return to black after colored text used RGB, which a PDF/X file beside a CMYK output intent must not contain, even for an invisible space. It is gray now, in every format, and prints on the black plate only. Links are left out of a PDF/X file with a warning, since PDF/X allows neither an annotation in the printed area nor an action.
 - **The `@page` rule of a master page draws its background and border.**<br>
