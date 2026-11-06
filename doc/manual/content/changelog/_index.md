@@ -9,6 +9,11 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
+## 0.1.15 (2026-11-04)
+
+- **`@font-face` rules of one family combine, with unicode-range selecting the file per character ([htmlbag#105](https://github.com/boxesandglue/htmlbag/issues/105)).**<br>
+  Several `@font-face` rules with the same family, weight and style replaced each other, and only the last one was used. They form one face now: a character takes the last rule whose `unicode-range` contains it and whose font has a glyph for it, and a rule without `unicode-range` covers all characters. Google Fonts stylesheets, which split a family into subsets, and the version 4 names of Font Awesome work. A font file none of the text falls into is not loaded. In a `src` list with several entries the first usable one is taken instead of the last, skipping unsupported formats and missing files.
+
 ## 0.1.14 (2026-11-04)
 
 - **A zero width space is a break opportunity without width ([boxesandglue#99](https://github.com/boxesandglue/boxesandglue/issues/99)).**<br>

@@ -24,6 +24,9 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
+    <entry version="0.1.15" date="2026-11-04">
+      <en summary="@font-face rules of one family combine, with unicode-range selecting the file per character (htmlbag#105).">Several <tt>@font-face</tt> rules with the same family, weight and style replaced each other, and only the last one was used. They form one face now: a character takes the last rule whose <tt>unicode-range</tt> contains it and whose font has a glyph for it, and a rule without <tt>unicode-range</tt> covers all characters. Google Fonts stylesheets, which split a family into subsets, and the version 4 names of Font Awesome work. A font file none of the text falls into is not loaded. In a <tt>src</tt> list with several entries the first usable one is taken instead of the last, skipping unsupported formats and missing files.</en>
+    </entry>
     <entry version="0.1.14" date="2026-11-04">
       <en summary="A zero width space is a break opportunity without width (boxesandglue#99).">U+200B in the text allows a line break at that point and takes no room otherwise. Before, it was set as a space of the font's space width, or dropped between letters so that the line could not break there. With <tt>white-space</tt> <tt>pre</tt> or <tt>nowrap</tt> it does not break.</en>
     </entry>

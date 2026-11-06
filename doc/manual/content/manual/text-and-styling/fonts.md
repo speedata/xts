@@ -6,7 +6,7 @@ linktitle: Fonts
 
 # Using Fonts
 
-XTS supports TrueType (`.ttf`), OpenType (`.otf`) and TrueType/OpenType collections (`.ttc`) fonts. Loading them is done through CSS `@font-face` rules -- the same syntax you'd use on the web.
+XTS supports TrueType (`.ttf`), OpenType (`.otf`) and TrueType/OpenType collections (`.ttc`) fonts, and the web formats WOFF and WOFF2. Loading them is done through CSS `@font-face` rules -- the same syntax you'd use on the web.
 
 ## Loading font families
 
@@ -50,6 +50,8 @@ When the text asks for a variant the family does not have, XTS uses the closest 
 ```
 
 `@font-face` also takes `size-adjust`, which scales a face so that it matches the size of its neighbors, and `ascent-override`, `descent-override` and `line-gap-override`. `ascent-override` and `descent-override` set the font's content area: the band an inline `background-color` covers and the edge `text-box-trim` cuts at. For the height of a line the built-in line models use none of the three overrides; only a line model registered from Go reads them (see [Running XTS from Go](../../running-xts/go)). The [CSS reference](/reference/css-properties) lists all descriptors.
+
+Several `@font-face` rules with the same family, weight and style form one face. With `unicode-range` each file covers part of Unicode, as in the stylesheets of Google Fonts, which split a family into subsets such as latin and latin-ext. A character is taken from the last rule whose range contains it and whose font has a glyph for it, before the next family of the `font-family` list is tried; a rule without `unicode-range` covers all characters. A file none of the text falls into is not loaded. In a `src` list with several entries the first usable one is taken: unsupported formats and missing files are skipped.
 
 ## Selecting fonts
 
