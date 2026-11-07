@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.16" date="2026-11-06">
+      <en summary="SVG images have radial gradients and bounding box units.">An SVG image reads <tt>radialGradient</tt> with its focus and, with <tt>stop-opacity</tt>, soft edges. It used to paint such a shape black. Without <tt>gradientUnits</tt> a gradient now refers to the bounding box of its shape, and percentages work, as in a browser. A reference to an unknown gradient paints nothing and writes a warning, as does a gradient on a stroke or on text, which is not supported.</en>
+    </entry>
+    <entry version="0.1.16" date="2026-11-06">
       <en summary="SVG images can be transparent.">An SVG image honors <tt>opacity</tt>, <tt>fill-opacity</tt>, <tt>stroke-opacity</tt>, <tt>stop-opacity</tt> and colors with an alpha value such as <tt>rgba()</tt> and <tt>#rrggbbaa</tt>. An <tt>opacity</tt> on a group applies to the group as a whole. In PDF/X-3, which forbids transparency, the image stays opaque with a warning.</en>
     </entry>
     <entry version="0.1.16" date="2026-11-06">
