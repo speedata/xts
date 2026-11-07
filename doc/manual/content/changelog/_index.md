@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.16 (2026-11-06)
 
+- **Color fonts keep the alpha of their palette and the color of the text.**<br>
+  The layers of a COLR font were all opaque, now they have the alpha of their palette entry, multiplied with the alpha of the text color. PDF/X-3 stays opaque with a warning. The text after such a glyph lost its color and turned black, now it keeps it. A layer that asks for the foreground color takes the color of the text instead of black.
 - **SVG images can use the colors of the document.**<br>
   The `fill` and the `stroke` of an SVG image take a name from `<DefineColor>` or `@-bag-color`, including spot colors, CMYK colors and overprinting, so a logo can use the ink of the document. Such a name wins over a color name of SVG. The stops of a gradient stay RGB and write a warning. A color that cannot be read now counts as not given, as in a browser: a fill used to vanish, now it is inherited or black, with a warning. SVG images also know `hsl()` and `hsla()`.
 - **HTML content knows hsl() and warns about bad colors.**<br>
