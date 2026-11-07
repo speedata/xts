@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.16" date="2026-11-06">
+      <en summary="An SVG image with a viewBox gets its size from one side.">An <tt>&lt;svg&gt;</tt> with a <tt>viewBox</tt> and only <tt>width</tt> had the height 0 and stayed invisible, and with only <tt>height</tt> it kept the size of the <tt>viewBox</tt>. The missing side now follows from the aspect ratio of the <tt>viewBox</tt>, as in a browser. A percentage no longer counts as a size of the image, so <tt>width="100%" height="100%"</tt> keeps the aspect ratio.</en>
+    </entry>
+    <entry version="0.1.16" date="2026-11-06">
       <en summary="A style element in the body of HTML content works.">A <tt>&lt;style&gt;</tt> element after the start of the body had its source set as visible text and its rules were ignored. Its rules now apply as in a browser, in document order. <tt>&lt;script&gt;</tt>, <tt>&lt;title&gt;</tt>, <tt>&lt;link&gt;</tt>, <tt>&lt;meta&gt;</tt> and <tt>&lt;template&gt;</tt> in the body show nothing either.</en>
     </entry>
     <entry version="0.1.16" date="2026-11-06">

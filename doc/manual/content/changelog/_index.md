@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.16 (2026-11-06)
 
+- **An SVG image with a viewBox gets its size from one side.**<br>
+  An `<svg>` with a `viewBox` and only `width` had the height 0 and stayed invisible, and with only `height` it kept the size of the `viewBox`. The missing side now follows from the aspect ratio of the `viewBox`, as in a browser. A percentage no longer counts as a size of the image, so `width="100%" height="100%"` keeps the aspect ratio.
 - **A style element in the body of HTML content works.**<br>
   A `<style>` element after the start of the body had its source set as visible text and its rules were ignored. Its rules now apply as in a browser, in document order. `<script>`, `<title>`, `<link>`, `<meta>` and `<template>` in the body show nothing either.
 - **PDF/UA: all text of HTML content is tagged.**<br>
