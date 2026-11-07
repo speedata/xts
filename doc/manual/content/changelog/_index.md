@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.17 (2026-11-07)
 
+- **Color emoji can be searched and copied.**<br>
+  A glyph of a color font extracted as U+FFFD (COLR) or not at all (bitmaps from sbix or CBDT, SVG glyphs), so emoji were lost for search, copy and assistive technology. Each one is now in a marked-content sequence with its source characters as `ActualText`, a sequence of several characters such as 👩‍💻 included. A bitmap or SVG glyph also shows its base glyph as invisible text. The page looks the same.
 - **A length without a unit in an SVG image is a pixel, 0.75pt, as in a browser.**<br>
   An SVG image with `width="96"` used to be 96pt wide, now it is 72pt, as in a browser and as `96px` in CSS. This changes the natural size of an SVG whose size has no unit. A size in `mm`, `pt` or another absolute unit stays as it was. Lengths inside the drawing now take their units too: `<rect width="10mm">` is 10mm, not 10 user units, and `Q` is known. A percentage inside the drawing refers to the viewBox, and `stroke-width` with a unit is no longer ignored. An image exported with a size in px that means points, as some programs do, is now smaller; give its size in the layout or in the file in pt.
 - **HTML content reads link elements as a browser does.**<br>
