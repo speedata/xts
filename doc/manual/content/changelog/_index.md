@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.16 (2026-11-07)
 
+- **XTS warns when page numbers from the aux file are out of date.**<br>
+  If `sd:page-number()` or `sd:last-page-number()` gave a value that is not the one of the finished run, XTS writes a warning with the names, as the document needs another run. A mark that nobody reads does not count. The marks in the aux file are now sorted, so two runs with the same result write the same file, and `pdftarget` is read back. [#76](https://github.com/speedata/xts/issues/76)
 - **Transparent table cells mix with their row.**<br>
   In HTML tables a cell with a transparent background now lies on top of its row, and a row on top of its row group, as in CSS. Before, the color of the cell replaced the one of the row. An opaque color still hides what is below. `background-color: transparent` on a cell painted a black box, now the row shows through.
 - **Color fonts keep the alpha of their palette and the color of the text.**<br>

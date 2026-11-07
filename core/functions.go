@@ -373,10 +373,8 @@ func fnImageWidth(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequen
 
 func fnLastPagenumber(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {
 	xd := ctx.Store["xd"].(*xtsDocument)
-	if a := xd.aux; a != nil {
-		return goxpath.Sequence{a.LastPage}, nil
-	}
-	return goxpath.Sequence{0}, nil
+	xd.lastPageRead = true
+	return goxpath.Sequence{xd.lastPageOfPreviousRun()}, nil
 }
 
 func fnMdFive(ctx *goxpath.Context, args []goxpath.Sequence) (goxpath.Sequence, error) {

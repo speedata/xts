@@ -56,8 +56,10 @@ type xtsDocument struct {
 	masterpages        []*pagetype
 	marker             mapmarker
 	aux                *auxfile // contents of the previous run, if available
-	optionsBleed       bool     // <Options> gave the bleed, it wins over @page
-	optionsCutmarks    bool     // <Options> gave cutmarks, they win over @page
+	marksRead          map[markRead]bool
+	lastPageRead       bool // the layout asked for sd:last-page-number()
+	optionsBleed       bool // <Options> gave the bleed, it wins over @page
+	optionsCutmarks    bool // <Options> gave cutmarks, they win over @page
 	currentPage        *page
 	currentGrid        *grid
 	currentSlate       *slate
@@ -108,6 +110,7 @@ func newXTSDocument() *xtsDocument {
 		templates:         make(map[string]*goxml.Element),
 		store:             make(map[any]any),
 		marker:            make(mapmarker),
+		marksRead:         make(map[markRead]bool),
 		statCache:         make(map[string]string),
 	}
 	xd.layoutcss.FileFinder = xd.findFile
@@ -188,6 +191,11 @@ func (xd *xtsDocument) setupPage() {
 type PublishingInfo struct {
 	Pages    int
 	FileSize int64
+	// OutOfDate names the references that gave the layout an old value: marks
+	// read with sd:page-number() and sd:last-page-number(). If it is not empty,
+	// another run changes the document. Reading the aux file in another way,
+	// with $_lastpage or LoadXML, is not noticed.
+	OutOfDate []string
 }
 
 // XTSConfig is the configuration file for PDF generation.
@@ -376,6 +384,7 @@ func RunXTS(cfg *XTSConfig) error {
 	if err = d.writeAuxXML(); err != nil {
 		return err
 	}
+	d.cfg.Info.OutOfDate = d.outOfDate()
 	d.cfg.Info.Pages = d.currentPagenumber
 	d.cfg.Info.FileSize = d.document.Doc.PDFWriter.Size()
 

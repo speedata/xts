@@ -4,7 +4,9 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
+	"maps"
 	"os"
+	"slices"
 	"strconv"
 
 	"github.com/boxesandglue/boxesandglue/backend/node"
@@ -65,17 +67,25 @@ func (mm *mapmarker) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 					if err != nil {
 						return err
 					}
+				case "pdftarget":
+					m.pdftarget, err = strconv.ParseBool(attr.Value)
+					if err != nil {
+						return err
+					}
 				}
 			}
 			(*mm)[m.name] = m
-			// fmt.Println(tok, err)
 		}
 	}
 	return nil
 }
+
+// MarshalXML writes the marks sorted by name, so that two runs with the same
+// result write the same file.
 func (mm mapmarker) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	e.EncodeToken(start)
-	for _, v := range mm {
+	for _, name := range slices.Sorted(maps.Keys(mm)) {
+		v := mm[name]
 		mStart := xml.StartElement{Name: xml.Name{Local: "mark"}}
 		mStart.Attr = append(mStart.Attr, xml.Attr{Name: xml.Name{Local: "name"}, Value: v.name})
 		mStart.Attr = append(mStart.Attr, xml.Attr{Name: xml.Name{Local: "page"}, Value: fmt.Sprintf("%d", v.pagenumber)})
@@ -135,14 +145,47 @@ func (d *xtsDocument) readAuxFile() (*auxfile, error) {
 	return &aux, nil
 }
 
+// getMarker returns the mark of this run or else the one of the previous run.
+// It notes the answer for outOfDate.
 func (d *xtsDocument) getMarker(name string) (marker, bool) {
-	if m, ok := d.marker[name]; ok {
-		return m, ok
+	m, ok := d.marker[name]
+	if !ok && d.aux != nil {
+		m, ok = d.aux.Marker[name]
 	}
-	if d.aux != nil {
-		if m, ok := d.aux.Marker[name]; ok {
-			return m, ok
+	d.marksRead[markRead{name, m.pagenumber}] = true
+	return m, ok
+}
+
+// markRead is a page number that the layout got for a mark.
+type markRead struct {
+	name string
+	page int
+}
+
+// outOfDate returns the references that told the layout something else than
+// the finished run knows, sorted. The document may be wrong in these places, so
+// it needs another run. A mark that nobody read does not count: it moves
+// without any effect. Neither does a mark that does not exist in the end, the
+// layout gets the same 0 in any run.
+func (d *xtsDocument) outOfDate() []string {
+	var stale []string
+	for r := range d.marksRead {
+		if d.marker[r.name].pagenumber != r.page {
+			stale = append(stale, r.name)
 		}
 	}
-	return marker{}, false
+	if d.lastPageRead && d.lastPageOfPreviousRun() != d.currentPagenumber {
+		stale = append(stale, "sd:last-page-number()")
+	}
+	slices.Sort(stale)
+	return slices.Compact(stale)
+}
+
+// lastPageOfPreviousRun returns the number of pages of the previous run and 0
+// before the first one.
+func (d *xtsDocument) lastPageOfPreviousRun() int {
+	if d.aux == nil {
+		return 0
+	}
+	return d.aux.LastPage
 }

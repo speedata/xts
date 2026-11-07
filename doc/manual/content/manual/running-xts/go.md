@@ -66,7 +66,7 @@ Each call to `RunXTS` starts afresh, as a new `xts` process does: the records, t
 | `LineModels` | Line models by name, see below | |
 | `Breakers` | Line breakers by name, see below | |
 
-The command line does a few things around `RunXTS` that a Go program does itself when it needs them: it reads `xts.cfg`, adds the directories, runs the Lua filter, and calls `RunXTS` again for `--runs`, so that cross-references written to the aux file in one run are resolved in the next. Messages go to the default logger of `log/slog`; the protocol file `xts-protocol.xml` is written by the command line.
+The command line does a few things around `RunXTS` that a Go program does itself when it needs them: it reads `xts.cfg`, adds the directories, runs the Lua filter, and calls `RunXTS` again for `--runs`, so that cross-references written to the aux file in one run are resolved in the next. After a run, `Info.OutOfDate` names the references that need one more run. Messages go to the default logger of `log/slog`; the protocol file `xts-protocol.xml` is written by the command line.
 
 ## Line models
 

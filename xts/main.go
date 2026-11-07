@@ -494,6 +494,9 @@ func runPublisher(dumpOutputFileName string, configFileRead []string) error {
 			break
 		}
 	}
+	if err == nil && len(info.OutOfDate) > 0 {
+		slog.Warn("Page numbers may be out of date, run XTS again", "references", strings.Join(info.OutOfDate, ", "))
+	}
 	if l != nil {
 		runFinalizerCallback()
 	}

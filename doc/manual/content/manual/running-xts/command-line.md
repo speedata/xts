@@ -57,7 +57,7 @@ xts
 # Use custom file names
 xts --data products.xml --layout catalog.xml --jobname catalog
 
-# Multiple runs for cross-references
+# Multiple runs for cross-references, XTS warns when one more is needed
 xts --runs 2
 
 # Quick test without a data file
