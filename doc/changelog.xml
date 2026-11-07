@@ -24,6 +24,9 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
+    <entry version="0.1.17" date="2026-11-07">
+      <en summary="SVG, MathML and barcodes with display: block are drawn.">In HTML content an <tt>&lt;svg&gt;</tt>, a <tt>&lt;math&gt;</tt> or a <tt>&lt;barcode&gt;</tt> with <tt>display: block</tt> vanished without a warning. Each one is now a block of its own, as an <tt>&lt;img&gt;</tt> with <tt>display: block</tt> already was, and <tt>margin: 0 auto</tt> centers it.</en>
+    </entry>
     <entry version="0.1.16" date="2026-11-07">
       <en summary="XTS warns when page numbers from the aux file are out of date.">If <tt>sd:page-number()</tt> or <tt>sd:last-page-number()</tt> gave a value that is not the one of the finished run, XTS writes a warning with the names, as the document needs another run. A mark that nobody reads does not count. The marks in the aux file are now sorted, so two runs with the same result write the same file, and <tt>pdftarget</tt> is read back. #76</en>
     </entry>

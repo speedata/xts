@@ -9,6 +9,11 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
+## 0.1.17 (2026-11-07)
+
+- **SVG, MathML and barcodes with display: block are drawn.**<br>
+  In HTML content an `<svg>`, a `<math>` or a `<barcode>` with `display: block` vanished without a warning. Each one is now a block of its own, as an `<img>` with `display: block` already was, and `margin: 0 auto` centers it.
+
 ## 0.1.16 (2026-11-07)
 
 - **XTS warns when page numbers from the aux file are out of date.**<br>
