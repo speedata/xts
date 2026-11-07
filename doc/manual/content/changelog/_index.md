@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.17 (2026-11-07)
 
+- **An inline SVG takes the color of the text with currentColor.**<br>
+  In HTML content `currentColor` in an `<svg>` is the CSS `color` of the svg element, so an icon takes the color of the text around it, also a color from `<DefineColor>`. It used to be black. The `color` property inside the SVG is read too. The attributes of the `<svg>` element itself, such as `fill="none" stroke="currentColor"` on an icon, now apply to the drawing; they were ignored. An SVG in `<img>` is a document of its own and stays black, as in a browser.
 - **SVG, MathML and barcodes with display: block are drawn.**<br>
   In HTML content an `<svg>`, a `<math>` or a `<barcode>` with `display: block` vanished without a warning. Each one is now a block of its own, as an `<img>` with `display: block` already was, and `margin: 0 auto` centers it.
 

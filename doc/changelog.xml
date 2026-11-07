@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.17" date="2026-11-07">
+      <en summary="An inline SVG takes the color of the text with currentColor.">In HTML content <tt>currentColor</tt> in an <tt>&lt;svg&gt;</tt> is the CSS <tt>color</tt> of the svg element, so an icon takes the color of the text around it, also a color from <tt>&lt;DefineColor&gt;</tt>. It used to be black. The <tt>color</tt> property inside the SVG is read too. The attributes of the <tt>&lt;svg&gt;</tt> element itself, such as <tt>fill="none" stroke="currentColor"</tt> on an icon, now apply to the drawing; they were ignored. An SVG in <tt>&lt;img&gt;</tt> is a document of its own and stays black, as in a browser.</en>
+    </entry>
+    <entry version="0.1.17" date="2026-11-07">
       <en summary="SVG, MathML and barcodes with display: block are drawn.">In HTML content an <tt>&lt;svg&gt;</tt>, a <tt>&lt;math&gt;</tt> or a <tt>&lt;barcode&gt;</tt> with <tt>display: block</tt> vanished without a warning. Each one is now a block of its own, as an <tt>&lt;img&gt;</tt> with <tt>display: block</tt> already was, and <tt>margin: 0 auto</tt> centers it.</en>
     </entry>
     <entry version="0.1.16" date="2026-11-07">
