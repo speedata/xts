@@ -741,7 +741,11 @@ func cmdDefineColor(xd *xtsDocument, layoutelt *goxml.Element) (xpath.Sequence, 
 		if attValues.Value == "" {
 			return nil, fmt.Errorf("DefineColor: empty model not recognized - you should provide a color model or a value attribute (line %d)", layoutelt.Line)
 		}
-		col = *xd.document.GetColor(attValues.Value)
+		valueColor := xd.document.GetColor(attValues.Value)
+		if valueColor == nil {
+			return nil, newTypesettingErrorf("DefineColor", layoutelt.Line, "cannot parse color value %q", attValues.Value)
+		}
+		col = *valueColor
 	default:
 		return nil, newTypesettingErrorf("DefineColor", layoutelt.Line, "model %q not recognized", attValues.Model)
 	}

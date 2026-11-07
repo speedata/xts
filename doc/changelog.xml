@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.16" date="2026-11-06">
+      <en summary="HTML content knows hsl() and warns about bad colors.">Colors can be written as <tt>hsl()</tt> and <tt>hsla()</tt>, with commas or blanks and with an alpha value. A color that cannot be parsed writes a warning instead of disappearing silently, and a value such as <tt>#12</tt> is ignored as in CSS instead of painting black. Names and functions of colors ignore the case. <tt>&lt;DefineColor&gt;</tt> with a <tt>value</tt> that cannot be parsed is an error now, it used to crash.</en>
+    </entry>
+    <entry version="0.1.16" date="2026-11-06">
       <en summary="Ligatures in SVG text can be searched and copied.">A ligature in the text of an SVG image extracted as U+FFFD unless the same ligature also stood in the text of the page. It now extracts as the characters it was made from, for search, copy and assistive technology.</en>
     </entry>
     <entry version="0.1.16" date="2026-11-06">

@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.16 (2026-11-06)
 
+- **HTML content knows hsl() and warns about bad colors.**<br>
+  Colors can be written as `hsl()` and `hsla()`, with commas or blanks and with an alpha value. A color that cannot be parsed writes a warning instead of disappearing silently, and a value such as `[#12](https://github.com/speedata/xts/issues/12)` is ignored as in CSS instead of painting black. Names and functions of colors ignore the case. `<DefineColor>` with a `value` that cannot be parsed is an error now, it used to crash.
 - **Ligatures in SVG text can be searched and copied.**<br>
   A ligature in the text of an SVG image extracted as U+FFFD unless the same ligature also stood in the text of the page. It now extracts as the characters it was made from, for search, copy and assistive technology.
 - **The size of an SVG image honors its unit.**<br>
