@@ -24,6 +24,9 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
+    <entry version="0.1.16" date="2026-11-07">
+      <en summary="Transparent table cells mix with their row.">In HTML tables a cell with a transparent background now lies on top of its row, and a row on top of its row group, as in CSS. Before, the color of the cell replaced the one of the row. An opaque color still hides what is below. <tt>background-color: transparent</tt> on a cell painted a black box, now the row shows through.</en>
+    </entry>
     <entry version="0.1.16" date="2026-11-06">
       <en summary="Color fonts keep the alpha of their palette and the color of the text.">The layers of a COLR font were all opaque, now they have the alpha of their palette entry, multiplied with the alpha of the text color. PDF/X-3 stays opaque with a warning. The text after such a glyph lost its color and turned black, now it keeps it. A layer that asks for the foreground color takes the color of the text instead of black.</en>
     </entry>

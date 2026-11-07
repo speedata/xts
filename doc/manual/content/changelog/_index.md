@@ -9,8 +9,10 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
-## 0.1.16 (2026-11-06)
+## 0.1.16 (2026-11-07)
 
+- **Transparent table cells mix with their row.**<br>
+  In HTML tables a cell with a transparent background now lies on top of its row, and a row on top of its row group, as in CSS. Before, the color of the cell replaced the one of the row. An opaque color still hides what is below. `background-color: transparent` on a cell painted a black box, now the row shows through.
 - **Color fonts keep the alpha of their palette and the color of the text.**<br>
   The layers of a COLR font were all opaque, now they have the alpha of their palette entry, multiplied with the alpha of the text color. PDF/X-3 stays opaque with a warning. The text after such a glyph lost its color and turned black, now it keeps it. A layer that asks for the foreground color takes the color of the text instead of black.
 - **SVG images can use the colors of the document.**<br>
