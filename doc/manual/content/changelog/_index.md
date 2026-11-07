@@ -11,6 +11,10 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.16 (2026-11-06)
 
+- **A style element in the body of HTML content works.**<br>
+  A `<style>` element after the start of the body had its source set as visible text and its rules were ignored. Its rules now apply as in a browser, in document order. `<script>`, `<title>`, `<link>`, `<meta>` and `<template>` in the body show nothing either.
+- **PDF/UA: all text of HTML content is tagged.**<br>
+  Text in HTML content could end up as an artifact, which validators accept but which keeps it from assistive technology: a paragraph of one line that was the only block, the text outside of a paragraph, the lines of a paragraph after a page break, and the text of elements without a role such as `<main>` or `<dd>`. All of it has a structure element now. Text directly in a `<div>`, `<section>`, `<article>` or `<blockquote>` is a paragraph in that element, which PDF/UA-2 requires, and `<article>` and `<blockquote>` map to a standard role under PDF/UA-2. Content of a table cell belongs to the cell, without copies of its elements in the tree.
 - **SVG images have radial gradients and bounding box units.**<br>
   An SVG image reads `radialGradient` with its focus and, with `stop-opacity`, soft edges. It used to paint such a shape black. Without `gradientUnits` a gradient now refers to the bounding box of its shape, and percentages work, as in a browser. A reference to an unknown gradient paints nothing and writes a warning, as does a gradient on a stroke or on text, which is not supported.
 - **SVG images can be transparent.**<br>

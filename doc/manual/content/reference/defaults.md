@@ -91,7 +91,10 @@ The CSS defaults are:
 ~~~css
 html            { font-size: 10pt; tab-size: 4; font-family: serif; }
 li              { display: list-item; padding-left: 0; }
-head            { display: none }
+head, title,
+link, meta,
+script, style,
+template        { display: none }
 table           { display: table }
 tr              { display: table-row }
 thead           { display: table-header-group }

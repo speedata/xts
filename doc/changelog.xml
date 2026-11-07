@@ -25,6 +25,12 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.16" date="2026-11-06">
+      <en summary="A style element in the body of HTML content works.">A <tt>&lt;style&gt;</tt> element after the start of the body had its source set as visible text and its rules were ignored. Its rules now apply as in a browser, in document order. <tt>&lt;script&gt;</tt>, <tt>&lt;title&gt;</tt>, <tt>&lt;link&gt;</tt>, <tt>&lt;meta&gt;</tt> and <tt>&lt;template&gt;</tt> in the body show nothing either.</en>
+    </entry>
+    <entry version="0.1.16" date="2026-11-06">
+      <en summary="PDF/UA: all text of HTML content is tagged.">Text in HTML content could end up as an artifact, which validators accept but which keeps it from assistive technology: a paragraph of one line that was the only block, the text outside of a paragraph, the lines of a paragraph after a page break, and the text of elements without a role such as <tt>&lt;main&gt;</tt> or <tt>&lt;dd&gt;</tt>. All of it has a structure element now. Text directly in a <tt>&lt;div&gt;</tt>, <tt>&lt;section&gt;</tt>, <tt>&lt;article&gt;</tt> or <tt>&lt;blockquote&gt;</tt> is a paragraph in that element, which PDF/UA-2 requires, and <tt>&lt;article&gt;</tt> and <tt>&lt;blockquote&gt;</tt> map to a standard role under PDF/UA-2. Content of a table cell belongs to the cell, without copies of its elements in the tree.</en>
+    </entry>
+    <entry version="0.1.16" date="2026-11-06">
       <en summary="SVG images have radial gradients and bounding box units.">An SVG image reads <tt>radialGradient</tt> with its focus and, with <tt>stop-opacity</tt>, soft edges. It used to paint such a shape black. Without <tt>gradientUnits</tt> a gradient now refers to the bounding box of its shape, and percentages work, as in a browser. A reference to an unknown gradient paints nothing and writes a warning, as does a gradient on a stroke or on text, which is not supported.</en>
     </entry>
     <entry version="0.1.16" date="2026-11-06">
