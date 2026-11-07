@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.16 (2026-11-06)
 
+- **SVG images can use the colors of the document.**<br>
+  The `fill` and the `stroke` of an SVG image take a name from `<DefineColor>` or `@-bag-color`, including spot colors, CMYK colors and overprinting, so a logo can use the ink of the document. Such a name wins over a color name of SVG. The stops of a gradient stay RGB and write a warning. A color that cannot be read now counts as not given, as in a browser: a fill used to vanish, now it is inherited or black, with a warning. SVG images also know `hsl()` and `hsla()`.
 - **HTML content knows hsl() and warns about bad colors.**<br>
   Colors can be written as `hsl()` and `hsla()`, with commas or blanks and with an alpha value. A color that cannot be parsed writes a warning instead of disappearing silently, and a value such as `[#12](https://github.com/speedata/xts/issues/12)` is ignored as in CSS instead of painting black. Names and functions of colors ignore the case. `<DefineColor>` with a `value` that cannot be parsed is an error now, it used to crash.
 - **Ligatures in SVG text can be searched and copied.**<br>

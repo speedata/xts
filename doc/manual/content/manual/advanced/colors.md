@@ -23,6 +23,7 @@ XTS supports the standard CSS color formats:
 - Named colors: `red`, `darkblue`, `limegreen`, ...
 - Hex: `#ff0000`, `#369`
 - RGB: `rgb(255, 0, 0)`, `rgba(255, 0, 0, 0.5)`
+- HSL: `hsl(120 100% 25%)`, `hsla(120, 100%, 25%, 0.5)`
 - CMYK: `cmyk(0%, 20%, 100%, 5%)` or `device-cmyk(0, 0.2, 1, 0.05)`
 
 ## Defining custom colors

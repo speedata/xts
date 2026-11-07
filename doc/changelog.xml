@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.16" date="2026-11-06">
+      <en summary="SVG images can use the colors of the document.">The <tt>fill</tt> and the <tt>stroke</tt> of an SVG image take a name from <tt>&lt;DefineColor&gt;</tt> or <tt>@-bag-color</tt>, including spot colors, CMYK colors and overprinting, so a logo can use the ink of the document. Such a name wins over a color name of SVG. The stops of a gradient stay RGB and write a warning. A color that cannot be read now counts as not given, as in a browser: a fill used to vanish, now it is inherited or black, with a warning. SVG images also know <tt>hsl()</tt> and <tt>hsla()</tt>.</en>
+    </entry>
+    <entry version="0.1.16" date="2026-11-06">
       <en summary="HTML content knows hsl() and warns about bad colors.">Colors can be written as <tt>hsl()</tt> and <tt>hsla()</tt>, with commas or blanks and with an alpha value. A color that cannot be parsed writes a warning instead of disappearing silently, and a value such as <tt>#12</tt> is ignored as in CSS instead of painting black. Names and functions of colors ignore the case. <tt>&lt;DefineColor&gt;</tt> with a <tt>value</tt> that cannot be parsed is an error now, it used to crash.</en>
     </entry>
     <entry version="0.1.16" date="2026-11-06">
