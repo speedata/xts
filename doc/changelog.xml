@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.17" date="2026-11-07">
+      <en summary="A length without a unit in an SVG image is a pixel, 0.75pt, as in a browser.">An SVG image with <tt>width="96"</tt> used to be 96pt wide, now it is 72pt, as in a browser and as <tt>96px</tt> in CSS. This changes the natural size of an SVG whose size has no unit. A size in <tt>mm</tt>, <tt>pt</tt> or another absolute unit stays as it was. Lengths inside the drawing now take their units too: <tt>&lt;rect width="10mm"&gt;</tt> is 10mm, not 10 user units, and <tt>Q</tt> is known. A percentage inside the drawing refers to the viewBox, and <tt>stroke-width</tt> with a unit is no longer ignored. An image exported with a size in px that means points, as some programs do, is now smaller; give its size in the layout or in the file in pt.</en>
+    </entry>
+    <entry version="0.1.17" date="2026-11-07">
       <en summary="HTML content reads link elements as a browser does.">Only a <tt>&lt;link&gt;</tt> with <tt>rel="stylesheet"</tt> loads CSS. Before, every <tt>&lt;link&gt;</tt> with an <tt>href</tt> was read as a stylesheet, also <tt>rel="icon"</tt>. A <tt>&lt;link&gt;</tt> in the body is read too, and the stylesheets of <tt>&lt;link&gt;</tt> and <tt>&lt;style&gt;</tt> elements apply in the order they stand in the document. Before, all linked stylesheets came first, so a <tt>&lt;link&gt;</tt> after a <tt>&lt;style&gt;</tt> lost against it. An alternate stylesheet is not applied.</en>
     </entry>
     <entry version="0.1.17" date="2026-11-07">

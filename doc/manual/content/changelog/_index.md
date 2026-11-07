@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.17 (2026-11-07)
 
+- **A length without a unit in an SVG image is a pixel, 0.75pt, as in a browser.**<br>
+  An SVG image with `width="96"` used to be 96pt wide, now it is 72pt, as in a browser and as `96px` in CSS. This changes the natural size of an SVG whose size has no unit. A size in `mm`, `pt` or another absolute unit stays as it was. Lengths inside the drawing now take their units too: `<rect width="10mm">` is 10mm, not 10 user units, and `Q` is known. A percentage inside the drawing refers to the viewBox, and `stroke-width` with a unit is no longer ignored. An image exported with a size in px that means points, as some programs do, is now smaller; give its size in the layout or in the file in pt.
 - **HTML content reads link elements as a browser does.**<br>
   Only a `<link>` with `rel="stylesheet"` loads CSS. Before, every `<link>` with an `href` was read as a stylesheet, also `rel="icon"`. A `<link>` in the body is read too, and the stylesheets of `<link>` and `<style>` elements apply in the order they stand in the document. Before, all linked stylesheets came first, so a `<link>` after a `<style>` lost against it. An alternate stylesheet is not applied.
 - **An inline SVG takes the color of the text with currentColor.**<br>
