@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.16 (2026-11-06)
 
+- **Ligatures in SVG text can be searched and copied.**<br>
+  A ligature in the text of an SVG image extracted as U+FFFD unless the same ligature also stood in the text of the page. It now extracts as the characters it was made from, for search, copy and assistive technology.
 - **The size of an SVG image honors its unit.**<br>
   An image with `width="100mm"` used to come out 100 points wide. The units `mm`, `cm`, `in` and `pc` of the `width` and `height` of an SVG image now count. One user unit stays one point, so `px` and a size without a unit do not change.
 - **An SVG image with a viewBox gets its size from one side.**<br>

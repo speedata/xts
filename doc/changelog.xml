@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.16" date="2026-11-06">
+      <en summary="Ligatures in SVG text can be searched and copied.">A ligature in the text of an SVG image extracted as U+FFFD unless the same ligature also stood in the text of the page. It now extracts as the characters it was made from, for search, copy and assistive technology.</en>
+    </entry>
+    <entry version="0.1.16" date="2026-11-06">
       <en summary="The size of an SVG image honors its unit.">An image with <tt>width="100mm"</tt> used to come out 100 points wide. The units <tt>mm</tt>, <tt>cm</tt>, <tt>in</tt> and <tt>pc</tt> of the <tt>width</tt> and <tt>height</tt> of an SVG image now count. One user unit stays one point, so <tt>px</tt> and a size without a unit do not change.</en>
     </entry>
     <entry version="0.1.16" date="2026-11-06">
