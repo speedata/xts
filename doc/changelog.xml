@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.17" date="2026-11-07">
+      <en summary="HTML content reads link elements as a browser does.">Only a <tt>&lt;link&gt;</tt> with <tt>rel="stylesheet"</tt> loads CSS. Before, every <tt>&lt;link&gt;</tt> with an <tt>href</tt> was read as a stylesheet, also <tt>rel="icon"</tt>. A <tt>&lt;link&gt;</tt> in the body is read too, and the stylesheets of <tt>&lt;link&gt;</tt> and <tt>&lt;style&gt;</tt> elements apply in the order they stand in the document. Before, all linked stylesheets came first, so a <tt>&lt;link&gt;</tt> after a <tt>&lt;style&gt;</tt> lost against it. An alternate stylesheet is not applied.</en>
+    </entry>
+    <entry version="0.1.17" date="2026-11-07">
       <en summary="An inline SVG takes the color of the text with currentColor.">In HTML content <tt>currentColor</tt> in an <tt>&lt;svg&gt;</tt> is the CSS <tt>color</tt> of the svg element, so an icon takes the color of the text around it, also a color from <tt>&lt;DefineColor&gt;</tt>. It used to be black. The <tt>color</tt> property inside the SVG is read too. The attributes of the <tt>&lt;svg&gt;</tt> element itself, such as <tt>fill="none" stroke="currentColor"</tt> on an icon, now apply to the drawing; they were ignored. An SVG in <tt>&lt;img&gt;</tt> is a document of its own and stays black, as in a browser.</en>
     </entry>
     <entry version="0.1.17" date="2026-11-07">
