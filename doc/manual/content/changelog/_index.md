@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.18 (2026-11-08)
 
+- **Size attributes without a unit are in pixels.**<br>
+  In HTML content a `width` or `height` attribute without a unit, as in `<img src="photo.png" width="200">`, is in CSS pixels, so the image is 150pt wide. Before, the attribute was dropped and the image kept its natural size. An inline `<svg>` keeps its `width` attribute beside a CSS `height`. A `<barcode>` reads such a number as pixels too; it used to stop with an error.
 - **vertical-align moves images and inline SVG.**<br>
   In HTML content `vertical-align` places an `<img>` or `<svg>` in its line, as it does text: a length or percentage moves it, so `svg { vertical-align: -0.2em }` lowers an icon, `sub` and `super` and the shift of a `<sup>` around it apply too, and `middle`, `text-top` and `text-bottom` place it against the font of the line. Before, only `text-top` worked, only on a raster image, and with an estimated ascent; it now takes the ascent of the font, so such an image sits a little higher. An SVG lower than its line now stands on the baseline; it used to hang from the top of the line. The vertical alignment of a table cell no longer reaches the images in it.
 - **CSS width and height size images and inline SVG.**<br>
