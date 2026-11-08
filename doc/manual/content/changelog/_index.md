@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.18 (2026-11-08)
 
+- **vertical-align moves images and inline SVG.**<br>
+  In HTML content `vertical-align` places an `<img>` or `<svg>` in its line, as it does text: a length or percentage moves it, so `svg { vertical-align: -0.2em }` lowers an icon, `sub` and `super` and the shift of a `<sup>` around it apply too, and `middle`, `text-top` and `text-bottom` place it against the font of the line. Before, only `text-top` worked, only on a raster image, and with an estimated ascent; it now takes the ascent of the font, so such an image sits a little higher. An SVG lower than its line now stands on the baseline; it used to hang from the top of the line. The vertical alignment of a table cell no longer reaches the images in it.
 - **CSS width and height size images and inline SVG.**<br>
   In HTML content the CSS properties `width` and `height` of an `<svg>` set its size, and they override the `width` and `height` attributes, as in a browser. The other side follows from the aspect ratio, so `svg { width: 1.2em; height: 1.2em }` sizes an icon to the text. Before, an inline SVG took its size only from the attributes or the viewBox. An `<img>` takes its CSS `height` too, which was ignored. `width: auto` on an image drops the attribute; it used to make the image as wide as the font size. A CSS width beats a percentage in the `width` attribute, and `max-width` applies to an inline SVG. The `color` of the svg element from a stylesheet now reaches `currentColor`; before, only a `style` attribute on the svg did.
 
