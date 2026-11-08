@@ -9,6 +9,11 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
+## 0.1.18 (2026-11-08)
+
+- **CSS width and height size images and inline SVG.**<br>
+  In HTML content the CSS properties `width` and `height` of an `<svg>` set its size, and they override the `width` and `height` attributes, as in a browser. The other side follows from the aspect ratio, so `svg { width: 1.2em; height: 1.2em }` sizes an icon to the text. Before, an inline SVG took its size only from the attributes or the viewBox. An `<img>` takes its CSS `height` too, which was ignored. `width: auto` on an image drops the attribute; it used to make the image as wide as the font size. A CSS width beats a percentage in the `width` attribute, and `max-width` applies to an inline SVG. The `color` of the svg element from a stylesheet now reaches `currentColor`; before, only a `style` attribute on the svg did.
+
 ## 0.1.17 (2026-11-07)
 
 - **Color emoji can be searched and copied.**<br>

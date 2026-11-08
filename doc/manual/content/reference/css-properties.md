@@ -64,9 +64,9 @@ The list comes from htmlbag, the HTML and CSS layer that XTS shares with glu and
 | `padding` | One to four lengths, shorthand for the four sides | `padding: 5pt 10pt;` |
 | `padding-top`, `padding-right`, `padding-bottom`, `padding-left` | Length | `padding-left: 10pt;` |
 | `padding-inline-start` | Length. Maps to `padding-left` for `ltr` and to `padding-right` for `rtl` | `padding-inline-start: 2em;` |
-| `width` | Length or percentage, on blocks, images and table cells | `width: 100%;` |
-| `height` | Length, on blocks, images, table rows and table cells. A minimum: content taller than the height is never clipped, a table row grows to fit its cells | `height: 4cm;` |
-| `max-width` | Length or percentage, on images | `max-width: 100%;` |
+| `width` | Length or percentage, on blocks, images, inline `svg` and table cells. On an image or inline `svg` it overrides the `width` attribute, `auto` drops the attribute; the height follows from the aspect ratio unless it is set | `width: 100%;` |
+| `height` | Length, on blocks, images, inline `svg`, table rows and table cells. A minimum: content taller than the height is never clipped, a table row grows to fit its cells. On an image or inline `svg` it is the height, overrides the `height` attribute, and the width follows from the aspect ratio unless it is set | `height: 4cm;` |
+| `max-width` | Length or percentage, on images and inline `svg` | `max-width: 100%;` |
 | `object-view-box` | `none`, or `inset()` with one to four lengths or percentages, on images (`<img>`, also with an SVG or PDF source). Not inherited. The region becomes the image's natural size and aspect ratio, and `width`, `height` and `max-width` size it as they size a whole image. `xywh()` and `rect()` are not supported and warn, as do the `round` corners of `inset()`, which are ignored. A bitmap's natural size is one point per pixel, as for its sizing, so `inset(10pt)` takes 10 pixels off each edge. Not read on an inline `<svg>` | `object-view-box: inset(10% 20%);` |
 | `background-color` | Color value, painted on block elements, inline elements and table cells | `background-color: #ffffcc;` |
 | `background` | Shorthand, only the color is read | `background: #ffffcc;` |

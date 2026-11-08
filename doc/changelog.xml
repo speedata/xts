@@ -24,6 +24,9 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
+    <entry version="0.1.18" date="2026-11-08">
+      <en summary="CSS width and height size images and inline SVG.">In HTML content the CSS properties <tt>width</tt> and <tt>height</tt> of an <tt>&lt;svg&gt;</tt> set its size, and they override the <tt>width</tt> and <tt>height</tt> attributes, as in a browser. The other side follows from the aspect ratio, so <tt>svg { width: 1.2em; height: 1.2em }</tt> sizes an icon to the text. Before, an inline SVG took its size only from the attributes or the viewBox. An <tt>&lt;img&gt;</tt> takes its CSS <tt>height</tt> too, which was ignored. <tt>width: auto</tt> on an image drops the attribute; it used to make the image as wide as the font size. A CSS width beats a percentage in the <tt>width</tt> attribute, and <tt>max-width</tt> applies to an inline SVG. The <tt>color</tt> of the svg element from a stylesheet now reaches <tt>currentColor</tt>; before, only a <tt>style</tt> attribute on the svg did.</en>
+    </entry>
     <entry version="0.1.17" date="2026-11-07">
       <en summary="Color emoji can be searched and copied.">A glyph of a color font extracted as U+FFFD (COLR) or not at all (bitmaps from sbix or CBDT, SVG glyphs), so emoji were lost for search, copy and assistive technology. Each one is now in a marked-content sequence with its source characters as <tt>ActualText</tt>, a sequence of several characters such as 👩‍💻 included. A bitmap or SVG glyph also shows its base glyph as invisible text. The page looks the same.</en>
     </entry>
