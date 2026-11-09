@@ -9,8 +9,10 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
-## 0.1.18 (2026-11-08)
+## 0.1.18 (2026-11-09)
 
+- **PDF/UA: an image in a paragraph is a Figure of its own ([htmlbag#116](https://github.com/boxesandglue/htmlbag/issues/116)).**<br>
+  In HTML content a paragraph with an image that has an `alt` text was tagged as one Figure with the alt text of the first image, so its text and every further image were lost for assistive technology. The paragraph now stays a paragraph with its text, and each image is a Figure inside it with its own alt text, read in place. The same holds for a heading, a list item and a table cell, which used to hide the alt text of its images. A block that holds nothing but one image is still a Figure. The bounding box of a Figure is now where the image is drawn; it was mirrored at the middle of the page.
 - **Size attributes without a unit are in pixels.**<br>
   In HTML content a `width` or `height` attribute without a unit, as in `<img src="photo.png" width="200">`, is in CSS pixels, so the image is 150pt wide. Before, the attribute was dropped and the image kept its natural size. An inline `<svg>` keeps its `width` attribute beside a CSS `height`. A `<barcode>` reads such a number as pixels too; it used to stop with an error.
 - **vertical-align moves images and inline SVG.**<br>

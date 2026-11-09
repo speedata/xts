@@ -24,6 +24,9 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
+    <entry version="0.1.18" date="2026-11-09">
+      <en summary="PDF/UA: an image in a paragraph is a Figure of its own (htmlbag#116).">In HTML content a paragraph with an image that has an <tt>alt</tt> text was tagged as one Figure with the alt text of the first image, so its text and every further image were lost for assistive technology. The paragraph now stays a paragraph with its text, and each image is a Figure inside it with its own alt text, read in place. The same holds for a heading, a list item and a table cell, which used to hide the alt text of its images. A block that holds nothing but one image is still a Figure. The bounding box of a Figure is now where the image is drawn; it was mirrored at the middle of the page.</en>
+    </entry>
     <entry version="0.1.18" date="2026-11-08">
       <en summary="Size attributes without a unit are in pixels.">In HTML content a <tt>width</tt> or <tt>height</tt> attribute without a unit, as in <tt>&lt;img src="photo.png" width="200"&gt;</tt>, is in CSS pixels, so the image is 150pt wide. Before, the attribute was dropped and the image kept its natural size. An inline <tt>&lt;svg&gt;</tt> keeps its <tt>width</tt> attribute beside a CSS <tt>height</tt>. A <tt>&lt;barcode&gt;</tt> reads such a number as pixels too; it used to stop with an error.</en>
     </entry>
