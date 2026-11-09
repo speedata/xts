@@ -70,6 +70,7 @@ The list comes from htmlbag, the HTML and CSS layer that XTS shares with glu and
 | `object-view-box` | `none`, or `inset()` with one to four lengths or percentages, on images (`<img>`, also with an SVG or PDF source). Not inherited. The region becomes the image's natural size and aspect ratio, and `width`, `height` and `max-width` size it as they size a whole image. `xywh()` and `rect()` are not supported and warn, as do the `round` corners of `inset()`, which are ignored. A bitmap's natural size is one point per pixel, as for its sizing, so `inset(10pt)` takes 10 pixels off each edge. Not read on an inline `<svg>` | `object-view-box: inset(10% 20%);` |
 | `background-color` | Color value, painted on block elements, inline elements and table cells | `background-color: #ffffcc;` |
 | `background` | Shorthand, only the color is read | `background: #ffffcc;` |
+| `opacity` | Number from 0 to 1 or percentage, on block elements and tables. Not inherited. The box is painted as one object, its text, background and border together, so a background does not shine through the text on it. Not read on inline elements, images and table cells. PDF/X-3 and PDF/A-1 forbid transparency, there the box is opaque and a warning is written | `opacity: 0.5;` |
 | `display` | `block`, `inline`, `flow-root`, `none`. `flow-root` is a block that keeps clear of a float as a whole, where a block runs on under it. Other values are ignored with a warning, the table parts follow from the HTML tags | `display: none;` |
 
 ## Borders
