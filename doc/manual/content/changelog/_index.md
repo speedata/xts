@@ -9,8 +9,10 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
-## 0.1.18 (2026-11-09)
+## 0.1.18 (2026-11-10)
 
+- **PDF/UA: an image with display: block in a paragraph is one Figure in it ([htmlbag#118](https://github.com/boxesandglue/htmlbag/issues/118)).**<br>
+  In HTML content an image with `display: block` in a paragraph or a heading, as in `<p><img style="display: block" alt="Chart">Text</p>`, was tagged as a Figure inside a Figure with the same alt text, and the text around it as a paragraph inside the paragraph, which PDF/UA-2 does not allow. The paragraph or heading now holds the text and one Figure for the image, as for an image among text. Such a heading is now the destination of its bookmark under PDF/UA-2, and an image with `display: block` on its own is one Figure.
 - **opacity makes a block or an image transparent as a whole ([htmlbag#108](https://github.com/boxesandglue/htmlbag/issues/108)).**<br>
   In HTML content the CSS property `opacity` was ignored with a warning. On a block element and on a table it now makes the whole box transparent: background, border and text are painted as one object, so the background does not shine through the text as it would with a transparent color for each of them. A box split over pages is transparent on each page, and a box in a transparent box multiplies the opacities. An overprinting color in the box still overprints what lies below it. Under PDF/UA the content of the box stays tagged. Images, also SVG and PDF images, and an inline `<svg>` take `opacity` too; inline elements and table cells do not. PDF/X-3 forbids transparency, there the box is painted opaque with a warning.
 - **PDF/UA: an image in a paragraph is a Figure of its own ([htmlbag#116](https://github.com/boxesandglue/htmlbag/issues/116)).**<br>
