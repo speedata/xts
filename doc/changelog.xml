@@ -25,6 +25,9 @@
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
     <entry version="0.1.18" date="2026-11-10">
+      <en summary="PDF/UA: a floated image is a Figure (htmlbag#117).">In HTML content an image with an <tt>alt</tt> text and <tt>float: left</tt> or <tt>float: right</tt> at the start of a paragraph, or between the blocks of a container, was tagged as an artifact, so its alt text was not in the file. It is now a Figure with its alt text, read before the text beside it.</en>
+    </entry>
+    <entry version="0.1.18" date="2026-11-10">
       <en summary="PDF/UA: an image with display: block in a paragraph is one Figure in it (htmlbag#118).">In HTML content an image with <tt>display: block</tt> in a paragraph or a heading, as in <tt>&lt;p&gt;&lt;img style="display: block" alt="Chart"&gt;Text&lt;/p&gt;</tt>, was tagged as a Figure inside a Figure with the same alt text, and the text around it as a paragraph inside the paragraph, which PDF/UA-2 does not allow. The paragraph or heading now holds the text and one Figure for the image, as for an image among text. Such a heading is now the destination of its bookmark under PDF/UA-2, and an image with <tt>display: block</tt> on its own is one Figure.</en>
     </entry>
     <entry version="0.1.18" date="2026-11-09">

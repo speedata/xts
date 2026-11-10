@@ -11,6 +11,8 @@ All user visible changes of XTS, newest first. The version at the top may not be
 
 ## 0.1.18 (2026-11-10)
 
+- **PDF/UA: a floated image is a Figure ([htmlbag#117](https://github.com/boxesandglue/htmlbag/issues/117)).**<br>
+  In HTML content an image with an `alt` text and `float: left` or `float: right` at the start of a paragraph, or between the blocks of a container, was tagged as an artifact, so its alt text was not in the file. It is now a Figure with its alt text, read before the text beside it.
 - **PDF/UA: an image with display: block in a paragraph is one Figure in it ([htmlbag#118](https://github.com/boxesandglue/htmlbag/issues/118)).**<br>
   In HTML content an image with `display: block` in a paragraph or a heading, as in `<p><img style="display: block" alt="Chart">Text</p>`, was tagged as a Figure inside a Figure with the same alt text, and the text around it as a paragraph inside the paragraph, which PDF/UA-2 does not allow. The paragraph or heading now holds the text and one Figure for the image, as for an image among text. Such a heading is now the destination of its bookmark under PDF/UA-2, and an image with `display: block` on its own is one Figure.
 - **opacity makes a block or an image transparent as a whole ([htmlbag#108](https://github.com/boxesandglue/htmlbag/issues/108)).**<br>
