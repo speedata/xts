@@ -24,6 +24,18 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
+    <entry version="0.1.19" date="2026-11-24">
+      <en summary="word-spacing and -bag-word-spacing set the width of word spaces.">In HTML content <tt>word-spacing</tt> adds a length to every word space (U+0020 and U+00A0), also a preserved one; it was ignored. The new property <tt>-bag-word-spacing</tt> sets the minimum, natural and maximum width of a word space as percentages of the font's space width, such as <tt>80% 100% 133%</tt>. Ragged text uses the natural width, a justified line shrinks and stretches the spaces within the two limits before it counts as loose. Without it, a space stretches by half and shrinks by a third of its width, as before.</en>
+    </entry>
+    <entry version="0.1.19" date="2026-11-24">
+      <en summary="A font that paints its spaces draws them.">Some color fonts give their space glyph ink, a stripe that continues through the gaps between words. Such a space was set as an empty gap. It is now drawn once at its own width; the rest of a stretched space in justified text stays empty, as in a browser, and such a space does not shrink below its glyph.</en>
+    </entry>
+    <entry version="0.1.19" date="2026-11-24">
+      <en summary="Text extraction keeps the space after an emoji, and a paragraph ends in one space.">A word space after a color glyph, an emoji for one, wrote no space character into the PDF, so text read in content order ran the emoji into the next word. The space is now written. The last line of a paragraph ended in two space characters; it now ends in one.</en>
+    </entry>
+    <entry version="0.1.19" date="2026-11-24">
+      <en summary="Thin, em and the other Unicode spaces keep their width.">In running text U+2009 THIN SPACE, U+2003 EM SPACE and the other Unicode spaces became an ordinary word space that stretched in justified text and merged with a space next to it. They now keep the width of their glyph, or the width HarfBuzz gives a space the font lacks (a fifth of an em for a thin space), and neither stretch nor shrink. A line may break after them, but no longer after U+202F NARROW NO-BREAK SPACE or U+2007 FIGURE SPACE, so <tt>10&amp;#x202F;000</tt> stays together. At the start of a paragraph such a space is no longer dropped.</en>
+    </entry>
     <entry version="0.1.18" date="2026-11-10">
       <en summary="PDF/UA: a floated image is a Figure (htmlbag#117).">In HTML content an image with an <tt>alt</tt> text and <tt>float: left</tt> or <tt>float: right</tt> at the start of a paragraph, or between the blocks of a container, was tagged as an artifact, so its alt text was not in the file. It is now a Figure with its alt text, read before the text beside it.</en>
     </entry>

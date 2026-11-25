@@ -203,6 +203,15 @@ Force a line break with `<Br/>`:
 
 `letter-spacing` adds space after every character, the spaces between words included, so a letter-spaced line keeps its words apart. For headings in capitals, a small value such as `0.05em` is common.
 
+`word-spacing` adds a length to every word space. `-bag-word-spacing` sets the minimum, natural and maximum width of a word space as percentages of the font's space width. Ragged text uses the natural width; a justified line shrinks the spaces down to the minimum and stretches them up to the maximum before it counts as loose. The default is `66.7% 100% 150%`. Thin, em and the other Unicode spaces keep the width of their glyph and are not affected.
+
+```xml
+<StyleSheet>
+    .body { text-align: justify; -bag-word-spacing: 80% 100% 133%; }
+    .wide { word-spacing: 0.1em; }
+</StyleSheet>
+```
+
 `-bag-horizontal-scale` draws the glyphs narrower or wider by a fixed factor, given as a percentage or a number (`90%` or `0.9`). The line breaker sees the scaled width, so more text fits on a line. The value is inherited but does not compound: `100%` inside a scaled element returns to normal width.
 
 ```xml

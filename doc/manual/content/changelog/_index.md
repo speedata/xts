@@ -9,6 +9,17 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
+## 0.1.19 (2026-11-24)
+
+- **word-spacing and -bag-word-spacing set the width of word spaces.**<br>
+  In HTML content `word-spacing` adds a length to every word space (U+0020 and U+00A0), also a preserved one; it was ignored. The new property `-bag-word-spacing` sets the minimum, natural and maximum width of a word space as percentages of the font's space width, such as `80% 100% 133%`. Ragged text uses the natural width, a justified line shrinks and stretches the spaces within the two limits before it counts as loose. Without it, a space stretches by half and shrinks by a third of its width, as before.
+- **A font that paints its spaces draws them.**<br>
+  Some color fonts give their space glyph ink, a stripe that continues through the gaps between words. Such a space was set as an empty gap. It is now drawn once at its own width; the rest of a stretched space in justified text stays empty, as in a browser, and such a space does not shrink below its glyph.
+- **Text extraction keeps the space after an emoji, and a paragraph ends in one space.**<br>
+  A word space after a color glyph, an emoji for one, wrote no space character into the PDF, so text read in content order ran the emoji into the next word. The space is now written. The last line of a paragraph ended in two space characters; it now ends in one.
+- **Thin, em and the other Unicode spaces keep their width.**<br>
+  In running text U+2009 THIN SPACE, U+2003 EM SPACE and the other Unicode spaces became an ordinary word space that stretched in justified text and merged with a space next to it. They now keep the width of their glyph, or the width HarfBuzz gives a space the font lacks (a fifth of an em for a thin space), and neither stretch nor shrink. A line may break after them, but no longer after U+202F NARROW NO-BREAK SPACE or U+2007 FIGURE SPACE, so `10&#x202F;000` stays together. At the start of a paragraph such a space is no longer dropped.
+
 ## 0.1.18 (2026-11-10)
 
 - **PDF/UA: a floated image is a Figure ([htmlbag#117](https://github.com/boxesandglue/htmlbag/issues/117)).**<br>
