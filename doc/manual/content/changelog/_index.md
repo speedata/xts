@@ -19,6 +19,16 @@ All user visible changes of XTS, newest first. The version at the top may not be
   A word space after a color glyph, an emoji for one, wrote no space character into the PDF, so text read in content order ran the emoji into the next word. The space is now written. The last line of a paragraph ended in two space characters; it now ends in one.
 - **Thin, em and the other Unicode spaces keep their width.**<br>
   In running text U+2009 THIN SPACE, U+2003 EM SPACE and the other Unicode spaces became an ordinary word space that stretched in justified text and merged with a space next to it. They now keep the width of their glyph, or the width HarfBuzz gives a space the font lacks (a fifth of an em for a thin space), and neither stretch nor shrink. A line may break after them, but no longer after U+202F NARROW NO-BREAK SPACE or U+2007 FIGURE SPACE, so `10&#x202F;000` stays together. At the start of a paragraph such a space is no longer dropped.
+- **A hyphenated line ends with the kern between the last letter and the hyphen.**<br>
+  At a hyphenation point the kern between the letter before the break and the letter after it stayed at the end of the line, and the kern between that letter and the hyphen was missing, so in some fonts the hyphen stood too far from an r. The letter before the break is now shaped together with the hyphen. The letters of such a line may move by a fraction of a point.
+- **PDF/UA: right-to-left text beside an inline image is tagged in reading order.**<br>
+  In HTML content a right-to-left paragraph with an inline image or formula was tagged in the order the text is drawn, so assistive technology read it from left to right, split at the image. Each run of text is now its own structure element in reading order.
+- **unicode-bidi, the dir attribute, bdi and bdo work in HTML content.**<br>
+  In HTML content the CSS property `unicode-bidi` (`isolate`, `embed`, `bidi-override`, `isolate-override`, `plaintext`) sets how an element takes part in the bidirectional order, as in a browser. The default stylesheet uses it for the `dir` attribute, for `<bdi>`, which isolates a name or a number from the text around it, and for `<bdo dir="rtl">`, which sets its text right to left whatever its characters are. `dir="auto"` takes the direction from the first strong character. A `dir` attribute now also applies inside an element that inherited its direction.
+- **Numbers in right-to-left text keep their place.**<br>
+  In a line such as `abc אבג 123 דהו xyz` a number between two right-to-left words broke the right-to-left run, so the words around it stood in the wrong order. The bidirectional order is now resolved once for the whole paragraph, as the Unicode Bidirectional Algorithm requires, also across spans, soft hyphens and inline images. A paragraph without a given direction takes it from its first strong character, so `2026 שנה` is set right to left.
+- **SVG images apply the rules of their style element.**<br>
+  An SVG image that colors its shapes through classes in a `<style>` element showed them black. Rules with element, class and id selectors now apply, as in a browser: the more specific rule wins, a rule wins over an attribute such as `fill="red"`, and the `style` attribute wins over a rule.
 
 ## 0.1.18 (2026-11-10)
 

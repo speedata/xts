@@ -36,6 +36,21 @@
     <entry version="0.1.19" date="2026-11-24">
       <en summary="Thin, em and the other Unicode spaces keep their width.">In running text U+2009 THIN SPACE, U+2003 EM SPACE and the other Unicode spaces became an ordinary word space that stretched in justified text and merged with a space next to it. They now keep the width of their glyph, or the width HarfBuzz gives a space the font lacks (a fifth of an em for a thin space), and neither stretch nor shrink. A line may break after them, but no longer after U+202F NARROW NO-BREAK SPACE or U+2007 FIGURE SPACE, so <tt>10&amp;#x202F;000</tt> stays together. At the start of a paragraph such a space is no longer dropped.</en>
     </entry>
+    <entry version="0.1.19" date="2026-11-17">
+      <en summary="A hyphenated line ends with the kern between the last letter and the hyphen.">At a hyphenation point the kern between the letter before the break and the letter after it stayed at the end of the line, and the kern between that letter and the hyphen was missing, so in some fonts the hyphen stood too far from an r. The letter before the break is now shaped together with the hyphen. The letters of such a line may move by a fraction of a point.</en>
+    </entry>
+    <entry version="0.1.19" date="2026-11-17">
+      <en summary="PDF/UA: right-to-left text beside an inline image is tagged in reading order.">In HTML content a right-to-left paragraph with an inline image or formula was tagged in the order the text is drawn, so assistive technology read it from left to right, split at the image. Each run of text is now its own structure element in reading order.</en>
+    </entry>
+    <entry version="0.1.19" date="2026-11-17">
+      <en summary="unicode-bidi, the dir attribute, bdi and bdo work in HTML content.">In HTML content the CSS property <tt>unicode-bidi</tt> (<tt>isolate</tt>, <tt>embed</tt>, <tt>bidi-override</tt>, <tt>isolate-override</tt>, <tt>plaintext</tt>) sets how an element takes part in the bidirectional order, as in a browser. The default stylesheet uses it for the <tt>dir</tt> attribute, for <tt>&lt;bdi&gt;</tt>, which isolates a name or a number from the text around it, and for <tt>&lt;bdo dir="rtl"&gt;</tt>, which sets its text right to left whatever its characters are. <tt>dir="auto"</tt> takes the direction from the first strong character. A <tt>dir</tt> attribute now also applies inside an element that inherited its direction.</en>
+    </entry>
+    <entry version="0.1.19" date="2026-11-17">
+      <en summary="Numbers in right-to-left text keep their place.">In a line such as <tt>abc אבג 123 דהו xyz</tt> a number between two right-to-left words broke the right-to-left run, so the words around it stood in the wrong order. The bidirectional order is now resolved once for the whole paragraph, as the Unicode Bidirectional Algorithm requires, also across spans, soft hyphens and inline images. A paragraph without a given direction takes it from its first strong character, so <tt>2026 שנה</tt> is set right to left.</en>
+    </entry>
+    <entry version="0.1.19" date="2026-11-15">
+      <en summary="SVG images apply the rules of their style element.">An SVG image that colors its shapes through classes in a <tt>&lt;style&gt;</tt> element showed them black. Rules with element, class and id selectors now apply, as in a browser: the more specific rule wins, a rule wins over an attribute such as <tt>fill="red"</tt>, and the <tt>style</tt> attribute wins over a rule.</en>
+    </entry>
     <entry version="0.1.18" date="2026-11-10">
       <en summary="PDF/UA: a floated image is a Figure (htmlbag#117).">In HTML content an image with an <tt>alt</tt> text and <tt>float: left</tt> or <tt>float: right</tt> at the start of a paragraph, or between the blocks of a container, was tagged as an artifact, so its alt text was not in the file. It is now a Figure with its alt text, read before the text beside it.</en>
     </entry>
