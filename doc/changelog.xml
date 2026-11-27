@@ -24,6 +24,9 @@
 -->
 <changelog xmlns="urn:speedata.de:2014/changelog">
   <chapter version="0.1">
+    <entry version="0.1.20" date="2026-11-27">
+      <en summary="xts watch frees the memory of each run again.">Since 0.1.19 every document stayed in memory after its run through a cache of the word spaces, so <tt>xts watch</tt> grew with each rerun. The cache now lives with the font and goes away with the document.</en>
+    </entry>
     <entry version="0.1.19" date="2026-11-24">
       <en summary="word-spacing and -bag-word-spacing set the width of word spaces.">In HTML content <tt>word-spacing</tt> adds a length to every word space (U+0020 and U+00A0), also a preserved one; it was ignored. The new property <tt>-bag-word-spacing</tt> sets the minimum, natural and maximum width of a word space as percentages of the font's space width, such as <tt>80% 100% 133%</tt>. Ragged text uses the natural width, a justified line shrinks and stretches the spaces within the two limits before it counts as loose. Without it, a space stretches by half and shrinks by a third of its width, as before.</en>
     </entry>

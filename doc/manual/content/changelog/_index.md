@@ -9,6 +9,11 @@ weight: 60
 
 All user visible changes of XTS, newest first. The version at the top may not be released yet.
 
+## 0.1.20 (2026-11-27)
+
+- **xts watch frees the memory of each run again.**<br>
+  Since 0.1.19 every document stayed in memory after its run through a cache of the word spaces, so `xts watch` grew with each rerun. The cache now lives with the font and goes away with the document.
+
 ## 0.1.19 (2026-11-24)
 
 - **word-spacing and -bag-word-spacing set the width of word spaces.**<br>
